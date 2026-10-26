@@ -184,10 +184,37 @@ async function renderEp(){
     <label>متن کامل پادکست / روایت (فارسی)</label><textarea id="epText" rows="8" style="width:100%;min-height:200px;direction:rtl;text-align:right;font-size:15px"></textarea>
     <div class="row"><button class="pri" id="epSend">ارسال و تحلیل</button></div><div class="st" id="epSt"></div></div>
     ${eps.length?`<div class="card"><label>قسمت‌های قبلی</label><div class="row" id="epList">${eps.map(e=>`<button data-e="${e}">${e}</button>`).join('')}</div></div>`:''}
+    <div class="card" id="epBuild"><div class="name">ساخت ویدیو</div>
+      <label>طول تقریبی ویدیو</label>
+      <select id="bMin" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="3">حدود ۳ دقیقه (آزمایشی)</option><option value="5">حدود ۵ دقیقه</option><option value="7" selected>حدود ۷ دقیقه</option><option value="8">حدود ۸ دقیقه</option></select>
+      <label><input type="checkbox" id="bV" checked> عمودی (اینستاگرام و تیک‌تاک)</label>
+      <label><input type="checkbox" id="bH" checked> افقی (یوتیوب)</label>
+      <div class="row"><button class="pri" id="bGo">ساخت ویدیو از روی این قسمت</button></div><div class="st" id="bSt"></div>
+      <p class="hint">بعد از زدن دکمه حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد. می‌توانی اپ را ببندی؛ ویدیوی آماده در لیست زیر می‌آید.</p>
+      <div id="vids"></div></div>
     <div id="epNeeds"></div>`;
+  $('#bGo').onclick = buildVideo; loadVids();
   el.querySelectorAll('#epList button').forEach(b=>b.onclick=()=>{ ls.set('curEp',b.dataset.e); $('#epName').value=b.dataset.e; showNeeds(b.dataset.e); });
   $('#epSend').onclick = sendEp;
   if(cur) showNeeds(cur);
+}
+async function loadVids(){
+  const box=$('#vids'); if(!box) return;
+  try{ const rel=await api('/releases?per_page=8'); box.innerHTML = rel.length ? '<label>ویدیوهای ساخته‌شده</label>'+rel.map(r=>`<div class="row" style="align-items:center;margin:6px 0"><span class="en" style="flex:1">${r.name||r.tag_name}</span>${r.assets.map(a=>`<a class="btn" href="${a.browser_download_url}" target="_blank" rel="noopener">${/vertical/.test(a.name)?'عمودی':/horizontal/.test(a.name)?'افقی':'دانلود'}</a>`).join('')}</div>`).join('') : ''; }catch(e){}
+}
+async function buildVideo(){
+  const st=$('#bSt'), ep=slug($('#epName').value);
+  if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return; }
+  if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس (همان که متن را با آن فرستادی)'; return; }
+  const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
+  try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده'; return; }
+  const body={formats, minutes:+$('#bMin').value, lang:'fa', ts:Date.now()};
+  st.className='st'; st.textContent='در حال شروع…';
+  try{ let sha; try{ sha=(await api('/contents/episodes/'+ep+'/request.json')).sha }catch(e){}
+    await api('/contents/episodes/'+ep+'/request.json',{method:'PUT',body:JSON.stringify({message:'build video: '+ep,content:enc(JSON.stringify(body)),branch:'main',sha})});
+    st.className='st ok'; st.textContent='شروع شد. حدود ۱۰ تا ۳۰ دقیقه بعد ویدیو در همین لیست می‌آید.';
+    for(let k=0;k<90;k++){ await sleep(30000); const before=$('#vids')?.textContent.length||0; await loadVids(); if(($('#vids')?.textContent.length||0)!==before){ st.textContent='ویدیو آماده شد!'; return } }
+  }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message }
 }
 async function showNeeds(ep){
   const box = $('#epNeeds'); box.innerHTML='<p class="hint">در حال خواندن…</p>';

@@ -1,0 +1,108 @@
+name: Make video
+on:
+  push:
+    branches: [main]
+    paths: ['episodes/*/request.json']
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: episode folder name
+        required: true
+permissions:
+  contents: write
+concurrency:
+  group: make-video
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      ep: ${{ steps.ep.outputs.ep }}
+      matrix: ${{ steps.dir.outputs.matrix }}
+      total: ${{ steps.dir.outputs.total }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - id: ep
+        env: { EP_INPUT: "${{ github.event.inputs.episode }}" }
+        run: |
+          if [ -n "$EP_INPUT" ]; then ep="$EP_INPUT"; else ep=$(git diff --name-only HEAD~1 HEAD -- 'episodes/*/request.json' | head -1 | cut -d/ -f2); fi
+          echo "ep=$ep" >> "$GITHUB_OUTPUT"
+      - run: pip install edge-tts
+      - uses: FedericoCarboni/setup-ffmpeg@v3
+      - name: Narration, voice, timing
+        env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
+        run: python tools/narrate_tts.py "${{ steps.ep.outputs.ep }}"
+      - id: dir
+        name: Scene director
+        env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
+        run: python tools/direct_scenes.py "${{ steps.ep.outputs.ep }}"
+      - name: Save narration + scenes in the repo
+        run: |
+          ep="${{ steps.ep.outputs.ep }}"
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add episodes/$ep/narration.txt episodes/$ep/narration.meta episodes/$ep/timing.json episodes/$ep/scenes.json episodes/$ep/director.json
+          git diff --cached --quiet || { git commit -qm "episode $ep: narration and scenes"; for i in 1 2 3 4 5; do git pull -q --rebase origin main && git push -q origin main && break; sleep 4; done; }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: episode-data
+          path: |
+            episodes/${{ steps.ep.outputs.ep }}/voice.mp3
+            episodes/${{ steps.ep.outputs.ep }}/scenes.json
+          retention-days: 2
+  render:
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        c: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install --no-audit --no-fund
+      - uses: FedericoCarboni/setup-ffmpeg@v3
+      - uses: actions/download-artifact@v4
+        with: { name: episode-data, path: episode-data }
+      - name: Render chunk
+        env: { CHROME_PATH: /usr/bin/google-chrome }
+        run: |
+          ep="${{ needs.prepare.outputs.ep }}"
+          cp episode-data/scenes.json episodes/$ep/scenes.json 2>/dev/null || cp episode-data/*/scenes.json episodes/$ep/scenes.json
+          mkdir -p out
+          node engine/render-v2.js "$ep" ${{ matrix.c.f }} ${{ matrix.c.a }} ${{ matrix.c.b }} out/${{ matrix.c.f }}_${{ matrix.c.i }}.mp4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: part-${{ matrix.c.f }}-${{ matrix.c.i }}
+          path: out/${{ matrix.c.f }}_${{ matrix.c.i }}.mp4
+          retention-days: 1
+  merge:
+    needs: [prepare, render]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: FedericoCarboni/setup-ffmpeg@v3
+      - uses: actions/download-artifact@v4
+        with: { name: episode-data, path: episode-data }
+      - uses: actions/download-artifact@v4
+        with: { pattern: part-*, merge-multiple: true, path: parts }
+      - name: Join, add voice, master loudness
+        run: |
+          total="${{ needs.prepare.outputs.total }}"; v=$(find episode-data -name voice.mp3 | head -1)
+          for f in v h; do
+            ls parts | grep "^${f}_" | sort -V | sed "s|^|file parts/|" > list_$f.txt
+            [ -s list_$f.txt ] || continue
+            ffmpeg -loglevel error -y -f concat -safe 0 -i list_$f.txt -i "$v" -map 0:v -map 1:a -t $total \
+              -af "afade=t=out:st=$(python3 -c "print(max(0,$total-0.6))"):d=0.6,apad,loudnorm=I=-14:TP=-2.2:LRA=11" \
+              -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -ar 48000 -movflags +faststart final_$f.mp4
+          done
+          ls -la final_*.mp4
+      - name: Publish release
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          ep="${{ needs.prepare.outputs.ep }}"; tag="$ep-$(date +%Y%m%d-%H%M%S)"; files=""
+          [ -f final_v.mp4 ] && cp final_v.mp4 "${ep}_vertical.mp4" && files="$files ${ep}_vertical.mp4"
+          [ -f final_h.mp4 ] && cp final_h.mp4 "${ep}_horizontal.mp4" && files="$files ${ep}_horizontal.mp4"
+          gh release create "$tag" $files --title "$ep" --notes "Rendered automatically" -R "${{ github.repository }}"
