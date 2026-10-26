@@ -1,5 +1,19 @@
 {
  "items": {
+  "alarm-clock": {
+   "id": "alarm-clock",
+   "en": "alarm clock with two bells",
+   "fa": "ساعت زنگ‌دار",
+   "tags": [
+    "time",
+    "morning",
+    "wake"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "alarm-clock__1.webp"
+   ]
+  },
   "battery-power": {
    "id": "battery-power",
    "en": "battery (English text on it)",
