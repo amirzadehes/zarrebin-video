@@ -1,0 +1,9 @@
+model: openai/gpt-oss-120b
+sentences 46 words 483 seconds 242.0 wordmarks
+model: openai/gpt-oss-120b
+rate limited, waiting 8s
+rate limited, waiting 15s
+rate limited, waiting 3s
+rate limited, waiting 12s
+rate limited, waiting 4s
+scenes 31 total 243.19 templates {'hero': 5, 'duo': 5, 'trio': 4, 'statement': 17, 'stat': 0}
