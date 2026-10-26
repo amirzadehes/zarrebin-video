@@ -10,6 +10,16 @@
     "battery-power__1.webp"
    ]
   },
+  "book": {
+   "id": "book",
+   "en": "book",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "book__1.webp"
+   ]
+  },
   "brain-colorful": {
    "id": "brain-colorful",
    "en": "colorful brain",
