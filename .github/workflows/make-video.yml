@@ -33,7 +33,7 @@ jobs:
       - run: pip install edge-tts
       - uses: FedericoCarboni/setup-ffmpeg@v3
       - name: Narration, voice, timing
-        env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
+        env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}", GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}" }
         run: |
           set -o pipefail
           python tools/narrate_tts.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
