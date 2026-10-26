@@ -92,7 +92,7 @@ async def run(ep):
         src = [f'tmp_tts/s{i}.wav' for i in range(len(sents))]
         for ci, ids in enumerate(chunk_sentences(sents)):
             cp = f'tmp_tts/chunk{ci}.wav'; tts_gemini.synth(' '.join(tts_gemini.tag(sents[i][0], sents[i][1]) for i in ids), voice, req.get('style', tts_gemini.DEFAULT_STYLE), cp)
-            tts_gemini.split_sentences_audio(cp, [sents[i][0] for i in ids], [src[i] for i in ids]); print('chunk', ci, 'sentences', len(ids)); time.sleep(float(os.environ.get('TTS_GAP', '2')))
+            tts_gemini.split_sentences_audio(cp, [sents[i][0] for i in ids], [src[i] for i in ids]); print('chunk', ci, 'sentences', len(ids)); time.sleep(float(os.environ.get('TTS_GAP', '4')))
     else:
         for b in range(0, len(sents), 6):
             res = await asyncio.gather(*[synth(sents[i][0], voice, rate, src[i]) for i in range(b, min(b + 6, len(sents)))])

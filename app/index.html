@@ -187,6 +187,8 @@ async function renderEp(){
     <div class="card" id="epBuild"><div class="name">ساخت ویدیو</div>
       <label>طول تقریبی ویدیو</label>
       <select id="bMin" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="3">حدود ۳ دقیقه (آزمایشی)</option><option value="5">حدود ۵ دقیقه</option><option value="7" selected>حدود ۷ دقیقه</option><option value="8">حدود ۸ دقیقه</option></select>
+      <label>صدای راوی (نمونه‌ها را در لیست پایین بشنو)</label>
+      <select id="bVoice" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option>Sulafat</option><option>Charon</option><option>Algieba</option><option>Kore</option><option>Puck</option><option>Orus</option><option>Gacrux</option></select>
       <label><input type="checkbox" id="bV" checked> عمودی (اینستاگرام و تیک‌تاک)</label>
       <label><input type="checkbox" id="bH" checked> افقی (یوتیوب)</label>
       <p class="hint" id="bCover"></p><div class="row"><button class="pri" id="bGo">ساخت ویدیو از روی این قسمت</button></div><div class="st" id="bSt"></div>
@@ -208,7 +210,7 @@ async function buildVideo(){
   if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس (همان که متن را با آن فرستادی)'; return; }
   const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
   try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده'; return; }
-  const body={formats, minutes:+$('#bMin').value, lang:'fa', ts:Date.now()};
+  const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()};
   st.className='st'; st.textContent='در حال شروع…';
   try{ let sha; try{ sha=(await api('/contents/episodes/'+ep+'/request.json')).sha }catch(e){}
     await api('/contents/episodes/'+ep+'/request.json',{method:'PUT',body:JSON.stringify({message:'build video: '+ep,content:enc(JSON.stringify(body)),branch:'main',sha})});
