@@ -106,6 +106,21 @@
    "variants": [
     "lightning-burst__1.webp"
    ]
+  },
+  "sun": {
+   "id": "sun",
+   "en": "sun",
+   "fa": "خورشید",
+   "tags": [
+    "day",
+    "morning",
+    "light"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "sun__1.webp",
+    "sun__2.webp"
+   ]
   }
  }
 }
