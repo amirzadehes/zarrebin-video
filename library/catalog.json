@@ -129,6 +129,20 @@
     "crescent-moon__4.webp"
    ]
   },
+  "eye-sleepy": {
+   "id": "eye-sleepy",
+   "en": "sleepy half-closed human eye",
+   "fa": "چشم خواب‌آلود",
+   "tags": [
+    "tired",
+    "sleepy"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "eye-sleepy__1.webp",
+    "eye-sleepy__2.webp"
+   ]
+  },
   "lightning-burst": {
    "id": "lightning-burst",
    "en": "lightning burst",
