@@ -356,6 +356,20 @@
     "sun__2.webp"
    ]
   },
+  "tea-cup": {
+   "id": "tea-cup",
+   "en": "tea cup with a tea bag",
+   "fa": "فنجان چای",
+   "tags": [
+    "tea"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "tea-cup__1.webp",
+    "tea-cup__2.webp",
+    "tea-cup__3.webp"
+   ]
+  },
   "thief-mask": {
    "id": "thief-mask",
    "en": "black thief eye mask",
