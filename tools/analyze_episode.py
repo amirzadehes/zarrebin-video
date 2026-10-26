@@ -42,7 +42,7 @@ def main(ep):
     msgs = [{'role': 'system', 'content': system}, {'role': 'user', 'content': text[:24000]}]
     res = None
     for fmt in ({'type': 'json_object'}, None):
-        payload = {'model': model, 'temperature': 0.3, 'messages': msgs}
+        payload = {'model': model, 'temperature': 0.3, 'max_completion_tokens': 12000, 'messages': msgs}
         if fmt: payload['response_format'] = fmt
         req = urllib.request.Request('https://api.groq.com/openai/v1/chat/completions', json.dumps(payload).encode(),
                                      {'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json', 'User-Agent': 'zarrebin'})
@@ -50,8 +50,15 @@ def main(ep):
         except urllib.error.HTTPError as e: err = 'Groq error %s (%s): %s' % (e.code, model, e.read()[:300])
     if res is None: sys.exit(err)
     content = res['choices'][0]['message']['content']
-    j = re.search(r'\{.*\}', content, re.S)
-    items = json.loads(j.group(0)).get('items', []) if j else []
+    items, dec, pos = [], json.JSONDecoder(), 0
+    while True:  # lenient: collect every complete {"id":...} object even if the JSON is cut off or malformed
+        k = content.find('{', pos)
+        if k < 0: break
+        try:
+            o, end = dec.raw_decode(content, k)
+            if isinstance(o, dict) and 'id' in o: items.append(o); pos = end
+            else: pos = k + 1
+        except ValueError: pos = k + 1
     out, seen = [], set()
     for it in items:
         i = re.sub(r'[^a-z0-9-]+', '-', str(it.get('id', '')).lower()).strip('-')
