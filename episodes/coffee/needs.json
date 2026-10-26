@@ -1,0 +1,243 @@
+{
+ "episode": "coffee",
+ "items": [
+  {
+   "id": "coffee-cup",
+   "en": "coffee cup",
+   "fa": "فنجان قهوه",
+   "why": "لیوان اول قهوه",
+   "tags": []
+  },
+  {
+   "id": "tea-cup",
+   "en": "tea cup",
+   "fa": "فنجان چای",
+   "why": "قهوه یا چای",
+   "tags": []
+  },
+  {
+   "id": "battery-empty",
+   "en": "empty battery",
+   "fa": "باتری خالی",
+   "why": "سیستم بالا نمیاد",
+   "tags": []
+  },
+  {
+   "id": "battery-full",
+   "en": "full battery",
+   "fa": "باتری پر",
+   "why": "قهوه باتری اضافه‌ست",
+   "tags": []
+  },
+  {
+   "id": "light-bulb-idea",
+   "en": "idea light bulb",
+   "fa": "ایده",
+   "why": "انرژی میده",
+   "tags": []
+  },
+  {
+   "id": "caffeine-molecule",
+   "en": "caffeine molecule",
+   "fa": "مولکول کافئین",
+   "why": "کافئین چیست",
+   "tags": []
+  },
+  {
+   "id": "brain-hacker",
+   "en": "brain hacker symbol",
+   "fa": "هکر مغز",
+   "why": "کافئین هکر سیستم عصبی",
+   "tags": []
+  },
+  {
+   "id": "person-sleeping",
+   "en": "sleeping person",
+   "fa": "خواب",
+   "why": "خوابم می‌پره بعد قهوه",
+   "tags": []
+  },
+  {
+   "id": "adenosine",
+   "en": "adenosine molecule",
+   "fa": "آدنوزین",
+   "why": "آدنوزین در مغز",
+   "tags": []
+  },
+  {
+   "id": "receptor",
+   "en": "receptor icon",
+   "fa": "گیرنده",
+   "why": "گیرنده‌های مغز",
+   "tags": []
+  },
+  {
+   "id": "brain-colorful",
+   "en": "colorful brain",
+   "fa": "مغز",
+   "why": "مغز خسته می‌شود",
+   "tags": []
+  },
+  {
+   "id": "fatigue-brain",
+   "en": "brain fatigue symbol",
+   "fa": "خستگی مغز",
+   "why": "احساس خستگی",
+   "tags": []
+  },
+  {
+   "id": "key-fake",
+   "en": "fake key",
+   "fa": "کلید تقلبی",
+   "why": "کلید تقلبی در قفل",
+   "tags": []
+  },
+  {
+   "id": "lock-closed",
+   "en": "closed lock",
+   "fa": "قفل بسته",
+   "why": "قفل گیرنده‌ها",
+   "tags": []
+  },
+  {
+   "id": "door",
+   "en": "door",
+   "fa": "در",
+   "why": "در مغز برای آدنوزین",
+   "tags": []
+  },
+  {
+   "id": "adrenaline",
+   "en": "adrenaline molecule",
+   "fa": "آدرنالین",
+   "why": "آدرنالین پس از قهوه",
+   "tags": []
+  },
+  {
+   "id": "heart",
+   "en": "heart",
+   "fa": "قلب",
+   "why": "ضربان قلب تند می‌شود",
+   "tags": []
+  },
+  {
+   "id": "blood-vessel",
+   "en": "blood vessel",
+   "fa": "رگ خون",
+   "why": "رگ‌ها منقبض می‌شوند",
+   "tags": []
+  },
+  {
+   "id": "hand-tremble",
+   "en": "trembling hand",
+   "fa": "دست لرزان",
+   "why": "لرزش دست بعد قهوه",
+   "tags": []
+  },
+  {
+   "id": "anxiety",
+   "en": "anxiety icon",
+   "fa": "اضطراب",
+   "why": "بی‌قراری و اضطراب",
+   "tags": []
+  },
+  {
+   "id": "espresso-cup",
+   "en": "espresso cup",
+   "fa": "فنجان اسپرسو",
+   "why": "فنجان قهوه اسپرسو",
+   "tags": []
+  },
+  {
+   "id": "hourglass",
+   "en": "hourglass",
+   "fa": "ساعت شنی",
+   "why": "نیمه‌عمر کافئین",
+   "tags": []
+  },
+  {
+   "id": "clock-wall",
+   "en": "wall clock",
+   "fa": "ساعت دیواری",
+   "why": "ساعت زمان مصرف قهوه",
+   "tags": []
+  },
+  {
+   "id": "sleep-deep",
+   "en": "deep sleep symbol",
+   "fa": "خواب عمیق",
+   "why": "خواب عمیق تحت تاثیر قهوه",
+   "tags": []
+  },
+  {
+   "id": "dna-helix",
+   "en": "DNA helix",
+   "fa": "دی‌ان‌ای",
+   "why": "ژنتیک تجزیه کافئین",
+   "tags": []
+  },
+  {
+   "id": "liver",
+   "en": "liver",
+   "fa": "کبد",
+   "why": "کبد تجزیه کافئین",
+   "tags": []
+  },
+  {
+   "id": "enzyme",
+   "en": "enzyme icon",
+   "fa": "آنزیم",
+   "why": "آنزیم CYP1A2",
+   "tags": []
+  },
+  {
+   "id": "brain-adaptation",
+   "en": "brain adaptation symbol",
+   "fa": "سازگاری مغز",
+   "why": "مقاومت مغز به کافئین",
+   "tags": []
+  },
+  {
+   "id": "head-profile",
+   "en": "head profile",
+   "fa": "سر",
+   "why": "سر برای حس سرگیجه",
+   "tags": []
+  },
+  {
+   "id": "headache",
+   "en": "headache symbol",
+   "fa": "سردرد",
+   "why": "سردرد پس از قطع قهوه",
+   "tags": []
+  },
+  {
+   "id": "l-theanine",
+   "en": "L-theanine molecule",
+   "fa": "ال-تیانین",
+   "why": "ماده در چای برای اثر ملایم",
+   "tags": []
+  },
+  {
+   "id": "hammer",
+   "en": "hammer",
+   "fa": "چکش",
+   "why": "قهوه مثل چکش روی گیرنده‌ها",
+   "tags": []
+  },
+  {
+   "id": "glove",
+   "en": "glove",
+   "fa": "دستکش مخملی",
+   "why": "چای مثل دستکش مخملی",
+   "tags": []
+  },
+  {
+   "id": "crown",
+   "en": "crown",
+   "fa": "کلاه بزرگ",
+   "why": "کلاه بزرگ سر مغز",
+   "tags": []
+  }
+ ]
+}
