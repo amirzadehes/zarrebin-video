@@ -1,0 +1,38 @@
+name: Voice test
+on:
+  push:
+    branches: [main]
+    paths: ['voice-test/request.txt']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  samples:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install edge-tts
+      - uses: FedericoCarboni/setup-ffmpeg@v3
+      - name: Make samples
+        env: { GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}" }
+        run: |
+          set -o pipefail
+          mkdir -p voice-test/out
+          python tools/voice_test.py 2>&1 | tee voice-test/log.txt
+          python - <<'PY' 2>&1 | tee -a voice-test/log.txt
+          import asyncio, edge_tts
+          T = open('tools/voice_test.py', encoding='utf8').read().split('TEXT = (')[1].split(')\nos.makedirs')[0]
+          text = ''.join(eval(x) for x in T.replace('\n', ' ').replace('" "', '"\n"').split('\n'))
+          asyncio.run(edge_tts.Communicate(text, 'fa-IR-FaridNeural').save('voice-test/out/voice_edge_Farid_old.mp3'))
+          print('ok edge')
+          PY
+      - name: Publish samples
+        if: always()
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          tag="voices-$(date +%Y%m%d-%H%M%S)"; files=$(ls voice-test/out/voice_*.mp3 2>/dev/null)
+          gh release create "$tag" $files --title "voice samples" --notes "$(tail -c 1500 voice-test/log.txt)" -R "${{ github.repository }}" || true
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add voice-test/log.txt; git commit -qm "voice test log" || true; for i in 1 2 3; do git pull -q --rebase origin main && git push -q origin main && break; sleep 3; done

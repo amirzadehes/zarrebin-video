@@ -1,6 +1,6 @@
 """Step 1+2: script.txt -> narration.txt (single narrator) -> voice.mp3 + words/sentences timing.
 usage: python tools/narrate_tts.py <episode>      writes episodes/<ep>/{narration.txt,voice.mp3,timing.json}"""
-import asyncio, hashlib, json, os, re, subprocess, sys
+import asyncio, hashlib, json, os, re, subprocess, sys, time
 sys.path.insert(0, os.path.dirname(__file__))
 import groqlib
 
@@ -71,39 +71,53 @@ def spread(words, d, lead=.07, tail=.1):
         out.append((t, t + span * x / tot)); t += span * x / tot
     return out
 
+def chunk_sentences(sents, limit=650):
+    """group consecutive sentences (never across paragraphs) into chunks of <= limit chars"""
+    out, cur, n = [], [], 0
+    for i, (t, par) in enumerate(sents):
+        if cur and n + len(t) > limit: out.append(cur); cur, n = [], 0
+        cur.append(i); n += len(t) + 1
+        if par: out.append(cur); cur, n = [], 0
+    if cur: out.append(cur)
+    return out
+
 async def run(ep):
     d = f'episodes/{ep}'; req = load(f'{d}/request.json', {}); lang = req.get('lang', 'fa')
-    text = narrate(ep, req); voice = req.get('voice') or VOICES[lang]; rate = req.get('rate', '+0%')
+    text = narrate(ep, req); engine = req.get('tts') or ('gemini' if os.environ.get('GEMINI_API_KEY') else 'edge')
+    voice = req.get('voice') or (os.environ.get('GEMINI_VOICE', 'Kore') if engine == 'gemini' else VOICES[lang]); rate = req.get('rate', '+0%')
     sents = split_sentences(text); os.makedirs('tmp_tts', exist_ok=True)
-    evs = [None] * len(sents)
-    for b in range(0, len(sents), 6):
-        res = await asyncio.gather(*[synth(sents[i][0], voice, rate, f'tmp_tts/s{i}.mp3') for i in range(b, min(b + 6, len(sents)))])
-        for k, r in enumerate(res): evs[b + k] = r
+    evs = [None] * len(sents); src = [f'tmp_tts/s{i}.mp3' for i in range(len(sents))]
+    if engine == 'gemini':
+        import tts_gemini
+        src = [f'tmp_tts/s{i}.wav' for i in range(len(sents))]
+        for ci, ids in enumerate(chunk_sentences(sents)):
+            cp = f'tmp_tts/chunk{ci}.wav'; tts_gemini.synth(' '.join(sents[i][0] for i in ids), voice, req.get('style', tts_gemini.DEFAULT_STYLE), cp)
+            tts_gemini.split_sentences_audio(cp, [sents[i][0] for i in ids], [src[i] for i in ids]); print('chunk', ci, 'sentences', len(ids)); time.sleep(float(os.environ.get('TTS_GAP', '2')))
+    else:
+        for b in range(0, len(sents), 6):
+            res = await asyncio.gather(*[synth(sents[i][0], voice, rate, src[i]) for i in range(b, min(b + 6, len(sents)))])
+            for k, r in enumerate(res): evs[b + k] = r
     lst, t, S, Wd = [], 0.0, [], []
     for i, (s, par) in enumerate(sents):
-        subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-i', f'tmp_tts/s{i}.mp3', '-ar', '44100', '-ac', '1', f'tmp_tts/s{i}.wav'])
-        dd = dur(f'tmp_tts/s{i}.wav'); gap = .55 if par else .22
+        subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-i', src[i], '-ar', '44100', '-ac', '1', f'tmp_tts/s{i}.wav' if engine != 'gemini' else f'tmp_tts/n{i}.wav'])
+        wp = f'tmp_tts/s{i}.wav' if engine != 'gemini' else f'tmp_tts/n{i}.wav'
+        dd = dur(wp); gap = (.55 if par else .22) if engine != 'gemini' else (.3 if par else .06)
         toks = tokens(s); ev = evs[i]
         if ev and len(ev) >= max(2, int(len(toks) * .6)) and len(ev) <= len(toks) + 3:
-            # map boundary events to our tokens in order
             tt = [(e[0], e[0] + max(e[1], .08)) for e in ev]
-            if len(tt) != len(toks):
-                tt = [tt[min(int(k * len(tt) / len(toks)), len(tt) - 1)] for k in range(len(toks))]
+            if len(tt) != len(toks): tt = [tt[min(int(k * len(tt) / len(toks)), len(tt) - 1)] for k in range(len(toks))]
         else: tt = spread(toks, dd)
         for k, w in enumerate(toks): Wd.append({'w': w, 't0': round(t + tt[k][0], 3), 't1': round(t + min(tt[k][1], dd), 3), 's': i})
-        S.append({'i': i, 't0': round(t, 3), 't1': round(t + dd, 3), 'text': s}); lst.append(f'tmp_tts/s{i}.wav'); t += dd
-        lst.append(f'tmp_tts/g{i}.wav'); t += gap
+        S.append({'i': i, 't0': round(t, 3), 't1': round(t + dd, 3), 'text': s}); lst.append((wp, gap)); t += dd + gap
     import wave
     with wave.open('tmp_tts/all.wav', 'wb') as out:
         out.setnchannels(1); out.setsampwidth(2); out.setframerate(44100)
-        for p in lst:
-            if p.split('/')[-1].startswith('g'):
-                out.writeframes(b'\x00\x00' * int(44100 * (.55 if sents[int(re.findall(r'\d+', p)[-1])][1] else .22)))
-            else:
-                with wave.open(p, 'rb') as w: out.writeframes(w.readframes(w.getnframes()))
+        for p, gap in lst:
+            with wave.open(p, 'rb') as w: out.writeframes(w.readframes(w.getnframes()))
+            out.writeframes(b'\x00\x00' * int(44100 * gap))
     subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-i', 'tmp_tts/all.wav', '-c:a', 'libmp3lame', '-b:a', '160k', f'{d}/voice.mp3'])
-    json.dump({'sentences': S, 'words': Wd, 'voice_seconds': round(t, 2), 'lang': lang, 'voice': voice}, open(f'{d}/timing.json', 'w', encoding='utf8'), ensure_ascii=False)
-    print('sentences', len(S), 'words', len(Wd), 'seconds', round(t, 1), 'wordmarks' if any(evs) else 'estimated timing')
+    json.dump({'sentences': S, 'words': Wd, 'voice_seconds': round(t, 2), 'lang': lang, 'voice': voice, 'engine': engine}, open(f'{d}/timing.json', 'w', encoding='utf8'), ensure_ascii=False)
+    print('engine', engine, voice, '| sentences', len(S), 'words', len(Wd), 'seconds', round(t, 1))
 
 if __name__ == '__main__':
     asyncio.run(run(sys.argv[1]))

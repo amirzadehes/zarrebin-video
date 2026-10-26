@@ -128,6 +128,10 @@ def main(ep):
     d = f'episodes/{ep}'; T = load(f'{d}/timing.json', None); req = load(f'{d}/request.json', {})
     if not T: sys.exit('timing.json missing; run narrate_tts.py first')
     lib = library()
+    needs = load(f'{d}/needs.json', {}).get('items') or []
+    if needs and not req.get('all_library'):
+        ids = {n['id'] for n in needs}; lib = {i: v for i, v in lib.items() if i in ids}
+        print('using only this episode\'s objects:', len(lib), 'of', len(ids), 'planned')
     raw = load(f'{d}/director.json', None) if req.get('keep_direction') else None
     if raw is None:
         raw = direct(ep, T, lib); json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
