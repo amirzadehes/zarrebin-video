@@ -2,7 +2,7 @@
 """Process every image in inbox/: magenta background -> transparent cut-out with white sticker border -> WebP in library/.
 File name format in inbox:  <id>__<anything>.<jpg|png|webp>     e.g.  alarm-clock__t123_ab.jpg
 """
-import json, os, re, sys, time, shutil
+import io, hashlib, json, os, re, sys, time, shutil
 import numpy as np
 from PIL import Image
 from scipy import ndimage as ndi
@@ -59,6 +59,8 @@ def load_json(p, default):
     try: return json.load(open(p, encoding='utf8'))
     except Exception: return default
 
+class Dup(Exception): pass
+
 def main():
     os.makedirs(LIB, exist_ok=True); os.makedirs(FAILED, exist_ok=True)
     cat = load_json(CATALOG, {'items': {}}); items = cat['items']
@@ -75,10 +77,17 @@ def main():
             im = cutout(Image.open(src))
             n = 1 + max([int(x.group(1)) for x in (re.match(re.escape(iid) + r'__(\d+)\.webp$', g) for g in os.listdir(LIB)) if x] + [0])
             name = f'{iid}__{n}.webp'
-            im.save(os.path.join(LIB, name), 'WEBP', quality=92, method=6)
+            buf = io.BytesIO(); im.save(buf, 'WEBP', quality=92, method=6); data = buf.getvalue()
+            h = hashlib.md5(data).hexdigest()
+            for v in items.get(iid, {}).get('variants', []):
+                if os.path.exists(os.path.join(LIB, v)) and hashlib.md5(open(os.path.join(LIB, v), 'rb').read()).hexdigest() == h:
+                    raise Dup(v)
+            open(os.path.join(LIB, name), 'wb').write(data)
             it = items.setdefault(iid, {'id': iid, 'en': wanted.get(iid, {}).get('en', iid.replace('-', ' ')), 'fa': wanted.get(iid, {}).get('fa', ''), 'tags': wanted.get(iid, {}).get('tags', []), 'has_text_in_image': False, 'variants': []})
             it['variants'].append(name)
             os.remove(src); ok.append({'file': f, 'id': iid, 'saved': name, 'kb': round(os.path.getsize(os.path.join(LIB, name)) / 1024)})
+        except Dup as d:
+            os.remove(src); bad.append({'file': f, 'reason': 'تکراری بود (همین تصویر قبلاً ذخیره شده: %s)' % d})
         except Exception as e:
             reason = str(e) if isinstance(e, Reject) else 'خطا در خواندن تصویر: %s' % e
             shutil.move(src, os.path.join(FAILED, f)); bad.append({'file': f, 'reason': reason})
