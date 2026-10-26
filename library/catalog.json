@@ -142,6 +142,21 @@
     "lightning-burst__1.webp"
    ]
   },
+  "magnifying-glass": {
+   "id": "magnifying-glass",
+   "en": "magnifying glass",
+   "fa": "ذره‌بین",
+   "tags": [
+    "search",
+    "look"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "magnifying-glass__1.webp",
+    "magnifying-glass__2.webp",
+    "magnifying-glass__3.webp"
+   ]
+  },
   "pointing-hand": {
    "id": "pointing-hand",
    "en": "hand with pointing index finger",
