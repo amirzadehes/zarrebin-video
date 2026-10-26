@@ -103,6 +103,22 @@
     "caffeine-molecule__1.webp"
    ]
   },
+  "coffee-beans": {
+   "id": "coffee-beans",
+   "en": "pile of roasted coffee beans",
+   "fa": "دانه‌های قهوه",
+   "tags": [
+    "coffee",
+    "beans"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "coffee-beans__1.webp",
+    "coffee-beans__2.webp",
+    "coffee-beans__3.webp",
+    "coffee-beans__4.webp"
+   ]
+  },
   "coffee-cup": {
    "id": "coffee-cup",
    "en": "coffee cup",

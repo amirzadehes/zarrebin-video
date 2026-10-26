@@ -542,6 +542,41 @@
     }
    ],
    "failed": []
+  },
+  {
+   "time": "2026-10-26 21:30:10 UTC",
+   "ok": [
+    {
+     "file": "coffee-beans__mvprsb300.jpg",
+     "id": "coffee-beans",
+     "saved": "coffee-beans__1.webp",
+     "kb": 80
+    },
+    {
+     "file": "coffee-beans__mvprsdd71.jpg",
+     "id": "coffee-beans",
+     "saved": "coffee-beans__2.webp",
+     "kb": 97
+    },
+    {
+     "file": "coffee-beans__mvprsfy02.jpg",
+     "id": "coffee-beans",
+     "saved": "coffee-beans__3.webp",
+     "kb": 94
+    },
+    {
+     "file": "coffee-beans__mvprsipl3.jpg",
+     "id": "coffee-beans",
+     "saved": "coffee-beans__4.webp",
+     "kb": 144
+    }
+   ],
+   "failed": [
+    {
+     "file": "tired-brain__mvprrhom2.jpg",
+     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: tired-brain__3.webp)"
+    }
+   ]
   }
  ]
 }
