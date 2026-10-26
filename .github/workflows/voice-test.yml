@@ -21,13 +21,6 @@ jobs:
           set -o pipefail
           mkdir -p voice-test/out
           python tools/voice_test.py 2>&1 | tee voice-test/log.txt
-          python - <<'PY' 2>&1 | tee -a voice-test/log.txt
-          import asyncio, edge_tts
-          T = open('tools/voice_test.py', encoding='utf8').read().split('TEXT = (')[1].split(')\nos.makedirs')[0]
-          text = ''.join(eval(x) for x in T.replace('\n', ' ').replace('" "', '"\n"').split('\n'))
-          asyncio.run(edge_tts.Communicate(text, 'fa-IR-FaridNeural').save('voice-test/out/voice_edge_Farid_old.mp3'))
-          print('ok edge')
-          PY
       - name: Publish samples
         if: always()
         env: { GH_TOKEN: "${{ github.token }}" }

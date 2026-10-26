@@ -12,3 +12,8 @@ for v in voices:
         subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-i', f'voice-test/out/{v}.wav', '-b:a', '128k', f'voice-test/out/voice_{v}.mp3'])
         print('ok', v)
     except SystemExit as e: print('FAILED', v, e)
+
+try:
+    import asyncio, edge_tts
+    asyncio.run(edge_tts.Communicate(TEXT, 'fa-IR-FaridNeural').save('voice-test/out/voice_edge_Farid_old.mp3')); print('ok edge')
+except Exception as e: print('edge failed', e)
