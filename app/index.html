@@ -71,12 +71,14 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 
 <nav class="tabs">
   <button data-t="want" class="on">مورد نیاز</button>
+  <button data-t="gen">عمومی</button>
   <button data-t="lib">کتابخانه</button>
   <button data-t="rep">گزارش</button>
 </nav>
 
 <main>
   <div id="want"></div>
+  <div id="gen" hidden></div>
   <div id="lib" hidden></div>
   <div id="rep" hidden></div>
 </main>
@@ -90,7 +92,7 @@ const $ = s => document.querySelector(s);
 const ls = { get:(k,d)=>{try{return localStorage.getItem(k)??d}catch(e){return d}}, set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}} };
 const fa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-let S = { repo: ls.get('repo','amirzadehes/zarrebin-video'), token: ls.get('token',''), tpl: ls.get('tpl', DEFAULT_TPL), wanted: [], catalog: {items:{}}, report: {runs:[]}, pending: 0, custom: JSON.parse(ls.get('custom','[]')) };
+let S = { repo: ls.get('repo','amirzadehes/zarrebin-video'), token: ls.get('token',''), tpl: ls.get('tpl', DEFAULT_TPL), wanted: [], pool: [], genN: +ls.get('genN','30'), catalog: {items:{}}, report: {runs:[]}, pending: 0, custom: JSON.parse(ls.get('custom','[]')) };
 
 function toast(t, ms=3200){ const e=$('#toast'); e.textContent=t; e.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>e.classList.remove('show'), ms); }
 async function api(path, opt={}){
@@ -109,6 +111,7 @@ async function copy(text){ try{ await navigator.clipboard.writeText(text); retur
 /* ---------- data ---------- */
 async function loadAll(){
   S.wanted = await readJson('wanted.json', []);
+  S.pool = await readJson('generic-pool.json', []);
   S.catalog = await readJson('library/catalog.json', {items:{}});
   S.report = await readJson('library/report.json', {runs:[]});
   try{ const l = await api('/contents/inbox'); S.pending = l.filter(x=>x.type==='file' && !x.name.startsWith('.')).length }catch(e){ S.pending = 0 }
@@ -122,8 +125,11 @@ function items(){
 }
 function renderWant(){
   const el = $('#want'); const L = items();
+  cards(el, L, true);
+}
+function cards(el, L, withAdd, head){
   const missing = L.filter(x=>x.n===0).length;
-  let h = `<p class="hint">${fa(missing)} مورد هنوز تصویر ندارد.${S.pending?` · ${fa(S.pending)} تصویر در انتظار پردازش`:''}</p>`;
+  let h = head || `<p class="hint">${fa(missing)} مورد هنوز تصویر ندارد.${S.pending?` · ${fa(S.pending)} تصویر در انتظار پردازش`:''}</p>`;
   h += L.map(w=>{
     const v = (S.catalog.items[w.id]?.variants||[])[0];
     return `<div class="card item" data-id="${w.id}">
@@ -140,7 +146,7 @@ function renderWant(){
         <div class="st"></div>
       </div>
     </div>`}).join('');
-  h += `<div class="card"><div class="name">شیء جدید</div>
+  if(withAdd) h += `<div class="card"><div class="name">شیء جدید</div>
      <label>نام شیء به انگلیسی (مثلاً: red apple)</label><input type="text" class="ltr" id="newEn">
      <label>نام فارسی (اختیاری)</label><input type="text" id="newFa">
      <div class="row"><button class="pri" id="btnAdd">افزودن به فهرست</button></div></div>`;
@@ -150,9 +156,20 @@ function renderWant(){
     c.querySelector('.bCopy').onclick = async()=>{ const ok = await copy(prompt(w.en)); st.className='st '+(ok?'ok':'bad'); st.textContent = ok?'پرامپت کپی شد؛ در Gemini بچسبان':'کپی نشد'; };
     c.querySelector('.bFile').onchange = e => upload(id, [...e.target.files], st, e.target);
   });
-  $('#btnAdd').onclick = ()=>{ const en=$('#newEn').value.trim(), id=slug(en); if(!id) return toast('نام انگلیسی را بنویس');
+  if(withAdd) $('#btnAdd').onclick = ()=>{ const en=$('#newEn').value.trim(), id=slug(en); if(!id) return toast('نام انگلیسی را بنویس');
     if(!S.custom.some(c=>c.id===id)&&!S.wanted.some(c=>c.id===id)){ S.custom.push({id,en,fa:$('#newFa').value.trim(),tags:[]}); ls.set('custom',JSON.stringify(S.custom)); }
     renderWant(); toast('اضافه شد'); };
+}
+function renderGen(){
+  const have = id => (S.catalog.items[id]?.variants||[]).length>0;
+  const miss = S.pool.filter(p=>!have(p.id));
+  const shown = miss.slice(0, S.genN).map(w=>({...w,n:0}));
+  const head = `<p class="hint">پرکاربردترین‌ها در بالا هستند. ${fa(miss.length)} مورد عمومی هنوز ساخته نشده؛ ${fa(shown.length)} مورد نمایش داده می‌شود. بعد از هر آپلود موفق، همان مورد از این فهرست می‌رود و به کتابخانه می‌آید.</p>`;
+  cards($('#gen'), shown, false, head);
+  const more = document.createElement('div'); more.className='card';
+  more.innerHTML = miss.length>shown.length ? `<button class="pri" id="btnMore" style="width:100%">۳۰ مورد دیگر اضافه کن (${fa(miss.length-shown.length)} باقی‌مانده)</button>` : '<p class="hint">همه‌ی موارد پیشنهادی نمایش داده شد. اگر مورد دیگری خواستی در «مورد نیاز» اضافه کن یا به من بگو تا فهرست را بزرگ‌تر کنم.</p>';
+  $('#gen').appendChild(more);
+  const b = more.querySelector('#btnMore'); if(b) b.onclick=()=>{ S.genN+=30; ls.set('genN',String(S.genN)); renderGen(); toast('۳۰ مورد اضافه شد'); };
 }
 function renderLib(){
   const its = Object.values(S.catalog.items||{});
@@ -167,7 +184,7 @@ function renderRep(){
     ${r.failed.map(o=>`<div class="run" style="color:var(--bad)">❌ <bdi>${o.file}</bdi><br><span class="hint">${o.reason}</span></div>`).join('')}</div>`).join('') : '<p class="hint">هنوز گزارشی نیست.</p>';
   $('#rep').innerHTML=h; $('#btnRef').onclick=async()=>{ await loadAll(); toast('به‌روز شد') };
 }
-function renderAll(){ renderWant(); renderLib(); renderRep(); }
+function renderAll(){ renderGen(); renderWant(); renderLib(); renderRep(); }
 
 /* ---------- upload ---------- */
 const toB64 = f => new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(f); });
@@ -204,7 +221,7 @@ $('#btnSave').onclick=async()=>{
   try{ const r=await api(''); st.className='st '+(r.permissions?.push?'ok':'bad'); st.textContent = r.permissions?.push ? 'اتصال برقرار است و اجازه‌ی نوشتن دارد ✓' : 'اتصال هست ولی اجازه‌ی نوشتن نداری؛ توکن را با دسترسی Contents بساز'; await loadAll(); }
   catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message; }
 };
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); ['want','lib','rep'].forEach(t=>$('#'+t).hidden=t!==b.dataset.t); });
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); ['want','gen','lib','rep'].forEach(t=>$('#'+t).hidden=t!==b.dataset.t); });
 if(!S.token) $('#settings').hidden=false;
 loadAll();
 </script>

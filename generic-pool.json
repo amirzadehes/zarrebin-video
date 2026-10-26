@@ -1,0 +1,1052 @@
+[
+{
+"id": "arrow-right",
+"en": "bold arrow pointing right",
+"fa": "فلش راست",
+"tags": []
+},
+{
+"id": "arrow-up",
+"en": "bold arrow pointing up",
+"fa": "فلش بالا",
+"tags": []
+},
+{
+"id": "arrow-down",
+"en": "bold arrow pointing down",
+"fa": "فلش پایین",
+"tags": []
+},
+{
+"id": "curved-arrow",
+"en": "big curved arrow",
+"fa": "فلش منحنی",
+"tags": []
+},
+{
+"id": "question-mark",
+"en": "giant question mark",
+"fa": "علامت سؤال",
+"tags": []
+},
+{
+"id": "exclamation-mark",
+"en": "giant exclamation mark",
+"fa": "علامت تعجب",
+"tags": []
+},
+{
+"id": "checkmark",
+"en": "bold green check mark",
+"fa": "تیک سبز",
+"tags": []
+},
+{
+"id": "cross-mark",
+"en": "bold red X mark",
+"fa": "ضربدر قرمز",
+"tags": []
+},
+{
+"id": "light-bulb-idea",
+"en": "glowing idea light bulb",
+"fa": "لامپ ایده",
+"tags": []
+},
+{
+"id": "heart",
+"en": "red heart",
+"fa": "قلب",
+"tags": []
+},
+{
+"id": "broken-heart",
+"en": "broken heart",
+"fa": "قلب شکسته",
+"tags": []
+},
+{
+"id": "star",
+"en": "golden star",
+"fa": "ستاره",
+"tags": []
+},
+{
+"id": "money-coins",
+"en": "stack of gold coins",
+"fa": "سکه‌ها",
+"tags": []
+},
+{
+"id": "money-bag",
+"en": "money bag with dollar sign",
+"fa": "کیسه پول",
+"tags": []
+},
+{
+"id": "banknotes",
+"en": "bundle of banknotes",
+"fa": "اسکناس",
+"tags": []
+},
+{
+"id": "euro-sign",
+"en": "euro coin",
+"fa": "یورو",
+"tags": []
+},
+{
+"id": "earth-globe",
+"en": "planet earth globe",
+"fa": "کره زمین",
+"tags": []
+},
+{
+"id": "rocket",
+"en": "rocket launching",
+"fa": "موشک",
+"tags": []
+},
+{
+"id": "calendar",
+"en": "wall calendar",
+"fa": "تقویم",
+"tags": []
+},
+{
+"id": "stopwatch",
+"en": "stopwatch",
+"fa": "کرونومتر",
+"tags": []
+},
+{
+"id": "clock-wall",
+"en": "round wall clock",
+"fa": "ساعت دیواری",
+"tags": []
+},
+{
+"id": "phone-smartphone",
+"en": "smartphone",
+"fa": "گوشی موبایل",
+"tags": []
+},
+{
+"id": "laptop",
+"en": "open laptop",
+"fa": "لپ‌تاپ",
+"tags": []
+},
+{
+"id": "shield",
+"en": "protective shield",
+"fa": "سپر",
+"tags": []
+},
+{
+"id": "shield-check",
+"en": "shield with check mark",
+"fa": "سپر تأییدشده",
+"tags": []
+},
+{
+"id": "lock-closed",
+"en": "closed padlock",
+"fa": "قفل بسته",
+"tags": []
+},
+{
+"id": "lock-open",
+"en": "open padlock",
+"fa": "قفل باز",
+"tags": []
+},
+{
+"id": "key",
+"en": "golden key",
+"fa": "کلید",
+"tags": []
+},
+{
+"id": "trophy",
+"en": "golden trophy",
+"fa": "جام",
+"tags": []
+},
+{
+"id": "medal",
+"en": "gold medal",
+"fa": "مدال",
+"tags": []
+},
+{
+"id": "crown",
+"en": "golden crown",
+"fa": "تاج",
+"tags": []
+},
+{
+"id": "fire",
+"en": "flame",
+"fa": "آتش",
+"tags": []
+},
+{
+"id": "lightning-bolt",
+"en": "lightning bolt",
+"fa": "رعد و برق",
+"tags": []
+},
+{
+"id": "rain-cloud",
+"en": "rain cloud",
+"fa": "ابر بارانی",
+"tags": []
+},
+{
+"id": "snowflake",
+"en": "snowflake",
+"fa": "دانه برف",
+"tags": []
+},
+{
+"id": "tree",
+"en": "green tree",
+"fa": "درخت",
+"tags": []
+},
+{
+"id": "flower",
+"en": "flower",
+"fa": "گل",
+"tags": []
+},
+{
+"id": "leaf",
+"en": "green leaf",
+"fa": "برگ",
+"tags": []
+},
+{
+"id": "water-drop",
+"en": "water drop",
+"fa": "قطره آب",
+"tags": []
+},
+{
+"id": "thermometer",
+"en": "thermometer",
+"fa": "دماسنج",
+"tags": []
+},
+{
+"id": "pill",
+"en": "medicine pill and capsule",
+"fa": "قرص",
+"tags": []
+},
+{
+"id": "syringe",
+"en": "syringe",
+"fa": "سرنگ",
+"tags": []
+},
+{
+"id": "stethoscope",
+"en": "stethoscope",
+"fa": "گوشی پزشکی",
+"tags": []
+},
+{
+"id": "dna-helix",
+"en": "DNA double helix",
+"fa": "دی‌ان‌ای",
+"tags": []
+},
+{
+"id": "microscope",
+"en": "microscope",
+"fa": "میکروسکوپ",
+"tags": []
+},
+{
+"id": "telescope",
+"en": "telescope",
+"fa": "تلسکوپ",
+"tags": []
+},
+{
+"id": "test-tubes",
+"en": "laboratory test tubes",
+"fa": "لوله آزمایش",
+"tags": []
+},
+{
+"id": "flask",
+"en": "chemistry flask with bubbling liquid",
+"fa": "بالن شیمی",
+"tags": []
+},
+{
+"id": "atom",
+"en": "atom model",
+"fa": "اتم",
+"tags": []
+},
+{
+"id": "magnet",
+"en": "horseshoe magnet",
+"fa": "آهنربا",
+"tags": []
+},
+{
+"id": "gear",
+"en": "single gear",
+"fa": "چرخ‌دنده",
+"tags": []
+},
+{
+"id": "gears",
+"en": "three meshing gears",
+"fa": "چرخ‌دنده‌ها",
+"tags": []
+},
+{
+"id": "wrench",
+"en": "wrench",
+"fa": "آچار",
+"tags": []
+},
+{
+"id": "hammer",
+"en": "hammer",
+"fa": "چکش",
+"tags": []
+},
+{
+"id": "scales-justice",
+"en": "scales of justice",
+"fa": "ترازوی عدالت",
+"tags": []
+},
+{
+"id": "gavel",
+"en": "judge gavel",
+"fa": "چکش قاضی",
+"tags": []
+},
+{
+"id": "book-open",
+"en": "open book",
+"fa": "کتاب باز",
+"tags": []
+},
+{
+"id": "books-stack",
+"en": "stack of books",
+"fa": "کتاب‌ها",
+"tags": []
+},
+{
+"id": "graduation-cap",
+"en": "graduation cap",
+"fa": "کلاه فارغ‌التحصیلی",
+"tags": []
+},
+{
+"id": "pencil",
+"en": "pencil",
+"fa": "مداد",
+"tags": []
+},
+{
+"id": "notebook",
+"en": "notebook with pen",
+"fa": "دفترچه",
+"tags": []
+},
+{
+"id": "newspaper",
+"en": "newspaper",
+"fa": "روزنامه",
+"tags": []
+},
+{
+"id": "megaphone",
+"en": "megaphone",
+"fa": "بلندگو",
+"tags": []
+},
+{
+"id": "bell",
+"en": "notification bell",
+"fa": "زنگ",
+"tags": []
+},
+{
+"id": "speech-bubble",
+"en": "empty speech bubble",
+"fa": "حباب گفتگو",
+"tags": []
+},
+{
+"id": "thought-bubble",
+"en": "empty thought bubble",
+"fa": "حباب فکر",
+"tags": []
+},
+{
+"id": "eye-magnifier",
+"en": "eye",
+"fa": "چشم",
+"tags": []
+},
+{
+"id": "ear",
+"en": "human ear",
+"fa": "گوش",
+"tags": []
+},
+{
+"id": "nose",
+"en": "human nose",
+"fa": "بینی",
+"tags": []
+},
+{
+"id": "mouth-tongue",
+"en": "mouth with tongue",
+"fa": "دهان",
+"tags": []
+},
+{
+"id": "hand-stop",
+"en": "raised open hand, stop gesture",
+"fa": "دست توقف",
+"tags": []
+},
+{
+"id": "thumbs-up",
+"en": "thumbs up",
+"fa": "لایک",
+"tags": []
+},
+{
+"id": "thumbs-down",
+"en": "thumbs down",
+"fa": "دیسلایک",
+"tags": []
+},
+{
+"id": "fist",
+"en": "raised fist",
+"fa": "مشت",
+"tags": []
+},
+{
+"id": "muscle-arm",
+"en": "flexed arm muscle",
+"fa": "عضله",
+"tags": []
+},
+{
+"id": "foot-footprint",
+"en": "pair of footprints",
+"fa": "ردپا",
+"tags": []
+},
+{
+"id": "heart-organ",
+"en": "anatomical human heart",
+"fa": "قلب (آناتومی)",
+"tags": []
+},
+{
+"id": "lungs",
+"en": "human lungs",
+"fa": "ریه‌ها",
+"tags": []
+},
+{
+"id": "stomach",
+"en": "human stomach",
+"fa": "معده",
+"tags": []
+},
+{
+"id": "liver",
+"en": "human liver",
+"fa": "کبد",
+"tags": []
+},
+{
+"id": "bone",
+"en": "bone",
+"fa": "استخوان",
+"tags": []
+},
+{
+"id": "skull",
+"en": "skull",
+"fa": "جمجمه",
+"tags": []
+},
+{
+"id": "tooth",
+"en": "tooth",
+"fa": "دندان",
+"tags": []
+},
+{
+"id": "spine",
+"en": "human spine",
+"fa": "ستون فقرات",
+"tags": []
+},
+{
+"id": "brain-gears",
+"en": "head silhouette with gears inside",
+"fa": "مغز و چرخ‌دنده",
+"tags": []
+},
+{
+"id": "person-thinking",
+"en": "cartoon person with hand on chin thinking",
+"fa": "آدم متفکر",
+"tags": []
+},
+{
+"id": "person-worried",
+"en": "cartoon worried person",
+"fa": "آدم نگران",
+"tags": []
+},
+{
+"id": "person-happy",
+"en": "cartoon happy person jumping",
+"fa": "آدم شاد",
+"tags": []
+},
+{
+"id": "person-tired",
+"en": "cartoon tired yawning person",
+"fa": "آدم خسته",
+"tags": []
+},
+{
+"id": "person-sleeping",
+"en": "cartoon person sleeping",
+"fa": "آدم خوابیده",
+"tags": []
+},
+{
+"id": "group-people",
+"en": "group of three cartoon people",
+"fa": "گروه آدم‌ها",
+"tags": []
+},
+{
+"id": "family",
+"en": "cartoon family of four",
+"fa": "خانواده",
+"tags": []
+},
+{
+"id": "doctor",
+"en": "cartoon doctor with white coat",
+"fa": "دکتر",
+"tags": []
+},
+{
+"id": "scientist",
+"en": "cartoon scientist with lab coat",
+"fa": "دانشمند",
+"tags": []
+},
+{
+"id": "teacher",
+"en": "cartoon teacher",
+"fa": "معلم",
+"tags": []
+},
+{
+"id": "worker-helmet",
+"en": "construction worker with helmet",
+"fa": "کارگر",
+"tags": []
+},
+{
+"id": "chef-hat",
+"en": "chef hat",
+"fa": "کلاه آشپز",
+"tags": []
+},
+{
+"id": "taxi-car",
+"en": "yellow taxi car",
+"fa": "تاکسی",
+"tags": []
+},
+{
+"id": "car",
+"en": "simple car",
+"fa": "ماشین",
+"tags": []
+},
+{
+"id": "bus",
+"en": "city bus",
+"fa": "اتوبوس",
+"tags": []
+},
+{
+"id": "train",
+"en": "train",
+"fa": "قطار",
+"tags": []
+},
+{
+"id": "airplane",
+"en": "airplane",
+"fa": "هواپیما",
+"tags": []
+},
+{
+"id": "bicycle",
+"en": "bicycle",
+"fa": "دوچرخه",
+"tags": []
+},
+{
+"id": "ship",
+"en": "ship",
+"fa": "کشتی",
+"tags": []
+},
+{
+"id": "traffic-light",
+"en": "traffic light",
+"fa": "چراغ راهنمایی",
+"tags": []
+},
+{
+"id": "road-sign-stop",
+"en": "stop road sign without letters",
+"fa": "علامت ایست",
+"tags": []
+},
+{
+"id": "house",
+"en": "house",
+"fa": "خانه",
+"tags": []
+},
+{
+"id": "apartment-building",
+"en": "apartment building",
+"fa": "ساختمان",
+"tags": []
+},
+{
+"id": "hospital",
+"en": "hospital building with cross",
+"fa": "بیمارستان",
+"tags": []
+},
+{
+"id": "school",
+"en": "school building",
+"fa": "مدرسه",
+"tags": []
+},
+{
+"id": "office-building",
+"en": "office skyscraper",
+"fa": "برج اداری",
+"tags": []
+},
+{
+"id": "factory",
+"en": "factory with chimney",
+"fa": "کارخانه",
+"tags": []
+},
+{
+"id": "shopping-cart",
+"en": "shopping cart",
+"fa": "سبد خرید",
+"tags": []
+},
+{
+"id": "shopping-bag",
+"en": "shopping bag",
+"fa": "کیسه خرید",
+"tags": []
+},
+{
+"id": "gift-box",
+"en": "gift box",
+"fa": "هدیه",
+"tags": []
+},
+{
+"id": "credit-card",
+"en": "credit card",
+"fa": "کارت بانکی",
+"tags": []
+},
+{
+"id": "chart-up",
+"en": "bar chart going up",
+"fa": "نمودار صعودی",
+"tags": []
+},
+{
+"id": "chart-down",
+"en": "bar chart going down",
+"fa": "نمودار نزولی",
+"tags": []
+},
+{
+"id": "pie-chart",
+"en": "pie chart",
+"fa": "نمودار دایره‌ای",
+"tags": []
+},
+{
+"id": "target-dart",
+"en": "dartboard with dart in center",
+"fa": "هدف",
+"tags": []
+},
+{
+"id": "puzzle-piece",
+"en": "puzzle pieces",
+"fa": "پازل",
+"tags": []
+},
+{
+"id": "chess-piece",
+"en": "chess knight",
+"fa": "مهره شطرنج",
+"tags": []
+},
+{
+"id": "dice",
+"en": "pair of dice",
+"fa": "تاس",
+"tags": []
+},
+{
+"id": "flag",
+"en": "waving flag",
+"fa": "پرچم",
+"tags": []
+},
+{
+"id": "map-pin",
+"en": "map location pin",
+"fa": "پین نقشه",
+"tags": []
+},
+{
+"id": "compass",
+"en": "compass",
+"fa": "قطب‌نما",
+"tags": []
+},
+{
+"id": "map-folded",
+"en": "folded paper map",
+"fa": "نقشه",
+"tags": []
+},
+{
+"id": "bread",
+"en": "loaf of bread",
+"fa": "نان",
+"tags": []
+},
+{
+"id": "apple",
+"en": "red apple",
+"fa": "سیب",
+"tags": []
+},
+{
+"id": "water-bottle",
+"en": "water bottle",
+"fa": "بطری آب",
+"tags": []
+},
+{
+"id": "glass-water",
+"en": "glass of water",
+"fa": "لیوان آب",
+"tags": []
+},
+{
+"id": "milk",
+"en": "milk carton",
+"fa": "شیر",
+"tags": []
+},
+{
+"id": "egg",
+"en": "egg",
+"fa": "تخم‌مرغ",
+"tags": []
+},
+{
+"id": "sugar-cubes",
+"en": "sugar cubes",
+"fa": "حبه قند",
+"tags": []
+},
+{
+"id": "salt-shaker",
+"en": "salt shaker",
+"fa": "نمک‌پاش",
+"tags": []
+},
+{
+"id": "pizza",
+"en": "pizza slice",
+"fa": "پیتزا",
+"tags": []
+},
+{
+"id": "cake",
+"en": "birthday cake",
+"fa": "کیک",
+"tags": []
+},
+{
+"id": "chocolate",
+"en": "chocolate bar",
+"fa": "شکلات",
+"tags": []
+},
+{
+"id": "energy-drink-can",
+"en": "energy drink can without text",
+"fa": "نوشابه انرژی‌زا",
+"tags": []
+},
+{
+"id": "cigarette",
+"en": "cigarette",
+"fa": "سیگار",
+"tags": []
+},
+{
+"id": "wine-glass",
+"en": "wine glass",
+"fa": "لیوان شراب",
+"tags": []
+},
+{
+"id": "dumbbell",
+"en": "dumbbell",
+"fa": "دمبل",
+"tags": []
+},
+{
+"id": "running-shoe",
+"en": "running shoe",
+"fa": "کفش ورزشی",
+"tags": []
+},
+{
+"id": "football",
+"en": "soccer ball",
+"fa": "توپ فوتبال",
+"tags": []
+},
+{
+"id": "headphones",
+"en": "headphones",
+"fa": "هدفون",
+"tags": []
+},
+{
+"id": "microphone",
+"en": "podcast microphone",
+"fa": "میکروفون",
+"tags": []
+},
+{
+"id": "camera",
+"en": "camera",
+"fa": "دوربین",
+"tags": []
+},
+{
+"id": "video-play",
+"en": "play button",
+"fa": "دکمه پخش",
+"tags": []
+},
+{
+"id": "music-note",
+"en": "music notes",
+"fa": "نت موسیقی",
+"tags": []
+},
+{
+"id": "tv",
+"en": "television",
+"fa": "تلویزیون",
+"tags": []
+},
+{
+"id": "wifi",
+"en": "wifi signal symbol",
+"fa": "وای‌فای",
+"tags": []
+},
+{
+"id": "robot",
+"en": "friendly robot",
+"fa": "ربات",
+"tags": []
+},
+{
+"id": "ai-chip",
+"en": "computer chip",
+"fa": "تراشه",
+"tags": []
+},
+{
+"id": "magnifier-search",
+"en": "magnifying glass over document",
+"fa": "ذره‌بین و سند",
+"tags": []
+},
+{
+"id": "document",
+"en": "paper document with lines",
+"fa": "سند",
+"tags": []
+},
+{
+"id": "folder",
+"en": "folder",
+"fa": "پوشه",
+"tags": []
+},
+{
+"id": "envelope",
+"en": "envelope",
+"fa": "پاکت نامه",
+"tags": []
+},
+{
+"id": "trash-bin",
+"en": "trash bin",
+"fa": "سطل زباله",
+"tags": []
+},
+{
+"id": "recycle",
+"en": "recycling symbol",
+"fa": "بازیافت",
+"tags": []
+},
+{
+"id": "sun-glasses",
+"en": "sunglasses",
+"fa": "عینک آفتابی",
+"tags": []
+},
+{
+"id": "umbrella",
+"en": "umbrella",
+"fa": "چتر",
+"tags": []
+},
+{
+"id": "candle",
+"en": "lit candle",
+"fa": "شمع",
+"tags": []
+},
+{
+"id": "mirror",
+"en": "hand mirror",
+"fa": "آینه",
+"tags": []
+},
+{
+"id": "scissors",
+"en": "scissors",
+"fa": "قیچی",
+"tags": []
+},
+{
+"id": "ladder",
+"en": "ladder",
+"fa": "نردبان",
+"tags": []
+},
+{
+"id": "rope-knot",
+"en": "rope tied in a knot",
+"fa": "طناب",
+"tags": []
+},
+{
+"id": "chain-link",
+"en": "chain link",
+"fa": "زنجیر",
+"tags": []
+},
+{
+"id": "bomb",
+"en": "cartoon bomb with lit fuse",
+"fa": "بمب",
+"tags": []
+},
+{
+"id": "red-button",
+"en": "big red button",
+"fa": "دکمه قرمز",
+"tags": []
+},
+{
+"id": "timer-sand",
+"en": "hourglass with sand",
+"fa": "ساعت شنی",
+"tags": []
+},
+{
+"id": "stairs-up",
+"en": "staircase going up",
+"fa": "پله‌ها",
+"tags": []
+},
+{
+"id": "mountain",
+"en": "mountain peak with flag",
+"fa": "قله",
+"tags": []
+},
+{
+"id": "bridge",
+"en": "bridge",
+"fa": "پل",
+"tags": []
+},
+{
+"id": "door",
+"en": "door",
+"fa": "در",
+"tags": []
+},
+{
+"id": "window",
+"en": "window",
+"fa": "پنجره",
+"tags": []
+}
+]
