@@ -205,6 +205,22 @@
     "magnifying-glass__3.webp"
    ]
   },
+  "neuron": {
+   "id": "neuron",
+   "en": "neuron nerve cell",
+   "fa": "سلول عصبی",
+   "tags": [
+    "brain",
+    "nerve",
+    "cell"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "neuron__1.webp",
+    "neuron__2.webp",
+    "neuron__3.webp"
+   ]
+  },
   "old-key": {
    "id": "old-key",
    "en": "old-fashioned key",
