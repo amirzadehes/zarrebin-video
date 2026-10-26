@@ -1,1 +1,264 @@
-{"episode": "michellien-star", "error": true, "message": ".py\", line 338, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/json/decoder.py\", line 354, in raw_decode\n    obj, end = self.scan_once(s, idx)\n               ^^^^^^^^^^^^^^^^^^^^^^\njson.decoder.JSONDecodeError: Expecting ',' delimiter: line 140 column 6 (char 3126)\n", "items": []}
+{
+ "episode": "michellien-star",
+ "items": [
+  {
+   "id": "silverware-set",
+   "en": "silverware set",
+   "fa": "ست چنگال و کارد",
+   "why": "رستوران لوکس و بشقاب",
+   "tags": []
+  },
+  {
+   "id": "star",
+   "en": "Michelin star badge",
+   "fa": "ستاره میشلین",
+   "why": "ستاره میشلین روی بشقاب",
+   "tags": []
+  },
+  {
+   "id": "rubber-tire",
+   "en": "rubber tire",
+   "fa": "لاستیک خودرو",
+   "why": "شرکت تولید لاستیک خودرو",
+   "tags": []
+  },
+  {
+   "id": "car",
+   "en": "early 1900s car",
+   "fa": "ماشین قدیمی",
+   "why": "سال ۱۹۰۰ و کم بودن ماشین‌ها",
+   "tags": []
+  },
+  {
+   "id": "gas-pump",
+   "en": "gasoline pump",
+   "fa": "پمپ بنزین",
+   "why": "رانندگی سخت و پمپ بنزین کم",
+   "tags": []
+  },
+  {
+   "id": "map-folded",
+   "en": "folded road map",
+   "fa": "نقشه جاده‌ها",
+   "why": "کتابچه راهنمای قرمز شامل نقشه جاده‌ها",
+   "tags": []
+  },
+  {
+   "id": "road",
+   "en": "road stretch",
+   "fa": "جاده",
+   "why": "تشویق مردم به سفر در جاده‌ها",
+   "tags": []
+  },
+  {
+   "id": "two-brothers",
+   "en": "two male figures representing brothers",
+   "fa": "دو برادر",
+   "why": "آندره و ادوارد میشلین",
+   "tags": []
+  },
+  {
+   "id": "factory",
+   "en": "factory building",
+   "fa": "کارخانه",
+   "why": "کارخانه لاستیک‌سازی میشلین",
+   "tags": []
+  },
+  {
+   "id": "red-guidebook",
+   "en": "red Michelin guidebook",
+   "fa": "کتابچه قرمز میشلین",
+   "why": "کتابچه راهنمای قرمز",
+   "tags": []
+  },
+  {
+   "id": "hotel-building",
+   "en": "hotel building icon",
+   "fa": "هتل",
+   "why": "لیست هتل‌ها در کتابچه",
+   "tags": []
+  },
+  {
+   "id": "book-open",
+   "en": "open book showing list",
+   "fa": "کتاب باز",
+   "why": "لیست رستوران‌ها در کتابچه",
+   "tags": []
+  },
+  {
+   "id": "secret-inspector",
+   "en": "masked secret inspector",
+   "fa": "بازرس مخفی",
+   "why": "استخدام بازرس‌های مخفی",
+   "tags": []
+  },
+  {
+   "id": "star-rating",
+   "en": "star rating system diagram",
+   "fa": "سیستم امتیازدهی ستاره‌ای",
+   "why": "سیستم امتیازدهی با ستاره",
+   "tags": []
+  },
+  {
+   "id": "one-star",
+   "en": "single star icon",
+   "fa": "یک ستاره",
+   "why": "یک ستاره میشلین",
+   "tags": []
+  },
+  {
+   "id": "two-stars",
+   "en": "double star icon",
+   "fa": "دو ستاره",
+   "why": "دو ستاره میشلین",
+   "tags": []
+  },
+  {
+   "id": "three-stars",
+   "en": "triple star icon",
+   "fa": "سه ستاره",
+   "why": "سه ستاره میشلین",
+   "tags": []
+  },
+  {
+   "id": "social-media",
+   "en": "social media icons",
+   "fa": "شبکه‌های اجتماعی",
+   "why": "بازرس‌ها شبکه‌های اجتماعی را رصد می‌کنند",
+   "tags": []
+  },
+  {
+   "id": "newspaper",
+   "en": "newspaper",
+   "fa": "روزنامه",
+   "why": "نقدهای روزنامه‌ها",
+   "tags": []
+  },
+  {
+   "id": "blog",
+   "en": "blog page",
+   "fa": "وبلاگ",
+   "why": "وبلاگ‌های محلی",
+   "tags": []
+  },
+  {
+   "id": "apple",
+   "en": "apple fruit",
+   "fa": "سیب",
+   "why": "کیفیت مواد اولیه",
+   "tags": []
+  },
+  {
+   "id": "spice-jar",
+   "en": "spice jar",
+   "fa": "شیشه ادویه",
+   "why": "تسلط روی طعم‌ها",
+   "tags": []
+  },
+  {
+   "id": "chef-hat",
+   "en": "chef hat",
+   "fa": "کلاه سرآشپز",
+   "why": "شخصیت سرآشپز",
+   "tags": []
+  },
+  {
+   "id": "money-bag",
+   "en": "money bag",
+   "fa": "پول",
+   "why": "ارزش غذا نسبت به قیمت",
+   "tags": []
+  },
+  {
+   "id": "clock-wall",
+   "en": "wall clock",
+   "fa": "ساعت دیواری",
+   "why": "ثبات کیفیت در زمان",
+   "tags": []
+  },
+  {
+   "id": "street-food-stall",
+   "en": "street food stall",
+   "fa": "دکه غذافروشی خیابانی",
+   "why": "مثال دکه جِی فای در بانکوک",
+   "tags": []
+  },
+  {
+   "id": "plastic-stool",
+   "en": "plastic stool",
+   "fa": "چهارپایه پلاستیکی",
+   "why": "نشستن روی چهارپایه پلاستیکی",
+   "tags": []
+  },
+  {
+   "id": "safety-glasses",
+   "en": "safety glasses",
+   "fa": "عینک ایمنی",
+   "why": "پیرزن با عینک ایمنی",
+   "tags": []
+  },
+  {
+   "id": "reservation-card",
+   "en": "reservation card",
+   "fa": "کارت رزرو",
+   "why": "رزرو مخفی توسط بازرس",
+   "tags": []
+  },
+  {
+   "id": "cash",
+   "en": "cash notes",
+   "fa": "نقد پول",
+   "why": "پرداخت هزینه غذا توسط بازرس",
+   "tags": []
+  },
+  {
+   "id": "banknotes",
+   "en": "banknotes",
+   "fa": "اسناد بانکی",
+   "why": "میانگین هزینه شام معمولی در آمریکا",
+   "tags": []
+  },
+  {
+   "id": "price-tag",
+   "en": "price tag",
+   "fa": "برچسب قیمت",
+   "why": "قیمت رستوران یک ستاره",
+   "tags": []
+  },
+  {
+   "id": "restaurant-sign",
+   "en": "restaurant sign",
+   "fa": "نشان رستوران",
+   "why": "رستوران تیم هو وان",
+   "tags": []
+  },
+  {
+   "id": "cityscape-chicago",
+   "en": "Chicago skyline silhouette",
+   "fa": "خط افق شیکاگو",
+   "why": "رستوران آلینیا در شیکاگو",
+   "tags": []
+  },
+  {
+   "id": "wine-glass",
+   "en": "wine glass",
+   "fa": "لیوان شراب",
+   "why": "رستوران فرنچ لاندری",
+   "tags": []
+  },
+  {
+   "id": "mobile-app",
+   "en": "mobile app icon",
+   "fa": "اپلیکیشن موبایل",
+   "why": "وب‌سایت و اپلیکیشن میشلین",
+   "tags": []
+  },
+  {
+   "id": "tire-company-logo",
+   "en": "tire company logo",
+   "fa": "لوگوی شرکت لاستیک",
+   "why": "شرکت لاستیک‌سازی صاحب ستاره‌ها",
+   "tags": []
+  }
+ ]
+}
