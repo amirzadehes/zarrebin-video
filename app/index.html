@@ -193,7 +193,7 @@ async function showNeeds(ep){
   const box = $('#epNeeds'); box.innerHTML='<p class="hint">در حال خواندن…</p>';
   const j = await readJson('episodes/'+ep+'/needs.json', null);
   if(!j){ box.innerHTML='<p class="hint">هنوز تحلیلی برای این قسمت نیست (اگر تازه فرستاده‌ای، یک دقیقه صبر کن و دوباره بزن).</p>'; return false; }
-  if(j.error){ box.innerHTML='<p class="hint" style="color:var(--bad)">تحلیل خطا داد. معمولاً کلید Groq در Secrets ریپو گذاشته نشده است.</p>'; return true; }
+  if(j.error){ box.innerHTML=`<p class="hint" style="color:var(--bad)">تحلیل خطا داد. ${/GROQ_API_KEY is not set/.test(j.message||'')?'کلید Groq هنوز در Secrets ریپو گذاشته نشده است.':'دلیل: '+(j.message||'نامشخص')}</p>`; return true; }
   const L = j.items.map(w=>({...w, n:(S.catalog.items[w.id]?.variants||[]).length})).sort((a,b)=>(a.n>0)-(b.n>0));
   const miss = L.filter(x=>x.n===0).length;
   const tmp = document.createElement('div'); cards(tmp, L, false, `<p class="hint">این قسمت ${fa(L.length)} شیء لازم دارد؛ ${fa(miss)} مورد را هنوز نداریم (بالای فهرست). مواردی که در کتابخانه هست دوباره ساخته نمی‌شود.</p>`);
