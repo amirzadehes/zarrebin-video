@@ -157,7 +157,11 @@
     "head-profile__1.webp",
     "head-profile__2.webp",
     "head-profile__3.webp",
-    "head-profile__4.webp"
+    "head-profile__4.webp",
+    "head-profile__5.webp",
+    "head-profile__6.webp",
+    "head-profile__7.webp",
+    "head-profile__8.webp"
    ]
   },
   "lightning-burst": {
@@ -183,6 +187,22 @@
     "magnifying-glass__1.webp",
     "magnifying-glass__2.webp",
     "magnifying-glass__3.webp"
+   ]
+  },
+  "old-key": {
+   "id": "old-key",
+   "en": "old-fashioned key",
+   "fa": "کلید قدیمی",
+   "tags": [
+    "key",
+    "unlock"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "old-key__1.webp",
+    "old-key__2.webp",
+    "old-key__3.webp",
+    "old-key__4.webp"
    ]
   },
   "padlock": {

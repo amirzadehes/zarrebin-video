@@ -359,6 +359,65 @@
     }
    ],
    "failed": []
+  },
+  {
+   "time": "2026-10-26 21:24:44 UTC",
+   "ok": [
+    {
+     "file": "head-profile__mvprkt5l4.jpg",
+     "id": "head-profile",
+     "saved": "head-profile__5.webp",
+     "kb": 152
+    },
+    {
+     "file": "head-profile__mvprkvu25.jpg",
+     "id": "head-profile",
+     "saved": "head-profile__6.webp",
+     "kb": 158
+    },
+    {
+     "file": "head-profile__mvprkydo6.jpg",
+     "id": "head-profile",
+     "saved": "head-profile__7.webp",
+     "kb": 134
+    },
+    {
+     "file": "head-profile__mvprl15a7.jpg",
+     "id": "head-profile",
+     "saved": "head-profile__8.webp",
+     "kb": 118
+    },
+    {
+     "file": "old-key__mvprkts40.jpg",
+     "id": "old-key",
+     "saved": "old-key__1.webp",
+     "kb": 73
+    },
+    {
+     "file": "old-key__mvprl26r1.jpg",
+     "id": "old-key",
+     "saved": "old-key__2.webp",
+     "kb": 51
+    },
+    {
+     "file": "old-key__mvprl4kf2.jpg",
+     "id": "old-key",
+     "saved": "old-key__3.webp",
+     "kb": 74
+    },
+    {
+     "file": "old-key__mvprl76c3.jpg",
+     "id": "old-key",
+     "saved": "old-key__4.webp",
+     "kb": 66
+    }
+   ],
+   "failed": [
+    {
+     "file": "head-profile__mvprk1xk3.jpg",
+     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: head-profile__4.webp)"
+    }
+   ]
   }
  ]
 }
