@@ -17,6 +17,22 @@
     "alarm-clock__4.webp"
    ]
   },
+  "battery-empty": {
+   "id": "battery-empty",
+   "en": "cylindrical battery with plain body, almost empty, small red charge",
+   "fa": "باتری خالی",
+   "tags": [
+    "battery",
+    "empty",
+    "energy"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "battery-empty__1.webp",
+    "battery-empty__2.webp",
+    "battery-empty__3.webp"
+   ]
+  },
   "battery-power": {
    "id": "battery-power",
    "en": "battery (English text on it)",
