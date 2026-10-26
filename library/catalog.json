@@ -97,6 +97,22 @@
     "coffee-cup__1.webp"
    ]
   },
+  "crescent-moon": {
+   "id": "crescent-moon",
+   "en": "crescent moon with a few small stars",
+   "fa": "ماه و ستاره",
+   "tags": [
+    "night",
+    "sleep"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "crescent-moon__1.webp",
+    "crescent-moon__2.webp",
+    "crescent-moon__3.webp",
+    "crescent-moon__4.webp"
+   ]
+  },
   "lightning-burst": {
    "id": "lightning-burst",
    "en": "lightning burst",
