@@ -236,6 +236,19 @@
     "magnifying-glass__3.webp"
    ]
   },
+  "moka-pot": {
+   "id": "moka-pot",
+   "en": "moka pot",
+   "fa": "قهوه‌جوش موکا",
+   "tags": [
+    "coffee"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "moka-pot__1.webp",
+    "moka-pot__2.webp"
+   ]
+  },
   "neuron": {
    "id": "neuron",
    "en": "neuron nerve cell",
