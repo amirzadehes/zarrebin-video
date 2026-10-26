@@ -220,6 +220,18 @@
     "espresso-cup__4.webp"
    ]
   },
+  "euro-sign": {
+   "id": "euro-sign",
+   "en": "euro sign",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "euro-sign__1.webp",
+    "euro-sign__2.webp",
+    "euro-sign__3.webp"
+   ]
+  },
   "eye-open": {
    "id": "eye-open",
    "en": "human eye wide open",
