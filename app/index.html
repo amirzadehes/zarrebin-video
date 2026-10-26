@@ -189,7 +189,7 @@ async function renderEp(){
       <select id="bMin" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="3">حدود ۳ دقیقه (آزمایشی)</option><option value="5">حدود ۵ دقیقه</option><option value="7" selected>حدود ۷ دقیقه</option><option value="8">حدود ۸ دقیقه</option></select>
       <label><input type="checkbox" id="bV" checked> عمودی (اینستاگرام و تیک‌تاک)</label>
       <label><input type="checkbox" id="bH" checked> افقی (یوتیوب)</label>
-      <div class="row"><button class="pri" id="bGo">ساخت ویدیو از روی این قسمت</button></div><div class="st" id="bSt"></div>
+      <p class="hint" id="bCover"></p><div class="row"><button class="pri" id="bGo">ساخت ویدیو از روی این قسمت</button></div><div class="st" id="bSt"></div>
       <p class="hint">بعد از زدن دکمه حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد. می‌توانی اپ را ببندی؛ ویدیوی آماده در لیست زیر می‌آید.</p>
       <div id="vids"></div></div>
     <div id="epNeeds"></div>`;
@@ -224,6 +224,7 @@ async function showNeeds(ep){
   const L = j.items.map(w=>({...w, n:(S.catalog.items[w.id]?.variants||[]).length})).sort((a,b)=>(a.n>0)-(b.n>0));
   const miss = L.filter(x=>x.n===0).length;
   const tmp = document.createElement('div'); cards(tmp, L, false, `<p class="hint">این قسمت ${fa(L.length)} شیء لازم دارد؛ ${fa(miss)} مورد را هنوز نداریم (بالای فهرست). مواردی که در کتابخانه هست دوباره ساخته نمی‌شود.</p>`);
+  const have=L.length-miss; const bs=$('#bCover'); if(bs) bs.textContent=`تصاویر این قسمت: ${fa(have)} از ${fa(L.length)} آماده است. هرچه بیشتر باشد، ویدیو بهتر و مرتبط‌تر می‌شود.`;
   box.innerHTML=''; while(tmp.firstChild) box.appendChild(tmp.firstChild);
   return true;
 }

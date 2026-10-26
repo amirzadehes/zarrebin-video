@@ -36,8 +36,8 @@ def split_sentences(text):
         parts = [s.strip() for s in re.split(r'(?<=[.!؟?!…])\s+', para) if s.strip()]
         fixed = []
         for s in parts:   # split overly long sentences at commas
-            while len(s) > 230:
-                cut = max(s.rfind('،', 0, 200), s.rfind(',', 0, 200), s.rfind(' ', 0, 200)); fixed.append(s[:cut + 1].strip()); s = s[cut + 1:].strip()
+            while len(s) > 150:
+                cut = max(s.rfind('،', 0, 130), s.rfind(',', 0, 130), s.rfind(' ', 0, 130)); fixed.append(s[:cut + 1].strip()); s = s[cut + 1:].strip()
             fixed.append(s)
         for i, s in enumerate(fixed): sents.append((s, i == len(fixed) - 1))
     return sents
