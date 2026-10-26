@@ -22,15 +22,18 @@ def model():
             if p in i.lower(): _model = i; print('model:', i); return i
     _model = ids[0]; return _model
 
-def chat(system, user, max_tokens=10000, json_mode=False, temperature=.3, tries=7):
+def chat(system, user, max_tokens=4000, json_mode=False, temperature=.3, tries=7):
+    effort = True
     msgs = [{'role': 'system', 'content': system}, {'role': 'user', 'content': user}]
     last = ''
     for k in range(tries):
         payload = {'model': model(), 'temperature': temperature, 'max_completion_tokens': max_tokens, 'messages': msgs}
         if json_mode: payload['response_format'] = {'type': 'json_object'}
+        if effort and 'gpt-oss' in model(): payload['reasoning_effort'] = 'low'
         try: return _req('/chat/completions', payload)['choices'][0]['message']['content']
         except urllib.error.HTTPError as e:
             body = e.read().decode('utf8', 'ignore'); last = 'HTTP %s %s' % (e.code, body[:300])
+            if e.code == 400 and 'reasoning' in body.lower() and effort: effort = False; continue
             if e.code == 400 and json_mode: json_mode = False; continue
             if e.code in (429, 500, 502, 503):
                 m = re.search(r'try again in ([\d.]+)(ms|s|m)', body); w = 20 * (k + 1)

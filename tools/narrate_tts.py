@@ -25,7 +25,7 @@ def narrate(ep, req):
               '۸) خروجی فقط متن روایت باشد: بدون عنوان، شماره، توضیح یا نشانه‌گذاری فرمت. پاراگراف‌ها را با یک خط خالی جدا کن.' % words)
     if req.get('lang', 'fa') != 'fa':
         system += '\n۹) متن نهایی را به زبان %s بنویس.' % LANGNAME[req['lang']]
-    text = groqlib.chat(system, src[:30000], max_tokens=9000, temperature=.5).strip()
+    text = groqlib.chat(system, src[:14000], max_tokens=6000, temperature=.5).strip()
     text = re.sub(r'^\s*#+.*$', '', text, flags=re.M).strip()
     open(out, 'w', encoding='utf8').write(text); json.dump({'h': h}, open(f'{d}/narration.meta', 'w')); return text
 

@@ -35,13 +35,13 @@ kw فهرست حداکثر ۳ کلمه‌ی مهم همان صحنه برای ه
 
 def direct(ep, T, lib):
     S = T['sentences']; scenes = []; prev = ''
-    ids = '\n'.join(f"{i}: {v.get('fa','')} / {v.get('en','')}" for i, v in sorted(lib.items()))
-    B = 18
+    ids = ', '.join(f"{i}={v.get('fa','')}" for i, v in sorted(lib.items()))
+    B = 12
     for b in range(0, len(S), B):
         chunk = S[b:b + B]
         user = 'قالب آخرین صحنه‌ی قبلی: %s\n\nفهرست اشیای موجود (شناسه: نام):\n%s\n\nجمله‌ها:\n%s' % (
             prev or '-', ids, '\n'.join(f"{s['i']} | {s['t0']:.1f}-{s['t1']:.1f}s | {s['text']}" for s in chunk))
-        raw = groqlib.chat(SYSTEM, user, max_tokens=7000, json_mode=True, temperature=.4)
+        raw = groqlib.chat(SYSTEM, user, max_tokens=3500, json_mode=True, temperature=.4)
         got = [o for o in groqlib.objects(raw, 'from') if isinstance(o.get('from'), int)]
         got = [o for o in got if b <= o['from'] < b + B] or [{'from': b, 'to': min(b + B, len(S)) - 1, 'tpl': 'statement'}]
         scenes += got; prev = got[-1].get('tpl', '')
