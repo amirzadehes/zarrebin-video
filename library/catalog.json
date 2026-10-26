@@ -17,6 +17,18 @@
     "alarm-clock__4.webp"
    ]
   },
+  "banknotes": {
+   "id": "banknotes",
+   "en": "banknotes",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "banknotes__1.webp",
+    "banknotes__2.webp",
+    "banknotes__3.webp"
+   ]
+  },
   "battery-empty": {
    "id": "battery-empty",
    "en": "cylindrical battery with plain body, almost empty, small red charge",
