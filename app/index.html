@@ -215,7 +215,10 @@ async function buildVideo(){
   try{ let sha; try{ sha=(await api('/contents/episodes/'+ep+'/request.json')).sha }catch(e){}
     await api('/contents/episodes/'+ep+'/request.json',{method:'PUT',body:JSON.stringify({message:'build video: '+ep,content:enc(JSON.stringify(body)),branch:'main',sha})});
     st.className='st ok'; st.textContent='شروع شد. حدود ۱۰ تا ۳۰ دقیقه بعد ویدیو در همین لیست می‌آید.';
-    for(let k=0;k<90;k++){ await sleep(30000); const before=$('#vids')?.textContent.length||0; await loadVids(); if(($('#vids')?.textContent.length||0)!==before){ st.textContent='ویدیو آماده شد!'; return } }
+    let logSha; try{ logSha=(await api('/contents/episodes/'+ep+'/build.log')).sha }catch(e){}
+    for(let k=0;k<90;k++){ await sleep(30000); const before=$('#vids')?.textContent.length||0; await loadVids(); if(($('#vids')?.textContent.length||0)!==before){ st.textContent='ویدیو آماده شد!'; return }
+      try{ const j=await api('/contents/episodes/'+ep+'/build.log'); if(j.sha!==logSha){ const txt=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0)));
+        if(/daily free limit|Gemini TTS failed|Groq failed|Groq error|Traceback|GEMINI_API_KEY is not set|GROQ_API_KEY is not set/.test(txt)){ st.className='st bad'; st.textContent=/daily free limit/.test(txt)?'سهمیه‌ی روزانه‌ی رایگان صدای گوگل (۱۰ درخواست در روز) تمام شده؛ چند ساعت بعد دوباره بزن.':'ساخت متوقف شد: '+txt.trim().split('\n').slice(-1)[0].slice(0,200); return } } }catch(e){} }
   }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message }
 }
 async function showNeeds(ep){
