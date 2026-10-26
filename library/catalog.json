@@ -182,6 +182,22 @@
     "pointing-hand__1.webp"
    ]
   },
+  "purple-molecule": {
+   "id": "purple-molecule",
+   "en": "molecule made of purple spheres connected by black sticks",
+   "fa": "مولکول بنفش",
+   "tags": [
+    "molecule",
+    "chemistry"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "purple-molecule__1.webp",
+    "purple-molecule__2.webp",
+    "purple-molecule__3.webp",
+    "purple-molecule__4.webp"
+   ]
+  },
   "sun": {
    "id": "sun",
    "en": "sun",
