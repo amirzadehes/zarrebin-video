@@ -1,0 +1,21 @@
+[in#0 @ 0x2d494c80] Error opening input: Invalid data found when processing input
+Error opening input file tmp_tts/list.txt.
+Error opening input files: Invalid data found when processing input
+model: openai/gpt-oss-120b
+Traceback (most recent call last):
+  File "/home/runner/work/zarrebin-video/zarrebin-video/tools/narrate_tts.py", line 102, in <module>
+    asyncio.run(run(sys.argv[1]))
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/runner/work/zarrebin-video/zarrebin-video/tools/narrate_tts.py", line 97, in run
+    subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', 'tmp_tts/list.txt', '-c:a', 'libmp3lame', '-b:a', '160k', f'{d}/voice.mp3'])
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/subprocess.py", line 413, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['ffmpeg', '-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', 'tmp_tts/list.txt', '-c:a', 'libmp3lame', '-b:a', '160k', 'episodes/michellien-star/voice.mp3']' returned non-zero exit status 183.
