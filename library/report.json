@@ -734,6 +734,36 @@
      "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: battery-full__3.webp)"
     }
    ]
+  },
+  {
+   "time": "2026-10-26 21:38:08 UTC",
+   "ok": [
+    {
+     "file": "eye-open__mvps2d6x0.jpg",
+     "id": "eye-open",
+     "saved": "eye-open__1.webp",
+     "kb": 137
+    },
+    {
+     "file": "eye-open__mvps2fv31.jpg",
+     "id": "eye-open",
+     "saved": "eye-open__2.webp",
+     "kb": 74
+    },
+    {
+     "file": "eye-open__mvps2ieb2.jpg",
+     "id": "eye-open",
+     "saved": "eye-open__3.webp",
+     "kb": 87
+    },
+    {
+     "file": "eye-open__mvps2l383.jpg",
+     "id": "eye-open",
+     "saved": "eye-open__4.webp",
+     "kb": 82
+    }
+   ],
+   "failed": []
   }
  ]
 }

@@ -208,6 +208,22 @@
     "espresso-cup__4.webp"
    ]
   },
+  "eye-open": {
+   "id": "eye-open",
+   "en": "human eye wide open",
+   "fa": "چشم باز",
+   "tags": [
+    "awake",
+    "alert"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "eye-open__1.webp",
+    "eye-open__2.webp",
+    "eye-open__3.webp",
+    "eye-open__4.webp"
+   ]
+  },
   "eye-sleepy": {
    "id": "eye-sleepy",
    "en": "sleepy half-closed human eye",
