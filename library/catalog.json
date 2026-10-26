@@ -295,6 +295,21 @@
     "thief-mask__3.webp",
     "thief-mask__4.webp"
    ]
+  },
+  "warning-sign": {
+   "id": "warning-sign",
+   "en": "warning triangle with exclamation mark",
+   "fa": "علامت هشدار",
+   "tags": [
+    "warning",
+    "danger"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "warning-sign__1.webp",
+    "warning-sign__2.webp",
+    "warning-sign__3.webp"
+   ]
   }
  }
 }
