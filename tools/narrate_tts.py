@@ -92,9 +92,16 @@ async def run(ep):
         else: tt = spread(toks, dd)
         for k, w in enumerate(toks): Wd.append({'w': w, 't0': round(t + tt[k][0], 3), 't1': round(t + min(tt[k][1], dd), 3), 's': i})
         S.append({'i': i, 't0': round(t, 3), 't1': round(t + dd, 3), 'text': s}); lst.append(f'tmp_tts/s{i}.wav'); t += dd
-        subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'lavfi', '-i', 'anullsrc=r=44100:cl=mono', '-t', str(gap), f'tmp_tts/g{i}.wav']); lst.append(f'tmp_tts/g{i}.wav'); t += gap
-    with open('tmp_tts/list.txt', 'w') as fh: fh.write(''.join(f"file '{os.path.abspath(p)}'\n" for p in lst))
-    subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', 'tmp_tts/list.txt', '-c:a', 'libmp3lame', '-b:a', '160k', f'{d}/voice.mp3'])
+        lst.append(f'tmp_tts/g{i}.wav'); t += gap
+    import wave
+    with wave.open('tmp_tts/all.wav', 'wb') as out:
+        out.setnchannels(1); out.setsampwidth(2); out.setframerate(44100)
+        for p in lst:
+            if p.split('/')[-1].startswith('g'):
+                out.writeframes(b'\x00\x00' * int(44100 * (.55 if sents[int(re.findall(r'\d+', p)[-1])][1] else .22)))
+            else:
+                with wave.open(p, 'rb') as w: out.writeframes(w.readframes(w.getnframes()))
+    subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-i', 'tmp_tts/all.wav', '-c:a', 'libmp3lame', '-b:a', '160k', f'{d}/voice.mp3'])
     json.dump({'sentences': S, 'words': Wd, 'voice_seconds': round(t, 2), 'lang': lang, 'voice': voice}, open(f'{d}/timing.json', 'w', encoding='utf8'), ensure_ascii=False)
     print('sentences', len(S), 'words', len(Wd), 'seconds', round(t, 1), 'wordmarks' if any(evs) else 'estimated timing')
 
