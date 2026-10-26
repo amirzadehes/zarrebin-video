@@ -1,11 +1,12 @@
 model: openai/gpt-oss-120b
-sentences 65 words 770 seconds 371.5 wordmarks
-model: openai/gpt-oss-120b
-rate limited, waiting 11s
-rate limited, waiting 12s
-rate limited, waiting 9s
-rate limited, waiting 6s
-rate limited, waiting 10s
-rate limited, waiting 6s
-rate limited, waiting 11s
-scenes 44 total 372.66 templates {'hero': 7, 'duo': 5, 'trio': 3, 'statement': 29, 'stat': 0}
+chunk 0 sentences 1
+chunk 1 sentences 1
+gemini tts: HTTP 429 {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 8h19m38s or upgrade your tier at https://ai.dev/rate-limit.","code":"too_many_requests"}}
+gemini tts: HTTP 429 {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 8h19m23s or upgrade your tier at https://ai.dev/rate-limit.","code":"too_many_requests"}}
+gemini tts: HTTP 429 {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 8h18m52s or upgrade your tier at https://ai.dev/rate-limit.","code":"too_many_requests"}}
+gemini tts: HTTP 429 {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 8h18m7s or upgrade your tier at https://ai.dev/rate-limit.","code":"too_many_requests"}}
+gemini tts: HTTP 429 {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 8h17m7s or upgrade your tier at https://ai.dev/rate-limit.","code":"too_many_requests"}}
+gemini tts: HTTP 429 {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 8h15m52s or upgrade your tier at https://ai.dev/rate-limit.","code":"too_many_requests"}}
+gemini tts: HTTP 429 {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 8h14m22s or upgrade your tier at https://ai.dev/rate-limit.","code":"too_many_requests"}}
+gemini tts: HTTP 429 {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 8h12m51s or upgrade your tier at https://ai.dev/rate-limit.","code":"too_many_requests"}}
+Gemini TTS failed: HTTP 429 {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 8h12m51s or upgrade your tier at https://ai.dev/rate-limit.","code":"too_many_requests"}}
