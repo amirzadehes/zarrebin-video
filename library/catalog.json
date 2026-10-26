@@ -212,6 +212,22 @@
     "sun__1.webp",
     "sun__2.webp"
    ]
+  },
+  "thief-mask": {
+   "id": "thief-mask",
+   "en": "black thief eye mask",
+   "fa": "نقاب دزد",
+   "tags": [
+    "thief",
+    "hack"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "thief-mask__1.webp",
+    "thief-mask__2.webp",
+    "thief-mask__3.webp",
+    "thief-mask__4.webp"
+   ]
   }
  }
 }
