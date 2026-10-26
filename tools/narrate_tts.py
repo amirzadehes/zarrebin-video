@@ -93,7 +93,7 @@ async def run(ep):
         for k, w in enumerate(toks): Wd.append({'w': w, 't0': round(t + tt[k][0], 3), 't1': round(t + min(tt[k][1], dd), 3), 's': i})
         S.append({'i': i, 't0': round(t, 3), 't1': round(t + dd, 3), 'text': s}); lst.append(f'tmp_tts/s{i}.wav'); t += dd
         subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'lavfi', '-i', 'anullsrc=r=44100:cl=mono', '-t', str(gap), f'tmp_tts/g{i}.wav']); lst.append(f'tmp_tts/g{i}.wav'); t += gap
-    open('tmp_tts/list.txt', 'w').write(''.join(f"file '{os.path.abspath(p)}'\n" for p in lst))
+    with open('tmp_tts/list.txt', 'w') as fh: fh.write(''.join(f"file '{os.path.abspath(p)}'\n" for p in lst))
     subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', 'tmp_tts/list.txt', '-c:a', 'libmp3lame', '-b:a', '160k', f'{d}/voice.mp3'])
     json.dump({'sentences': S, 'words': Wd, 'voice_seconds': round(t, 2), 'lang': lang, 'voice': voice}, open(f'{d}/timing.json', 'w', encoding='utf8'), ensure_ascii=False)
     print('sentences', len(S), 'words', len(Wd), 'seconds', round(t, 1), 'wordmarks' if any(evs) else 'estimated timing')
