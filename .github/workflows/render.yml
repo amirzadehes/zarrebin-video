@@ -1,0 +1,87 @@
+name: Render episode
+on:
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Episode folder name inside episodes/"
+        default: coffee-test
+      seconds:
+        description: "Video length in seconds (test: 12)"
+        default: "12"
+      chunk:
+        description: "Chunk length in seconds (each chunk = one parallel server)"
+        default: "4"
+      total:
+        description: "Full episode length (only for the progress bar)"
+        default: "66.5"
+
+permissions:
+  contents: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      chunks: ${{ steps.p.outputs.chunks }}
+    steps:
+      - id: p
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, math
+          sec=float("${{ inputs.seconds }}"); ch=float("${{ inputs.chunk }}")
+          n=math.ceil(sec/ch)
+          items=[{"i":i,"a":round(i*ch,3),"b":round(min((i+1)*ch,sec),3)} for i in range(n)]
+          print("chunks="+json.dumps(items))
+          PY
+
+  render:
+    needs: plan
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        c: ${{ fromJson(needs.plan.outputs.chunks) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npx playwright install --with-deps chromium
+      - run: sudo apt-get install -y ffmpeg
+      - name: Render chunk
+        run: |
+          mkdir -p out
+          node engine/render-chunk.js "${{ inputs.episode }}" ${{ matrix.c.a }} ${{ matrix.c.b }} out/part_${{ matrix.c.i }}.mp4 "${{ inputs.seconds }}" "${{ inputs.total }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: part-${{ matrix.c.i }}
+          path: out/part_${{ matrix.c.i }}.mp4
+          retention-days: 1
+
+  merge:
+    needs: render
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get install -y ffmpeg
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: part-*
+          merge-multiple: true
+          path: parts
+      - name: Join chunks, add voice, master loudness
+        run: |
+          ls parts | sort -V | sed 's/^/file parts\//' > list.txt
+          cat list.txt
+          ffmpeg -y -f concat -safe 0 -i list.txt -i episodes/${{ inputs.episode }}/voice.mp3 \
+            -map 0:v -map 1:a -t ${{ inputs.seconds }} \
+            -af "afade=t=out:st=$(python3 -c "print(max(0,${{ inputs.seconds }}-0.4))"):d=0.4,apad,loudnorm=I=-14:TP=-2.2:LRA=11" \
+            -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -c:a aac -b:a 192k -ar 48000 \
+            -movflags +faststart final.mp4
+      - name: Publish as a release (easy download from phone)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ inputs.episode }}-run${{ github.run_number }}"
+          gh release create "$TAG" final.mp4#${{ inputs.episode }}.mp4 --title "$TAG" --notes "Rendered by GitHub Actions"
