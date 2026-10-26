@@ -1,16 +1,1 @@
-{
- "runs": [
-  {
-   "time": "2026-10-26 19:45:59 UTC",
-   "ok": [
-    {
-     "file": "zz-test__e2e1.png",
-     "id": "zz-test",
-     "saved": "zz-test__1.webp",
-     "kb": 12
-    }
-   ],
-   "failed": []
-  }
- ]
-}
+{"runs": []}

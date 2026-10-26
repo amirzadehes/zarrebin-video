@@ -79,16 +79,6 @@
    "variants": [
     "lightning-burst__1.webp"
    ]
-  },
-  "zz-test": {
-   "id": "zz-test",
-   "en": "zz test",
-   "fa": "",
-   "tags": [],
-   "has_text_in_image": false,
-   "variants": [
-    "zz-test__1.webp"
-   ]
   }
  }
 }
