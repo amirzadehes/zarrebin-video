@@ -313,6 +313,18 @@
     "moka-pot__2.webp"
    ]
   },
+  "money-bag": {
+   "id": "money-bag",
+   "en": "money bag",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "money-bag__1.webp",
+    "money-bag__2.webp",
+    "money-bag__3.webp"
+   ]
+  },
   "neuron": {
    "id": "neuron",
    "en": "neuron nerve cell",
