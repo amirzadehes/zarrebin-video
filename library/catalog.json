@@ -312,6 +312,21 @@
     "thief-mask__4.webp"
    ]
   },
+  "tired-brain": {
+   "id": "tired-brain",
+   "en": "tired brain in dull grey-blue colors",
+   "fa": "مغز خسته",
+   "tags": [
+    "brain",
+    "tired"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "tired-brain__1.webp",
+    "tired-brain__2.webp",
+    "tired-brain__3.webp"
+   ]
+  },
   "warning-sign": {
    "id": "warning-sign",
    "en": "warning triangle with exclamation mark",
