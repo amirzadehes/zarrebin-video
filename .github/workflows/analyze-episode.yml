@@ -31,11 +31,7 @@ jobs:
           if [ -n "$EP_INPUT" ]; then eps="$EP_INPUT"; else eps=$(git diff --name-only HEAD~1 HEAD -- 'episodes/*/script.txt' | cut -d/ -f2 | sort -u); fi
           for ep in $eps; do
             if ! python tools/analyze_episode.py "$ep" 2> err.txt; then
-              python - "$ep" <<'PY'
-import json,sys
-ep=sys.argv[1]; m=open('err.txt').read()[-400:]
-json.dump({'episode':ep,'error':True,'message':m,'items':[]},open(f'episodes/{ep}/needs.json','w'),ensure_ascii=False)
-PY
+              python tools/write_error.py "$ep"
             fi
           done
           rm -f err.txt
