@@ -71,6 +71,7 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 
 <nav class="tabs">
   <button data-t="want" class="on">مورد نیاز</button>
+  <button data-t="ep">قسمت</button>
   <button data-t="gen">عمومی</button>
   <button data-t="lib">کتابخانه</button>
   <button data-t="rep">گزارش</button>
@@ -78,6 +79,7 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 
 <main>
   <div id="want"></div>
+  <div id="ep" hidden></div>
   <div id="gen" hidden></div>
   <div id="lib" hidden></div>
   <div id="rep" hidden></div>
@@ -109,7 +111,7 @@ function prompt(subject){ return S.tpl.replace('{subject}', subject); }
 async function copy(text){ try{ await navigator.clipboard.writeText(text); return true }catch(e){ const t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); let ok=false; try{ ok=document.execCommand('copy') }catch(e){} t.remove(); return ok } }
 
 /* ---------- data ---------- */
-async function loadAll(){
+async function loadAll(keepEp){
   S.wanted = await readJson('wanted.json', []);
   S.pool = await readJson('generic-pool.json', []);
   S.catalog = await readJson('library/catalog.json', {items:{}});
@@ -171,6 +173,48 @@ function renderGen(){
   $('#gen').appendChild(more);
   const b = more.querySelector('#btnMore'); if(b) b.onclick=()=>{ S.genN+=30; ls.set('genN',String(S.genN)); renderGen(); toast('۳۰ مورد اضافه شد'); };
 }
+/* ---------- episode ---------- */
+const enc = t => btoa(String.fromCharCode(...new TextEncoder().encode(t)));
+async function renderEp(){
+  const el = $('#ep'); let eps=[];
+  try{ eps = (await api('/contents/episodes')).filter(x=>x.type==='dir').map(x=>x.name) }catch(e){}
+  const cur = ls.get('curEp','');
+  el.innerHTML = `<div class="card"><div class="name">قسمت جدید</div>
+    <label>نام قسمت به انگلیسی (مثلاً sleep-debt)</label><input type="text" class="ltr" id="epName" value="${cur}">
+    <label>متن کامل پادکست / روایت (فارسی)</label><textarea id="epText" rows="8" style="width:100%;min-height:200px;direction:rtl;text-align:right;font-size:15px"></textarea>
+    <div class="row"><button class="pri" id="epSend">ارسال و تحلیل</button></div><div class="st" id="epSt"></div></div>
+    ${eps.length?`<div class="card"><label>قسمت‌های قبلی</label><div class="row" id="epList">${eps.map(e=>`<button data-e="${e}">${e}</button>`).join('')}</div></div>`:''}
+    <div id="epNeeds"></div>`;
+  el.querySelectorAll('#epList button').forEach(b=>b.onclick=()=>{ ls.set('curEp',b.dataset.e); $('#epName').value=b.dataset.e; showNeeds(b.dataset.e); });
+  $('#epSend').onclick = sendEp;
+  if(cur) showNeeds(cur);
+}
+async function showNeeds(ep){
+  const box = $('#epNeeds'); box.innerHTML='<p class="hint">در حال خواندن…</p>';
+  const j = await readJson('episodes/'+ep+'/needs.json', null);
+  if(!j){ box.innerHTML='<p class="hint">هنوز تحلیلی برای این قسمت نیست (اگر تازه فرستاده‌ای، یک دقیقه صبر کن و دوباره بزن).</p>'; return false; }
+  if(j.error){ box.innerHTML='<p class="hint" style="color:var(--bad)">تحلیل خطا داد. معمولاً کلید Groq در Secrets ریپو گذاشته نشده است.</p>'; return true; }
+  const L = j.items.map(w=>({...w, n:(S.catalog.items[w.id]?.variants||[]).length})).sort((a,b)=>(a.n>0)-(b.n>0));
+  const miss = L.filter(x=>x.n===0).length;
+  const tmp = document.createElement('div'); cards(tmp, L, false, `<p class="hint">این قسمت ${fa(L.length)} شیء لازم دارد؛ ${fa(miss)} مورد را هنوز نداریم (بالای فهرست). مواردی که در کتابخانه هست دوباره ساخته نمی‌شود.</p>`);
+  box.innerHTML=''; while(tmp.firstChild) box.appendChild(tmp.firstChild);
+  return true;
+}
+async function sendEp(){
+  const st=$('#epSt'), ep=slug($('#epName').value), text=$('#epText').value.trim();
+  if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return; }
+  if(!ep||text.length<50){ st.className='st bad'; st.textContent='نام انگلیسی و متن کامل را وارد کن'; return; }
+  st.className='st'; st.textContent='در حال ارسال…';
+  try{
+    let sha, oldN; try{ sha=(await api('/contents/episodes/'+ep+'/script.txt')).sha }catch(e){}
+    try{ oldN=(await api('/contents/episodes/'+ep+'/needs.json')).sha }catch(e){}
+    await api('/contents/episodes/'+ep+'/script.txt',{method:'PUT',body:JSON.stringify({message:'episode script: '+ep,content:enc(text),branch:'main',sha})});
+    ls.set('curEp',ep); st.className='st ok'; st.textContent='ارسال شد؛ تحلیل حدود یک تا دو دقیقه طول می‌کشد…';
+    for(let k=0;k<30;k++){ await sleep(8000); let n; try{ n=(await api('/contents/episodes/'+ep+'/needs.json')).sha }catch(e){}
+      if(n && n!==oldN){ await loadAll(true); await showNeeds(ep); st.textContent='فهرست آماده شد'; return; } }
+    st.className='st bad'; st.textContent='هنوز آماده نشد؛ بعداً از «قسمت‌های قبلی» باز کن.';
+  }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message; }
+}
 function renderLib(){
   const its = Object.values(S.catalog.items||{});
   $('#lib').innerHTML = its.length ? `<div class="grid">${its.map(i=>`<div class="tile" data-id="${i.id}"><div class="thumb"><img loading="lazy" src="${raw(i.variants[0])}"></div><small>${i.fa||i.en}</small><span class="badge">${fa(i.variants.length)}</span></div>`).join('')}</div>` : '<p class="hint">هنوز تصویری در کتابخانه نیست.</p>';
@@ -184,7 +228,8 @@ function renderRep(){
     ${r.failed.map(o=>`<div class="run" style="color:var(--bad)">❌ <bdi>${o.file}</bdi><br><span class="hint">${o.reason}</span></div>`).join('')}</div>`).join('') : '<p class="hint">هنوز گزارشی نیست.</p>';
   $('#rep').innerHTML=h; $('#btnRef').onclick=async()=>{ await loadAll(); toast('به‌روز شد') };
 }
-function renderAll(){ renderGen(); renderWant(); renderLib(); renderRep(); }
+let keepEpDone=false;
+function renderAll(){ if(!keepEpDone){ keepEpDone=true; renderEp(); } renderGen(); renderWant(); renderLib(); renderRep(); }
 
 /* ---------- upload ---------- */
 const toB64 = f => new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(f); });
@@ -221,7 +266,7 @@ $('#btnSave').onclick=async()=>{
   try{ const r=await api(''); st.className='st '+(r.permissions?.push?'ok':'bad'); st.textContent = r.permissions?.push ? 'اتصال برقرار است و اجازه‌ی نوشتن دارد ✓' : 'اتصال هست ولی اجازه‌ی نوشتن نداری؛ توکن را با دسترسی Contents بساز'; await loadAll(); }
   catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message; }
 };
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); ['want','gen','lib','rep'].forEach(t=>$('#'+t).hidden=t!==b.dataset.t); });
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); ['want','ep','gen','lib','rep'].forEach(t=>$('#'+t).hidden=t!==b.dataset.t); });
 if(!S.token) $('#settings').hidden=false;
 loadAll();
 </script>

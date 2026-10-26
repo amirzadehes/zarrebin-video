@@ -1,0 +1,35 @@
+name: Analyze episode script
+on:
+  push:
+    branches: [main]
+    paths: ['episodes/*/script.txt']
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: episode folder name
+        required: true
+permissions:
+  contents: write
+concurrency:
+  group: analyze-episode
+  cancel-in-progress: false
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Analyze changed scripts and commit
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          EP_INPUT: ${{ github.event.inputs.episode }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$EP_INPUT" ]; then eps="$EP_INPUT"; else eps=$(git diff --name-only HEAD~1 HEAD -- 'episodes/*/script.txt' | cut -d/ -f2 | sort -u); fi
+          for ep in $eps; do python tools/analyze_episode.py "$ep" || { echo "{\"episode\":\"$ep\",\"error\":true,\"items\":[]}" > episodes/$ep/needs.json; }; done
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -qm "episode needs: analyzed"
+          for i in 1 2 3 4 5; do git pull -q --rebase origin main && git push -q origin main && exit 0; sleep 5; done; exit 1
