@@ -1,0 +1,9 @@
+ok Kore
+ok Charon
+ok Puck
+ok Sulafat
+ok Orus
+gemini tts: HTTP 429 {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 3 requests per minute on Free Tier). Please retry in 48s or upgrade your tier at https://ai.dev/rate-limit.","code":"too_many_requests"}}
+ok Gacrux
+ok Algieba
+ok edge
