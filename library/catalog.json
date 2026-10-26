@@ -27,6 +27,22 @@
     "battery-power__1.webp"
    ]
   },
+  "bed": {
+   "id": "bed",
+   "en": "bed with pillow and blanket",
+   "fa": "تخت‌خواب",
+   "tags": [
+    "sleep",
+    "night",
+    "rest"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "bed__1.webp",
+    "bed__2.webp",
+    "bed__3.webp"
+   ]
+  },
   "book": {
    "id": "book",
    "en": "book",
