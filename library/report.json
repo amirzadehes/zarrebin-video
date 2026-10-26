@@ -440,6 +440,36 @@
      "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: old-key__4.webp)"
     }
    ]
+  },
+  {
+   "time": "2026-10-26 21:26:34 UTC",
+   "ok": [
+    {
+     "file": "hourglass__mvprng160.jpg",
+     "id": "hourglass",
+     "saved": "hourglass__1.webp",
+     "kb": 186
+    },
+    {
+     "file": "hourglass__mvprniq21.jpg",
+     "id": "hourglass",
+     "saved": "hourglass__2.webp",
+     "kb": 209
+    },
+    {
+     "file": "hourglass__mvprnlbn2.jpg",
+     "id": "hourglass",
+     "saved": "hourglass__3.webp",
+     "kb": 223
+    },
+    {
+     "file": "hourglass__mvprno773.jpg",
+     "id": "hourglass",
+     "saved": "hourglass__4.webp",
+     "kb": 166
+    }
+   ],
+   "failed": []
   }
  ]
 }

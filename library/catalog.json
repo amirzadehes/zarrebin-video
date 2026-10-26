@@ -164,6 +164,22 @@
     "head-profile__8.webp"
    ]
   },
+  "hourglass": {
+   "id": "hourglass",
+   "en": "hourglass",
+   "fa": "ساعت شنی",
+   "tags": [
+    "time",
+    "wait"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "hourglass__1.webp",
+    "hourglass__2.webp",
+    "hourglass__3.webp",
+    "hourglass__4.webp"
+   ]
+  },
   "lightning-burst": {
    "id": "lightning-burst",
    "en": "lightning burst",
