@@ -36,6 +36,7 @@ def synth(text, voice='Kore', style=DEFAULT_STYLE, out='out.wav', tries=8):
             b = e.read().decode('utf8', 'ignore'); last = 'HTTP %s %s' % (e.code, b[:300]); print('gemini tts:', last)
             if e.code in (429, 500, 503):
                 m = re.search(r'retry in ([\d.]+)s', b) or re.search(r'"retryDelay":\s*"(\d+)s"', b)
+                if 'per day' in b or re.search(r'retry in (\d+)h', b): sys.exit('Gemini TTS daily free limit reached (10 requests/day): ' + b[:200])
                 time.sleep(min(float(m.group(1)) + 2 if m else 15 * (k + 1), 90)); continue
             if e.code == 400 and style: print('retrying without style'); body['input'][0]['content'][0].pop('annotations', None); style = None; continue
             break

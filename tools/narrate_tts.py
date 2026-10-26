@@ -78,13 +78,13 @@ def spread(words, d, lead=.07, tail=.1):
         out.append((t, t + span * x / tot)); t += span * x / tot
     return out
 
-def chunk_sentences(sents, limit=650):
-    """group consecutive sentences (never across paragraphs) into chunks of <= limit chars"""
-    out, cur, n = [], [], 0
+def chunk_sentences(sents, limit=3200):
+    """few big chunks (Gemini free tier: 10 requests/day), split only at paragraph ends"""
+    total = sum(len(t) for t, _ in sents); n = max(1, -(-total // limit)); target = total / n
+    out, cur, acc = [], [], 0
     for i, (t, par) in enumerate(sents):
-        if cur and n + len(t) > limit: out.append(cur); cur, n = [], 0
-        cur.append(i); n += len(t) + 1
-        if par: out.append(cur); cur, n = [], 0
+        cur.append(i); acc += len(t) + 1
+        if par and acc >= target and len(out) < n - 1: out.append(cur); cur, acc = [], 0
     if cur: out.append(cur)
     return out
 
@@ -94,28 +94,36 @@ async def run(ep):
     voice = req.get('voice') or (os.environ.get('GEMINI_VOICE', 'Algieba') if engine == 'gemini' else VOICES[lang]); rate = req.get('rate', '+0%')
     sents = split_sentences(text); os.makedirs('tmp_tts', exist_ok=True)
     evs = [None] * len(sents); src = [f'tmp_tts/s{i}.mp3' for i in range(len(sents))]
+    chunk_wavs = []
     if engine == 'gemini':
         import tts_gemini
-        src = [f'tmp_tts/s{i}.wav' for i in range(len(sents))]
         for ci, ids in enumerate(chunk_sentences(sents)):
             cp = f'tmp_tts/chunk{ci}.wav'; tts_gemini.synth(' '.join(tts_gemini.tag(sents[i][0], sents[i][1]) for i in ids), voice, req.get('style', tts_gemini.DEFAULT_STYLE), cp)
-            tts_gemini.split_sentences_audio(cp, [sents[i][0] for i in ids], [src[i] for i in ids]); print('chunk', ci, 'sentences', len(ids)); time.sleep(float(os.environ.get('TTS_GAP', '4')))
+            chunk_wavs.append((cp, ids)); print('chunk', ci, 'sentences', len(ids), 'seconds', round(dur(cp), 1)); time.sleep(float(os.environ.get('TTS_GAP', '21')))
     else:
         for b in range(0, len(sents), 6):
             res = await asyncio.gather(*[synth(sents[i][0], voice, rate, src[i]) for i in range(b, min(b + 6, len(sents)))])
             for k, r in enumerate(res): evs[b + k] = r
+    # segments: (wav, [sentence ids], gap after). edge-tts = one sentence per segment, gemini = a few long chunks
+    segs = []
+    if engine == 'gemini':
+        for k, (cp, ids) in enumerate(chunk_wavs):
+            subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-i', cp, '-ar', '44100', '-ac', '1', f'tmp_tts/c{k}.wav']); segs.append((f'tmp_tts/c{k}.wav', ids, .5))
+    else:
+        for i, (st, par) in enumerate(sents):
+            subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-i', src[i], '-ar', '44100', '-ac', '1', f'tmp_tts/s{i}.wav']); segs.append((f'tmp_tts/s{i}.wav', [i], .55 if par else .22))
     lst, t, S, Wd = [], 0.0, [], []
-    for i, (s, par) in enumerate(sents):
-        subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-i', src[i], '-ar', '44100', '-ac', '1', f'tmp_tts/s{i}.wav' if engine != 'gemini' else f'tmp_tts/n{i}.wav'])
-        wp = f'tmp_tts/s{i}.wav' if engine != 'gemini' else f'tmp_tts/n{i}.wav'
-        dd = dur(wp); gap = (.55 if par else .22) if engine != 'gemini' else (.3 if par else .06)
-        toks = tokens(s); ev = evs[i]
-        if ev and len(ev) >= max(2, int(len(toks) * .6)) and len(ev) <= len(toks) + 3:
-            tt = [(e[0], e[0] + max(e[1], .08)) for e in ev]
-            if len(tt) != len(toks): tt = [tt[min(int(k * len(tt) / len(toks)), len(tt) - 1)] for k in range(len(toks))]
-        else: tt = spread(toks, dd)
-        for k, w in enumerate(toks): Wd.append({'w': w, 't0': round(t + tt[k][0], 3), 't1': round(t + min(tt[k][1], dd), 3), 's': i})
-        S.append({'i': i, 't0': round(t, 3), 't1': round(t + dd, 3), 'text': s}); lst.append((wp, gap)); t += dd + gap
+    for wp, ids, gap in segs:
+        dd = dur(wp); wts = [len(re.sub(r'[^\w]', '', sents[i][0])) + 3 for i in ids]; tot = sum(wts); off = 0.0
+        for i, wt in zip(ids, wts):
+            st = sents[i][0]; sd = dd * wt / tot; toks = tokens(st); ev = evs[i]
+            if ev and len(ids) == 1 and len(ev) >= max(2, int(len(toks) * .6)) and len(ev) <= len(toks) + 3:
+                tt = [(e[0], e[0] + max(e[1], .08)) for e in ev]
+                if len(tt) != len(toks): tt = [tt[min(int(k * len(tt) / len(toks)), len(tt) - 1)] for k in range(len(toks))]
+            else: tt = spread(toks, sd)
+            for k, w in enumerate(toks): Wd.append({'w': w, 't0': round(t + off + tt[k][0], 3), 't1': round(t + off + min(tt[k][1], sd), 3), 's': i})
+            S.append({'i': i, 't0': round(t + off, 3), 't1': round(t + off + sd, 3), 'text': st}); off += sd
+        lst.append((wp, gap)); t += dd + gap
     import wave
     with wave.open('tmp_tts/all.wav', 'wb') as out:
         out.setnchannels(1); out.setsampwidth(2); out.setframerate(44100)
