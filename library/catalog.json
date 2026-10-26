@@ -1,99 +1,84 @@
-[
- {
-  "id": "bulb",
-  "file": "library/bulb.png",
-  "en": "lightbulb",
-  "fa": "لامپ ایده روشن",
-  "tags": [
-   "idea",
-   "light",
-   "bulb",
-   "energy"
-  ],
-  "has_text_in_image": false
- },
- {
-  "id": "lightning-burst",
-  "file": "library/lightning-burst.png",
-  "en": "lightning bolt burst",
-  "fa": "رعد برق انرژی انفجار",
-  "tags": [
-   "energy",
-   "power",
-   "shock"
-  ],
-  "has_text_in_image": false
- },
- {
-  "id": "battery-power",
-  "file": "library/battery-power.png",
-  "en": "battery",
-  "fa": "باتری انرژی شارژ",
-  "tags": [
-   "energy",
-   "charge",
-   "power"
-  ],
-  "has_text_in_image": true
- },
- {
-  "id": "brain-pink",
-  "file": "library/brain-pink.png",
-  "en": "brain",
-  "fa": "مغز",
-  "tags": [
-   "brain",
-   "mind",
-   "thinking"
-  ],
-  "has_text_in_image": false
- },
- {
-  "id": "brain-colorful",
-  "file": "library/brain-colorful.png",
-  "en": "colorful brain",
-  "fa": "مغز رنگی",
-  "tags": [
-   "brain",
-   "mind",
-   "creativity"
-  ],
-  "has_text_in_image": false
- },
- {
-  "id": "caffeine-molecule",
-  "file": "library/caffeine-molecule.png",
-  "en": "caffeine molecule",
-  "fa": "مولکول کافئین شیمی",
-  "tags": [
-   "caffeine",
-   "chemistry",
-   "molecule"
-  ],
-  "has_text_in_image": false
- },
- {
-  "id": "coffee-cup",
-  "file": "library/coffee-cup.png",
-  "en": "coffee cup",
-  "fa": "فنجان قهوه",
-  "tags": [
-   "coffee",
-   "cup",
-   "drink"
-  ],
-  "has_text_in_image": false
- },
- {
-  "id": "burger",
-  "file": "library/burger.png",
-  "en": "burger",
-  "fa": "همبرگر غذا",
-  "tags": [
-   "food",
-   "burger",
-   "meal"
-  ],
-  "has_text_in_image": false
+{
+ "items": {
+  "battery-power": {
+   "id": "battery-power",
+   "en": "battery (English text on it)",
+   "fa": "باتری",
+   "tags": [],
+   "has_text_in_image": true,
+   "variants": [
+    "battery-power__1.webp"
+   ]
+  },
+  "brain-colorful": {
+   "id": "brain-colorful",
+   "en": "colorful brain",
+   "fa": "مغز رنگی",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "brain-colorful__1.webp"
+   ]
+  },
+  "brain-pink": {
+   "id": "brain-pink",
+   "en": "brain",
+   "fa": "مغز",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "brain-pink__1.webp"
+   ]
+  },
+  "bulb": {
+   "id": "bulb",
+   "en": "lightbulb",
+   "fa": "لامپ",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "bulb__1.webp"
+   ]
+  },
+  "burger": {
+   "id": "burger",
+   "en": "burger",
+   "fa": "همبرگر",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "burger__1.webp"
+   ]
+  },
+  "caffeine-molecule": {
+   "id": "caffeine-molecule",
+   "en": "caffeine molecule",
+   "fa": "مولکول کافئین",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "caffeine-molecule__1.webp"
+   ]
+  },
+  "coffee-cup": {
+   "id": "coffee-cup",
+   "en": "coffee cup",
+   "fa": "فنجان قهوه",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "coffee-cup__1.webp"
+   ]
+  },
+  "lightning-burst": {
+   "id": "lightning-burst",
+   "en": "lightning burst",
+   "fa": "رعد و برق",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "lightning-burst__1.webp"
+   ]
+  }
  }
-]
+}

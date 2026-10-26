@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14110f">
+<title>کتابخانه‌ی تصاویر ذره‌بین</title>
+<style>
+@font-face{font-family:Vz;src:url(../assets/fonts/Vazirmatn-Bold.ttf);font-weight:700}
+@font-face{font-family:Vz;src:url(../assets/fonts/Vazirmatn-Black.ttf);font-weight:900}
+:root{--bg:#14110f;--card:#211b17;--card2:#2b231d;--line:#3a2f27;--tx:#f6efe6;--mut:#a89a8a;--acc:#ffc21a;--acc-tx:#14100e;--ok:#5fe08a;--bad:#ff6b6b;--mag:#d4146e}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:Vz,system-ui,sans-serif;font-weight:700}
+body{padding:0 16px calc(40px + env(safe-area-inset-bottom));max-width:720px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 10px}
+h1{font-size:20px;font-weight:900;margin:0}
+h1 span{color:var(--acc)}
+button,.btn{font:inherit;font-weight:700;border:0;border-radius:12px;min-height:46px;padding:0 16px;cursor:pointer;color:var(--tx);background:var(--card2);border:1px solid var(--line)}
+button.pri,.btn.pri{background:var(--acc);color:var(--acc-tx);border-color:var(--acc)}
+button:disabled{opacity:.5}
+.tabs{display:flex;gap:8px;margin:8px 0 16px;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:5}
+.tabs button{flex:1;min-height:44px}
+.tabs button.on{background:var(--acc);color:var(--acc-tx);border-color:var(--acc)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.item{display:grid;grid-template-columns:76px 1fr;gap:12px;align-items:center}
+.thumb{width:76px;height:76px;border-radius:12px;background:repeating-conic-gradient(#2a221c 0 25%,#241d18 0 50%) 0 0/16px 16px;display:grid;place-items:center;overflow:hidden;color:var(--mut);font-size:12px}
+.thumb img{width:100%;height:100%;object-fit:contain}
+.name{font-size:17px;font-weight:900}
+.en{direction:ltr;text-align:right;color:var(--mut);font-size:13px;margin-top:2px}
+.row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.row>*{flex:1}
+.badge{display:inline-block;font-size:12px;padding:2px 10px;border-radius:99px;background:var(--card2);border:1px solid var(--line);margin-inline-start:8px;color:var(--mut)}
+.badge.ok{color:var(--ok);border-color:#2f6b44}
+.st{font-size:13px;color:var(--mut);margin-top:8px;min-height:18px}
+.st.ok{color:var(--ok)}.st.bad{color:var(--bad)}
+input[type=text],input[type=password],textarea{width:100%;font:inherit;font-weight:500;color:var(--tx);background:#17120f;border:1px solid var(--line);border-radius:12px;padding:12px;min-height:46px}
+textarea{min-height:130px;direction:ltr;text-align:left;font-size:13px;line-height:1.5}
+input.ltr{direction:ltr;text-align:left}
+label{display:block;font-size:13px;color:var(--mut);margin:12px 0 6px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px;text-align:center}
+.tile .thumb{width:100%;height:auto;aspect-ratio:1;border-radius:10px}
+.tile small{display:block;margin:6px 0 2px;font-size:12px}
+dialog{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:18px;max-width:92vw;width:560px;padding:16px}
+dialog::backdrop{background:rgba(0,0,0,.7)}
+.vars{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.run{border-top:1px solid var(--line);padding-top:10px;margin-top:10px;font-size:13px}
+.run b{color:var(--acc)}
+.hint{color:var(--mut);font-size:13px;line-height:1.7}
+#toast{position:fixed;inset-inline:16px;bottom:calc(16px + env(safe-area-inset-bottom));background:var(--acc);color:var(--acc-tx);padding:12px 16px;border-radius:14px;text-align:center;transform:translateY(160%);transition:.25s;z-index:20}
+#toast.show{transform:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>کتابخانه‌ی <span>ذره‌بین</span></h1>
+  <button id="btnSet">تنظیمات</button>
+</header>
+
+<section id="settings" class="card" hidden>
+  <label>نام ریپو</label>
+  <input type="text" class="ltr" id="repo" value="amirzadehes/zarrebin-video">
+  <label>توکن GitHub (فقط روی همین دستگاه ذخیره می‌شود)</label>
+  <input type="password" class="ltr" id="token" placeholder="github_pat_...">
+  <label>قالب پرامپت ({subject} جای نام شیء می‌نشیند)</label>
+  <textarea id="tpl"></textarea>
+  <div class="row"><button class="pri" id="btnSave">ذخیره و بررسی اتصال</button><button id="btnReset">قالب پیش‌فرض</button></div>
+  <div class="st" id="setSt"></div>
+  <p class="hint">توکن را فقط با دسترسی Contents (خواندن و نوشتن) و فقط برای همین ریپو بساز.</p>
+</section>
+
+<nav class="tabs">
+  <button data-t="want" class="on">مورد نیاز</button>
+  <button data-t="lib">کتابخانه</button>
+  <button data-t="rep">گزارش</button>
+</nav>
+
+<main>
+  <div id="want"></div>
+  <div id="lib" hidden></div>
+  <div id="rep" hidden></div>
+</main>
+
+<dialog id="dlg"><div id="dlgBody"></div><div class="row"><button onclick="dlg.close()">بستن</button></div></dialog>
+<div id="toast"></div>
+
+<script>
+const DEFAULT_TPL = "{subject}, hand-drawn comic ink illustration, bold black outline, vivid saturated colors, single object centered, isolated on a flat solid magenta background (#DD0F7A), no shadow, no text, vertical 9:16, closed outline, no glow or rays outside the outline";
+const $ = s => document.querySelector(s);
+const ls = { get:(k,d)=>{try{return localStorage.getItem(k)??d}catch(e){return d}}, set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}} };
+const fa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+let S = { repo: ls.get('repo','amirzadehes/zarrebin-video'), token: ls.get('token',''), tpl: ls.get('tpl', DEFAULT_TPL), wanted: [], catalog: {items:{}}, report: {runs:[]}, pending: 0, custom: JSON.parse(ls.get('custom','[]')) };
+
+function toast(t, ms=3200){ const e=$('#toast'); e.textContent=t; e.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>e.classList.remove('show'), ms); }
+async function api(path, opt={}){
+  const h = { 'Accept':'application/vnd.github+json' }; if (S.token) h.Authorization = 'Bearer '+S.token;
+  if (opt.body) h['Content-Type']='application/json';
+  const r = await fetch('https://api.github.com/repos/'+S.repo+path, { ...opt, headers:h, cache:'no-store' });
+  if (!r.ok) { let m=''; try{ m=(await r.json()).message }catch(e){} const err=new Error(m||('HTTP '+r.status)); err.status=r.status; throw err; }
+  return r.status===204 ? null : r.json();
+}
+async function readJson(p, dflt){ try{ const j=await api('/contents/'+p); const b=atob(j.content.replace(/\n/g,'')); return JSON.parse(new TextDecoder().decode(Uint8Array.from(b,c=>c.charCodeAt(0)))); }catch(e){ return dflt } }
+const raw = f => 'https://raw.githubusercontent.com/'+S.repo+'/main/library/'+f;
+const slug = s => s.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+function prompt(subject){ return S.tpl.replace('{subject}', subject); }
+async function copy(text){ try{ await navigator.clipboard.writeText(text); return true }catch(e){ const t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); let ok=false; try{ ok=document.execCommand('copy') }catch(e){} t.remove(); return ok } }
+
+/* ---------- data ---------- */
+async function loadAll(){
+  S.wanted = await readJson('wanted.json', []);
+  S.catalog = await readJson('library/catalog.json', {items:{}});
+  S.report = await readJson('library/report.json', {runs:[]});
+  try{ const l = await api('/contents/inbox'); S.pending = l.filter(x=>x.type==='file' && !x.name.startsWith('.')).length }catch(e){ S.pending = 0 }
+  renderAll();
+}
+
+/* ---------- render ---------- */
+function items(){
+  const list = [...S.wanted, ...S.custom.filter(c=>!S.wanted.some(w=>w.id===c.id))];
+  return list.map(w=>({ ...w, n: (S.catalog.items[w.id]?.variants||[]).length })).sort((a,b)=> (a.n>0)-(b.n>0));
+}
+function renderWant(){
+  const el = $('#want'); const L = items();
+  const missing = L.filter(x=>x.n===0).length;
+  let h = `<p class="hint">${fa(missing)} مورد هنوز تصویر ندارد.${S.pending?` · ${fa(S.pending)} تصویر در انتظار پردازش`:''}</p>`;
+  h += L.map(w=>{
+    const v = (S.catalog.items[w.id]?.variants||[])[0];
+    return `<div class="card item" data-id="${w.id}">
+      <div class="thumb">${v?`<img loading="lazy" src="${raw(v)}">`:'بدون تصویر'}</div>
+      <div>
+        <div class="name">${w.fa||w.en}${w.n?`<span class="badge ok">${fa(w.n)} تصویر</span>`:''}</div>
+        <div class="en">${w.en}</div>
+      </div>
+      <div style="grid-column:1/-1">
+        <div class="row">
+          <button class="bCopy">کپی پرامپت</button>
+          <label class="btn pri" style="display:grid;place-items:center;margin:0;color:var(--acc-tx)">آپلود تصویر<input type="file" accept="image/*" multiple hidden class="bFile"></label>
+        </div>
+        <div class="st"></div>
+      </div>
+    </div>`}).join('');
+  h += `<div class="card"><div class="name">شیء جدید</div>
+     <label>نام شیء به انگلیسی (مثلاً: red apple)</label><input type="text" class="ltr" id="newEn">
+     <label>نام فارسی (اختیاری)</label><input type="text" id="newFa">
+     <div class="row"><button class="pri" id="btnAdd">افزودن به فهرست</button></div></div>`;
+  el.innerHTML = h;
+  el.querySelectorAll('.item').forEach(c=>{
+    const id=c.dataset.id, w=L.find(x=>x.id===id), st=c.querySelector('.st');
+    c.querySelector('.bCopy').onclick = async()=>{ const ok = await copy(prompt(w.en)); st.className='st '+(ok?'ok':'bad'); st.textContent = ok?'پرامپت کپی شد؛ در Gemini بچسبان':'کپی نشد'; };
+    c.querySelector('.bFile').onchange = e => upload(id, [...e.target.files], st, e.target);
+  });
+  $('#btnAdd').onclick = ()=>{ const en=$('#newEn').value.trim(), id=slug(en); if(!id) return toast('نام انگلیسی را بنویس');
+    if(!S.custom.some(c=>c.id===id)&&!S.wanted.some(c=>c.id===id)){ S.custom.push({id,en,fa:$('#newFa').value.trim(),tags:[]}); ls.set('custom',JSON.stringify(S.custom)); }
+    renderWant(); toast('اضافه شد'); };
+}
+function renderLib(){
+  const its = Object.values(S.catalog.items||{});
+  $('#lib').innerHTML = its.length ? `<div class="grid">${its.map(i=>`<div class="tile" data-id="${i.id}"><div class="thumb"><img loading="lazy" src="${raw(i.variants[0])}"></div><small>${i.fa||i.en}</small><span class="badge">${fa(i.variants.length)}</span></div>`).join('')}</div>` : '<p class="hint">هنوز تصویری در کتابخانه نیست.</p>';
+  document.querySelectorAll('#lib .tile').forEach(t=>t.onclick=()=>{ const i=S.catalog.items[t.dataset.id]; $('#dlgBody').innerHTML=`<div class="name">${i.fa||i.en}</div><div class="en">${i.id}</div>${i.has_text_in_image?'<p class="hint" style="color:var(--bad)">این تصویر متن دارد و برای نسخه‌ی چندزبانه مناسب نیست.</p>':''}<div class="vars">${i.variants.map(v=>`<div class="thumb" style="width:100%;height:auto;aspect-ratio:1"><img src="${raw(v)}"></div>`).join('')}</div>`; dlg.showModal(); });
+}
+function renderRep(){
+  const runs=[...(S.report.runs||[])].reverse();
+  let h=`<div class="row"><button id="btnRef" class="pri">به‌روزرسانی</button></div><p class="hint">${S.pending?`${fa(S.pending)} تصویر هنوز در صف پردازش است.`:'صف پردازش خالی است.'}</p>`;
+  h+= runs.length? runs.map(r=>`<div class="card"><b dir="ltr" style="color:var(--acc)">${r.time}</b>
+    ${r.ok.map(o=>`<div class="run">✅ <bdi>${o.id} ← ${o.saved}</bdi> <span class="hint">(${fa(o.kb)} کیلوبایت)</span></div>`).join('')}
+    ${r.failed.map(o=>`<div class="run" style="color:var(--bad)">❌ <bdi>${o.file}</bdi><br><span class="hint">${o.reason}</span></div>`).join('')}</div>`).join('') : '<p class="hint">هنوز گزارشی نیست.</p>';
+  $('#rep').innerHTML=h; $('#btnRef').onclick=async()=>{ await loadAll(); toast('به‌روز شد') };
+}
+function renderAll(){ renderWant(); renderLib(); renderRep(); }
+
+/* ---------- upload ---------- */
+const toB64 = f => new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(f); });
+async function put(path, b64, msg){
+  for(let k=0;k<4;k++){
+    try{ return await api('/contents/'+path, { method:'PUT', body: JSON.stringify({ message: msg, content: b64, branch:'main' }) }); }
+    catch(e){ if(k===3 || ![409,422,502,503].includes(e.status)) throw e; await sleep(1500*(k+1)); }
+  }
+}
+async function upload(id, files, st, input){
+  if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; $('#settings').hidden=false; return; }
+  if(!files.length) return; let ok=0, bad=0;
+  for(let i=0;i<files.length;i++){
+    const f=files[i]; st.className='st'; st.textContent=`ارسال ${fa(i+1)} از ${fa(files.length)}…`;
+    if(f.size>25*1024*1024){ bad++; continue; }
+    const ext=(f.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
+    const name=`${id}__${Date.now().toString(36)}${i}.${ext}`;
+    try{ await put('inbox/'+name, await toB64(f), 'inbox: '+name); ok++; }
+    catch(e){ bad++; st.className='st bad'; st.textContent='خطا: '+e.message; if(e.status===401||e.status===403||e.status===404) break; }
+    if(i<files.length-1) await sleep(1300);   // stay under GitHub's content-creation rate limit
+  }
+  input.value='';
+  if(ok){ st.className='st ok'; st.textContent=`${fa(ok)} تصویر ارسال شد${bad?` (${fa(bad)} ناموفق)`:''}. پردازش حدود ۱ تا ۲ دقیقه طول می‌کشد.`; toast('ارسال شد ✓'); S.pending+=ok; setTimeout(loadAll, 100000); }
+}
+
+/* ---------- settings / tabs ---------- */
+$('#btnSet').onclick=()=>{ $('#settings').hidden=!$('#settings').hidden; };
+$('#repo').value=S.repo; $('#token').value=S.token; $('#tpl').value=S.tpl;
+$('#btnReset').onclick=()=>{ $('#tpl').value=DEFAULT_TPL; };
+$('#btnSave').onclick=async()=>{
+  S.repo=$('#repo').value.trim(); S.token=$('#token').value.trim(); S.tpl=$('#tpl').value.trim()||DEFAULT_TPL;
+  ls.set('repo',S.repo); ls.set('token',S.token); ls.set('tpl',S.tpl);
+  const st=$('#setSt'); st.className='st'; st.textContent='در حال بررسی…';
+  try{ const r=await api(''); st.className='st '+(r.permissions?.push?'ok':'bad'); st.textContent = r.permissions?.push ? 'اتصال برقرار است و اجازه‌ی نوشتن دارد ✓' : 'اتصال هست ولی اجازه‌ی نوشتن نداری؛ توکن را با دسترسی Contents بساز'; await loadAll(); }
+  catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message; }
+};
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); ['want','lib','rep'].forEach(t=>$('#'+t).hidden=t!==b.dataset.t); });
+if(!S.token) $('#settings').hidden=false;
+loadAll();
+</script>
+</body>
+</html>

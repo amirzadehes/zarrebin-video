@@ -1,0 +1,223 @@
+[
+ {
+  "id": "alarm-clock",
+  "en": "alarm clock with two bells",
+  "fa": "ساعت زنگ‌دار",
+  "tags": [
+   "time",
+   "morning",
+   "wake"
+  ]
+ },
+ {
+  "id": "sun",
+  "en": "sun",
+  "fa": "خورشید",
+  "tags": [
+   "day",
+   "morning",
+   "light"
+  ]
+ },
+ {
+  "id": "crescent-moon",
+  "en": "crescent moon with a few small stars",
+  "fa": "ماه و ستاره",
+  "tags": [
+   "night",
+   "sleep"
+  ]
+ },
+ {
+  "id": "bed",
+  "en": "bed with pillow and blanket",
+  "fa": "تخت‌خواب",
+  "tags": [
+   "sleep",
+   "night",
+   "rest"
+  ]
+ },
+ {
+  "id": "eye-open",
+  "en": "human eye wide open",
+  "fa": "چشم باز",
+  "tags": [
+   "awake",
+   "alert"
+  ]
+ },
+ {
+  "id": "eye-sleepy",
+  "en": "sleepy half-closed human eye",
+  "fa": "چشم خواب‌آلود",
+  "tags": [
+   "tired",
+   "sleepy"
+  ]
+ },
+ {
+  "id": "head-profile",
+  "en": "human head in side profile",
+  "fa": "سر انسان (نیم‌رخ)",
+  "tags": [
+   "head",
+   "mind",
+   "person"
+  ]
+ },
+ {
+  "id": "pointing-hand",
+  "en": "hand with pointing index finger",
+  "fa": "دست اشاره‌کننده",
+  "tags": [
+   "point",
+   "attention"
+  ]
+ },
+ {
+  "id": "magnifying-glass",
+  "en": "magnifying glass",
+  "fa": "ذره‌بین",
+  "tags": [
+   "search",
+   "look"
+  ]
+ },
+ {
+  "id": "padlock",
+  "en": "padlock with keyhole",
+  "fa": "قفل",
+  "tags": [
+   "lock",
+   "security"
+  ]
+ },
+ {
+  "id": "old-key",
+  "en": "old-fashioned key",
+  "fa": "کلید قدیمی",
+  "tags": [
+   "key",
+   "unlock"
+  ]
+ },
+ {
+  "id": "hourglass",
+  "en": "hourglass",
+  "fa": "ساعت شنی",
+  "tags": [
+   "time",
+   "wait"
+  ]
+ },
+ {
+  "id": "warning-sign",
+  "en": "warning triangle with exclamation mark",
+  "fa": "علامت هشدار",
+  "tags": [
+   "warning",
+   "danger"
+  ]
+ },
+ {
+  "id": "neuron",
+  "en": "neuron nerve cell",
+  "fa": "سلول عصبی",
+  "tags": [
+   "brain",
+   "nerve",
+   "cell"
+  ]
+ },
+ {
+  "id": "tired-brain",
+  "en": "tired brain in dull grey-blue colors",
+  "fa": "مغز خسته",
+  "tags": [
+   "brain",
+   "tired"
+  ]
+ },
+ {
+  "id": "coffee-beans",
+  "en": "pile of roasted coffee beans",
+  "fa": "دانه‌های قهوه",
+  "tags": [
+   "coffee",
+   "beans"
+  ]
+ },
+ {
+  "id": "coffee-plant",
+  "en": "coffee plant branch with red coffee cherries",
+  "fa": "شاخه‌ی قهوه",
+  "tags": [
+   "coffee",
+   "plant"
+  ]
+ },
+ {
+  "id": "moka-pot",
+  "en": "moka pot",
+  "fa": "قهوه‌جوش موکا",
+  "tags": [
+   "coffee"
+  ]
+ },
+ {
+  "id": "espresso-cup",
+  "en": "small espresso cup",
+  "fa": "فنجان اسپرسو",
+  "tags": [
+   "coffee",
+   "espresso"
+  ]
+ },
+ {
+  "id": "tea-cup",
+  "en": "tea cup with a tea bag",
+  "fa": "فنجان چای",
+  "tags": [
+   "tea"
+  ]
+ },
+ {
+  "id": "battery-empty",
+  "en": "cylindrical battery with plain body, almost empty, small red charge",
+  "fa": "باتری خالی",
+  "tags": [
+   "battery",
+   "empty",
+   "energy"
+  ]
+ },
+ {
+  "id": "battery-full",
+  "en": "cylindrical battery with plain body, fully charged, green",
+  "fa": "باتری پر",
+  "tags": [
+   "battery",
+   "full",
+   "energy"
+  ]
+ },
+ {
+  "id": "purple-molecule",
+  "en": "molecule made of purple spheres connected by black sticks",
+  "fa": "مولکول بنفش",
+  "tags": [
+   "molecule",
+   "chemistry"
+  ]
+ },
+ {
+  "id": "thief-mask",
+  "en": "black thief eye mask",
+  "fa": "نقاب دزد",
+  "tags": [
+   "thief",
+   "hack"
+  ]
+ }
+]

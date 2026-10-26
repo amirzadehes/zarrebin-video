@@ -3,7 +3,7 @@ const {chromium}=require('playwright');const {spawn}=require('child_process');
 const http=require('http'),fs=require('fs'),path=require('path');
 const [ep,a,b,outf,dur,total]=[process.argv[2],+process.argv[3],+process.argv[4],process.argv[5],process.argv[6],process.argv[7]||'66.5'];
 const ROOT=path.resolve(__dirname,'..');
-const MIME={'.html':'text/html','.js':'text/javascript','.png':'image/png','.ttf':'font/ttf','.json':'application/json'};
+const MIME={'.html':'text/html','.js':'text/javascript','.png':'image/png','.webp':'image/webp','.ttf':'font/ttf','.json':'application/json'};
 const srv=http.createServer((q,r)=>{const f=path.join(ROOT,decodeURIComponent(q.url.split('?')[0]));
  if(!f.startsWith(ROOT)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}
  r.writeHead(200,{'Content-Type':MIME[path.extname(f)]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});
