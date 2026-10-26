@@ -129,6 +129,21 @@
     "coffee-cup__1.webp"
    ]
   },
+  "coffee-plant": {
+   "id": "coffee-plant",
+   "en": "coffee plant branch with red coffee cherries",
+   "fa": "شاخه‌ی قهوه",
+   "tags": [
+    "coffee",
+    "plant"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "coffee-plant__1.webp",
+    "coffee-plant__2.webp",
+    "coffee-plant__3.webp"
+   ]
+  },
   "crescent-moon": {
    "id": "crescent-moon",
    "en": "crescent moon with a few small stars",

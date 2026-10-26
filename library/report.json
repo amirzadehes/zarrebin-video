@@ -577,6 +577,30 @@
      "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: tired-brain__3.webp)"
     }
    ]
+  },
+  {
+   "time": "2026-10-26 21:30:56 UTC",
+   "ok": [
+    {
+     "file": "coffee-plant__mvprt9ne0.jpg",
+     "id": "coffee-plant",
+     "saved": "coffee-plant__1.webp",
+     "kb": 133
+    },
+    {
+     "file": "coffee-plant__mvprtcdg1.jpg",
+     "id": "coffee-plant",
+     "saved": "coffee-plant__2.webp",
+     "kb": 147
+    },
+    {
+     "file": "coffee-plant__mvprtf3y2.jpg",
+     "id": "coffee-plant",
+     "saved": "coffee-plant__3.webp",
+     "kb": 131
+    }
+   ],
+   "failed": []
   }
  ]
 }
