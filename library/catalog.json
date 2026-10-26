@@ -11,7 +11,10 @@
    ],
    "has_text_in_image": false,
    "variants": [
-    "alarm-clock__1.webp"
+    "alarm-clock__1.webp",
+    "alarm-clock__2.webp",
+    "alarm-clock__3.webp",
+    "alarm-clock__4.webp"
    ]
   },
   "battery-power": {
