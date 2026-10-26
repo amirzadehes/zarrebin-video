@@ -143,6 +143,23 @@
     "eye-sleepy__2.webp"
    ]
   },
+  "head-profile": {
+   "id": "head-profile",
+   "en": "human head in side profile",
+   "fa": "سر انسان (نیم‌رخ)",
+   "tags": [
+    "head",
+    "mind",
+    "person"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "head-profile__1.webp",
+    "head-profile__2.webp",
+    "head-profile__3.webp",
+    "head-profile__4.webp"
+   ]
+  },
   "lightning-burst": {
    "id": "lightning-burst",
    "en": "lightning burst",
