@@ -34,11 +34,21 @@ jobs:
       - uses: FedericoCarboni/setup-ffmpeg@v3
       - name: Narration, voice, timing
         env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
-        run: python tools/narrate_tts.py "${{ steps.ep.outputs.ep }}"
+        run: |
+          set -o pipefail
+          python tools/narrate_tts.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
       - id: dir
         name: Scene director
         env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
-        run: python tools/direct_scenes.py "${{ steps.ep.outputs.ep }}"
+        run: |
+          set -o pipefail
+          python tools/direct_scenes.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
+      - name: Save build log
+        if: always()
+        run: |
+          ep="${{ steps.ep.outputs.ep }}"; [ -f build.log ] && tail -c 6000 build.log > episodes/$ep/build.log
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add episodes/$ep/build.log; git diff --cached --quiet || { git commit -qm "build log"; for i in 1 2 3 4 5; do git pull -q --rebase origin main && git push -q origin main && break; sleep 4; done; }
       - name: Save narration + scenes in the repo
         run: |
           ep="${{ steps.ep.outputs.ep }}"
