@@ -1,0 +1,376 @@
+[
+ {
+  "from": 0,
+  "to": 11,
+  "tpl": "statement"
+ },
+ {
+  "from": 12,
+  "to": 23,
+  "tpl": "statement"
+ },
+ {
+  "from": 24,
+  "to": 24,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "warning-sign",
+    "at": "تپش"
+   }
+  ],
+  "text": "*تپش قلب* و لرزش",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "تپش",
+   "لرزش",
+   "قلب"
+  ]
+ },
+ {
+  "from": 25,
+  "to": 26,
+  "tpl": "duo",
+  "items": [
+   {
+    "id": "hourglass",
+    "at": "ساعت"
+   },
+   {
+    "id": "battery-full",
+    "at": "ساعت"
+   }
+  ],
+  "text": "اثر *کافئین* چند ساعت",
+  "number": "",
+  "link": "vs",
+  "decor": [],
+  "kw": [
+   "کافئین",
+   "ساعت"
+  ]
+ },
+ {
+  "from": 27,
+  "to": 28,
+  "tpl": "trio",
+  "items": [
+   {
+    "id": "brain-pink",
+    "at": "آدنوزین"
+   },
+   {
+    "id": "eye-sleepy",
+    "at": "خستگی"
+   },
+   {
+    "id": "warning-sign",
+    "at": "هشدار"
+   }
+  ],
+  "text": "آدنوزین باز می‌شود → *خستگی*",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "آدنوزین",
+   "خستگی"
+  ]
+ },
+ {
+  "from": 29,
+  "to": 29,
+  "tpl": "statement",
+  "items": [],
+  "text": "*کافئین کرش*",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "کافئین",
+   "کرش"
+  ]
+ },
+ {
+  "from": 30,
+  "to": 31,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "pointing-hand",
+    "at": "چرا"
+   }
+  ],
+  "text": "چرا *قهوه* بی‌اثر؟",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "قهوه",
+   "بی‌اثر"
+  ]
+ },
+ {
+  "from": 32,
+  "to": 34,
+  "tpl": "duo",
+  "items": [
+   {
+    "id": "brain-pink",
+    "at": "ژنتیک"
+   },
+   {
+    "id": "brain-colorful",
+    "at": "مقاومت"
+   }
+  ],
+  "text": "ژنتیک vs *مقاومت* مغزی",
+  "number": "",
+  "link": "vs",
+  "decor": [],
+  "kw": [
+   "ژنتیک",
+   "مقاومت"
+  ]
+ },
+ {
+  "from": 35,
+  "to": 35,
+  "tpl": "statement",
+  "items": [],
+  "text": "*مغز* گیرنده جدید می‌سازد",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "مغز",
+   "گیرنده"
+  ]
+ },
+ {
+  "from": 36,
+  "to": 36,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "coffee-cup",
+    "at": "فنجان"
+   },
+   {
+    "id": "coffee-cup",
+    "at": "فنجان"
+   }
+  ],
+  "text": "*دو فنجان* یا بیشتر",
+  "number": "",
+  "link": "",
+  "decor": [
+   "coffee-beans"
+  ],
+  "kw": [
+   "قهوه",
+   "فنجان"
+  ]
+ },
+ {
+  "from": 37,
+  "to": 37,
+  "tpl": "duo",
+  "items": [
+   {
+    "id": "battery-empty",
+    "at": "خالی"
+   },
+   {
+    "id": "warning-sign",
+    "at": "هشدار"
+   }
+  ],
+  "text": "گیرنده‌ها *پر* می‌شوند",
+  "number": "",
+  "link": "vs",
+  "decor": [],
+  "kw": [
+   "سردرد",
+   "خستگی"
+  ]
+ },
+ {
+  "from": 38,
+  "to": 38,
+  "tpl": "trio",
+  "items": [
+   {
+    "id": "coffee-cup",
+    "at": "قهوه"
+   },
+   {
+    "id": "tea-cup",
+    "at": "چای"
+   },
+   {
+    "id": "arrow",
+    "at": "arrow"
+   }
+  ],
+  "text": "قهوه یا چای، کدام *قوی‌تر*؟",
+  "number": "",
+  "link": "vs",
+  "decor": [],
+  "kw": [
+   "قهوه",
+   "چای"
+  ]
+ },
+ {
+  "from": 39,
+  "to": 39,
+  "tpl": "trio",
+  "items": [
+   {
+    "id": "coffee-cup",
+    "at": "قهوه"
+   },
+   {
+    "id": "tea-cup",
+    "at": "چای"
+   },
+   {
+    "id": "tea-cup",
+    "at": "چای"
+   }
+  ],
+  "text": "کافئین: قهوه ۹۰‑۱۰۰، چای سیاه ۴۵‑۵۰",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "کافئین",
+   "قهوه",
+   "چای"
+  ]
+ },
+ {
+  "from": 40,
+  "to": 40,
+  "tpl": "statement",
+  "items": [
+   {
+    "id": "coffee-cup",
+    "at": "قهوه"
+   }
+  ],
+  "text": "قهوه *دو برابر* کافئین",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "قهوه",
+   "کافئین"
+  ]
+ },
+ {
+  "from": 41,
+  "to": 41,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "tea-cup",
+    "at": "چای"
+   },
+   {
+    "id": "purple-molecule",
+    "at": "ال‑تیانین"
+   }
+  ],
+  "text": "چای حاوی *ال‑تیانین*",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "ال‑تیانین",
+   "چای"
+  ]
+ },
+ {
+  "from": 42,
+  "to": 42,
+  "tpl": "statement",
+  "items": [],
+  "text": "قهوه *چکش*، چای *دستکش*",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "قهوه",
+   "چای"
+  ]
+ },
+ {
+  "from": 43,
+  "to": 43,
+  "tpl": "duo",
+  "items": [
+   {
+    "id": "brain-pink",
+    "at": "مغز"
+   },
+   {
+    "id": "thief-mask",
+    "at": "نقاب"
+   }
+  ],
+  "text": "هکرهای *سیستم عصبی*: خشن vs مودب",
+  "number": "",
+  "link": "vs",
+  "decor": [],
+  "kw": [
+   "هکر",
+   "سیستم عصبی"
+  ]
+ },
+ {
+  "from": 44,
+  "to": 44,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "coffee-cup",
+    "at": "قهوه"
+   },
+   {
+    "id": "money-bag",
+    "at": "وام"
+   }
+  ],
+  "text": "قهوه = *وام* بهره بالا",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "قهوه",
+   "وام"
+  ]
+ },
+ {
+  "from": 45,
+  "to": 45,
+  "tpl": "statement",
+  "items": [
+   {
+    "id": "magnifying-glass",
+    "at": "ذره‌بین"
+   }
+  ],
+  "text": "برای کشف بیشتر، *ذره‌بین* را دنبال کنید",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "ذره‌بین",
+   "کشف"
+  ]
+ }
+]
