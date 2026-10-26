@@ -142,6 +142,19 @@
     "lightning-burst__1.webp"
    ]
   },
+  "pointing-hand": {
+   "id": "pointing-hand",
+   "en": "hand with pointing index finger",
+   "fa": "دست اشاره‌کننده",
+   "tags": [
+    "point",
+    "attention"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "pointing-hand__1.webp"
+   ]
+  },
   "sun": {
    "id": "sun",
    "en": "sun",
