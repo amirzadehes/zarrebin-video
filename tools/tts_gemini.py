@@ -3,7 +3,14 @@ import base64, io, json, os, re, subprocess, sys, time, urllib.request, urllib.e
 
 URL = 'https://generativelanguage.googleapis.com/v1beta/interactions'
 MODEL = os.environ.get('GEMINI_TTS_MODEL', 'gemini-3.8-flash-tts')
-DEFAULT_STYLE = 'با لحن گرم، صمیمی و روشن یک راوی مستند علمی، با سرعت متوسط و مکث‌های طبیعی بخوان'
+DEFAULT_STYLE = 'warm, friendly, curious documentary narrator, calm medium pace'
+
+def tag(text, par_end=False):
+    """add natural-pause tags: after questions and at paragraph ends"""
+    t = text.strip()
+    if t.endswith(('؟', '?')): t += ' <short pause>'
+    if par_end: t += ' <long pause>'
+    return t
 
 def synth(text, voice='Kore', style=DEFAULT_STYLE, out='out.wav', tries=8):
     key = os.environ.get('GEMINI_API_KEY', '')

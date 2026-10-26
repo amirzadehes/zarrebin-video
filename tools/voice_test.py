@@ -2,8 +2,9 @@
 import json, os, subprocess, sys
 sys.path.insert(0, os.path.dirname(__file__))
 import tts_gemini
-TEXT = ("آیا می‌دانستید که معتبرترین قاضی غذاهای دنیا، یک شرکت تولید لاستیک است؟ بله، همین شرکت میشلین که امروز با «راهنمای میشلین» می‌شناسیمش، "
-        "در ابتدا فقط یک کارخانه لاستیک‌سازی بود. در سال هزار و نهصد، دو برادر برای فروش بیشتر لاستیک، یک کتابچه‌ی قرمز ساختند.")
+TEXT_EDGE = ''
+TEXT = ("آیا می‌دانستید که معتبرترین قاضی غذاهای دنیا، یک شرکت تولید لاستیک است؟ <short pause> بله، همین شرکت میشلین که امروز با «راهنمای میشلین» می‌شناسیمش، "
+        "<short pause> در ابتدا فقط یک کارخانه لاستیک‌سازی بود. در سال هزار و نهصد، دو برادر برای فروش بیشتر لاستیک، یک کتابچه‌ی قرمز ساختند.")
 os.makedirs('voice-test/out', exist_ok=True)
 voices = os.environ.get('VOICES', 'Kore,Charon,Puck,Sulafat,Orus,Gacrux,Algieba').split(',')
 for v in voices:
@@ -15,5 +16,5 @@ for v in voices:
 
 try:
     import asyncio, edge_tts
-    asyncio.run(edge_tts.Communicate(TEXT, 'fa-IR-FaridNeural').save('voice-test/out/voice_edge_Farid_old.mp3')); print('ok edge')
+    asyncio.run(edge_tts.Communicate(TEXT.replace('<short pause>', ''), 'fa-IR-FaridNeural').save('voice-test/out/voice_edge_Farid_old.mp3')); print('ok edge')
 except Exception as e: print('edge failed', e)
