@@ -33,6 +33,22 @@
     "battery-empty__3.webp"
    ]
   },
+  "battery-full": {
+   "id": "battery-full",
+   "en": "cylindrical battery with plain body, fully charged, green",
+   "fa": "باتری پر",
+   "tags": [
+    "battery",
+    "full",
+    "energy"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "battery-full__1.webp",
+    "battery-full__2.webp",
+    "battery-full__3.webp"
+   ]
+  },
   "battery-power": {
    "id": "battery-power",
    "en": "battery (English text on it)",

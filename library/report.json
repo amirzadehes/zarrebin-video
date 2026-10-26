@@ -697,6 +697,43 @@
     }
    ],
    "failed": []
+  },
+  {
+   "time": "2026-10-26 21:37:25 UTC",
+   "ok": [
+    {
+     "file": "battery-full__mvps150h0.jpg",
+     "id": "battery-full",
+     "saved": "battery-full__1.webp",
+     "kb": 35
+    },
+    {
+     "file": "battery-full__mvps17ai1.jpg",
+     "id": "battery-full",
+     "saved": "battery-full__2.webp",
+     "kb": 52
+    },
+    {
+     "file": "battery-full__mvps19ty2.jpg",
+     "id": "battery-full",
+     "saved": "battery-full__3.webp",
+     "kb": 48
+    }
+   ],
+   "failed": [
+    {
+     "file": "battery-full__mvps1gss0.jpg",
+     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: battery-full__1.webp)"
+    },
+    {
+     "file": "battery-full__mvps1j681.jpg",
+     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: battery-full__2.webp)"
+    },
+    {
+     "file": "battery-full__mvps1lv32.jpg",
+     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: battery-full__3.webp)"
+    }
+   ]
   }
  ]
 }
