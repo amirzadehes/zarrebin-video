@@ -6,6 +6,18 @@ def load(p, d):
     try: return json.load(open(p, encoding='utf8'))
     except Exception: return d
 
+PREF = ['gpt-oss-120b', 'llama-4-maverick', 'llama-3.3-70b', 'qwen', 'gpt-oss-20b', 'llama-4-scout', 'llama-3.1-70b', 'llama']
+BAD = ('whisper', 'guard', 'tts', 'orpheus', 'embed', 'compound', 'safeguard', 'distil')
+
+def pick_model(key):
+    req = urllib.request.Request('https://api.groq.com/openai/v1/models', headers={'Authorization': 'Bearer ' + key, 'User-Agent': 'zarrebin'})
+    ids = [m['id'] for m in json.load(urllib.request.urlopen(req, timeout=60))['data'] if not any(b in m['id'].lower() for b in BAD)]
+    print('available:', ids)
+    for p in PREF:
+        for i in ids:
+            if p in i.lower(): return i
+    return ids[0]
+
 def main(ep):
     d = f'episodes/{ep}'
     text = open(f'{d}/script.txt', encoding='utf8').read().strip()
@@ -24,13 +36,22 @@ def main(ep):
         "Prefer these existing ids when they fit the meaning (reuse = no new drawing needed): " + ", ".join(sorted(known)) + ". "
         "For anything else invent a new kebab-case English id. "
         'Return JSON only: {"items":[{"id":"kebab-id","en":"short English description for an image prompt, single object","fa":"نام فارسی کوتاه","why":"چند کلمه فارسی: کجای متن"}]}')
-    body = json.dumps({'model': 'llama-3.3-70b-versatile', 'temperature': 0.3, 'response_format': {'type': 'json_object'},
-                       'messages': [{'role': 'system', 'content': system}, {'role': 'user', 'content': text[:24000]}]}).encode()
-    req = urllib.request.Request('https://api.groq.com/openai/v1/chat/completions', body,
-                                 {'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json', 'User-Agent': 'zarrebin'})
-    try: res = json.load(urllib.request.urlopen(req, timeout=120))
-    except urllib.error.HTTPError as e: sys.exit('Groq error %s: %s' % (e.code, e.read()[:400]))
-    items = json.loads(res['choices'][0]['message']['content']).get('items', [])
+    try: model = pick_model(key)
+    except urllib.error.HTTPError as e: sys.exit('Groq error %s: %s' % (e.code, e.read()[:300]))
+    print('model:', model)
+    msgs = [{'role': 'system', 'content': system}, {'role': 'user', 'content': text[:24000]}]
+    res = None
+    for fmt in ({'type': 'json_object'}, None):
+        payload = {'model': model, 'temperature': 0.3, 'messages': msgs}
+        if fmt: payload['response_format'] = fmt
+        req = urllib.request.Request('https://api.groq.com/openai/v1/chat/completions', json.dumps(payload).encode(),
+                                     {'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json', 'User-Agent': 'zarrebin'})
+        try: res = json.load(urllib.request.urlopen(req, timeout=180)); break
+        except urllib.error.HTTPError as e: err = 'Groq error %s (%s): %s' % (e.code, model, e.read()[:300])
+    if res is None: sys.exit(err)
+    content = res['choices'][0]['message']['content']
+    j = re.search(r'\{.*\}', content, re.S)
+    items = json.loads(j.group(0)).get('items', []) if j else []
     out, seen = [], set()
     for it in items:
         i = re.sub(r'[^a-z0-9-]+', '-', str(it.get('id', '')).lower()).strip('-')
