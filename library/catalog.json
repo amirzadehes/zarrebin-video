@@ -160,6 +160,22 @@
     "crescent-moon__4.webp"
    ]
   },
+  "espresso-cup": {
+   "id": "espresso-cup",
+   "en": "small espresso cup",
+   "fa": "فنجان اسپرسو",
+   "tags": [
+    "coffee",
+    "espresso"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "espresso-cup__1.webp",
+    "espresso-cup__2.webp",
+    "espresso-cup__3.webp",
+    "espresso-cup__4.webp"
+   ]
+  },
   "eye-sleepy": {
    "id": "eye-sleepy",
    "en": "sleepy half-closed human eye",
