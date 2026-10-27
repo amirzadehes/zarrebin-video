@@ -69,14 +69,23 @@
  "hand-tremble": [
   "pointing-hand"
  ],
- "anxiety": [
-  "tired-brain",
-  "eye-sleepy"
+ "espresso-cup": [
+  "coffee-cup",
+  "tea-cup",
+  "moka-pot"
+ ],
+ "hourglass": [
+  "alarm-clock",
+  "clock-wall"
+ ],
+ "clock-wall": [
+  "alarm-clock",
+  "hourglass"
  ],
  "sleep-deep": [
-  "crescent-moon",
   "eye-sleepy",
-  "tired-brain"
+  "crescent-moon",
+  "bed"
  ],
  "brain-adaptation": [
   "brain-colorful",
@@ -86,5 +95,8 @@
  "l-theanine": [
   "caffeine-molecule",
   "purple-molecule"
+ ],
+ "crown": [
+  "chef-hat"
  ]
 }

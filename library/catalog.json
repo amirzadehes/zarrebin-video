@@ -479,6 +479,28 @@
    ],
    "fa_tags_for": "ماه و ستاره"
   },
+  "eiffel-tower": {
+   "id": "eiffel-tower",
+   "en": "eiffel tower",
+   "fa": "برج ایفل",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "eiffel-tower__1.webp"
+   ],
+   "fa_tags": [
+    "برج",
+    "ایفل",
+    "پاریس",
+    "فرانسه",
+    "نماد",
+    "گردشگری",
+    "معماری"
+   ],
+   "fa_tags_for": "برج ایفل"
+  },
   "espresso-cup": {
    "id": "espresso-cup",
    "en": "small espresso cup",

@@ -11,6 +11,9 @@
  "book-open": [
   "book"
  ],
+ "book": [
+  "book-open"
+ ],
  "star-rating": [
   "one-star",
   "two-stars",
@@ -47,18 +50,6 @@
   "chef-hat",
   "silverware-set"
  ],
- "plastic-stool": [
-  "bed"
- ],
- "safety-glasses": [
-  "eye-open",
-  "eye-sleepy"
- ],
- "reservation-card": [
-  "book",
-  "book-open",
-  "red-guidebook"
- ],
  "cash": [
   "banknotes",
   "money-bag"
@@ -67,24 +58,18 @@
   "cash",
   "money-bag"
  ],
- "price-tag": [
-  "red-guidebook"
- ],
  "restaurant-sign": [
   "chef-hat",
-  "street-food-stall"
+  "silverware-set"
  ],
  "cityscape-chicago": [
-  "hotel-building",
-  "factory"
+  "eiffel-tower",
+  "hotel-building"
  ],
  "wine-glass": [
   "coffee-cup",
   "espresso-cup",
   "tea-cup"
- ],
- "mobile-app": [
-  "social-media"
  ],
  "tire-company-logo": [
   "rubber-tire"

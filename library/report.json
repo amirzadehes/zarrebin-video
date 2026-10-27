@@ -1,28 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-26 21:25:16 UTC",
-   "ok": [],
-   "failed": [
-    {
-     "file": "old-key__mvprlvc10.jpg",
-     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: old-key__1.webp)"
-    },
-    {
-     "file": "old-key__mvprlxp01.jpg",
-     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: old-key__2.webp)"
-    },
-    {
-     "file": "old-key__mvprm0d52.jpg",
-     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: old-key__3.webp)"
-    },
-    {
-     "file": "old-key__mvprm2uk3.jpg",
-     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: old-key__4.webp)"
-    }
-   ]
-  },
-  {
    "time": "2026-10-26 21:26:34 UTC",
    "ok": [
     {
@@ -885,6 +863,18 @@
      "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: football-referee__1.webp)"
     }
    ]
+  },
+  {
+   "time": "2026-10-27 15:21:34 UTC",
+   "ok": [
+    {
+     "file": "eiffel-tower__mvqu20rb.jpg",
+     "id": "eiffel-tower",
+     "saved": "eiffel-tower__1.webp",
+     "kb": 110
+    }
+   ],
+   "failed": []
   }
  ]
 }
