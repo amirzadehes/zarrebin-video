@@ -548,6 +548,16 @@
     "pointing-hand__1.webp"
    ]
   },
+  "price-tag": {
+   "id": "price-tag",
+   "en": "price tag",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "price-tag__1.webp"
+   ]
+  },
   "purple-molecule": {
    "id": "purple-molecule",
    "en": "molecule made of purple spheres connected by black sticks",
