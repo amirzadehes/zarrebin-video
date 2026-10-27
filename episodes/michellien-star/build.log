@@ -1,9 +1,13 @@
-reusing the saved voice (same text, engine and voice) - no new TTS request
+model: openai/gpt-oss-120b
+chunk 0 sentences 31 seconds 215.0
+chunk 1 sentences 23 seconds 148.8
+whisper-aligned words: 96%
+engine gemini Algieba | sentences 54 words 781 seconds 364.8
 using only this episode's objects: 2 of 37 planned
 model: openai/gpt-oss-120b
-scenes 26 total 249.15 templates {'hero': 1, 'duo': 2, 'trio': 0, 'statement': 22, 'stat': 1}
-sfx events 160 peak 0.58 seconds 250.2
+rate limited, waiting 9s
+scenes 43 total 365.96 templates {'hero': 12, 'duo': 1, 'trio': 1, 'statement': 29, 'stat': 0}
+sfx events 278 peak 0.54 seconds 367.0
 model: openai/gpt-oss-120b
-rate limited, waiting 4s
-music mood: curious seconds 249
--rw-r--r-- 1 runner runner 43950100 Oct 27 06:49 episodes/michellien-star/music.wav
+music mood: curious seconds 366
+-rw-r--r-- 1 runner runner 64555388 Oct 27 06:58 episodes/michellien-star/music.wav
