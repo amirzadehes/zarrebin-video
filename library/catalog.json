@@ -169,6 +169,16 @@
     "car__2.webp"
    ]
   },
+  "cityscape-chicago": {
+   "id": "cityscape-chicago",
+   "en": "cityscape chicago",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "cityscape-chicago__1.webp"
+   ]
+  },
   "coffee-beans": {
    "id": "coffee-beans",
    "en": "pile of roasted coffee beans",
