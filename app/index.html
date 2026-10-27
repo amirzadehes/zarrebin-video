@@ -69,6 +69,8 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
   <input type="text" class="ltr" id="repo" value="amirzadehes/zarrebin-video">
   <label>توکن GitHub (فقط روی همین دستگاه ذخیره می‌شود)</label>
   <input type="password" class="ltr" id="token" placeholder="github_pat_...">
+  <label>سبک تصویرها (پرامپت)</label>
+  <select id="tplStyle" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="comic">کمیک رنگی</option><option value="vox">ووکس: گراوور و عکس قدیمی</option></select>
   <label>قالب پرامپت ({subject} جای نام شیء می‌نشیند)</label>
   <textarea id="tpl"></textarea>
   <div class="row"><button class="pri" id="btnSave">ذخیره و بررسی اتصال</button><button id="btnReset">قالب پیش‌فرض</button></div>
@@ -100,6 +102,7 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 
 <script>
 const DEFAULT_TPL = "{subject}, hand-drawn comic ink illustration, bold black outline, vivid saturated colors, single object centered, isolated on a flat solid magenta background (#DD0F7A), no shadow, no text, vertical 9:16, closed outline, no glow or rays outside the outline";
+const VOX_TPL = "{subject}, vintage black-and-white antique engraving illustration with fine crosshatching, aged sepia-toned ink, 19th-century encyclopedia etching style, rich detail, single subject centered, isolated on a flat solid magenta background (#DD0F7A), no shadow, no text, no frame, vertical 9:16, closed clean outline, no glow or rays outside the outline";
 const $ = s => document.querySelector(s);
 const ls = { get:(k,d)=>{try{return localStorage.getItem(k)??d}catch(e){return d}}, set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}} };
 const fa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
@@ -331,7 +334,9 @@ async function watchUpload(n){
 /* ---------- settings / tabs ---------- */
 $('#btnSet').onclick=()=>{ $('#settings').hidden=!$('#settings').hidden; };
 $('#repo').value=S.repo; $('#token').value=S.token; $('#tpl').value=S.tpl;
-$('#btnReset').onclick=()=>{ $('#tpl').value=DEFAULT_TPL; };
+$('#btnReset').onclick=()=>{ $('#tpl').value=DEFAULT_TPL; $('#tplStyle').value='comic'; };
+$('#tplStyle').value = S.tpl===VOX_TPL ? 'vox' : 'comic';
+$('#tplStyle').onchange=()=>{ S.tpl = $('#tplStyle').value==='vox' ? VOX_TPL : DEFAULT_TPL; $('#tpl').value=S.tpl; ls.set('tpl',S.tpl); toast('پرامپت تغییر کرد ✓'); };
 $('#btnSave').onclick=async()=>{
   S.repo=$('#repo').value.trim(); S.token=$('#token').value.trim(); S.tpl=$('#tpl').value.trim()||DEFAULT_TPL;
   ls.set('repo',S.repo); ls.set('token',S.token); ls.set('tpl',S.tpl);
