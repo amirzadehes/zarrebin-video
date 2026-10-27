@@ -354,7 +354,13 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
     ${s.number!==undefined?`<label>عدد</label><input type="text" class="num" value="${s.number}">`:''}
     <label>تصویرها (به همین ترتیب نمایش داده می‌شوند)</label>
     <div class="its">${(s.items||[]).map((it,k)=>`<div class="it"><div class="thumb"><img loading="lazy" src="${thumbUrl(it.src)}"></div><b style="position:absolute;bottom:34px;right:4px;background:#000a;border-radius:8px;padding:0 6px;font-size:12px">${fa(k+1)}</b><button class="x" data-k="${k}">✕</button><div style="display:flex;gap:4px;margin-top:4px"><button class="mv" data-k="${k}" data-d="-1" style="min-height:30px;flex:1;padding:0" ${k===0?'disabled':''}>›</button><button class="mv" data-k="${k}" data-d="1" style="min-height:30px;flex:1;padding:0" ${k===n-1?'disabled':''}>‹</button></div></div>`).join('')||'<span class="hint">بدون تصویر</span>'}</div>
-    <div class="row"><button class="bAdd">+ افزودن از کتابخانه (آخر صحنه اضافه می‌شود)</button></div><div class="pick" hidden></div>`;
+    <div class="row"><button class="bAdd">+ افزودن از کتابخانه (آخر صحنه اضافه می‌شود)</button></div><div class="pick" hidden></div>
+    <div class="row" style="margin-top:6px"><button class="bNew">+ تصویر تازه: آپلود در کتابخانه و استفاده در این صحنه</button></div>
+    <div class="newbox" hidden style="margin-top:8px"><label>نام فارسی تصویر</label><input type="text" class="nfa" placeholder="مثلاً: سطل زباله">
+      <label class="btn pri" style="display:grid;place-items:center;margin:8px 0 0;color:var(--acc-tx)">انتخاب تصویر و ارسال<input type="file" accept="image/*" hidden class="nfile"></label>
+      <p class="hint">زمینه‌ی تصویر باید همان سرخابی یک‌دست باشد (مثل تصویرهای دیگر کتابخانه). حدود ۲ تا ۴ دقیقه طول می‌کشد؛ تصویر پس از ذخیره خودش به آخر همین صحنه اضافه می‌شود. می‌توانی بقیه‌ی صحنه‌ها را ادامه بدهی.</p><div class="st nst"></div></div>`;
+  box.querySelector('.bNew').onclick=()=>{ const nb=box.querySelector('.newbox'); nb.hidden=!nb.hidden };
+  box.querySelector('.nfile').onchange=e=>{ const f=e.target.files[0]; e.target.value=''; if(f) newForScene(i,d,box.querySelector('.nfa').value.trim(),f,box.querySelector('.nst')) };
   const tx=box.querySelector('.txt'); tx.oninput=()=>{ s.text=tx.value; d.querySelector('summary').innerHTML=sceneHead(s,i); rvSave() };
   const nm=box.querySelector('.num'); if(nm) nm.oninput=()=>{ s.number=nm.value; rvSave() };
   box.querySelectorAll('.x').forEach(b=>b.onclick=()=>{ s.items.splice(+b.dataset.k,1); rvChanged(i,d) });
@@ -366,6 +372,28 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
     pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const it=S.catalog.items[t.dataset.id]; if((s.items||[]).length>=6) return toast('حداکثر ۶ تصویر در هر صحنه');
       s.items=s.items||[]; const last=s.items.length?s.items[s.items.length-1].t:s.t0; const end=Math.max(s.t1-.5,s.t0+.3); const tt=s.items.length?last+Math.max(.35,(end-last)/2):s.t0+.45;
       s.items.push({t:+tt.toFixed(3), src:'library/'+it.variants[0], en:'pop'}); toast('اضافه شد'); rvChanged(i,d) }) } }
+
+async function newForScene(i,d,faName,f,st){
+  if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return }
+  if(!faName){ st.className='st bad'; st.textContent='اول نام فارسی را بنویس'; return }
+  if(f.size>25*1024*1024){ st.className='st bad'; st.textContent='تصویر بزرگ‌تر از ۲۵ مگابایت است'; return }
+  const say=(t,c)=>{ st.className='st '+(c||''); st.textContent=t };
+  try{
+    let w=S.wanted.find(x=>x.fa===faName&&(x.tags||[]).includes('mine'))||Object.values(S.catalog.items).find(x=>x.fa===faName);
+    if(!w){ say('در حال ساخت نام انگلیسی…');
+      await put('renames/new__'+Date.now().toString(36)+'.json', enc(JSON.stringify({new:true,fa:faName})), 'new item');
+      for(let k=0;k<30&&!w;k++){ await sleep(8000); S.wanted=await readJson('wanted.json',[]); w=S.wanted.find(x=>x.fa===faName&&(x.tags||[]).includes('mine')) }
+      if(!w){ say('ساخت نام طول کشید؛ کمی بعد دوباره امتحان کن.','bad'); return } }
+    const id=w.id; const ext=(f.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
+    if(!(S.catalog.items[id]?.variants||[]).length){ say('در حال ارسال تصویر…'); await put('inbox/'+id+'__'+Date.now().toString(36)+'.'+ext, await toB64(f), 'inbox: '+id);
+      say('تصویر ارسال شد؛ پردازش و ذخیره در کتابخانه…'); let ok=false;
+      for(let k=0;k<40&&!ok;k++){ await sleep(10000); S.catalog=await readJson('library/catalog.json',{items:{}}); ok=(S.catalog.items[id]?.variants||[]).length>0;
+        if(!ok&&k>=3&&k%3===0){ const fl=await api('/contents/inbox/_failed').catch(()=>[]); if(Array.isArray(fl)&&fl.some(x=>x.name.startsWith(id+'__'))){ say('تصویر رد شد: زمینه‌ی سرخابی یک‌دست ندارد یا نامعتبر است. تصویر درست را دوباره بفرست.','bad'); return } } }
+      if(!ok){ say('هنوز ذخیره نشد؛ کمی بعد در «+ افزودن از کتابخانه» دنبالش بگرد.','bad'); return } }
+    const s=RV.data.scenes[i]; if((s.items||[]).length>=6){ say('در کتابخانه ذخیره شد ولی این صحنه ۶ تصویر دارد.','ok'); return }
+    s.items=s.items||[]; const last=s.items.length?s.items[s.items.length-1].t:s.t0, end=Math.max(s.t1-.5,s.t0+.3), tt=s.items.length?last+Math.max(.35,(end-last)/2):s.t0+.45;
+    s.items.push({t:+tt.toFixed(3), src:'library/'+S.catalog.items[id].variants[0], en:'pop'}); toast('✓ تصویر به کتابخانه و این صحنه اضافه شد'); rvChanged(i,d);
+  }catch(e){ say('خطا: '+e.message,'bad') } }
 function rvChanged(i,d){ const s=RV.data.scenes[i];
   // the order is the owner's: keep the existing time slots in ascending order and hand them out in that order
   const ts=s.items.map(it=>it.t).sort((a,b)=>a-b); s.items.forEach((it,j)=>{ it.t=ts[j] });
