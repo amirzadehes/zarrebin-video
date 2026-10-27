@@ -1,0 +1,22 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+@font-face{font-family:Vz;src:url(../assets/fonts/Vazirmatn-Bold.ttf);font-weight:700}
+@font-face{font-family:Vz;src:url(../assets/fonts/Vazirmatn-Black.ttf);font-weight:900}
+#msg[hidden]{display:none}
+html,body{margin:0;background:#000;height:100%;overflow:hidden;display:grid;place-items:center}
+canvas{display:block;max-width:100%;max-height:100%;aspect-ratio:9/16;height:100%;width:auto;object-fit:contain}
+#msg{position:fixed;inset:0;display:grid;place-items:center;color:#fff;font:700 18px Vz,sans-serif;background:#000a;text-align:center;direction:rtl}
+</style></head><body><canvas id="out"></canvas><div id="msg">در حال آماده‌سازی…</div>
+<script>/* in-app scene preview: ?inline=1&fmt=v ; parent posts {type:'load',data,ep,scene} */</script>
+<script src="v2.js"></script>
+<script>
+const msg=document.getElementById('msg'), au=new Audio(); au.preload='auto'; let sc=null, raf=0, playing=false;
+function stop(){ playing=false; cancelAnimationFrame(raf); au.pause() }
+function tick(){ if(!playing) return; const t=au.currentTime; if(t>=sc.t1-.02||au.ended){ seek(Math.max(sc.t1-.03,sc.t0)); playing=false; au.pause(); msg.hidden=false; msg.textContent='▶ دوباره پخش'; return } seek(t); raf=requestAnimationFrame(tick) }
+async function play(){ stop(); au.currentTime=sc.t0; seek(sc.t0); try{ await au.play() }catch(e){ msg.hidden=false; msg.textContent='▶ برای پخش لمس کن'; return } msg.hidden=true; playing=true; tick() }
+document.body.addEventListener('click',()=>{ if(!sc||playing) return; play() });
+addEventListener('message',async e=>{ const m=e.data||{}; if(m.type==='stop') return stop(); if(m.type!=='load') return; stop(); msg.hidden=false; msg.textContent='در حال آماده‌سازی…';
+  try{ const i=m.scene; sc=m.data.scenes[i]; await loadData(m.data,[i-1,i,i+1].filter(k=>k>=0&&k<m.data.scenes.length)); au.src='../episodes/'+m.ep+'/voice.mp3'; await new Promise(r=>{ au.onloadedmetadata=r; au.onerror=r; setTimeout(r,4000) }); play() }catch(err){ msg.textContent='خطا: '+err.message } });
+parent.postMessage({type:'ready'},'*');
+</script></body></html>

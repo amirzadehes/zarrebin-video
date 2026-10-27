@@ -339,17 +339,27 @@ async function loadReview(ep, quiet){ const body=$('#rvBody'); if(!body) return;
     RV={ep, sha:j.sha, data:JSON.parse(txt)}; renderReview() }catch(e){ if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
 function thumbUrl(src){ return raw(src.replace(/^library\//,'')) }
 function renderReview(){ const body=$('#rvBody'); if(!RV||!body) return; const sc=RV.data.scenes; const empty=sc.filter(s=>!(s.items||[]).length&&s.tpl!=='stat').length;
-  body.innerHTML=`<p class="hint"><b>${RV.ep}</b>: ${fa(sc.length)} صحنه${empty?` · <span style="color:#e0733f">${fa(empty)} صحنه بدون تصویر (علامت ⚠️)</span>`:''}. هر صحنه را باز کن؛ با ✕ تصویر را حذف کن یا از کتابخانه اضافه کن. تغییرها خودکار ذخیره می‌شوند.</p>`+
+  body.innerHTML=`<p class="hint"><b>${RV.ep}</b>: ${fa(sc.length)} صحنه${empty?` · <span style="color:#e0733f">${fa(empty)} صحنه بدون تصویر (علامت ⚠️)</span>`:''}. هر صحنه را باز کن؛ با ✕ تصویر را حذف کن یا از کتابخانه اضافه کن. تغییرها خودکار ذخیره می‌شوند. <b id="rvOk"></b></p>`+
   sc.map((s,i)=>{ const n=(s.items||[]).length; const warn=!n&&s.tpl!=='stat';
     return `<details class="sc ${warn?'warn':''}" data-i="${i}"><summary>${sceneHead(s,i)}</summary><div class="body"></div></details>`}).join('')+
   `<div class="row" style="margin-top:12px"><button class="pri" id="rvGo">۲. ادامه: ساخت ویدیو با همین صحنه‌ها</button></div><div class="st" id="rvSt"></div>`;
-  body.querySelectorAll('details.sc').forEach(d=>d.addEventListener('toggle',()=>{ if(d.open) fillScene(d) }));
+  updOk(); body.querySelectorAll('details.sc').forEach(d=>d.addEventListener('toggle',()=>{ if(d.open) fillScene(d) }));
   $('#rvGo').onclick=rvContinue }
 const nz=t=>String(t||'').toLowerCase().replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/[\u200c\u064b-\u065f]/g,'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\s+/g,' ').trim();
-const sceneHead=(s,i)=>{ const n=(s.items||[]).length, warn=!n&&s.tpl!=='stat'; return `${warn?'⚠️ ':''}<b>${fa(i+1)}</b> · ${(s.text||s.number||'').replace(/\*/g,'')||'—'} <span style="color:var(--mut)">(${fa(n)} تصویر)</span>` };
+
+function updOk(){ const e=$('#rvOk'); if(!e||!RV) return; const sc=RV.data.scenes; e.textContent=`${fa(sc.filter(s=>s.ok).length)} از ${fa(sc.length)} صحنه تأیید شده`; }
+let pvReady=false, pvQ=null, pvI=-1;
+addEventListener('message',e=>{ if(e.data&&e.data.type==='ready'){ pvReady=true; if(pvQ){ pvSend(pvQ); pvQ=null } } });
+function pvSend(i){ const f=$('#pvFrame'); f.contentWindow.postMessage({type:'load',data:RV.data,ep:RV.ep,scene:i},'*') }
+function openPreview(i){ if(!RV) return; pvI=i; $('#pvModal').hidden=false; $('#pvOk').textContent=RV.data.scenes[i].ok?'✓ تأیید شده':'✓ این صحنه خوب است'; if(pvReady) pvSend(i); else pvQ=i }
+$('#pvClose').onclick=()=>{ $('#pvModal').hidden=true; try{ $('#pvFrame').contentWindow.postMessage({type:'stop'},'*') }catch(e){} };
+$('#pvAgain').onclick=()=>{ if(pvI>=0) pvSend(pvI) };
+$('#pvOk').onclick=()=>{ if(pvI<0) return; const s=RV.data.scenes[pvI]; s.ok=true; const d=document.querySelector(`details.sc[data-i="${pvI}"]`); if(d){ d.querySelector('summary').innerHTML=sceneHead(s,pvI); const c=d.querySelector('.okc'); if(c) c.checked=true } updOk(); rvSave(); $('#pvOk').textContent='✓ تأیید شد'; if(pvI+1<RV.data.scenes.length){ pvI++; setTimeout(()=>{ pvSend(pvI); $('#pvOk').textContent=RV.data.scenes[pvI].ok?'✓ تأیید شده':'✓ این صحنه خوب است' },400) } else $('#pvClose').click() };
+const sceneHead=(s,i)=>{ const n=(s.items||[]).length, warn=!n&&s.tpl!=='stat'; return `${s.ok?'✅ ':''}${warn?'⚠️ ':''}<b>${fa(i+1)}</b> · ${(s.text||s.number||'').replace(/\*/g,'')||'—'} <span style="color:var(--mut)">(${fa(n)} تصویر)</span>` };
 const narr=s=>(RV.data.words||[]).filter(w=>w.t0>=s.t0-.02&&w.t0<s.t1-.02).map(w=>w.w).join(' ');
 function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySelector('.body'), n=(s.items||[]).length;
-  box.innerHTML=`<label>متنی که راوی در این صحنه می‌گوید</label><div class="narr" style="padding:8px 10px;border:1px dashed var(--line);border-radius:10px;color:var(--mut);font-size:14px;line-height:1.9">${narr(s)||'—'}</div>
+  box.innerHTML=`<div class="row" style="margin-bottom:6px"><button class="pri bPv">▶ پیش‌نمایش این صحنه</button><label style="display:flex;align-items:center;gap:6px;margin:0"><input type="checkbox" class="okc" ${s.ok?'checked':''}> خوب است</label></div>
+    <label>متنی که راوی در این صحنه می‌گوید</label><div class="narr" style="padding:8px 10px;border:1px dashed var(--line);border-radius:10px;color:var(--mut);font-size:14px;line-height:1.9">${narr(s)||'—'}</div>
     <label>نوشته‌ای که روی صفحه می‌آید (قابل ویرایش؛ کلمه‌ی مهم را بین ستاره بگذار: *بنزین*)</label><textarea class="txt" rows="2" style="width:100%;direction:rtl;text-align:right;font-size:15px">${(s.text||'').replace(/</g,'&lt;')}</textarea>
     ${s.number!==undefined?`<label>عدد</label><input type="text" class="num" value="${s.number}">`:''}
     <label>تصویرها (به همین ترتیب نمایش داده می‌شوند)</label>
@@ -361,7 +371,9 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
       <p class="hint">زمینه‌ی تصویر باید همان سرخابی یک‌دست باشد (مثل تصویرهای دیگر کتابخانه). حدود ۲ تا ۴ دقیقه طول می‌کشد؛ تصویر پس از ذخیره خودش به آخر همین صحنه اضافه می‌شود. می‌توانی بقیه‌ی صحنه‌ها را ادامه بدهی.</p><div class="st nst"></div></div>`;
   box.querySelector('.bNew').onclick=()=>{ const nb=box.querySelector('.newbox'); nb.hidden=!nb.hidden };
   box.querySelector('.nfile').onchange=e=>{ const f=e.target.files[0]; e.target.value=''; if(f) newForScene(i,d,box.querySelector('.nfa').value.trim(),f,box.querySelector('.nst')) };
-  const tx=box.querySelector('.txt'); tx.oninput=()=>{ s.text=tx.value; d.querySelector('summary').innerHTML=sceneHead(s,i); rvSave() };
+  box.querySelector('.bPv').onclick=()=>openPreview(i);
+  box.querySelector('.okc').onchange=e=>{ s.ok=e.target.checked; d.querySelector('summary').innerHTML=sceneHead(s,i); rvSave(); updOk() };
+  const tx=box.querySelector('.txt'); tx.oninput=()=>{ s.text=tx.value; if(s.ok){ s.ok=false; box.querySelector('.okc').checked=false; updOk() }; d.querySelector('summary').innerHTML=sceneHead(s,i); rvSave() };
   const nm=box.querySelector('.num'); if(nm) nm.oninput=()=>{ s.number=nm.value; rvSave() };
   box.querySelectorAll('.x').forEach(b=>b.onclick=()=>{ s.items.splice(+b.dataset.k,1); rvChanged(i,d) });
   box.querySelectorAll('.mv').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, j=k+(+b.dataset.d), a=s.items[k], c=s.items[j]; if(!c) return; const ta=a.t; a.t=c.t; c.t=ta; s.items[k]=c; s.items[j]=a; rvChanged(i,d) });
@@ -394,7 +406,7 @@ async function newForScene(i,d,faName,f,st){
     s.items=s.items||[]; const last=s.items.length?s.items[s.items.length-1].t:s.t0, end=Math.max(s.t1-.5,s.t0+.3), tt=s.items.length?last+Math.max(.35,(end-last)/2):s.t0+.45;
     s.items.push({t:+tt.toFixed(3), src:'library/'+S.catalog.items[id].variants[0], en:'pop'}); toast('✓ تصویر به کتابخانه و این صحنه اضافه شد'); rvChanged(i,d);
   }catch(e){ say('خطا: '+e.message,'bad') } }
-function rvChanged(i,d){ const s=RV.data.scenes[i];
+function rvChanged(i,d){ const s=RV.data.scenes[i]; s.ok=false; updOk();
   // the order is the owner's: keep the existing time slots in ascending order and hand them out in that order
   const ts=s.items.map(it=>it.t).sort((a,b)=>a-b); s.items.forEach((it,j)=>{ it.t=ts[j] });
   s.items.forEach((it,j)=>{ if(j) it.t=+Math.max(it.t,s.items[j-1].t+.35).toFixed(3); it.t=+Math.min(Math.max(it.t,s.t0+.25),Math.max(s.t1-.5,s.t0+.3)).toFixed(3) });
@@ -409,7 +421,7 @@ async function rvPush(){ const st=$('#rvSt'); const path='/contents/episodes/'+R
   for(let k=0;k<4;k++){ try{ const r=await api(path,{method:'PUT',body:JSON.stringify({message:'review edits: '+RV.ep,content:enc(JSON.stringify(RV.data)),branch:'main',sha:RV.sha})}); RV.sha=r.content.sha; if(st){ st.className='st ok'; st.textContent='✓ ذخیره شد' } return true }
     catch(e){ try{ RV.sha=(await api(path)).sha }catch(_){} await sleep(1200) } }
   if(st){ st.className='st bad'; st.textContent='ذخیره نشد؛ دوباره تغییر بده' } return false }
-async function rvContinue(){ const st=$('#rvSt'); if(!S.token){ st.className='st bad'; st.textContent='اول توکن را وارد کن'; return }
+async function rvContinue(){ const st=$('#rvSt'); const un=RV.data.scenes.filter(s=>!s.ok).length; if(un&&!confirm(fa(un)+' صحنه هنوز تأیید نشده است. با همین حال ویدیو ساخته شود؟')) return; if(!S.token){ st.className='st bad'; st.textContent='اول توکن را وارد کن'; return }
   clearTimeout(rvT); st.className='st'; st.textContent='در حال ذخیره‌ی صحنه‌ها…'; if(!(await rvPush())) return;
   let req=await readJson('episodes/'+RV.ep+'/request.json',null); if(!req){ st.className='st bad'; st.textContent='درخواست ساخت پیدا نشد'; return }
   req.review=false; req.use_plan=true; req.ts=Date.now(); let sha; try{ sha=(await api('/contents/episodes/'+RV.ep+'/request.json')).sha }catch(e){}
@@ -549,5 +561,8 @@ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.qu
 if(!S.token) $('#settings').hidden=false;
 loadAll();
 </script>
+<div id="pvModal" hidden style="position:fixed;inset:0;background:#000e;z-index:60;display:grid;place-items:center;align-content:center;gap:8px">
+  <iframe id="pvFrame" src="../engine/preview.html?inline=1&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(80vh*9/16));height:min(80vh,calc(94vw*16/9))"></iframe>
+  <div class="row" style="justify-content:center;width:100%"><button id="pvAgain">▶ دوباره</button><button class="pri" id="pvOk">✓ این صحنه خوب است</button><button id="pvClose">بستن</button></div></div>
 </body>
 </html>
