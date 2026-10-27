@@ -30,7 +30,7 @@ jobs:
         run: |
           if [ -n "$EP_INPUT" ]; then ep="$EP_INPUT"; else ep=$(git diff --name-only HEAD~1 HEAD -- 'episodes/*/request.json' | head -1 | cut -d/ -f2); fi
           echo "ep=$ep" >> "$GITHUB_OUTPUT"
-      - run: pip install edge-tts
+      - run: pip install edge-tts numpy scipy
       - uses: FedericoCarboni/setup-ffmpeg@v3
       - name: Narration, voice, timing
         env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}", GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}" }
@@ -44,6 +44,8 @@ jobs:
         run: |
           set -o pipefail
           python tools/direct_scenes.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
+      - name: Sound effects
+        run: python tools/make_sfx.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
       - name: Save narration, scenes and log in the repo
         if: always()
         run: |
@@ -58,6 +60,7 @@ jobs:
           path: |
             episodes/${{ steps.ep.outputs.ep }}/voice.mp3
             episodes/${{ steps.ep.outputs.ep }}/scenes.json
+            episodes/${{ steps.ep.outputs.ep }}/sfx.wav
           retention-days: 2
   render:
     needs: prepare
@@ -97,12 +100,13 @@ jobs:
         with: { pattern: part-*, merge-multiple: true, path: parts }
       - name: Join, add voice, master loudness
         run: |
-          total="${{ needs.prepare.outputs.total }}"; v=$(find episode-data -name voice.mp3 | head -1)
+          total="${{ needs.prepare.outputs.total }}"; v=$(find episode-data -name voice.mp3 | head -1); sfx=$(find episode-data -name sfx.wav | head -1)
+          fade="afade=t=out:st=$(python3 -c "print(max(0,$total-0.6))"):d=0.6,apad,loudnorm=I=-14:TP=-2.2:LRA=11"
+          if [ -n "$sfx" ]; then inputs="-i $v -i $sfx"; fc="[1:a][2:a]amix=inputs=2:duration=first:weights=1 0.4:normalize=0,$fade[a]"; else inputs="-i $v"; fc="[1:a]$fade[a]"; fi
           for f in v h; do
             ls parts | grep "^${f}_" | sort -V | sed "s|^|file parts/|" > list_$f.txt
             [ -s list_$f.txt ] || continue
-            ffmpeg -loglevel error -y -f concat -safe 0 -i list_$f.txt -i "$v" -map 0:v -map 1:a -t $total \
-              -af "afade=t=out:st=$(python3 -c "print(max(0,$total-0.6))"):d=0.6,apad,loudnorm=I=-14:TP=-2.2:LRA=11" \
+            ffmpeg -loglevel error -y -f concat -safe 0 -i list_$f.txt $inputs -filter_complex "$fc" -map 0:v -map "[a]" -t $total \
               -c:v libx264 -preset slow -crf 28 -tune animation -maxrate 1.8M -bufsize 4M -pix_fmt yuv420p -c:a aac -b:a 96k -ar 44100 -ac 2 -movflags +faststart final_$f.mp4
           done
           ls -la final_*.mp4

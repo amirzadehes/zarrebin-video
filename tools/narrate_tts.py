@@ -115,6 +115,23 @@ def own_voice(ep, req):
     for si, ws in enumerate(out):
         text = ' '.join(words[i][0] for i in ws); S.append({'i': si, 't0': round(max(words[ws[0]][1] - .12, 0), 3), 't1': round(words[ws[-1]][2], 3), 'text': text})
         for i in ws: Wd.append({'w': words[i][0], 't0': round(words[i][1], 3), 't1': round(words[i][2], 3), 's': si})
+    spoken = f'{d}/spoken.txt'
+    if os.path.exists(spoken) and open(spoken, encoding='utf8').read().strip():
+        # the owner supplied the exact text he read: use it as the subtitle text and take only the TIMES from Whisper
+        txt = open(spoken, encoding='utf8').read().strip(); ss = split_sentences(txt); new = []
+        for si, (st, par) in enumerate(ss):
+            for tk in tokens(st): new.append({'w': tk, 't0': 0, 't1': 0, 's': si})
+        new, frac = align_whisper.assign(new, [(w['w'], w['t0'], w['t1']) for w in Wd], total)
+        S2 = []
+        for si, (st, par) in enumerate(ss):
+            ws = [w for w in new if w['s'] == si]
+            if ws: S2.append({'i': si, 't0': round(max(ws[0]['t0'] - .12, 0), 3), 't1': round(ws[-1]['t1'], 3), 'text': st})
+        if frac > .5 and S2:
+            S, Wd = S2, new; print('own voice + own text: words matched %.0f%%' % (frac * 100))
+            open(f'{d}/narration.txt', 'w', encoding='utf8').write(txt)
+            json.dump({'sentences': S, 'words': Wd, 'voice_seconds': round(total, 2), 'lang': lang, 'voice': 'own', 'engine': 'own+text'}, open(f'{d}/timing.json', 'w', encoding='utf8'), ensure_ascii=False)
+            return
+        print('own text did not match the recording well (%.0f%%); using Whisper transcript instead' % (frac * 100))
     # spelling clean-up: Whisper often mis-spells; an LLM fixes the text (reference script helps with names), then our text is re-aligned to Whisper's times
     try:
         if os.environ.get('GROQ_API_KEY') and not req.get('no_cleanup'):
