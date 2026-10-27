@@ -200,6 +200,18 @@
     "cityscape-chicago__1.webp"
    ]
   },
+  "clock-wall": {
+   "id": "clock-wall",
+   "en": "clock wall",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "clock-wall__1.webp",
+    "clock-wall__2.webp",
+    "clock-wall__3.webp"
+   ]
+  },
   "coffee-beans": {
    "id": "coffee-beans",
    "en": "pile of roasted coffee beans",
