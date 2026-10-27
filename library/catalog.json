@@ -446,6 +446,16 @@
     "old-key__4.webp"
    ]
   },
+  "one-star": {
+   "id": "one-star",
+   "en": "one star",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "one-star__1.webp"
+   ]
+  },
   "padlock": {
    "id": "padlock",
    "en": "padlock with keyhole",
@@ -600,6 +610,16 @@
     "thief-mask__4.webp"
    ]
   },
+  "three-stars": {
+   "id": "three-stars",
+   "en": "three stars",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "three-stars__1.webp"
+   ]
+  },
   "tired-brain": {
    "id": "tired-brain",
    "en": "tired brain in dull grey-blue colors",
@@ -623,6 +643,16 @@
    "has_text_in_image": false,
    "variants": [
     "two-brothers__1.webp"
+   ]
+  },
+  "two-stars": {
+   "id": "two-stars",
+   "en": "two stars",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "two-stars__1.webp"
    ]
   },
   "warning-sign": {
