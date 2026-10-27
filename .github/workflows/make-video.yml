@@ -49,6 +49,7 @@ jobs:
           set -o pipefail
           python tools/direct_scenes.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
       - name: Sound effects
+        env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
         run: python tools/make_sfx.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
       - name: Background music
         env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
