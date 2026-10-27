@@ -11,9 +11,6 @@
  "book-open": [
   "book"
  ],
- "book": [
-  "book-open"
- ],
  "star-rating": [
   "one-star",
   "two-stars",
@@ -46,10 +43,6 @@
   "alarm-clock",
   "hourglass"
  ],
- "street-food-stall": [
-  "chef-hat",
-  "silverware-set"
- ],
  "cash": [
   "banknotes",
   "money-bag"
@@ -57,19 +50,6 @@
  "banknotes": [
   "cash",
   "money-bag"
- ],
- "restaurant-sign": [
-  "chef-hat",
-  "silverware-set"
- ],
- "cityscape-chicago": [
-  "eiffel-tower",
-  "hotel-building"
- ],
- "wine-glass": [
-  "coffee-cup",
-  "espresso-cup",
-  "tea-cup"
  ],
  "tire-company-logo": [
   "rubber-tire"

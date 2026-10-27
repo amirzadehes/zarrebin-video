@@ -265,5 +265,21 @@
   "tags": [
    "mine"
   ]
+ },
+ {
+  "id": "dinner-plate",
+  "en": "dinner plate",
+  "fa": "بشقاب غذا",
+  "tags": [
+   "mine"
+  ]
+ },
+ {
+  "id": "roadside-restaurant",
+  "en": "roadside restaurant",
+  "fa": "رستوران بین‌راهی",
+  "tags": [
+   "mine"
+  ]
  }
 ]
