@@ -1,0 +1,7 @@
+own voice + own text: words matched 98%
+library images offered to the director: 70 | priority (this episode): 21
+model: openai/gpt-oss-120b
+rate limited, waiting 2s
+rate limited, waiting 15s
+coverage pass: placed 11 of 18 unused priority images
+scenes 21 total 113.19 templates {'hero': 14, 'duo': 0, 'trio': 2, 'statement': 5, 'stat': 0}
