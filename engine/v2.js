@@ -51,7 +51,7 @@ function loadImg(src) { return new Promise(r => { const i = new Image(); i.onloa
 /* ---------- primitives ---------- */
 function drawImg(src, x, y, size, rot = 0, a = 1, filter = 'none', sx = 1, sy = 1, shadow = true) {
   const i = IM[src]; if (!i) return; const s = size / Math.max(i.width, i.height);
-  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s * sx, s * sy); ctx.globalAlpha = a; if (VOX) filter = (filter !== 'none' ? filter + ' ' : '') + 'sepia(.55) saturate(.85) contrast(1.05)'; if (filter !== 'none') ctx.filter = filter;
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s * sx, s * sy); ctx.globalAlpha = a; if (VOX) filter = (filter !== 'none' ? filter + ' ' : '') + 'sepia(.2) saturate(.8) contrast(1.03)'; if (filter !== 'none') ctx.filter = filter;
   if (shadow) { if (VOX) { ctx.shadowColor = 'rgba(20,25,45,.32)'; ctx.shadowOffsetX = 6 / s; ctx.shadowOffsetY = 22 / s; ctx.shadowBlur = 34 / s } else { ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowOffsetX = 16 / s; ctx.shadowOffsetY = 20 / s; ctx.shadowBlur = 0 } }
   ctx.drawImage(i, -i.width / 2, -i.height / 2); ctx.restore()
 }
