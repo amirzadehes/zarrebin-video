@@ -716,6 +716,16 @@
     "three-stars__1.webp"
    ]
   },
+  "tire-company-logo": {
+   "id": "tire-company-logo",
+   "en": "michelin tire company logo",
+   "fa": "لوگوی شرکت لاستیک میشلین",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "tire-company-logo__1.webp"
+   ]
+  },
   "tired-brain": {
    "id": "tired-brain",
    "en": "tired brain in dull grey-blue colors",
