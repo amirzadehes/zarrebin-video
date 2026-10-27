@@ -147,6 +147,17 @@
     "caffeine-molecule__1.webp"
    ]
   },
+  "car": {
+   "id": "car",
+   "en": "car",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "car__1.webp",
+    "car__2.webp"
+   ]
+  },
   "coffee-beans": {
    "id": "coffee-beans",
    "en": "pile of roasted coffee beans",
@@ -260,6 +271,17 @@
    "variants": [
     "eye-sleepy__1.webp",
     "eye-sleepy__2.webp"
+   ]
+  },
+  "gas-pump": {
+   "id": "gas-pump",
+   "en": "gas pump",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "gas-pump__1.webp",
+    "gas-pump__2.webp"
    ]
   },
   "head-profile": {
