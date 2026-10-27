@@ -432,6 +432,16 @@
     "map-folded__2.webp"
    ]
   },
+  "mobile-app": {
+   "id": "mobile-app",
+   "en": "iphone smartphone",
+   "fa": "آیفون",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "mobile-app__1.webp"
+   ]
+  },
   "moka-pot": {
    "id": "moka-pot",
    "en": "moka pot",
@@ -774,6 +784,18 @@
     "warning-sign__1.webp",
     "warning-sign__2.webp",
     "warning-sign__3.webp"
+   ]
+  },
+  "wine-glass": {
+   "id": "wine-glass",
+   "en": "wine glass",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "wine-glass__1.webp",
+    "wine-glass__2.webp",
+    "wine-glass__3.webp"
    ]
   }
  }
