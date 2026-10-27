@@ -345,6 +345,7 @@ function renderReview(){ const body=$('#rvBody'); if(!RV||!body) return; const s
   `<div class="row" style="margin-top:12px"><button class="pri" id="rvGo">۲. ادامه: ساخت ویدیو با همین صحنه‌ها</button></div><div class="st" id="rvSt"></div>`;
   body.querySelectorAll('details.sc').forEach(d=>d.addEventListener('toggle',()=>{ if(d.open) fillScene(d) }));
   $('#rvGo').onclick=rvContinue }
+const nz=t=>String(t||'').toLowerCase().replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/[\u200c\u064b-\u065f]/g,'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\s+/g,' ').trim();
 const sceneHead=(s,i)=>{ const n=(s.items||[]).length, warn=!n&&s.tpl!=='stat'; return `${warn?'⚠️ ':''}<b>${fa(i+1)}</b> · ${(s.text||s.number||'').replace(/\*/g,'')||'—'} <span style="color:var(--mut)">(${fa(n)} تصویر)</span>` };
 const narr=s=>(RV.data.words||[]).filter(w=>w.t0>=s.t0-.02&&w.t0<s.t1-.02).map(w=>w.w).join(' ');
 function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySelector('.body'), n=(s.items||[]).length;
@@ -360,8 +361,8 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
   box.querySelectorAll('.mv').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, j=k+(+b.dataset.d), a=s.items[k], c=s.items[j]; if(!c) return; const ta=a.t; a.t=c.t; c.t=ta; s.items[k]=c; s.items[j]=a; rvChanged(i,d) });
   box.querySelector('.bAdd').onclick=()=>{ const pk=box.querySelector('.pick'); pk.hidden=!pk.hidden; if(pk.hidden||pk.dataset.f) return; pk.dataset.f=1;
     const its=Object.values(S.catalog.items).filter(x=>x.variants&&x.variants.length).sort((a,b)=>(a.fa||a.en).localeCompare(b.fa||b.en));
-    pk.innerHTML='<input type="text" placeholder="جست‌وجو…" style="width:100%;margin-bottom:8px"><div class="grid">'+its.map(x=>`<div class="tile" data-id="${x.id}" data-q="${((x.fa||'')+' '+x.en).toLowerCase()}"><div class="thumb"><img loading="lazy" src="${raw(x.variants[0])}"></div><small>${x.fa||x.en}</small></div>`).join('')+'</div>';
-    pk.querySelector('input').oninput=e=>{ const q=e.target.value.trim().toLowerCase(); pk.querySelectorAll('.tile').forEach(t=>t.hidden=q&&!t.dataset.q.includes(q)) };
+    pk.innerHTML='<input type="text" placeholder="جست‌وجو به فارسی… (مثلاً هواپیما، غذا، پول)" style="width:100%;margin-bottom:8px"><div class="grid">'+its.map(x=>`<div class="tile" data-id="${x.id}" data-q="${nz([x.fa,x.en,...(x.fa_tags||[]),...(x.tags||[])].join(' '))}"><div class="thumb"><img loading="lazy" src="${raw(x.variants[0])}"></div><small>${x.fa||x.en}</small></div>`).join('')+'</div>';
+    pk.querySelector('input').oninput=e=>{ const qs=nz(e.target.value).split(' ').filter(Boolean); pk.querySelectorAll('.tile').forEach(t=>t.hidden=qs.length&&!qs.every(q=>t.dataset.q.includes(q))) };
     pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const it=S.catalog.items[t.dataset.id]; if((s.items||[]).length>=6) return toast('حداکثر ۶ تصویر در هر صحنه');
       s.items=s.items||[]; const last=s.items.length?s.items[s.items.length-1].t:s.t0; const end=Math.max(s.t1-.5,s.t0+.3); const tt=s.items.length?last+Math.max(.35,(end-last)/2):s.t0+.45;
       s.items.push({t:+tt.toFixed(3), src:'library/'+it.variants[0], en:'pop'}); toast('اضافه شد'); rvChanged(i,d) }) } }
