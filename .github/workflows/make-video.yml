@@ -20,6 +20,7 @@ jobs:
       ep: ${{ steps.ep.outputs.ep }}
       matrix: ${{ steps.dir.outputs.matrix }}
       total: ${{ steps.dir.outputs.total }}
+      review: ${{ steps.mode.outputs.review }}
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 2 }
@@ -30,6 +31,13 @@ jobs:
         run: |
           if [ -n "$EP_INPUT" ]; then ep="$EP_INPUT"; else ep=$(git diff --name-only HEAD~1 HEAD -- 'episodes/*/request.json' | head -1 | cut -d/ -f2); fi
           echo "ep=$ep" >> "$GITHUB_OUTPUT"
+      - id: mode
+        run: |
+          python3 - >> "$GITHUB_OUTPUT" <<'PY'
+          import json
+          q = json.load(open('episodes/${{ steps.ep.outputs.ep }}/request.json'))
+          print('review=' + str(bool(q.get('review'))).lower()); print('use_plan=' + str(bool(q.get('use_plan'))).lower())
+          PY
       - run: pip install edge-tts numpy scipy
       - uses: FedericoCarboni/setup-ffmpeg@v3
         id: ff1
@@ -37,6 +45,7 @@ jobs:
       - uses: FedericoCarboni/setup-ffmpeg@v3
         if: steps.ff1.outcome == 'failure'
       - name: Narration, voice, timing
+        if: steps.mode.outputs.use_plan != 'true'
         env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}", GEMINI_API_KEY: "${{ secrets.GEMINI_API_KEY }}" }
         run: |
           set -o pipefail
@@ -49,9 +58,11 @@ jobs:
           set -o pipefail
           python tools/direct_scenes.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
       - name: Sound effects
+        if: steps.mode.outputs.review != 'true'
         env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
         run: python tools/make_sfx.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
       - name: Background music
+        if: steps.mode.outputs.review != 'true'
         env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
         run: |
           set -o pipefail
@@ -76,6 +87,7 @@ jobs:
           retention-days: 2
   render:
     needs: prepare
+    if: needs.prepare.outputs.review != 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -107,6 +119,7 @@ jobs:
           retention-days: 1
   merge:
     needs: [prepare, render]
+    if: needs.prepare.outputs.review != 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: FedericoCarboni/setup-ffmpeg@v3

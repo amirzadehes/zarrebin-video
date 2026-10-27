@@ -158,8 +158,20 @@ def compile_scenes(ep, T, raw, lib, req):
     json.dump({'meta': meta, 'words': Wd, 'scenes': scenes}, open(f'episodes/{ep}/scenes.json', 'w', encoding='utf8'), ensure_ascii=False)
     return meta, scenes
 
+def emit_plan(meta, req):
+    chunk = int(req.get('chunk', 20)); fmts = req.get('formats') or ['v', 'h']; import math
+    n = math.ceil(meta['total'] / chunk); plan = [{'f': f, 'i': i, 'a': i * chunk, 'b': min((i + 1) * chunk, meta['total'])} for f in fmts for i in range(n)]
+    gh = os.environ.get('GITHUB_OUTPUT')
+    if gh: open(gh, 'a').write('matrix=' + json.dumps(plan) + '\ntotal=%s\n' % meta['total'])
+
 def main(ep):
     d = f'episodes/{ep}'; T = load(f'{d}/timing.json', None); req = load(f'{d}/request.json', {})
+    if req.get('use_plan') and os.path.exists(f'{d}/scenes.json'):   # the owner reviewed / edited scenes.json in the app: keep it as is
+        meta = load(f'{d}/scenes.json', {}).get('meta') or {}
+        for k in ('style', 'palette', 'base'):
+            if k in req: meta[k] = req[k]
+        D = load(f'{d}/scenes.json', {}); D['meta'] = meta; json.dump(D, open(f'{d}/scenes.json', 'w', encoding='utf8'), ensure_ascii=False)
+        print('using the reviewed scenes.json:', len(D.get('scenes', [])), 'scenes'); emit_plan(meta, req); return
     if not T: sys.exit('timing.json missing; run narrate_tts.py first')
     lib = library()
     needs = load(f'{d}/needs.json', {}).get('items') or []; prio = {n['id'] for n in needs} & set(lib)
@@ -175,10 +187,6 @@ def main(ep):
         json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
     meta, scenes = compile_scenes(ep, T, raw, lib, req)
     print('scenes', len(scenes), 'total', meta['total'], 'templates', {t: sum(1 for s in scenes if s['tpl'] == t) for t in TPLS})
-    # render plan for the workflow
-    chunk = int(req.get('chunk', 20)); fmts = req.get('formats') or ['v', 'h']; import math
-    n = math.ceil(meta['total'] / chunk); plan = [{'f': f, 'i': i, 'a': i * chunk, 'b': min((i + 1) * chunk, meta['total'])} for f in fmts for i in range(n)]
-    gh = os.environ.get('GITHUB_OUTPUT')
-    if gh: open(gh, 'a').write('matrix=' + json.dumps(plan) + '\ntotal=%s\n' % meta['total'])
+    emit_plan(meta, req)
 
 if __name__ == '__main__': main(sys.argv[1])

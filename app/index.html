@@ -53,6 +53,16 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 .vrow .vname small{display:block;color:var(--mut);font-size:11px;direction:rtl;text-align:right}
 .vrow .btn,.vrow button{min-height:40px;padding:0 12px;flex:0 0 auto}
 .vrow .vdel{padding:0 10px}
+.rv details.sc{border:1px solid var(--line);border-radius:12px;margin:8px 0;background:#17120f}
+.rv details.sc>summary{padding:10px 12px;cursor:pointer;list-style:none;font-size:14px;line-height:1.7}
+.rv details.sc>summary::-webkit-details-marker{display:none}
+.rv .sc.warn{border-color:#c0562f}
+.rv .sc .body{padding:0 12px 12px}
+.rv .its{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.rv .it{position:relative;width:76px}
+.rv .it .x{position:absolute;top:-6px;left:-6px;min-height:26px;width:26px;padding:0;border-radius:99px;background:#7a2a18;color:#fff;border:0}
+.rv .pick{max-height:300px;overflow:auto;margin-top:8px}
+.rv small.t{color:var(--mut);direction:ltr;display:inline-block}
 .prog{margin:10px 0 4px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#17120f}
 .prog .bar{height:12px;border-radius:99px;background:#2d241d;overflow:hidden;margin:8px 0}
 .prog .bar i{display:block;height:100%;background:var(--acc);border-radius:99px;transition:width .6s}
@@ -235,13 +245,14 @@ async function renderEp(){
       <select id="bVoice" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option>Algieba</option><option>Sulafat</option><option>Charon</option><option>Kore</option><option>Puck</option><option>Orus</option><option>Gacrux</option></select>
       <label><input type="checkbox" id="bV" checked> اینستاگرام (عمودی)</label>
       <label><input type="checkbox" id="bH" checked> یوتیوب (افقی)</label>
-      <p class="hint" id="bCover"></p><div class="row"><button class="pri" id="bGo">ساخت ویدیو از روی این قسمت</button></div><div class="st" id="bSt"></div>
-      <p class="hint">بعد از زدن دکمه حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد. می‌توانی اپ را ببندی؛ ویدیوی آماده در لیست زیر می‌آید.</p>
+      <p class="hint" id="bCover"></p><div class="row"><button class="pri" id="bGo">۱. آماده‌سازی صحنه‌ها برای بازبینی</button><button id="bGoDirect">ساخت مستقیم (بدون بازبینی)</button></div><div class="st" id="bSt"></div>
+      <details id="rvBox" class="rv" style="margin-top:12px"><summary class="btn" style="display:block;text-align:center;cursor:pointer">بازبینی صحنه‌ها و تصویرها</summary><div id="rvBody"><p class="hint">بعد از «آماده‌سازی صحنه‌ها» (حدود ۲ تا ۵ دقیقه) اینجا می‌بینی هر صحنه چه نوشته‌ای و چه تصویرهایی دارد؛ می‌توانی تصویر کم یا از کتابخانه اضافه کنی و بعد ویدیو را بسازی.</p></div></details>
+      <p class="hint">ساخت نهایی حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد. می‌توانی اپ را ببندی؛ ویدیوی آماده در لیست زیر می‌آید.</p>
       <div id="vids"></div></div>
     `;
   fillPal(); $('#bPal').value=ls.get('pal_'+S.style,''); $('#bPal').onchange=()=>ls.set('pal_'+S.style,$('#bPal').value);
   $('#bStyle').value=S.style; $('#bStyle').onchange=()=>setStyle($('#bStyle').value);
-  $('#bGo').onclick = buildVideo; loadVids();
+  $('#bGo').onclick = ()=>buildVideo('review'); $('#bGoDirect').onclick = ()=>buildVideo('direct'); loadVids(); if(cur) loadReview(cur,true);
   el.querySelectorAll('#epList button').forEach(b=>b.onclick=()=>setEpisode(b.dataset.e));
   $('#epSend').onclick = sendEp;
   if(cur){ readText(cur) } renderWant();
@@ -282,13 +293,13 @@ async function delVid(row){
   try{ await api('/releases/'+row.dataset.id,{method:'DELETE'}); try{ await api('/git/refs/tags/'+row.dataset.tag,{method:'DELETE'}) }catch(e){} row.remove(); toast('پاک شد ✓'); }
   catch(e){ toast('خطا: '+e.message) }
 }
-async function buildVideo(){
+async function buildVideo(mode){
   const st=$('#bSt'), ep=slug($('#epName').value);
   if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return; }
   if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس (همان که متن را با آن فرستادی)'; return; }
   const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
   try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده'; return; }
-  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.music=$('#bMusic').value; body.style=S.style; body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
+  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.music=$('#bMusic').value; body.style=S.style; body.review=(mode==='review'); body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
   st.className='st'; st.textContent='در حال شروع…';
   try{
     if(ownF){ st.className='st'; st.textContent='در حال آپلود صدا…'; const ext=(ownF.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -299,13 +310,67 @@ async function buildVideo(){
         await api('/contents/episodes/'+ep+'/spoken.txt',{method:'PUT',body:JSON.stringify({message:'spoken text: '+ep,content:enc(txt),branch:'main',sha:ssha})}); } }
     let sha; try{ sha=(await api('/contents/episodes/'+ep+'/request.json')).sha }catch(e){}
     await api('/contents/episodes/'+ep+'/request.json',{method:'PUT',body:JSON.stringify({message:'build video: '+ep,content:enc(JSON.stringify(body)),branch:'main',sha})});
-    st.className='st ok'; st.textContent='شروع شد. حدود ۱۰ تا ۳۰ دقیقه بعد ویدیو در همین لیست می‌آید.'; setTimeout(buildStatus,6000); setTimeout(buildStatus,20000);
+    setTimeout(buildStatus,6000); setTimeout(buildStatus,20000);
+    if(mode==='review'){ st.className='st ok'; st.textContent='صحنه‌ها در حال آماده شدن‌اند (۲ تا ۵ دقیقه)…'; let old=''; try{ old=(await api('/contents/episodes/'+ep+'/scenes.json')).sha }catch(e){}
+      for(let k=0;k<60;k++){ await sleep(15000); let nw=''; try{ nw=(await api('/contents/episodes/'+ep+'/scenes.json')).sha }catch(e){}
+        if(nw&&nw!==old){ await loadReview(ep,false); $('#rvBox').open=true; st.textContent='صحنه‌ها آماده است؛ پایین بازبینی کن و بعد «ادامه» را بزن.'; $('#rvBox').scrollIntoView({behavior:'smooth'}); return }
+        try{ const r=(await api('/actions/runs?per_page=3')).workflow_runs.find(x=>x.name==='Make video'); if(r&&r.status==='completed'&&r.conclusion==='failure'&&Date.now()-new Date(r.created_at)<20*60000){ st.className='st bad'; st.textContent='آماده‌سازی ناموفق بود؛ در «build.log» قسمت دلیلش هست.'; return } }catch(e){} }
+      return }
+    st.className='st ok'; st.textContent='شروع شد. حدود ۱۰ تا ۳۰ دقیقه بعد ویدیو در همین لیست می‌آید.';
     let logSha; try{ logSha=(await api('/contents/episodes/'+ep+'/build.log')).sha }catch(e){}
     for(let k=0;k<90;k++){ await sleep(30000); const before=$('#vids')?.textContent.length||0; await loadVids(); if(($('#vids')?.textContent.length||0)!==before){ st.textContent='ویدیو آماده شد!'; return }
       try{ const j=await api('/contents/episodes/'+ep+'/build.log'); if(j.sha!==logSha){ const txt=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0)));
         if(/daily free limit|Gemini TTS failed|Groq failed|Groq error|Traceback|GEMINI_API_KEY is not set|GROQ_API_KEY is not set/.test(txt)){ st.className='st bad'; st.textContent=/daily free limit/.test(txt)?'سهمیه‌ی روزانه‌ی رایگان صدای گوگل (۱۰ درخواست در روز) تمام شده؛ چند ساعت بعد دوباره بزن.':'ساخت متوقف شد: '+txt.trim().split('\n').slice(-1)[0].slice(0,200); return } } }catch(e){} }
   }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message }
 }
+
+/* ---------- بازبینی صحنه‌ها ---------- */
+let RV=null, rvT=null;
+const mmss=t=>{ t=Math.round(t); return fa(Math.floor(t/60)+':'+String(t%60).padStart(2,'0')) };
+const srcId=s=>(s||'').split('/').pop().split('__')[0];
+async function loadReview(ep, quiet){ const body=$('#rvBody'); if(!body) return;
+  try{ const j=await api('/contents/episodes/'+ep+'/scenes.json'); let txt=j.content&&j.content.replace(/\n/g,'')?new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))):null;
+    if(!txt){ const r=await fetch(j.download_url); txt=await r.text() }
+    RV={ep, sha:j.sha, data:JSON.parse(txt)}; renderReview() }catch(e){ if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
+function thumbUrl(src){ return raw(src.replace(/^library\//,'')) }
+function renderReview(){ const body=$('#rvBody'); if(!RV||!body) return; const sc=RV.data.scenes; const empty=sc.filter(s=>!(s.items||[]).length&&s.tpl!=='stat').length;
+  body.innerHTML=`<p class="hint"><b>${RV.ep}</b>: ${fa(sc.length)} صحنه${empty?` · <span style="color:#e0733f">${fa(empty)} صحنه بدون تصویر (علامت ⚠️)</span>`:''}. هر صحنه را باز کن؛ با ✕ تصویر را حذف کن یا از کتابخانه اضافه کن. تغییرها خودکار ذخیره می‌شوند.</p>`+
+  sc.map((s,i)=>{ const n=(s.items||[]).length; const warn=!n&&s.tpl!=='stat';
+    return `<details class="sc ${warn?'warn':''}" data-i="${i}"><summary>${warn?'⚠️ ':''}<b>${fa(i+1)}</b> <small class="t">${mmss(s.t0)}–${mmss(s.t1)}</small> · ${s.text?s.text.replace(/\*/g,''):(s.number||'')} <span style="color:var(--mut)">(${fa(n)} تصویر)</span></summary><div class="body"></div></details>`}).join('')+
+  `<div class="row" style="margin-top:12px"><button class="pri" id="rvGo">۲. ادامه: ساخت ویدیو با همین صحنه‌ها</button></div><div class="st" id="rvSt"></div>`;
+  body.querySelectorAll('details.sc').forEach(d=>d.addEventListener('toggle',()=>{ if(d.open) fillScene(d) }));
+  $('#rvGo').onclick=rvContinue }
+function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySelector('.body');
+  box.innerHTML=`<div class="its">${(s.items||[]).map((it,k)=>`<div class="it"><div class="thumb"><img loading="lazy" src="${thumbUrl(it.src)}"></div><button class="x" data-k="${k}">✕</button></div>`).join('')||'<span class="hint">بدون تصویر</span>'}</div>
+    <div class="row"><button class="bAdd">+ افزودن از کتابخانه</button></div><div class="pick" hidden></div>`;
+  box.querySelectorAll('.x').forEach(b=>b.onclick=()=>{ s.items.splice(+b.dataset.k,1); rvChanged(i,d) });
+  box.querySelector('.bAdd').onclick=()=>{ const pk=box.querySelector('.pick'); pk.hidden=!pk.hidden; if(pk.hidden||pk.dataset.f) return; pk.dataset.f=1;
+    const its=Object.values(S.catalog.items).filter(x=>x.variants&&x.variants.length).sort((a,b)=>(a.fa||a.en).localeCompare(b.fa||b.en));
+    pk.innerHTML='<input type="text" placeholder="جست‌وجو…" style="width:100%;margin-bottom:8px"><div class="grid">'+its.map(x=>`<div class="tile" data-id="${x.id}" data-q="${((x.fa||'')+' '+x.en).toLowerCase()}"><div class="thumb"><img loading="lazy" src="${raw(x.variants[0])}"></div><small>${x.fa||x.en}</small></div>`).join('')+'</div>';
+    pk.querySelector('input').oninput=e=>{ const q=e.target.value.trim().toLowerCase(); pk.querySelectorAll('.tile').forEach(t=>t.hidden=q&&!t.dataset.q.includes(q)) };
+    pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const it=S.catalog.items[t.dataset.id]; const n=(s.items||[]).length+1; if(n>6) return toast('حداکثر ۶ تصویر در هر صحنه');
+      const span=Math.max(s.t1-s.t0-1.3,.6); (s.items=s.items||[]).push({t:+(s.t0+.45+(n-1)*span/n).toFixed(3), src:'library/'+it.variants[0], en:'pop'}); rvChanged(i,d) }) } }
+function rvChanged(i,d){ const s=RV.data.scenes[i]; s.items.sort((a,b)=>a.t-b.t); s.items.forEach((it,j)=>{ if(j) it.t=+Math.max(it.t,s.items[j-1].t+.35).toFixed(3); it.t=+Math.min(Math.max(it.t,s.t0+.25),Math.max(s.t1-.5,s.t0+.3)).toFixed(3) });
+  if(s.items.length&&s.items[0].t>s.t0+.8) s.items[0].t=+(s.t0+.45).toFixed(3);
+  const n=s.items.length;
+  if(s.tpl!=='stat'){ if(n===0) s.tpl='statement'; else if(n===1) s.tpl='hero'; else if(n===2&&s.tpl==='statement') s.tpl='duo'; else if(n>=3&&['duo','statement'].includes(s.tpl)) s.tpl='trio'; else if(n>4&&s.tpl==='hero') s.tpl='trio'; else if(n===2&&s.tpl==='trio'&&false) s.tpl='duo' }
+  if(s.tpl==='statement'&&!(s.text||'').trim()){ const ws=(RV.data.words||[]).filter(w=>w.t0>=s.t0&&w.t0<s.t1).slice(0,7).map(w=>w.w); s.text=ws.join(' ') }
+  const sum=d.querySelector('summary'); const warn=!n&&s.tpl!=='stat'; d.classList.toggle('warn',warn);
+  sum.innerHTML=`${warn?'⚠️ ':''}<b>${fa(i+1)}</b> <small class="t">${mmss(s.t0)}–${mmss(s.t1)}</small> · ${s.text?s.text.replace(/\*/g,''):(s.number||'')} <span style="color:var(--mut)">(${fa(n)} تصویر)</span>`;
+  fillScene(d); rvSave() }
+function rvSave(){ clearTimeout(rvT); const st=$('#rvSt'); if(st){ st.className='st'; st.textContent='در حال ذخیره…' } rvT=setTimeout(async()=>{ await rvPush(); },1200) }
+async function rvPush(){ const st=$('#rvSt'); const path='/contents/episodes/'+RV.ep+'/scenes.json';
+  for(let k=0;k<4;k++){ try{ const r=await api(path,{method:'PUT',body:JSON.stringify({message:'review edits: '+RV.ep,content:enc(JSON.stringify(RV.data)),branch:'main',sha:RV.sha})}); RV.sha=r.content.sha; if(st){ st.className='st ok'; st.textContent='✓ ذخیره شد' } return true }
+    catch(e){ try{ RV.sha=(await api(path)).sha }catch(_){} await sleep(1200) } }
+  if(st){ st.className='st bad'; st.textContent='ذخیره نشد؛ دوباره تغییر بده' } return false }
+async function rvContinue(){ const st=$('#rvSt'); if(!S.token){ st.className='st bad'; st.textContent='اول توکن را وارد کن'; return }
+  clearTimeout(rvT); st.className='st'; st.textContent='در حال ذخیره‌ی صحنه‌ها…'; if(!(await rvPush())) return;
+  let req=await readJson('episodes/'+RV.ep+'/request.json',null); if(!req){ st.className='st bad'; st.textContent='درخواست ساخت پیدا نشد'; return }
+  req.review=false; req.use_plan=true; req.ts=Date.now(); let sha; try{ sha=(await api('/contents/episodes/'+RV.ep+'/request.json')).sha }catch(e){}
+  try{ await api('/contents/episodes/'+RV.ep+'/request.json',{method:'PUT',body:JSON.stringify({message:'build video (reviewed): '+RV.ep,content:enc(JSON.stringify(req)),branch:'main',sha})});
+    st.className='st ok'; st.textContent='ساخت ویدیو شروع شد؛ حدود ۱۰ تا ۳۰ دقیقه. می‌توانی اپ را ببندی.'; setTimeout(buildStatus,6000); setTimeout(buildStatus,20000);
+    for(let k=0;k<90;k++){ await sleep(30000); const before=$('#vids')?.textContent.length||0; await loadVids(); if(($('#vids')?.textContent.length||0)!==before){ st.textContent='ویدیو آماده شد!'; return } }
+  }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message } }
 function epHead(ep){ const eps=S.eps||[]; return `<div class="card"><label>قسمت</label><select id="needEp" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px">${(eps.includes(ep)||!ep?'':`<option>${ep}</option>`)+eps.map(e=>`<option ${e===ep?'selected':''}>${e}</option>`).join('')}${!ep?'<option value="">— یک قسمت انتخاب کن —</option>':''}</select></div>` }
 function bindEpHead(){ const s=$('#needEp'); if(s) s.onchange=()=>{ if(s.value) setEpisode(s.value) } }
 function setEpisode(e){ ls.set('curEp',e); const n=$('#epName'); if(n) n.value=e; readText(e); showNeeds(e) }
