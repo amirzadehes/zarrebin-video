@@ -468,6 +468,17 @@
     "purple-molecule__4.webp"
    ]
   },
+  "red-guidebook": {
+   "id": "red-guidebook",
+   "en": "red guidebook",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "red-guidebook__1.webp",
+    "red-guidebook__2.webp"
+   ]
+  },
   "road": {
    "id": "road",
    "en": "road",

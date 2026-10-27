@@ -973,6 +973,24 @@
     }
    ],
    "failed": []
+  },
+  {
+   "time": "2026-10-27 07:51:56 UTC",
+   "ok": [
+    {
+     "file": "red-guidebook__mvqdzv1s0.jpg",
+     "id": "red-guidebook",
+     "saved": "red-guidebook__1.webp",
+     "kb": 161
+    },
+    {
+     "file": "red-guidebook__mvqdzxzc1.jpg",
+     "id": "red-guidebook",
+     "saved": "red-guidebook__2.webp",
+     "kb": 223
+    }
+   ],
+   "failed": []
   }
  ]
 }
