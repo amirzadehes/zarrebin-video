@@ -315,6 +315,17 @@
     "head-profile__8.webp"
    ]
   },
+  "hotel-building": {
+   "id": "hotel-building",
+   "en": "hotel building",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "hotel-building__1.webp",
+    "hotel-building__2.webp"
+   ]
+  },
   "hourglass": {
    "id": "hourglass",
    "en": "hourglass",

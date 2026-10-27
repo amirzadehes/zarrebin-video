@@ -1,18 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-26 20:17:20 UTC",
-   "ok": [
-    {
-     "file": "book__mvpp6pkn0.jpg",
-     "id": "book",
-     "saved": "book__1.webp",
-     "kb": 119
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-10-26 20:20:13 UTC",
    "ok": [
     {
@@ -988,6 +976,24 @@
      "id": "red-guidebook",
      "saved": "red-guidebook__2.webp",
      "kb": 223
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-10-27 07:58:01 UTC",
+   "ok": [
+    {
+     "file": "hotel-building__mvqe7pe90.jpg",
+     "id": "hotel-building",
+     "saved": "hotel-building__1.webp",
+     "kb": 200
+    },
+    {
+     "file": "hotel-building__mvqe7u7u1.jpg",
+     "id": "hotel-building",
+     "saved": "hotel-building__2.webp",
+     "kb": 155
     }
    ],
    "failed": []
