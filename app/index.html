@@ -480,7 +480,7 @@ async function showNeeds(ep){
   box.innerHTML=head; while(tmp.firstChild) box.appendChild(tmp.firstChild); bindEpHead();
   return true;
 }
-const cleanScript=t=>String(t||'').replace(/\*{0,2}\[[^\]\n]{1,30}\]\s*:?\*{0,2}/g,'').replace(/<[^>\n]{1,24}>/g,' ').replace(/[ \t]+/g,' ').replace(/ *\n */g,'\n').replace(/\n{3,}/g,'\n\n').trim();   // speaker tags and TTS tags are for the voice, not for the video
+const cleanScript=t=>String(t||'').replace(/\*{0,2}\[[^\]\n]{1,30}\]\s*:?\*{0,2}/g,'').replace(/<[^>\n]{1,40}>/g,' ').replace(/[ \t]+/g,' ').replace(/ *\n */g,'\n').replace(/\n{3,}/g,'\n\n').trim();   // speaker tags and TTS tags are for the voice, not for the video
 async function sendEp(){
   const st=$('#epSt'), ep=slug($('#epName').value), text=cleanScript($('#epText').value);
   if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return; }
