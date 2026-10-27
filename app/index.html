@@ -69,11 +69,9 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
   <input type="text" class="ltr" id="repo" value="amirzadehes/zarrebin-video">
   <label>توکن GitHub (فقط روی همین دستگاه ذخیره می‌شود)</label>
   <input type="password" class="ltr" id="token" placeholder="github_pat_...">
-  <label>سبک تصویرها (پرامپت)</label>
+  <label>سبک تصویرها و ویدیو (پرامپت عکس و ظاهر ویدیو با هم عوض می‌شوند)</label>
   <select id="tplStyle" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="comic">کمیک رنگی</option><option value="vox">ووکس: گراوور و عکس قدیمی</option></select>
-  <label>قالب پرامپت ({subject} جای نام شیء می‌نشیند)</label>
-  <textarea id="tpl"></textarea>
-  <div class="row"><button class="pri" id="btnSave">ذخیره و بررسی اتصال</button><button id="btnReset">قالب پیش‌فرض</button></div>
+  <div class="row"><button class="pri" id="btnSave">ذخیره و بررسی اتصال</button></div>
   <div class="st" id="setSt"></div>
   <p class="hint">توکن را فقط با دسترسی Contents (خواندن و نوشتن) و فقط برای همین ریپو بساز.</p>
   <div class="card" style="margin-top:14px"><div class="name">موزیک‌های پس‌زمینه</div>
@@ -107,7 +105,7 @@ const $ = s => document.querySelector(s);
 const ls = { get:(k,d)=>{try{return localStorage.getItem(k)??d}catch(e){return d}}, set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}} };
 const fa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-let S = { repo: ls.get('repo','amirzadehes/zarrebin-video'), token: ls.get('token',''), tpl: ls.get('tpl', DEFAULT_TPL), wanted: [], pool: [], genN: +ls.get('genN','30'), catalog: {items:{}}, report: {runs:[]}, pending: 0, custom: JSON.parse(ls.get('custom','[]')) };
+let S = { repo: ls.get('repo','amirzadehes/zarrebin-video'), token: ls.get('token',''), style: ls.get('style','comic'), wanted: [], pool: [], genN: +ls.get('genN','30'), catalog: {items:{}}, report: {runs:[]}, pending: 0, custom: JSON.parse(ls.get('custom','[]')) };
 
 function toast(t, ms=3200){ const e=$('#toast'); e.textContent=t; e.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>e.classList.remove('show'), ms); }
 async function api(path, opt={}){
@@ -120,7 +118,7 @@ async function api(path, opt={}){
 async function readJson(p, dflt){ try{ const j=await api('/contents/'+p); const b=atob(j.content.replace(/\n/g,'')); return JSON.parse(new TextDecoder().decode(Uint8Array.from(b,c=>c.charCodeAt(0)))); }catch(e){ return dflt } }
 const raw = f => 'https://raw.githubusercontent.com/'+S.repo+'/main/library/'+f;
 const slug = s => s.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
-function prompt(subject){ return S.tpl.replace('{subject}', subject); }
+function prompt(subject){ return (S.style==='vox'?VOX_TPL:DEFAULT_TPL).replace('{subject}', subject); }
 async function copy(text){ try{ await navigator.clipboard.writeText(text); return true }catch(e){ const t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); let ok=false; try{ ok=document.execCommand('copy') }catch(e){} t.remove(); return ok } }
 
 /* ---------- data ---------- */
@@ -144,7 +142,7 @@ function renderWant(){
 }
 function cards(el, L, withAdd, head){
   const missing = L.filter(x=>x.n===0).length;
-  let h = head || `<p class="hint">${fa(missing)} مورد هنوز تصویر ندارد.${S.pending?` · ${fa(S.pending)} تصویر در انتظار پردازش`:''}</p>`;
+  let h = `<p class="hint styleNote" style="color:var(--acc)">${styleNote()}</p>` + (head || `<p class="hint">${fa(missing)} مورد هنوز تصویر ندارد.${S.pending?` · ${fa(S.pending)} تصویر در انتظار پردازش`:''}</p>`);
   h += L.map(w=>{
     const v = (S.catalog.items[w.id]?.variants||[])[0];
     return `<div class="card item" data-id="${w.id}">
@@ -216,6 +214,7 @@ async function renderEp(){
       <p class="hint">بعد از زدن دکمه حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد. می‌توانی اپ را ببندی؛ ویدیوی آماده در لیست زیر می‌آید.</p>
       <div id="vids"></div></div>
     <div id="epNeeds"></div>`;
+  $('#bStyle').value=S.style; $('#bStyle').onchange=()=>setStyle($('#bStyle').value);
   $('#bGo').onclick = buildVideo; loadVids();
   el.querySelectorAll('#epList button').forEach(b=>b.onclick=()=>{ ls.set('curEp',b.dataset.e); $('#epName').value=b.dataset.e; showNeeds(b.dataset.e); readText(b.dataset.e); });
   $('#epSend').onclick = sendEp;
@@ -243,7 +242,7 @@ async function buildVideo(){
   if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس (همان که متن را با آن فرستادی)'; return; }
   const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
   try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده'; return; }
-  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.music=$('#bMusic').value; body.style=$('#bStyle').value;
+  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.music=$('#bMusic').value; body.style=S.style;
   st.className='st'; st.textContent='در حال شروع…';
   try{
     if(ownF){ st.className='st'; st.textContent='در حال آپلود صدا…'; const ext=(ownF.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -333,13 +332,13 @@ async function watchUpload(n){
 }
 /* ---------- settings / tabs ---------- */
 $('#btnSet').onclick=()=>{ $('#settings').hidden=!$('#settings').hidden; };
-$('#repo').value=S.repo; $('#token').value=S.token; $('#tpl').value=S.tpl;
-$('#btnReset').onclick=()=>{ $('#tpl').value=DEFAULT_TPL; $('#tplStyle').value='comic'; };
-$('#tplStyle').value = S.tpl===VOX_TPL ? 'vox' : 'comic';
-$('#tplStyle').onchange=()=>{ S.tpl = $('#tplStyle').value==='vox' ? VOX_TPL : DEFAULT_TPL; $('#tpl').value=S.tpl; ls.set('tpl',S.tpl); toast('پرامپت تغییر کرد ✓'); };
+$('#repo').value=S.repo; $('#token').value=S.token;
+function setStyle(v,quiet){ S.style=v; ls.set('style',v); const a=$('#tplStyle'), b=$('#bStyle'); if(a) a.value=v; if(b) b.value=v; document.querySelectorAll('.styleNote').forEach(e=>e.textContent=styleNote()); if(!quiet) toast(v==='vox'?'سبک ووکس: پرامپت عکس و ویدیو عوض شد ✓':'سبک کمیک: پرامپت عکس و ویدیو عوض شد ✓') }
+const styleNote=()=>'سبک فعلی پرامپت عکس: '+(S.style==='vox'?'ووکس (گراوور و عکس قدیمی رنگی)':'کمیک رنگی');
+$('#tplStyle').value=S.style; $('#tplStyle').onchange=()=>setStyle($('#tplStyle').value);
 $('#btnSave').onclick=async()=>{
-  S.repo=$('#repo').value.trim(); S.token=$('#token').value.trim(); S.tpl=$('#tpl').value.trim()||DEFAULT_TPL;
-  ls.set('repo',S.repo); ls.set('token',S.token); ls.set('tpl',S.tpl);
+  S.repo=$('#repo').value.trim(); S.token=$('#token').value.trim();
+  ls.set('repo',S.repo); ls.set('token',S.token);
   const st=$('#setSt'); st.className='st'; st.textContent='در حال بررسی…';
   try{ const r=await api(''); st.className='st '+(r.permissions?.push?'ok':'bad'); st.textContent = r.permissions?.push ? 'اتصال برقرار است و اجازه‌ی نوشتن دارد ✓' : 'اتصال هست ولی اجازه‌ی نوشتن نداری؛ توکن را با دسترسی Contents بساز'; await loadAll(); }
   catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message; }
