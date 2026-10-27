@@ -233,6 +233,7 @@ async function renderEp(){
       <label>صدای خودت (اختیاری): اگر فایل صدا انتخاب کنی، به‌جای صدای هوش مصنوعی همان استفاده می‌شود</label>
       <input type="file" id="bOwn" accept="audio/*,.mp3,.m4a,.wav,.aac,.ogg,.opus" style="width:100%">
       <p class="hint">اگر صدای خودت را بدهی، همان متن بالا برای زمان‌بندی دقیق زیرنویس استفاده می‌شود؛ لازم نیست دوباره بفرستی.</p>
+      <label><input type="checkbox" id="bSubs" checked> زیرنویس روی ویدیو (اگر خاموش کنی، زیرنویس ساخته نمی‌شود)</label>
       <label><input type="checkbox" id="bSfx" checked> افکت‌های صوتی ریز (پاپ، ویژ، دینگ)</label>
       <label>سبک تصویر</label>
       <select id="bStyle" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="comic" selected>کمیک (رنگارنگ و پرانرژی)</option><option value="vox">ووکس (ساده، مدرن، شبیه ویدیوهای توضیحی Vox)</option></select>
@@ -299,7 +300,7 @@ async function buildVideo(mode){
   if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس (همان که متن را با آن فرستادی)'; return; }
   const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
   try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده'; return; }
-  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.music=$('#bMusic').value; body.style=S.style; body.review=(mode==='review'); body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
+  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.subs=$('#bSubs').checked; body.music=$('#bMusic').value; body.style=S.style; body.review=(mode==='review'); body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
   st.className='st'; st.textContent='در حال شروع…';
   try{
     if(ownF){ st.className='st'; st.textContent='در حال آپلود صدا…'; const ext=(ownF.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -336,27 +337,39 @@ function thumbUrl(src){ return raw(src.replace(/^library\//,'')) }
 function renderReview(){ const body=$('#rvBody'); if(!RV||!body) return; const sc=RV.data.scenes; const empty=sc.filter(s=>!(s.items||[]).length&&s.tpl!=='stat').length;
   body.innerHTML=`<p class="hint"><b>${RV.ep}</b>: ${fa(sc.length)} صحنه${empty?` · <span style="color:#e0733f">${fa(empty)} صحنه بدون تصویر (علامت ⚠️)</span>`:''}. هر صحنه را باز کن؛ با ✕ تصویر را حذف کن یا از کتابخانه اضافه کن. تغییرها خودکار ذخیره می‌شوند.</p>`+
   sc.map((s,i)=>{ const n=(s.items||[]).length; const warn=!n&&s.tpl!=='stat';
-    return `<details class="sc ${warn?'warn':''}" data-i="${i}"><summary>${warn?'⚠️ ':''}<b>${fa(i+1)}</b> <small class="t">${mmss(s.t0)}–${mmss(s.t1)}</small> · ${s.text?s.text.replace(/\*/g,''):(s.number||'')} <span style="color:var(--mut)">(${fa(n)} تصویر)</span></summary><div class="body"></div></details>`}).join('')+
+    return `<details class="sc ${warn?'warn':''}" data-i="${i}"><summary>${sceneHead(s,i)}</summary><div class="body"></div></details>`}).join('')+
   `<div class="row" style="margin-top:12px"><button class="pri" id="rvGo">۲. ادامه: ساخت ویدیو با همین صحنه‌ها</button></div><div class="st" id="rvSt"></div>`;
   body.querySelectorAll('details.sc').forEach(d=>d.addEventListener('toggle',()=>{ if(d.open) fillScene(d) }));
   $('#rvGo').onclick=rvContinue }
-function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySelector('.body');
-  box.innerHTML=`<div class="its">${(s.items||[]).map((it,k)=>`<div class="it"><div class="thumb"><img loading="lazy" src="${thumbUrl(it.src)}"></div><button class="x" data-k="${k}">✕</button></div>`).join('')||'<span class="hint">بدون تصویر</span>'}</div>
-    <div class="row"><button class="bAdd">+ افزودن از کتابخانه</button></div><div class="pick" hidden></div>`;
+const sceneHead=(s,i)=>{ const n=(s.items||[]).length, warn=!n&&s.tpl!=='stat'; return `${warn?'⚠️ ':''}<b>${fa(i+1)}</b> · ${(s.text||s.number||'').replace(/\*/g,'')||'—'} <span style="color:var(--mut)">(${fa(n)} تصویر)</span>` };
+const narr=s=>(RV.data.words||[]).filter(w=>w.t0>=s.t0-.02&&w.t0<s.t1-.02).map(w=>w.w).join(' ');
+function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySelector('.body'), n=(s.items||[]).length;
+  box.innerHTML=`<label>متنی که راوی در این صحنه می‌گوید</label><div class="narr" style="padding:8px 10px;border:1px dashed var(--line);border-radius:10px;color:var(--mut);font-size:14px;line-height:1.9">${narr(s)||'—'}</div>
+    <label>نوشته‌ای که روی صفحه می‌آید (قابل ویرایش؛ کلمه‌ی مهم را بین ستاره بگذار: *بنزین*)</label><textarea class="txt" rows="2" style="width:100%;direction:rtl;text-align:right;font-size:15px">${(s.text||'').replace(/</g,'&lt;')}</textarea>
+    ${s.number!==undefined?`<label>عدد</label><input type="text" class="num" value="${s.number}">`:''}
+    <label>تصویرها (به همین ترتیب نمایش داده می‌شوند)</label>
+    <div class="its">${(s.items||[]).map((it,k)=>`<div class="it"><div class="thumb"><img loading="lazy" src="${thumbUrl(it.src)}"></div><b style="position:absolute;bottom:34px;right:4px;background:#000a;border-radius:8px;padding:0 6px;font-size:12px">${fa(k+1)}</b><button class="x" data-k="${k}">✕</button><div style="display:flex;gap:4px;margin-top:4px"><button class="mv" data-k="${k}" data-d="-1" style="min-height:30px;flex:1;padding:0" ${k===0?'disabled':''}>›</button><button class="mv" data-k="${k}" data-d="1" style="min-height:30px;flex:1;padding:0" ${k===n-1?'disabled':''}>‹</button></div></div>`).join('')||'<span class="hint">بدون تصویر</span>'}</div>
+    <div class="row"><button class="bAdd">+ افزودن از کتابخانه (آخر صحنه اضافه می‌شود)</button></div><div class="pick" hidden></div>`;
+  const tx=box.querySelector('.txt'); tx.oninput=()=>{ s.text=tx.value; d.querySelector('summary').innerHTML=sceneHead(s,i); rvSave() };
+  const nm=box.querySelector('.num'); if(nm) nm.oninput=()=>{ s.number=nm.value; rvSave() };
   box.querySelectorAll('.x').forEach(b=>b.onclick=()=>{ s.items.splice(+b.dataset.k,1); rvChanged(i,d) });
+  box.querySelectorAll('.mv').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, j=k+(+b.dataset.d), a=s.items[k], c=s.items[j]; if(!c) return; const ta=a.t; a.t=c.t; c.t=ta; s.items[k]=c; s.items[j]=a; rvChanged(i,d) });
   box.querySelector('.bAdd').onclick=()=>{ const pk=box.querySelector('.pick'); pk.hidden=!pk.hidden; if(pk.hidden||pk.dataset.f) return; pk.dataset.f=1;
     const its=Object.values(S.catalog.items).filter(x=>x.variants&&x.variants.length).sort((a,b)=>(a.fa||a.en).localeCompare(b.fa||b.en));
     pk.innerHTML='<input type="text" placeholder="جست‌وجو…" style="width:100%;margin-bottom:8px"><div class="grid">'+its.map(x=>`<div class="tile" data-id="${x.id}" data-q="${((x.fa||'')+' '+x.en).toLowerCase()}"><div class="thumb"><img loading="lazy" src="${raw(x.variants[0])}"></div><small>${x.fa||x.en}</small></div>`).join('')+'</div>';
     pk.querySelector('input').oninput=e=>{ const q=e.target.value.trim().toLowerCase(); pk.querySelectorAll('.tile').forEach(t=>t.hidden=q&&!t.dataset.q.includes(q)) };
-    pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const it=S.catalog.items[t.dataset.id]; const n=(s.items||[]).length+1; if(n>6) return toast('حداکثر ۶ تصویر در هر صحنه');
-      const span=Math.max(s.t1-s.t0-1.3,.6); (s.items=s.items||[]).push({t:+(s.t0+.45+(n-1)*span/n).toFixed(3), src:'library/'+it.variants[0], en:'pop'}); rvChanged(i,d) }) } }
-function rvChanged(i,d){ const s=RV.data.scenes[i]; s.items.sort((a,b)=>a.t-b.t); s.items.forEach((it,j)=>{ if(j) it.t=+Math.max(it.t,s.items[j-1].t+.35).toFixed(3); it.t=+Math.min(Math.max(it.t,s.t0+.25),Math.max(s.t1-.5,s.t0+.3)).toFixed(3) });
+    pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const it=S.catalog.items[t.dataset.id]; if((s.items||[]).length>=6) return toast('حداکثر ۶ تصویر در هر صحنه');
+      s.items=s.items||[]; const last=s.items.length?s.items[s.items.length-1].t:s.t0; const end=Math.max(s.t1-.5,s.t0+.3); const tt=s.items.length?last+Math.max(.35,(end-last)/2):s.t0+.45;
+      s.items.push({t:+tt.toFixed(3), src:'library/'+it.variants[0], en:'pop'}); toast('اضافه شد'); rvChanged(i,d) }) } }
+function rvChanged(i,d){ const s=RV.data.scenes[i];
+  // the order is the owner's: keep the existing time slots in ascending order and hand them out in that order
+  const ts=s.items.map(it=>it.t).sort((a,b)=>a-b); s.items.forEach((it,j)=>{ it.t=ts[j] });
+  s.items.forEach((it,j)=>{ if(j) it.t=+Math.max(it.t,s.items[j-1].t+.35).toFixed(3); it.t=+Math.min(Math.max(it.t,s.t0+.25),Math.max(s.t1-.5,s.t0+.3)).toFixed(3) });
   if(s.items.length&&s.items[0].t>s.t0+.8) s.items[0].t=+(s.t0+.45).toFixed(3);
   const n=s.items.length;
-  if(s.tpl!=='stat'){ if(n===0) s.tpl='statement'; else if(n===1) s.tpl='hero'; else if(n===2&&s.tpl==='statement') s.tpl='duo'; else if(n>=3&&['duo','statement'].includes(s.tpl)) s.tpl='trio'; else if(n>4&&s.tpl==='hero') s.tpl='trio'; else if(n===2&&s.tpl==='trio'&&false) s.tpl='duo' }
-  if(s.tpl==='statement'&&!(s.text||'').trim()){ const ws=(RV.data.words||[]).filter(w=>w.t0>=s.t0&&w.t0<s.t1).slice(0,7).map(w=>w.w); s.text=ws.join(' ') }
-  const sum=d.querySelector('summary'); const warn=!n&&s.tpl!=='stat'; d.classList.toggle('warn',warn);
-  sum.innerHTML=`${warn?'⚠️ ':''}<b>${fa(i+1)}</b> <small class="t">${mmss(s.t0)}–${mmss(s.t1)}</small> · ${s.text?s.text.replace(/\*/g,''):(s.number||'')} <span style="color:var(--mut)">(${fa(n)} تصویر)</span>`;
+  if(s.tpl!=='stat'){ if(n===0) s.tpl='statement'; else if(n===1) s.tpl='hero'; else if(n===2&&s.tpl==='statement') s.tpl='duo'; else if(n>=3&&['duo','statement'].includes(s.tpl)) s.tpl='trio'; else if(n>4&&s.tpl==='hero') s.tpl='trio' }
+  if(s.tpl==='statement'&&!(s.text||'').trim()){ s.text=narr(s).split(' ').slice(0,7).join(' ') }
+  const warn=!n&&s.tpl!=='stat'; d.classList.toggle('warn',warn); d.querySelector('summary').innerHTML=sceneHead(s,i);
   fillScene(d); rvSave() }
 function rvSave(){ clearTimeout(rvT); const st=$('#rvSt'); if(st){ st.className='st'; st.textContent='در حال ذخیره…' } rvT=setTimeout(async()=>{ await rvPush(); },1200) }
 async function rvPush(){ const st=$('#rvSt'); const path='/contents/episodes/'+RV.ep+'/scenes.json';

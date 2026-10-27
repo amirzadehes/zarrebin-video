@@ -226,6 +226,7 @@ function buildCaptions() {
   CH.forEach((c, i) => { c.t0 = c.words[0].t0 - .05; const n = CH[i + 1]; c.t1 = n ? Math.min(n.words[0].t0 - .04, c.words[c.words.length - 1].t1 + .6) : c.words[c.words.length - 1].t1 + .5 })
 }
 function subs(t) {
+  if (D.meta.subs === false) return;
   const c = CH.find(c => t >= c.t0 && t < c.t1); if (!c) return; const fs = V ? 62 : 54, a = clamp((t - c.t0) / .1) * clamp((c.t1 - t) / .12), rtl = D.meta.rtl;
   ctx.save(); ctx.globalAlpha = a; ctx.font = `700 ${fs}px Vz`; ctx.direction = rtl ? 'rtl' : 'ltr'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; const sp = ctx.measureText(' ').width, y = V ? 1590 : H - 105;
   const tot = c.words.reduce((q, w) => q + w.mw, 0) + sp * (c.words.length - 1); let x = rtl ? W / 2 + tot / 2 : W / 2 - tot / 2;

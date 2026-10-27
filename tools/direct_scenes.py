@@ -154,7 +154,7 @@ def compile_scenes(ep, T, raw, lib, req):
             sc['text'] = fadig(sc['text']); sc['number'] = fadig(sc['number']) if sc.get('number') else None
             if sc['number'] is None: sc.pop('number')
     for w in Wd: w['kw'] = bool(norm(w['w'])) and any(len(q) > 1 and q in norm(w['w']) for q in kwall)
-    meta = {'total': total, 'rtl': T.get('lang', 'fa') == 'fa', 'topLabel': req.get('label') or ep.upper().replace('-', ' '), 'lang': T.get('lang', 'fa'), 'episode': ep, 'style': req.get('style', 'comic'), 'palette': req.get('palette', ''), 'base': req.get('base', '')}
+    meta = {'total': total, 'rtl': T.get('lang', 'fa') == 'fa', 'topLabel': req.get('label') or ep.upper().replace('-', ' '), 'lang': T.get('lang', 'fa'), 'episode': ep, 'style': req.get('style', 'comic'), 'palette': req.get('palette', ''), 'subs': req.get('subs', True), 'base': req.get('base', '')}
     json.dump({'meta': meta, 'words': Wd, 'scenes': scenes}, open(f'episodes/{ep}/scenes.json', 'w', encoding='utf8'), ensure_ascii=False)
     return meta, scenes
 
@@ -168,7 +168,7 @@ def main(ep):
     d = f'episodes/{ep}'; T = load(f'{d}/timing.json', None); req = load(f'{d}/request.json', {})
     if req.get('use_plan') and os.path.exists(f'{d}/scenes.json'):   # the owner reviewed / edited scenes.json in the app: keep it as is
         meta = load(f'{d}/scenes.json', {}).get('meta') or {}
-        for k in ('style', 'palette', 'base'):
+        for k in ('style', 'palette', 'base', 'subs'):
             if k in req: meta[k] = req[k]
         D = load(f'{d}/scenes.json', {}); D['meta'] = meta; json.dump(D, open(f'{d}/scenes.json', 'w', encoding='utf8'), ensure_ascii=False)
         print('using the reviewed scenes.json:', len(D.get('scenes', [])), 'scenes'); emit_plan(meta, req); return
