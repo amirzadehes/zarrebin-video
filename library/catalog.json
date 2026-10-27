@@ -15,7 +15,15 @@
     "alarm-clock__2.webp",
     "alarm-clock__3.webp",
     "alarm-clock__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "ساعت",
+    "زنگ",
+    "صبح",
+    "بیداری",
+    "زمان"
+   ],
+   "fa_tags_for": "ساعت زنگ‌دار"
   },
   "apple": {
    "id": "apple",
@@ -25,19 +33,36 @@
    "has_text_in_image": false,
    "variants": [
     "apple__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "میوه",
+    "سیب",
+    "قرمز",
+    "تغذیه",
+    "طبیعی"
+   ],
+   "fa_tags_for": "سیب قرمز"
   },
   "banknotes": {
    "id": "banknotes",
    "en": "banknotes",
-   "fa": "",
+   "fa": "اسناد پولی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "banknotes__1.webp",
     "banknotes__2.webp",
     "banknotes__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "پول",
+    "اسناد",
+    "نقدی",
+    "ارز",
+    "مالی",
+    "دستگاه‌پولی"
+   ],
+   "fa_tags_for": "اسناد پولی"
   },
   "battery-empty": {
    "id": "battery-empty",
@@ -53,7 +78,15 @@
     "battery-empty__1.webp",
     "battery-empty__2.webp",
     "battery-empty__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "باتری",
+    "خالی",
+    "انرژی",
+    "الکتریسیته",
+    "شارژ"
+   ],
+   "fa_tags_for": "باتری خالی"
   },
   "battery-full": {
    "id": "battery-full",
@@ -69,7 +102,15 @@
     "battery-full__1.webp",
     "battery-full__2.webp",
     "battery-full__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "باتری",
+    "پر",
+    "انرژی",
+    "شارژ",
+    "الکتریسیته"
+   ],
+   "fa_tags_for": "باتری پر"
   },
   "battery-power": {
    "id": "battery-power",
@@ -79,7 +120,15 @@
    "has_text_in_image": true,
    "variants": [
     "battery-power__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "باتری",
+    "انرژی",
+    "شارژ",
+    "الکتریسیته",
+    "قدرت"
+   ],
+   "fa_tags_for": "باتری"
   },
   "bed": {
    "id": "bed",
@@ -95,28 +144,55 @@
     "bed__1.webp",
     "bed__2.webp",
     "bed__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "تخت",
+    "خواب",
+    "پتو",
+    "بالش",
+    "استراحت",
+    "شب"
+   ],
+   "fa_tags_for": "تخت‌خواب"
   },
   "book": {
    "id": "book",
    "en": "book",
-   "fa": "",
+   "fa": "کتاب",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "book__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کتاب",
+    "مطالعه",
+    "ادبیات",
+    "خواندن",
+    "آموزش",
+    "متن"
+   ],
+   "fa_tags_for": "کتاب"
   },
   "book-open": {
    "id": "book-open",
    "en": "book open",
-   "fa": "",
+   "fa": "کتاب باز",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "book-open__1.webp",
     "book-open__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کتاب",
+    "باز",
+    "مطالعه",
+    "صفحه",
+    "خواندن",
+    "ادبیات"
+   ],
+   "fa_tags_for": "کتاب باز"
   },
   "brain-colorful": {
    "id": "brain-colorful",
@@ -126,7 +202,16 @@
    "has_text_in_image": false,
    "variants": [
     "brain-colorful__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "مغز",
+    "رنگی",
+    "نورون",
+    "عصب‌شناسی",
+    "فکر",
+    "خلاقیت"
+   ],
+   "fa_tags_for": "مغز رنگی"
   },
   "brain-pink": {
    "id": "brain-pink",
@@ -136,7 +221,16 @@
    "has_text_in_image": false,
    "variants": [
     "brain-pink__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "مغز",
+    "فکر",
+    "عصب‌شناسی",
+    "نورون",
+    "حافظه",
+    "هوش"
+   ],
+   "fa_tags_for": "مغز"
   },
   "bulb": {
    "id": "bulb",
@@ -146,7 +240,15 @@
    "has_text_in_image": false,
    "variants": [
     "bulb__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "نور",
+    "لامپ",
+    "روشنایی",
+    "الکتریسیته",
+    "نورپردازی"
+   ],
+   "fa_tags_for": "لامپ"
   },
   "burger": {
    "id": "burger",
@@ -156,7 +258,16 @@
    "has_text_in_image": false,
    "variants": [
     "burger__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "غذا",
+    "همبرگر",
+    "گوشت",
+    "فست‌فود",
+    "سندویچ",
+    "سرگرمی"
+   ],
+   "fa_tags_for": "همبرگر"
   },
   "caffeine-molecule": {
    "id": "caffeine-molecule",
@@ -166,18 +277,36 @@
    "has_text_in_image": false,
    "variants": [
     "caffeine-molecule__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کافئین",
+    "مولکول",
+    "شیمی",
+    "قهوه",
+    "انرژی",
+    "تحریک"
+   ],
+   "fa_tags_for": "مولکول کافئین"
   },
   "car": {
    "id": "car",
    "en": "car",
-   "fa": "",
+   "fa": "اتومبیل",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "car__1.webp",
     "car__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "ماشین",
+    "اتومبیل",
+    "حمل‌و‌نقل",
+    "جاده",
+    "سواری",
+    "وسایل-نقلیه"
+   ],
+   "fa_tags_for": "اتومبیل"
   },
   "cash": {
    "id": "cash",
@@ -187,40 +316,76 @@
    "has_text_in_image": false,
    "variants": [
     "cash__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "پول",
+    "اسکناس",
+    "دلار",
+    "نقدی",
+    "مالی",
+    "ارز"
+   ],
+   "fa_tags_for": "۲۰ دلاری"
   },
   "chef-hat": {
    "id": "chef-hat",
    "en": "chef hat",
-   "fa": "",
+   "fa": "کلاه سرآشپز",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "chef-hat__1.webp",
     "chef-hat__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "آشپز",
+    "کلاه",
+    "آشپزی",
+    "رستوران",
+    "پخت",
+    "سرآشپز"
+   ],
+   "fa_tags_for": "کلاه سرآشپز"
   },
   "cityscape-chicago": {
    "id": "cityscape-chicago",
    "en": "cityscape chicago",
-   "fa": "",
+   "fa": "منظره شهری شیکاگو",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "cityscape-chicago__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "شهر",
+    "شیکاگو",
+    "آسمان‌خراش",
+    "منظره",
+    "ساختمان",
+    "عمران"
+   ],
+   "fa_tags_for": "منظره شهری شیکاگو"
   },
   "clock-wall": {
    "id": "clock-wall",
    "en": "clock wall",
-   "fa": "",
+   "fa": "ساعت دیواری",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "clock-wall__1.webp",
     "clock-wall__2.webp",
     "clock-wall__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "ساعت",
+    "دیواری",
+    "زمان",
+    "دکور",
+    "خانه",
+    "میزان"
+   ],
+   "fa_tags_for": "ساعت دیواری"
   },
   "coffee-beans": {
    "id": "coffee-beans",
@@ -236,7 +401,16 @@
     "coffee-beans__2.webp",
     "coffee-beans__3.webp",
     "coffee-beans__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "قهوه",
+    "دانه",
+    "قهوه‌ساز",
+    "نوشیدنی",
+    "کافی",
+    "طعم"
+   ],
+   "fa_tags_for": "دانه‌های قهوه"
   },
   "coffee-cup": {
    "id": "coffee-cup",
@@ -246,7 +420,15 @@
    "has_text_in_image": false,
    "variants": [
     "coffee-cup__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "قهوه",
+    "فنجان",
+    "نوشیدنی",
+    "کافه",
+    "صبحانه"
+   ],
+   "fa_tags_for": "فنجان قهوه"
   },
   "coffee-plant": {
    "id": "coffee-plant",
@@ -261,7 +443,16 @@
     "coffee-plant__1.webp",
     "coffee-plant__2.webp",
     "coffee-plant__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "قهوه",
+    "گیاه",
+    "میوه",
+    "چری",
+    "کشاورزی",
+    "دانه"
+   ],
+   "fa_tags_for": "شاخه‌ی قهوه"
   },
   "crescent-moon": {
    "id": "crescent-moon",
@@ -277,7 +468,16 @@
     "crescent-moon__2.webp",
     "crescent-moon__3.webp",
     "crescent-moon__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "ماه",
+    "شب",
+    "ستاره",
+    "آسمان",
+    "نور",
+    "ماه‌نو"
+   ],
+   "fa_tags_for": "ماه و ستاره"
   },
   "espresso-cup": {
    "id": "espresso-cup",
@@ -293,19 +493,36 @@
     "espresso-cup__2.webp",
     "espresso-cup__3.webp",
     "espresso-cup__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "قهوه",
+    "اسپرسو",
+    "فنجان",
+    "کافه",
+    "نوشیدنی"
+   ],
+   "fa_tags_for": "فنجان اسپرسو"
   },
   "euro-sign": {
    "id": "euro-sign",
    "en": "euro sign",
-   "fa": "",
+   "fa": "نماد یورو",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "euro-sign__1.webp",
     "euro-sign__2.webp",
     "euro-sign__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "پول",
+    "ارز",
+    "یورو",
+    "مالی",
+    "قیمت",
+    "نشان"
+   ],
+   "fa_tags_for": "نماد یورو"
   },
   "eye-open": {
    "id": "eye-open",
@@ -321,7 +538,15 @@
     "eye-open__2.webp",
     "eye-open__3.webp",
     "eye-open__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "چشم",
+    "باز",
+    "بیداری",
+    "هشیاری",
+    "نگاه"
+   ],
+   "fa_tags_for": "چشم باز"
   },
   "eye-sleepy": {
    "id": "eye-sleepy",
@@ -335,28 +560,54 @@
    "variants": [
     "eye-sleepy__1.webp",
     "eye-sleepy__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "چشم",
+    "خواب‌آلود",
+    "خستگی",
+    "خواب",
+    "بی‌حالی"
+   ],
+   "fa_tags_for": "چشم خواب‌آلود"
   },
   "factory": {
    "id": "factory",
    "en": "factory",
-   "fa": "",
+   "fa": "کارخانه",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "factory__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "صنعت",
+    "تولید",
+    "ماشین",
+    "کارگر",
+    "ساخت",
+    "تولیدات"
+   ],
+   "fa_tags_for": "کارخانه"
   },
   "gas-pump": {
    "id": "gas-pump",
    "en": "gas pump",
-   "fa": "",
+   "fa": "پمپ بنزین",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "gas-pump__1.webp",
     "gas-pump__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "سوخت",
+    "بنزین",
+    "پمپ",
+    "نقلیه",
+    "ایستگاه",
+    "پمپ بنزین"
+   ],
+   "fa_tags_for": "پمپ بنزین"
   },
   "head-profile": {
    "id": "head-profile",
@@ -377,18 +628,36 @@
     "head-profile__6.webp",
     "head-profile__7.webp",
     "head-profile__8.webp"
-   ]
+   ],
+   "fa_tags": [
+    "سر",
+    "انسان",
+    "چهره",
+    "پروفایل",
+    "مغز",
+    "فکر"
+   ],
+   "fa_tags_for": "سر انسان (نیم‌رخ)"
   },
   "hotel-building": {
    "id": "hotel-building",
    "en": "hotel building",
-   "fa": "",
+   "fa": "هتل",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "hotel-building__1.webp",
     "hotel-building__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "هتل",
+    "مهمان‌خانه",
+    "سفر",
+    "اقامت",
+    "ساختمان",
+    "اتاق"
+   ],
+   "fa_tags_for": "هتل"
   },
   "hourglass": {
    "id": "hourglass",
@@ -404,7 +673,16 @@
     "hourglass__2.webp",
     "hourglass__3.webp",
     "hourglass__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "زمان",
+    "صبر",
+    "ساعت",
+    "شنی",
+    "انتظار",
+    "دستگاه"
+   ],
+   "fa_tags_for": "ساعت شنی"
   },
   "lightning-burst": {
    "id": "lightning-burst",
@@ -414,7 +692,16 @@
    "has_text_in_image": false,
    "variants": [
     "lightning-burst__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "آسمان",
+    "برق",
+    "طوفان",
+    "نور",
+    "صاعقه",
+    "طبیعت"
+   ],
+   "fa_tags_for": "رعد و برق"
   },
   "magnifying-glass": {
    "id": "magnifying-glass",
@@ -429,18 +716,36 @@
     "magnifying-glass__1.webp",
     "magnifying-glass__2.webp",
     "magnifying-glass__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "جستجو",
+    "نگاه",
+    "بزرگ‌نمایی",
+    "تحقیق",
+    "کشف",
+    "ابزار"
+   ],
+   "fa_tags_for": "ذره‌بین"
   },
   "map-folded": {
    "id": "map-folded",
    "en": "map folded",
-   "fa": "",
+   "fa": "نقشه تا شده",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "map-folded__1.webp",
     "map-folded__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "نقشه",
+    "مسیر",
+    "جغرافیا",
+    "سفر",
+    "کارت",
+    "موقعیت"
+   ],
+   "fa_tags_for": "نقشه تا شده"
   },
   "mobile-app": {
    "id": "mobile-app",
@@ -450,7 +755,16 @@
    "has_text_in_image": false,
    "variants": [
     "mobile-app__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "موبایل",
+    "تلفن",
+    "اپلیکیشن",
+    "هوشمند",
+    "دستگاه",
+    "iOS"
+   ],
+   "fa_tags_for": "آیفون"
   },
   "moka-pot": {
    "id": "moka-pot",
@@ -463,19 +777,37 @@
    "variants": [
     "moka-pot__1.webp",
     "moka-pot__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "قهوه",
+    "موکا",
+    "قهوه‌جوش",
+    "آلات",
+    "نوشیدنی",
+    "کافه"
+   ],
+   "fa_tags_for": "قهوه‌جوش موکا"
   },
   "money-bag": {
    "id": "money-bag",
    "en": "money bag",
-   "fa": "",
+   "fa": "کیسه پول",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "money-bag__1.webp",
     "money-bag__2.webp",
     "money-bag__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "پول",
+    "ثروت",
+    "مالی",
+    "دلار",
+    "نقد",
+    "کیسه"
+   ],
+   "fa_tags_for": "کیسه پول"
   },
   "neuron": {
    "id": "neuron",
@@ -491,7 +823,16 @@
     "neuron__1.webp",
     "neuron__2.webp",
     "neuron__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "عصب",
+    "مغز",
+    "سلول",
+    "نورون",
+    "سیستم عصبی",
+    "بیولوژی"
+   ],
+   "fa_tags_for": "سلول عصبی"
   },
   "old-key": {
    "id": "old-key",
@@ -507,17 +848,34 @@
     "old-key__2.webp",
     "old-key__3.webp",
     "old-key__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کلید",
+    "قفل",
+    "باز کردن",
+    "قدیمی",
+    "آنتیک",
+    "دستگاه"
+   ],
+   "fa_tags_for": "کلید قدیمی"
   },
   "one-star": {
    "id": "one-star",
    "en": "one star",
-   "fa": "",
+   "fa": "ستاره یک‌ستاره",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "one-star__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "امتیاز",
+    "ارزیابی",
+    "ستاره",
+    "یک‌ستاره",
+    "نمره"
+   ],
+   "fa_tags_for": "ستاره یک‌ستاره"
   },
   "padlock": {
    "id": "padlock",
@@ -532,18 +890,34 @@
     "padlock__1.webp",
     "padlock__2.webp",
     "padlock__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "قفل",
+    "قفل‌کلید",
+    "امنیت",
+    "قفل‌دستگاهی",
+    "قفل‌در"
+   ],
+   "fa_tags_for": "قفل"
   },
   "plastic-stool": {
    "id": "plastic-stool",
    "en": "plastic stool",
-   "fa": "",
+   "fa": "صندلی پلاستیکی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "plastic-stool__1.webp",
     "plastic-stool__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "صندلی",
+    "پلاستیک",
+    "مبلمان",
+    "نشست",
+    "چوب‌پلاستیک"
+   ],
+   "fa_tags_for": "صندلی پلاستیکی"
   },
   "pointing-hand": {
    "id": "pointing-hand",
@@ -556,17 +930,34 @@
    "has_text_in_image": false,
    "variants": [
     "pointing-hand__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "دست",
+    "اشاره",
+    "انگیزه",
+    "راهنما",
+    "نشانه"
+   ],
+   "fa_tags_for": "دست اشاره‌کننده"
   },
   "price-tag": {
    "id": "price-tag",
    "en": "price tag",
-   "fa": "",
+   "fa": "برچسب قیمت",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "price-tag__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "قیمت",
+    "برچسب",
+    "فروش",
+    "قیمت‌گذاری",
+    "تخفیف",
+    "محصول"
+   ],
+   "fa_tags_for": "برچسب قیمت"
   },
   "purple-molecule": {
    "id": "purple-molecule",
@@ -582,52 +973,92 @@
     "purple-molecule__2.webp",
     "purple-molecule__3.webp",
     "purple-molecule__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "مولکول",
+    "شیمی",
+    "بنفش",
+    "ساختار",
+    "اتم"
+   ],
+   "fa_tags_for": "مولکول بنفش"
   },
   "red-guidebook": {
    "id": "red-guidebook",
    "en": "red guidebook",
-   "fa": "",
+   "fa": "راهنمای قرمز",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "red-guidebook__1.webp",
     "red-guidebook__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "راهنما",
+    "کتابچه",
+    "قرمز",
+    "اطلاعات",
+    "دستورالعمل"
+   ],
+   "fa_tags_for": "راهنمای قرمز"
   },
   "road": {
    "id": "road",
    "en": "road",
-   "fa": "",
+   "fa": "جاده",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "road__1.webp",
     "road__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "جاده",
+    "راه",
+    "مسیر",
+    "حمل‌ونقل",
+    "آسفالت"
+   ],
+   "fa_tags_for": "جاده"
   },
   "rubber-tire": {
    "id": "rubber-tire",
    "en": "rubber tire",
-   "fa": "",
+   "fa": "لاستیک لاستیکی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "rubber-tire__1.webp",
     "rubber-tire__2.webp",
     "rubber-tire__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "لاستیک",
+    "چرخ",
+    "رابر",
+    "وسایل‌نقلیه",
+    "تعمیر"
+   ],
+   "fa_tags_for": "لاستیک لاستیکی"
   },
   "safety-glasses": {
    "id": "safety-glasses",
    "en": "safety glasses",
-   "fa": "",
+   "fa": "عینک ایمنی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "safety-glasses__1.webp",
     "safety-glasses__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "عینک",
+    "ایمنی",
+    "حفاظت",
+    "چشم",
+    "کار"
+   ],
+   "fa_tags_for": "عینک ایمنی"
   },
   "secret-inspector": {
    "id": "secret-inspector",
@@ -638,69 +1069,125 @@
    "variants": [
     "secret-inspector__1.webp",
     "secret-inspector__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "بازرس",
+    "بارونی",
+    "مشکی",
+    "سرقت",
+    "نظارت"
+   ],
+   "fa_tags_for": "بازرس با بارونی مشکی"
   },
   "silverware-set": {
    "id": "silverware-set",
    "en": "silverware set",
-   "fa": "",
+   "fa": "ست سفارشی نقره‌ای",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "silverware-set__1.webp",
     "silverware-set__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "سفارشی",
+    "نقره",
+    "قابلمه",
+    "ظرف",
+    "سرویس"
+   ],
+   "fa_tags_for": "ست سفارشی نقره‌ای"
   },
   "social-media": {
    "id": "social-media",
    "en": "social media",
-   "fa": "",
+   "fa": "شبکه‌اجتماعی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "social-media__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "شبکه",
+    "اجتماعی",
+    "پست",
+    "دنبال‌کننده",
+    "اینترنت"
+   ],
+   "fa_tags_for": "شبکه‌اجتماعی"
   },
   "spice-jar": {
    "id": "spice-jar",
    "en": "spice jar",
-   "fa": "",
+   "fa": "شیشه ادویه",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "spice-jar__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "ادویه",
+    "شیشه",
+    "آشپزی",
+    "طعم",
+    "طبیعت"
+   ],
+   "fa_tags_for": "شیشه ادویه"
   },
   "star": {
    "id": "star",
    "en": "star",
-   "fa": "",
+   "fa": "ستاره",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "star__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "ستاره",
+    "آسمان",
+    "نور",
+    "آسمانی",
+    "نورانی"
+   ],
+   "fa_tags_for": "ستاره"
   },
   "star-rating": {
    "id": "star-rating",
    "en": "star rating",
-   "fa": "",
+   "fa": "امتیاز ستاره‌ای",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "star-rating__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "امتیاز",
+    "ستاره",
+    "ارزیابی",
+    "نمره",
+    "رتبه"
+   ],
+   "fa_tags_for": "امتیاز ستاره‌ای"
   },
   "street-food-stall": {
    "id": "street-food-stall",
    "en": "street food stall",
-   "fa": "",
+   "fa": "غذای خیابانی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "street-food-stall__1.webp",
     "street-food-stall__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "غذا",
+    "خیابانی",
+    "فست‌فود",
+    "سفره",
+    "فروش"
+   ],
+   "fa_tags_for": "غذای خیابانی"
   },
   "sun": {
    "id": "sun",
@@ -715,7 +1202,15 @@
    "variants": [
     "sun__1.webp",
     "sun__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "خورشید",
+    "روز",
+    "نور",
+    "آفتاب",
+    "آسمان"
+   ],
+   "fa_tags_for": "خورشید"
   },
   "tea-cup": {
    "id": "tea-cup",
@@ -729,7 +1224,15 @@
     "tea-cup__1.webp",
     "tea-cup__2.webp",
     "tea-cup__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "چای",
+    "فنجان",
+    "نوشیدنی",
+    "قهوه‌خانه",
+    "دم‌کردن"
+   ],
+   "fa_tags_for": "فنجان چای"
   },
   "thief-mask": {
    "id": "thief-mask",
@@ -745,17 +1248,33 @@
     "thief-mask__2.webp",
     "thief-mask__3.webp",
     "thief-mask__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "نقاب",
+    "دزد",
+    "سرقت",
+    "هک",
+    "پوشش"
+   ],
+   "fa_tags_for": "نقاب دزد"
   },
   "three-stars": {
    "id": "three-stars",
    "en": "three stars",
-   "fa": "",
+   "fa": "سه ستاره",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "three-stars__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "ستاره",
+    "درجه",
+    "امتیاز",
+    "نشان",
+    "خوش‌نویسی"
+   ],
+   "fa_tags_for": "سه ستاره"
   },
   "tire-company-logo": {
    "id": "tire-company-logo",
@@ -765,7 +1284,16 @@
    "has_text_in_image": false,
    "variants": [
     "tire-company-logo__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "لوگو",
+    "لاستیک",
+    "میشلین",
+    "نشان تجاری",
+    "خودرو",
+    "شرکت"
+   ],
+   "fa_tags_for": "لوگوی شرکت لاستیک میشلین"
   },
   "tired-brain": {
    "id": "tired-brain",
@@ -780,27 +1308,52 @@
     "tired-brain__1.webp",
     "tired-brain__2.webp",
     "tired-brain__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "مغز",
+    "خستگی",
+    "ذهن",
+    "فکر",
+    "استرس",
+    "خواب"
+   ],
+   "fa_tags_for": "مغز خسته"
   },
   "two-brothers": {
    "id": "two-brothers",
    "en": "two brothers",
-   "fa": "",
+   "fa": "دو برادر",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "two-brothers__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "برادر",
+    "پسر",
+    "خانواده",
+    "مرد",
+    "دو نفر"
+   ],
+   "fa_tags_for": "دو برادر"
   },
   "two-stars": {
    "id": "two-stars",
    "en": "two stars",
-   "fa": "",
+   "fa": "دو ستاره",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "two-stars__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "ستاره",
+    "درجه",
+    "امتیاز",
+    "نشان",
+    "خوش‌نویسی"
+   ],
+   "fa_tags_for": "دو ستاره"
   },
   "warning-sign": {
    "id": "warning-sign",
@@ -815,19 +1368,37 @@
     "warning-sign__1.webp",
     "warning-sign__2.webp",
     "warning-sign__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "هشدار",
+    "خطر",
+    "علامت",
+    "تذکر",
+    "ایمنی",
+    "تنبیه"
+   ],
+   "fa_tags_for": "علامت هشدار"
   },
   "wine-glass": {
    "id": "wine-glass",
    "en": "wine glass",
-   "fa": "",
+   "fa": "لیوان شراب",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "wine-glass__1.webp",
     "wine-glass__2.webp",
     "wine-glass__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "شراب",
+    "لیوان",
+    "نوشیدنی",
+    "شیشه",
+    "میزبان",
+    "جشن"
+   ],
+   "fa_tags_for": "لیوان شراب"
   }
  }
 }
