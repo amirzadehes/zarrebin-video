@@ -249,5 +249,13 @@
   "en": "restaurant reservation card",
   "fa": "کارت رزرو رستوران",
   "tags": []
+ },
+ {
+  "id": "football-referee",
+  "en": "football referee",
+  "fa": "داور فوتبال",
+  "tags": [
+   "mine"
+  ]
  }
 ]

@@ -1,0 +1,40 @@
+{
+ "coffee-cup": [
+  "espresso-cup"
+ ],
+ "battery-empty": [
+  "battery-full",
+  "battery-power"
+ ],
+ "battery-full": [
+  "battery-empty",
+  "battery-power"
+ ],
+ "light-bulb-idea": [
+  "bulb"
+ ],
+ "brain-hacker": [
+  "brain-colorful",
+  "brain-pink",
+  "tired-brain"
+ ],
+ "brain-colorful": [
+  "brain-pink",
+  "tired-brain"
+ ],
+ "fatigue-brain": [
+  "brain-colorful",
+  "brain-pink",
+  "tired-brain"
+ ],
+ "key-fake": [
+  "old-key"
+ ],
+ "lock-closed": [
+  "padlock"
+ ],
+ "brain-adaptation": [
+  "brain-colorful",
+  "brain-pink"
+ ]
+}
