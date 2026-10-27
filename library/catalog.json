@@ -514,6 +514,17 @@
     "padlock__3.webp"
    ]
   },
+  "plastic-stool": {
+   "id": "plastic-stool",
+   "en": "plastic stool",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "plastic-stool__1.webp",
+    "plastic-stool__2.webp"
+   ]
+  },
   "pointing-hand": {
    "id": "pointing-hand",
    "en": "hand with pointing index finger",
