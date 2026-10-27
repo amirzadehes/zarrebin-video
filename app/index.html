@@ -126,7 +126,8 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
   <iframe id="pvFrame" src="../engine/preview.html?inline=1&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(62vh*9/16));height:min(62vh,calc(94vw*16/9))"></iframe>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvPlay">▶ پخش</button><button id="pvEdit">✋ ویرایش چیدمان</button></div>
   <div class="row" id="pvTools" hidden style="justify-content:center;width:100%;margin:0"><button data-op="bigger">＋ بزرگ‌تر</button><button data-op="smaller">－ کوچک‌تر</button><button data-op="rot">⟳ چرخش</button><button data-op="reset">↺ خودکار</button></div>
-  <p class="hint" id="pvHint" hidden style="margin:0;text-align:center">روی تصویر لمس کن و بکش؛ با دو انگشت هم می‌شود اندازه را عوض کرد.</p>
+  <div class="row" id="pvSel" hidden style="justify-content:center;width:100%;margin:0"></div>
+  <p class="hint" id="pvHint" hidden style="margin:0;text-align:center">تصویر را از ردیف بالا انتخاب کن (یا روی خودش لمس کن) و بکش؛ با دو انگشت هم می‌شود اندازه را عوض کرد.</p>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button class="pri" id="pvOk">✓ این صحنه خوب است</button><button id="pvClose">بستن</button></div></div>
 <script>
 const DEFAULT_TPL = "{subject}, hand-drawn comic ink illustration, bold black outline, vivid saturated colors, single object centered, isolated on a flat solid magenta background (#DD0F7A), no shadow, no text, vertical 9:16, closed outline, no glow or rays outside the outline";
@@ -371,14 +372,16 @@ function updOk(){ const e=$('#rvOk'); if(!e||!RV) return; const sc=RV.data.scene
 let pvReady=false, pvQ=null, pvI=-1, pvFmt=ls.get('pvFmt','v'), pvMode='play';
 function pvLayout(){ const f=$('#pvFrame'); if(pvFmt==='v'){ f.style.width='min(94vw,calc(62vh*9/16))'; f.style.height='min(62vh,calc(94vw*16/9))' } else { f.style.width='min(96vw,calc(50vh*16/9))'; f.style.height='min(50vh,calc(96vw*9/16))' }
   $('#pvV').classList.toggle('on',pvFmt==='v'); $('#pvH').classList.toggle('on',pvFmt==='h') }
-function pvTools(){ $('#pvTools').hidden=$('#pvHint').hidden=pvMode!=='edit'; $('#pvEdit').classList.toggle('on',pvMode==='edit'); $('#pvPlay').classList.toggle('on',pvMode==='play') }
+function pvSelBuild(cur){ const s=RV&&RV.data.scenes[pvI], box=$('#pvSel'); if(!s||pvMode!=='edit'){ box.hidden=true; return } box.hidden=false; box.innerHTML=(s.items||[]).map((it,k)=>`<button data-k="${k}" class="${k===cur?'on':''}" style="min-height:46px;padding:2px 6px"><img src="${thumbUrl(it.src)}" style="height:38px;width:38px;object-fit:contain;vertical-align:middle"> ${fa(k+1)}</button>`).join('');
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{ $('#pvFrame').contentWindow.postMessage({type:'sel',idx:+b.dataset.k},'*'); pvSelBuild(+b.dataset.k) }) }
+function pvTools(){ $('#pvTools').hidden=$('#pvHint').hidden=pvMode!=='edit'; pvSelBuild(0); $('#pvEdit').classList.toggle('on',pvMode==='edit'); $('#pvPlay').classList.toggle('on',pvMode==='play') }
 function pvOkLabel(){ const s=RV&&RV.data.scenes[pvI]; $('#pvOk').textContent=s&&okOf(s,pvFmt)?'✓ تأیید شده':'✓ این صحنه خوب است ('+(pvFmt==='v'?'عمودی':'افقی')+')' }
 function pvSend(){ if(!RV||pvI<0) return; const f=$('#pvFrame').contentWindow; if(pvMode==='edit') f.postMessage({type:'edit',data:RV.data,ep:RV.ep,scene:pvI,sel:0},'*'); else f.postMessage({type:'load',data:RV.data,ep:RV.ep,scene:pvI},'*') }
 function pvGo(){ if(pvReady) pvSend(); else pvQ=true }
 function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&fmt='+f; pvLayout(); pvOkLabel() }
 addEventListener('message',e=>{ const m=e.data||{};
   if(m.type==='ready'){ pvReady=true; if(pvQ){ pvQ=false; pvSend() } }
-  else if(m.type==='layout'&&RV){ const s=RV.data.scenes[m.scene], it=s&&s.items[m.idx]; if(!it) return; it.lay=it.lay||{}; it.lay[m.fmt]=m.lay; clearOk(s,m.fmt); syncOk(m.scene); pvOkLabel(); rvSave() } });
+  else if(m.type==='layout'&&RV){ const s=RV.data.scenes[m.scene], it=s&&s.items[m.idx]; if(!it) return; it.lay=it.lay||{}; it.lay[m.fmt]=m.lay; clearOk(s,m.fmt); syncOk(m.scene); pvOkLabel(); pvSelBuild(m.idx); rvSave() } });
 function openPreview(i,mode){ if(!RV) return; pvI=i; pvMode=mode||'play'; $('#pvModal').hidden=false; pvTools(); pvLayout(); pvOkLabel(); if(!$('#pvFrame').src.includes('fmt='+pvFmt)){ pvSetFmt(pvFmt) } else pvGo() }
 $('#pvClose').onclick=()=>{ $('#pvModal').hidden=true; try{ $('#pvFrame').contentWindow.postMessage({type:'stop'},'*') }catch(e){} };
 $('#pvV').onclick=()=>pvSetFmt('v'); $('#pvH').onclick=()=>pvSetFmt('h');
