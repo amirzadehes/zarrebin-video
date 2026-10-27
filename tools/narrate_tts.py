@@ -162,6 +162,9 @@ async def run(ep):
     if req.get('own_voice'): return own_voice(ep, req)
     text = narrate(ep, req); engine = req.get('tts') or ('gemini' if os.environ.get('GEMINI_API_KEY') else 'edge')
     voice = req.get('voice') or (os.environ.get('GEMINI_VOICE', 'Algieba') if engine == 'gemini' else VOICES[lang]); rate = req.get('rate', '+0%')
+    vkey = hashlib.md5((text + engine + voice + rate).encode()).hexdigest()
+    old = load(f'{d}/timing.json', {})
+    if os.path.exists(f'{d}/voice.mp3') and old.get('vkey') == vkey and not req.get('renarrate'): print('reusing the saved voice (same text, engine and voice) - no new TTS request'); return
     sents = split_sentences(text); os.makedirs('tmp_tts', exist_ok=True)
     evs = [None] * len(sents); src = [f'tmp_tts/s{i}.mp3' for i in range(len(sents))]
     chunk_wavs = []
@@ -212,7 +215,7 @@ async def run(ep):
                     if ws: sdict['t0'] = round(max(ws[0]['t0'] - .12, 0), 3); sdict['t1'] = round(ws[-1]['t1'], 3)
     except SystemExit: raise
     except Exception as e: print('whisper refine skipped:', e)
-    json.dump({'sentences': S, 'words': Wd, 'voice_seconds': round(t, 2), 'lang': lang, 'voice': voice, 'engine': engine}, open(f'{d}/timing.json', 'w', encoding='utf8'), ensure_ascii=False)
+    json.dump({'sentences': S, 'words': Wd, 'voice_seconds': round(t, 2), 'lang': lang, 'voice': voice, 'engine': engine, 'vkey': vkey}, open(f'{d}/timing.json', 'w', encoding='utf8'), ensure_ascii=False)
     print('engine', engine, voice, '| sentences', len(S), 'words', len(Wd), 'seconds', round(t, 1))
 
 if __name__ == '__main__':

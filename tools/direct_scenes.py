@@ -120,7 +120,7 @@ def compile_scenes(ep, T, raw, lib, req):
             sc['text'] = fadig(sc['text']); sc['number'] = fadig(sc['number']) if sc.get('number') else None
             if sc['number'] is None: sc.pop('number')
     for w in Wd: w['kw'] = bool(norm(w['w'])) and any(len(q) > 1 and q in norm(w['w']) for q in kwall)
-    meta = {'total': total, 'rtl': T.get('lang', 'fa') == 'fa', 'topLabel': req.get('label') or ep.upper().replace('-', ' '), 'lang': T.get('lang', 'fa'), 'episode': ep}
+    meta = {'total': total, 'rtl': T.get('lang', 'fa') == 'fa', 'topLabel': req.get('label') or ep.upper().replace('-', ' '), 'lang': T.get('lang', 'fa'), 'episode': ep, 'style': req.get('style', 'comic')}
     json.dump({'meta': meta, 'words': Wd, 'scenes': scenes}, open(f'episodes/{ep}/scenes.json', 'w', encoding='utf8'), ensure_ascii=False)
     return meta, scenes
 

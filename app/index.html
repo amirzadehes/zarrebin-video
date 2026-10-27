@@ -196,6 +196,8 @@ async function renderEp(){
       <input type="file" id="bOwn" accept="audio/*,.mp3,.m4a,.wav,.aac,.ogg,.opus" style="width:100%">
       <p class="hint">اگر صدای خودت را بدهی، همان متن بالا برای زمان‌بندی دقیق زیرنویس استفاده می‌شود؛ لازم نیست دوباره بفرستی.</p>
       <label><input type="checkbox" id="bSfx" checked> افکت‌های صوتی ریز (پاپ، ویژ، دینگ)</label>
+      <label>سبک تصویر</label>
+      <select id="bStyle" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="comic" selected>کمیک (رنگارنگ و پرانرژی)</option><option value="vox">ووکس (ساده، مدرن، شبیه ویدیوهای توضیحی Vox)</option></select>
       <label>موزیک پس‌زمینه (رایگان، ساخته‌شده توسط خودمان، زیر صدا آرام می‌شود)</label>
       <select id="bMusic" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="auto" selected>خودکار (بر اساس موضوع قسمت)</option><option value="calm">آرام و گرم</option><option value="curious">کنجکاو و علمی</option><option value="mystery">رازآلود</option><option value="upbeat">شاد و پرانرژی</option><option value="dramatic">جدی و دراماتیک</option><option value="none">بدون موزیک</option></select>
       <label>صدای راوی هوش مصنوعی </label>
@@ -233,7 +235,7 @@ async function buildVideo(){
   if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس (همان که متن را با آن فرستادی)'; return; }
   const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
   try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده'; return; }
-  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.music=$('#bMusic').value;
+  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.music=$('#bMusic').value; body.style=$('#bStyle').value;
   st.className='st'; st.textContent='در حال شروع…';
   try{
     if(ownF){ st.className='st'; st.textContent='در حال آپلود صدا…'; const ext=(ownF.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,'');
