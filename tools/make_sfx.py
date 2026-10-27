@@ -1,6 +1,6 @@
 """Synthesised UI sound effects (pop, whoosh, ding, tick ...) placed on the scene events -> episodes/<ep>/sfx.wav
 All sounds are generated in code: free, no licences. usage: python tools/make_sfx.py <episode>"""
-import json, sys, wave
+import json, sys, wave, glob, os, subprocess
 import numpy as np
 from scipy.signal import butter, lfilter
 
@@ -42,12 +42,40 @@ def sparkle():
     return fade(out, .002, .1) * .5
 
 def swoosh_short(): return whoosh(.28, True) * .8
+
+# ---- optional user library: sfx/<category>__<name>.<ext>  (categories: pop whoosh ding tick thud sparkle)
+MAXLEN = {'pop': .5, 'whoosh': 1.0, 'ding': 1.2, 'tick': .25, 'thud': .8, 'sparkle': 1.0}
+_lib, _cache, _cnt = {}, {}, {}
+def _load(path, cat):
+    if path in _cache: return _cache[path]
+    try:
+        raw = subprocess.run(['ffmpeg', '-v', 'error', '-i', path, '-t', str(MAXLEN[cat]), '-ac', '1', '-ar', str(SR), '-f', 'f32le', '-'], capture_output=True, check=True).stdout
+        x = np.frombuffer(raw, dtype='<f4').astype(float)
+        if len(x) < 100: raise ValueError('empty')
+        x = x / max(np.abs(x).max(), 1e-6) * .8; x = fade(x, .002, min(.05, len(x) / SR / 3))
+    except Exception as e:
+        print('sfx file skipped', path, e); x = None
+    _cache[path] = x; return x
+def pick(cat, synth, *a, **k):
+    fs = _lib.get(cat) or []
+    if fs:
+        i = _cnt.get(cat, 0); _cnt[cat] = i + 1
+        for d in range(len(fs)):
+            x = _load(fs[(i + d) % len(fs)], cat)
+            if x is not None: return x
+    return synth(*a, **k)
+def scan():
+    for f in sorted(glob.glob('sfx/*__*')):
+        c = os.path.basename(f).split('__')[0]
+        if c in MAXLEN: _lib.setdefault(c, []).append(f)
+    if _lib: print('sfx library:', {c: len(v) for c, v in _lib.items()})
 KIND = {'pop': ('pop', 1.0), 'spin': ('pop', 1.25), 'zoom': ('pop', .8), 'left': ('swoosh', 1), 'right': ('swoosh', 1), 'rise': ('swoosh', 1), 'drop': ('drop', 1)}
 
 def main(ep):
     try: req = json.load(open(f'episodes/{ep}/request.json', encoding='utf8'))
     except Exception: req = {}
     if req.get('sfx') is False: print('sfx disabled'); return
+    scan()
     D = json.load(open(f'episodes/{ep}/scenes.json', encoding='utf8')); total = D['meta']['total']
     buf = np.zeros(int((total + 1) * SR)); n_ev = 0
     def put(snd, t, g=1.0):
@@ -57,20 +85,20 @@ def main(ep):
         b = min(a + len(snd), len(buf)); buf[a:b] += snd[:b - a] * g; n_ev += 1
     for k, sc in enumerate(D['scenes']):
         t0, t1 = sc['t0'], sc['t1']
-        if k > 0: put(whoosh(.5, up=(k % 2 == 0)), t0 - .15, .8)
+        if k > 0: put(pick('whoosh', whoosh, .5, up=(k % 2 == 0)), t0 - .15, .8)
         for j, it in enumerate(sc.get('items', [])):
             kind, pitch = KIND.get(it.get('en', 'pop'), ('pop', 1.0)); t = it['t']; pj = pitch * (1 + .07 * ((j + k) % 4))
-            if kind == 'pop': put(pop(pj), t, .8)
-            elif kind == 'swoosh': put(swoosh_short(), t - .02, .7); put(pop(.9), t + .22, .35)
-            else: put(swoosh_short(), t - .05, .5); put(thud(), t + .26, .7)
-            if j == 0 and sc['tpl'] in ('hero',): put(sparkle(), t + .12, .45)
+            if kind == 'pop': put(pick('pop', pop, pj), t, .8)
+            elif kind == 'swoosh': put(pick('whoosh', swoosh_short), t - .02, .7); put(pick('pop', pop, .9), t + .22, .35)
+            else: put(pick('whoosh', swoosh_short), t - .05, .5); put(pick('thud', thud), t + .26, .7)
+            if j == 0 and sc['tpl'] in ('hero',): put(pick('sparkle', sparkle), t + .12, .45)
         if sc['tpl'] == 'statement':
-            put(pop(.85), t0 + .1, .7); words = len((sc.get('text') or '').split()); gap = min(.2, max(t1 - t0 - 1.2, .6) / max(words, 1))
-            for i in range(min(words, 10)): put(tick(), t0 + .3 + i * gap, .5)
-        elif sc['tpl'] == 'stat': put(pop(.7), t0 + .15, .8); put(ding(), t0 + .3, .8); put(sparkle(), t0 + .45, .5)
-        elif sc['tpl'] == 'hero' and sc.get('text'): put(pop(1.1), t0 + .35, .5)
-        elif sc['tpl'] in ('duo', 'trio') and sc.get('text'): put(pop(1.05), t0 + .4, .5)
-        if sc['tpl'] == 'duo' and len(sc.get('items', [])) > 1: put(ding(1568), sc['items'][1]['t'] + .06, .45)
+            put(pick('pop', pop, .85), t0 + .1, .7); words = len((sc.get('text') or '').split()); gap = min(.2, max(t1 - t0 - 1.2, .6) / max(words, 1))
+            for i in range(min(words, 10)): put(pick('tick', tick), t0 + .3 + i * gap, .5)
+        elif sc['tpl'] == 'stat': put(pick('pop', pop, .7), t0 + .15, .8); put(pick('ding', ding), t0 + .3, .8); put(pick('sparkle', sparkle), t0 + .45, .5)
+        elif sc['tpl'] == 'hero' and sc.get('text'): put(pick('pop', pop, 1.1), t0 + .35, .5)
+        elif sc['tpl'] in ('duo', 'trio') and sc.get('text'): put(pick('pop', pop, 1.05), t0 + .4, .5)
+        if sc['tpl'] == 'duo' and len(sc.get('items', [])) > 1: put(pick('ding', ding, 1568), sc['items'][1]['t'] + .06, .45)
     buf = np.tanh(buf * .9) * .85
     b, a = butter(2, 11000 / (SR / 2), btype='low'); buf = lfilter(b, a, buf)
     pcm = (np.clip(buf, -1, 1) * 32767).astype('<i2')

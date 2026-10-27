@@ -83,6 +83,11 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
     <select id="mMood" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="any">برای همه‌ی موضوع‌ها</option><option value="calm">آرام و گرم</option><option value="curious">کنجکاو و علمی</option><option value="mystery">رازآلود</option><option value="upbeat">شاد و پرانرژی</option><option value="dramatic">جدی و دراماتیک</option></select>
     <div class="row"><label class="btn pri" style="display:grid;place-items:center;margin:0;color:var(--acc-tx)">افزودن موزیک<input type="file" id="mFile" accept="audio/*,.mp3,.m4a,.wav,.ogg" multiple hidden></label></div>
     <div class="st" id="mSt"></div><div id="mList"></div></div>
+  <div class="card" style="margin-top:14px"><div class="name">افکت‌های صوتی</div>
+    <p class="hint">فایل افکت (مثلاً از YouTube Audio Library) را بده و نوعش را انتخاب کن. هر نوع که فایل داشته باشد، به‌جای صدای ساختگی از همین فایل‌ها (به‌نوبت) استفاده می‌شود؛ نوعی که فایل ندارد همان صدای ساختگی را نگه می‌دارد. افکت‌های کوتاه بهتر است.</p>
+    <select id="sCat" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="pop">پاپ (ظاهر شدن تصویر)</option><option value="whoosh">ویژ (عوض شدن صحنه / حرکت)</option><option value="ding">دینگ (عدد و نکته‌ی مهم)</option><option value="tick">تیک (ظهور کلمه‌ها)</option><option value="thud">کوبیدن (فرود تصویر)</option><option value="sparkle">درخشش</option></select>
+    <div class="row"><label class="btn pri" style="display:grid;place-items:center;margin:0;color:var(--acc-tx)">افزودن افکت<input type="file" id="sFile" accept="audio/*,.mp3,.m4a,.wav,.ogg" multiple hidden></label></div>
+    <div class="st" id="sSt"></div><div id="sList"></div></div>
   <div class="row"><button id="btnLib">نمایش کتابخانه‌ی تصاویر</button></div>
   <div id="lib" hidden style="margin-top:12px"></div>
 </section>
@@ -415,7 +420,16 @@ $('#mFile').onchange=async e=>{ const st=$('#mSt'); if(!S.token){ st.className='
     st.className='st'; st.textContent='در حال آپلود '+f.name+'…'; const ext=(f.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,''); const base=slug(f.name.replace(/\.[^.]+$/,''))||'track';
     try{ await put('music/'+$('#mMood').value+'__'+base+'.'+ext, await toB64(f), 'music: '+base); ok++ }catch(er){ st.className='st bad'; st.textContent='خطا: '+er.message } }
   e.target.value=''; if(ok){ st.className='st ok'; st.textContent=fa(ok)+' موزیک ذخیره شد'; toast('✓ موزیک ذخیره شد'); loadMusic() } };
-$('#btnSet').onclick=()=>{ $('#settings').hidden=!$('#settings').hidden; if(!$('#settings').hidden) loadMusic(); };
+const SFXFA={pop:'پاپ',whoosh:'ویژ',ding:'دینگ',tick:'تیک',thud:'کوبیدن',sparkle:'درخشش'};
+async function loadSfx(){ const box=$('#sList'); if(!box) return; let L=[]; try{ L=(await api('/contents/sfx')).filter(x=>x.type==='file'&&/__/.test(x.name)) }catch(e){}
+  box.innerHTML=L.length?L.map(x=>{const [m,...r]=x.name.split('__'); return `<div class="vrow" data-n="${x.name}" data-sha="${x.sha}"><span class="vname" dir="ltr">${r.join('__')}<small>${SFXFA[m]||m}</small></span><button class="sdel">🗑</button></div>`}).join(''):'<p class="hint">هنوز افکتی آپلود نشده؛ صداهای ساختگی استفاده می‌شوند.</p>';
+  box.querySelectorAll('.sdel').forEach(b=>b.onclick=async()=>{ const r=b.closest('.vrow'); if(!confirm('این افکت پاک شود؟')) return; try{ await api('/contents/sfx/'+r.dataset.n,{method:'DELETE',body:JSON.stringify({message:'remove sfx',sha:r.dataset.sha,branch:'main'})}); r.remove(); toast('پاک شد ✓') }catch(e){ toast('خطا: '+e.message) } }) }
+$('#sFile').onchange=async e=>{ const st=$('#sSt'); if(!S.token){ st.className='st bad'; st.textContent='اول توکن را ذخیره کن'; return }
+  const fs=[...e.target.files]; let ok=0; for(const f of fs){ if(f.size>5*1024*1024){ st.className='st bad'; st.textContent='افکت باید کمتر از ۵ مگابایت باشد: '+f.name; continue }
+    st.className='st'; st.textContent='در حال آپلود '+f.name+'…'; const ext=(f.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,''); const base=slug(f.name.replace(/\.[^.]+$/,''))||'sfx';
+    try{ await put('sfx/'+$('#sCat').value+'__'+base+'.'+ext, await toB64(f), 'sfx: '+base); ok++ }catch(er){ st.className='st bad'; st.textContent='خطا: '+er.message } }
+  e.target.value=''; if(ok){ st.className='st ok'; st.textContent=fa(ok)+' افکت ذخیره شد'; toast('✓ افکت ذخیره شد'); loadSfx() } };
+$('#btnSet').onclick=()=>{ $('#settings').hidden=!$('#settings').hidden; if(!$('#settings').hidden){ loadMusic(); loadSfx(); } };
 $('#btnLib').onclick=()=>{ const l=$('#lib'); l.hidden=!l.hidden; };
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); ['want','ep','gen'].forEach(t=>$('#'+t).hidden=t!==b.dataset.t); });
 if(!S.token) $('#settings').hidden=false;
