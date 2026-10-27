@@ -125,9 +125,15 @@ function ent(kind, t, t0, tx, ty) {
     default: s = VOX ? .86 + .14 * p : p; r = VOX ? 0 : (1 - p) * -.35 }
   return { x, y, s, r, a: ramp(t, t0, t0 + .06), bl }
 }
+let EDIT = null; const REC = {};   // EDIT = {sel} while the owner arranges items in the in-app preview; REC = where each item of the current scene is drawn
+window.setEdit = v => { EDIT = v }; window.getRec = () => REC;
 function drawItem(it, t, tx, ty, size, k) {
-  const e = ent(it.en, t, it.t, tx, ty); if (!e) return; const fl = Math.sin(t * 2 + k * 1.7), fr = Math.sin(t * 1.6 + k) * .03;
-  drawImg(it.src, e.x, e.y + fl * size * .02, size * e.s, e.r + fr, e.a, e.bl ? `blur(${e.bl}px)` : 'none');
+  const L = it.lay && it.lay[FMT], idx = CUR ? CUR.items.indexOf(it) : -1;   // owner's manual placement for this format (fractions of the canvas)
+  let rot0 = 0; if (L) { tx += (L.dx || 0) * W; ty += (L.dy || 0) * H; size *= (L.sz || 1); rot0 = L.rot || 0 }
+  const e = ent(it.en, t, it.t, tx, ty); if (!e) return; const fl = EDIT ? 0 : Math.sin(t * 2 + k * 1.7), fr = EDIT ? 0 : Math.sin(t * 1.6 + k) * .03;
+  if (idx >= 0) REC[idx] = { x: tx, y: ty, size };
+  drawImg(it.src, e.x, e.y + fl * size * .02, size * e.s, e.r + fr + rot0, e.a, e.bl ? `blur(${e.bl}px)` : 'none');
+  if (EDIT && EDIT.sel === idx && idx >= 0) { const im = IM[it.src]; if (im) { const m = Math.max(im.width, im.height), w = im.width / m * size, h = im.height / m * size; ctx.save(); ctx.translate(e.x, e.y); ctx.rotate(rot0); ctx.setLineDash([22, 14]); ctx.lineWidth = 7; ctx.strokeStyle = '#00e5ff'; ctx.strokeRect(-w / 2 - 8, -h / 2 - 8, w + 16, h + 16); ctx.restore() } }
   if (it.label) labelPill(it.label, e.x, e.y + size * .55, size, e.a * clamp(e.s), k);
   return e
 }
@@ -195,8 +201,8 @@ function its_corner(t, sc, c) { // items peek in from the corners around a text/
 
 /* ---------- scene, wipe, camera ---------- */
 function drawScene(t, sc) {
-  CUR = sc; const th = THEMES[sc.theme], lt = t - sc.t0, dur = sc.t1 - sc.t0, z = lerp(1.0, 1.07, ramp(lt, 0, dur + .6));
-  let shake = 0; sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .35) shake = Math.max(shake, 8 * (1 - d / .35)) });
+  CUR = sc; const th = THEMES[sc.theme], lt = t - sc.t0, dur = sc.t1 - sc.t0, z = EDIT ? 1 : lerp(1.0, 1.07, ramp(lt, 0, dur + .6));
+  let shake = 0; sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .35) shake = Math.max(shake, 8 * (1 - d / .35)) }); if (EDIT) { shake = 0 }
   ctx.save(); ctx.translate(W / 2 + Math.sin(t * 90) * shake, H / 2 + Math.cos(t * 77) * shake); ctx.scale(z, z); ctx.translate(-W / 2, -H / 2 + (V ? 0 : 0));
   if (VOX) vbg(t, VT(sc), sc); else bg(t, th, W * (.3 + .4 * ((sc.idx * .37) % 1)), H * .55, .06 + .03 * (sc.idx % 3));
   decor(t, sc, th); (TPL[sc.tpl] || TPL.hero)(t, sc); ctx.restore()

@@ -4,19 +4,41 @@
 @font-face{font-family:Vz;src:url(../assets/fonts/Vazirmatn-Bold.ttf);font-weight:700}
 @font-face{font-family:Vz;src:url(../assets/fonts/Vazirmatn-Black.ttf);font-weight:900}
 #msg[hidden]{display:none}
-html,body{margin:0;background:#000;height:100%;overflow:hidden;display:grid;place-items:center}
-canvas{display:block;max-width:100%;max-height:100%;aspect-ratio:9/16;height:100%;width:auto;object-fit:contain}
+html,body{margin:0;background:#000;height:100%;overflow:hidden}
+canvas{display:block;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);touch-action:none}
 #msg{position:fixed;inset:0;display:grid;place-items:center;color:#fff;font:700 18px Vz,sans-serif;background:#000a;text-align:center;direction:rtl}
 </style></head><body><canvas id="out"></canvas><div id="msg">در حال آماده‌سازی…</div>
-<script>/* in-app scene preview: ?inline=1&fmt=v ; parent posts {type:'load',data,ep,scene} */</script>
 <script src="v2.js"></script>
 <script>
-const msg=document.getElementById('msg'), au=new Audio(); au.preload='auto'; let sc=null, raf=0, playing=false;
+/* in-app scene preview + layout editor. ?inline=1&fmt=v|h. parent -> {type:'load'|'edit'|'adj'|'stop'}, iframe -> {type:'ready'|'layout'} */
+const msg=document.getElementById('msg'), cvs=document.getElementById('out'), au=new Audio(); au.preload='auto';
+let sc=null, si=0, raf=0, playing=false, mode='play', ptrs=new Map(), pinch0=null;
+function fit(){ const k=Math.min(innerWidth/W, innerHeight/H); cvs.style.width=(W*k)+'px'; cvs.style.height=(H*k)+'px' } addEventListener('resize',fit); fit();
 function stop(){ playing=false; cancelAnimationFrame(raf); au.pause() }
 function tick(){ if(!playing) return; const t=au.currentTime; if(t>=sc.t1-.02||au.ended){ seek(Math.max(sc.t1-.03,sc.t0)); playing=false; au.pause(); msg.hidden=false; msg.textContent='▶ دوباره پخش'; return } seek(t); raf=requestAnimationFrame(tick) }
-async function play(){ stop(); au.currentTime=sc.t0; seek(sc.t0); try{ await au.play() }catch(e){ msg.hidden=false; msg.textContent='▶ برای پخش لمس کن'; return } msg.hidden=true; playing=true; tick() }
-document.body.addEventListener('click',()=>{ if(!sc||playing) return; play() });
-addEventListener('message',async e=>{ const m=e.data||{}; if(m.type==='stop') return stop(); if(m.type!=='load') return; stop(); msg.hidden=false; msg.textContent='در حال آماده‌سازی…';
-  try{ const i=m.scene; sc=m.data.scenes[i]; await loadData(m.data,[i-1,i,i+1].filter(k=>k>=0&&k<m.data.scenes.length)); au.src='../episodes/'+m.ep+'/voice.mp3'; await new Promise(r=>{ au.onloadedmetadata=r; au.onerror=r; setTimeout(r,4000) }); play() }catch(err){ msg.textContent='خطا: '+err.message } });
+async function play(){ stop(); setEdit(null); mode='play'; au.currentTime=sc.t0; seek(sc.t0); try{ await au.play() }catch(e){ msg.hidden=false; msg.textContent='▶ برای پخش لمس کن'; return } msg.hidden=true; playing=true; tick() }
+const editT=()=>Math.min(sc.t1-.2, D.meta.total-.6);
+function edit(sel){ window.__sel=sel; stop(); mode='edit'; msg.hidden=true; setEdit({sel}); seek(editT()) }
+cvs.addEventListener('pointerdown',e=>{ if(mode!=='edit'){ if(!playing&&sc) play(); return }
+  cvs.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY}); const p=toC(e); 
+  if(ptrs.size===1){ const hit=hitTest(p); const cur=currentSel(); if(hit>=0&&hit!==cur){ edit(hit); post() } } if(ptrs.size===2){ const [a,b]=[...ptrs.values()]; pinch0={d:Math.hypot(a.x-b.x,a.y-b.y),sz:lay().sz||1} } });
+cvs.addEventListener('pointermove',e=>{ if(mode!=='edit'||!ptrs.has(e.pointerId)) return; const o=ptrs.get(e.pointerId), s=currentSel(); if(s<0) return; const k=W/cvs.getBoundingClientRect().width;
+  if(ptrs.size===1){ const L=lay(); L.dx=clampv((L.dx||0)+(e.clientX-o.x)*k/W,-.7,.7); L.dy=clampv((L.dy||0)+(e.clientY-o.y)*k/H,-.7,.7) }
+  ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(ptrs.size===2&&pinch0){ const [a,b]=[...ptrs.values()]; lay().sz=clampv(pinch0.sz*Math.hypot(a.x-b.x,a.y-b.y)/pinch0.d,.3,3) }
+  seek(editT()) });
+const up=e=>{ if(ptrs.has(e.pointerId)){ ptrs.delete(e.pointerId); if(ptrs.size<2) pinch0=null; if(mode==='edit') post() } }; cvs.addEventListener('pointerup',up); cvs.addEventListener('pointercancel',up);
+const clampv=(v,a,b)=>Math.max(a,Math.min(b,v));
+function toC(e){ const r=cvs.getBoundingClientRect(), k=W/r.width; return {x:(e.clientX-r.left)*k,y:(e.clientY-r.top)*k} }
+function currentSel(){ return window.__sel===undefined?-1:window.__sel }
+function hitTest(p){ const R=getRec(); let best=-1; Object.keys(R).map(Number).sort((a,b)=>a-b).forEach(i=>{ const r=R[i], it=sc.items[i], im=IM[it.src]; if(!im) return; const m=Math.max(im.width,im.height), w=im.width/m*r.size/2+20, h=im.height/m*r.size/2+20; if(Math.abs(p.x-r.x)<=w&&Math.abs(p.y-r.y)<=h) best=i }); return best }
+function lay(){ const it=sc.items[currentSel()]; it.lay=it.lay||{}; return it.lay[FMT]=it.lay[FMT]||{} }
+function post(){ const s=currentSel(); if(s<0) return; parent.postMessage({type:'layout',scene:si,idx:s,fmt:FMT,lay:{...lay()}},'*') }
+addEventListener('message',async e=>{ const m=e.data||{}; if(m.type==='stop'){ stop(); return }
+  if(m.type==='adj'){ if(mode!=='edit'||currentSel()<0) return; const L=lay(); if(m.op==='bigger') L.sz=clampv((L.sz||1)*1.12,.3,3); else if(m.op==='smaller') L.sz=clampv((L.sz||1)/1.12,.3,3); else if(m.op==='rot') L.rot=((L.rot||0)+.2)%(Math.PI*2); else if(m.op==='reset'){ const it=sc.items[currentSel()]; if(it.lay) delete it.lay[FMT] } seek(editT()); post(); return }
+  if(m.type==='edit'){ if(m.data) await ld(m); edit(Math.min(m.sel||0,sc.items.length-1)); post(); return }
+  if(m.type!=='load') return; stop(); msg.hidden=false; msg.textContent='در حال آماده‌سازی…';
+  try{ await ld(m); au.src='../episodes/'+m.ep+'/voice.mp3'; await new Promise(r=>{ au.onloadedmetadata=r; au.onerror=r; setTimeout(r,4000) }); play() }catch(err){ msg.textContent='خطا: '+err.message } });
+async function ld(m){ si=m.scene; await loadData(m.data,[si-1,si,si+1].filter(k=>k>=0&&k<m.data.scenes.length)); sc=D.scenes[si]; fit(); if(!au.src.includes('/'+m.ep+'/')) au.src='../episodes/'+m.ep+'/voice.mp3' }
 parent.postMessage({type:'ready'},'*');
 </script></body></html>
