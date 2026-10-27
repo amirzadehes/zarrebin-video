@@ -1,3 +1,7 @@
 model: openai/gpt-oss-120b
-gemini tts: HTTP 429 {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 8h3m12s or upgrade your tier at https://ai.dev/rate-limit.","code":"too_many_requests"}}
-Gemini TTS daily free limit reached (10 requests/day): {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 8h3m12s or upgrade your tier at https://ai.dev/rate-limit.","code":"t
+whisper-aligned words: 96%
+engine edge fa-IR-FaridNeural | sentences 30 words 411 seconds 196.4
+using only this episode's objects: 2 of 37 planned
+model: openai/gpt-oss-120b
+scenes 22 total 197.65 templates {'hero': 5, 'duo': 0, 'trio': 0, 'statement': 17, 'stat': 0}
+sfx events 152 peak 0.58 seconds 198.7
