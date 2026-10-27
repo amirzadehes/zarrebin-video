@@ -1,13 +1,27 @@
 model: openai/gpt-oss-120b
-chunk 0 sentences 25 seconds 166.0
-chunk 1 sentences 27 seconds 131.2
+model openai/gpt-oss-120b is rate limited for a long time (1022s): switching model
+model: qwen/qwen3.8-27b
+chunk 0 sentences 68 seconds 186.7
+chunk 1 sentences 41 seconds 129.4
 whisper-aligned words: 96%
-engine gemini Algieba | sentences 52 words 644 seconds 298.2
-using only this episode's objects: 2 of 37 planned
+engine gemini Algieba | sentences 109 words 685 seconds 317.0
+using only this episode's objects: 27 of 37 planned
 model: openai/gpt-oss-120b
-rate limited, waiting 6s
-scenes 34 total 299.44 templates {'hero': 1, 'duo': 1, 'trio': 0, 'statement': 32, 'stat': 0}
-sfx events 250 peak 0.57 seconds 300.4
-model: openai/gpt-oss-120b
-rate limited, waiting 5s
-no music uploaded yet (app > settings > music) - video will have no background music
+model openai/gpt-oss-120b is rate limited for a long time (122s): switching model
+model: qwen/qwen3.8-27b
+rate limited, waiting 40s
+rate limited, waiting 41s
+rate limited, waiting 17s
+rate limited, waiting 37s
+rate limited, waiting 57s
+rate limited, waiting 28s
+rate limited, waiting 49s
+rate limited, waiting 49s
+rate limited, waiting 43s
+rate limited, waiting 48s
+rate limited, waiting 27s
+rate limited, waiting 25s
+rate limited, waiting 53s
+scenes 57 total 318.24 templates {'hero': 23, 'duo': 7, 'trio': 3, 'statement': 18, 'stat': 6}
+sfx events 312 peak 0.70 seconds 319.2
+music off
