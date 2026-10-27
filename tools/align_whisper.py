@@ -63,6 +63,9 @@ def refine(voice_path, words, total, lang='fa'):
     """words: list of {'w','t0','t1','s'} with estimated times. Returns (words, matched_fraction)."""
     heard = whisper_words(voice_path, lang)
     if len(heard) < max(5, len(words) * .3): print('whisper gave too little, keeping estimated timing'); return words, 0.0
+    return assign(words, heard, total)
+
+def assign(words, heard, total):
     idx = align([w['w'] for w in words], heard); got = sum(1 for k in idx if k is not None)
     t0 = [heard[k][1] if k is not None else None for k in idx]; t1 = [heard[k][2] if k is not None else None for k in idx]
     n = len(words); i = 0

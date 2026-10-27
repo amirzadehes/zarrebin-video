@@ -90,7 +90,7 @@ def chunk_sentences(sents, limit=3200):
 
 def own_voice(ep, req):
     """the owner's own recording: Whisper gives the text, the sentences and the exact word times"""
-    import glob, align_whisper
+    import glob, align_whisper, groqlib
     d = f'episodes/{ep}'; cand = sorted(glob.glob(f'{d}/voice_user.*'))
     if not cand: sys.exit('own_voice requested but no voice_user file was uploaded')
     lang = req.get('lang', 'fa'); os.makedirs('tmp_tts', exist_ok=True)
@@ -115,6 +115,27 @@ def own_voice(ep, req):
     for si, ws in enumerate(out):
         text = ' '.join(words[i][0] for i in ws); S.append({'i': si, 't0': round(max(words[ws[0]][1] - .12, 0), 3), 't1': round(words[ws[-1]][2], 3), 'text': text})
         for i in ws: Wd.append({'w': words[i][0], 't0': round(words[i][1], 3), 't1': round(words[i][2], 3), 's': si})
+    # spelling clean-up: Whisper often mis-spells; an LLM fixes the text (reference script helps with names), then our text is re-aligned to Whisper's times
+    try:
+        if os.environ.get('GROQ_API_KEY') and not req.get('no_cleanup'):
+            ref = open(f'{d}/script.txt', encoding='utf8').read()[:6000] if os.path.exists(f'{d}/script.txt') else ''
+            fixed = groqlib.chat('تو ویراستار رونوشت‌های گفتاری فارسی هستی. هر خط یک جمله از رونوشت خودکار یک صدای ضبط‌شده است و غلط‌های املایی و کلمه‌های اشتباه دارد. '
+                                 'غلط‌ها را اصلاح کن ولی لحن محاوره‌ای و خودمونی و ترتیب و معنای جمله را حفظ کن (اومد، نون، می‌خوام را کتابی نکن) و چیزی اضافه یا حذف نکن. '
+                                 'اگر متن مرجع هست، فقط برای املای درست نام‌ها و اصطلاحات از آن کمک بگیر. خروجی دقیقاً همان تعداد خط باشد، بدون شماره و توضیح.',
+                                 ('متن مرجع:\n' + ref + '\n\n' if ref else '') + 'رونوشت:\n' + '\n'.join(x['text'].replace('\n', ' ') for x in S), max_tokens=6000, temperature=.1)
+            lines = [l.strip() for l in fixed.strip().split('\n') if l.strip()]
+            if len(lines) == len(S):
+                heard = [(w['w'], w['t0'], w['t1']) for w in Wd]; new = []
+                for si, l in enumerate(lines):
+                    for tk in tokens(l): new.append({'w': tk, 't0': 0, 't1': 0, 's': si})
+                new, frac = align_whisper.assign(new, heard, total)
+                if frac > .6:
+                    Wd = new
+                    for x, l in zip(S, lines): x['text'] = l
+                    print('transcript cleaned, words matched %.0f%%' % (frac * 100))
+            else: print('cleanup skipped: line count mismatch', len(lines), len(S))
+    except SystemExit: raise
+    except Exception as e: print('cleanup skipped:', e)
     open(f'{d}/narration.txt', 'w', encoding='utf8').write('\n'.join(x['text'] for x in S))
     json.dump({'sentences': S, 'words': Wd, 'voice_seconds': round(total, 2), 'lang': lang, 'voice': 'own', 'engine': 'own'}, open(f'{d}/timing.json', 'w', encoding='utf8'), ensure_ascii=False)
     print('own voice: seconds', round(total, 1), 'sentences', len(S), 'words', len(Wd))
