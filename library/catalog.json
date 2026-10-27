@@ -179,6 +179,16 @@
     "car__2.webp"
    ]
   },
+  "cash": {
+   "id": "cash",
+   "en": "20-dollar bill",
+   "fa": "۲۰ دلاری",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "cash__1.webp"
+   ]
+  },
   "chef-hat": {
    "id": "chef-hat",
    "en": "chef hat",
@@ -606,6 +616,17 @@
     "rubber-tire__1.webp",
     "rubber-tire__2.webp",
     "rubber-tire__3.webp"
+   ]
+  },
+  "safety-glasses": {
+   "id": "safety-glasses",
+   "en": "safety glasses",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "safety-glasses__1.webp",
+    "safety-glasses__2.webp"
    ]
   },
   "secret-inspector": {

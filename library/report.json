@@ -1,24 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-26 21:22:15 UTC",
-   "ok": [
-    {
-     "file": "eye-sleepy__mvpri03h0.jpg",
-     "id": "eye-sleepy",
-     "saved": "eye-sleepy__1.webp",
-     "kb": 68
-    },
-    {
-     "file": "eye-sleepy__mvpri2o31.jpg",
-     "id": "eye-sleepy",
-     "saved": "eye-sleepy__2.webp",
-     "kb": 47
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-10-26 21:23:40 UTC",
    "ok": [
     {
@@ -937,6 +919,39 @@
     }
    ],
    "failed": []
+  },
+  {
+   "time": "2026-10-27 08:48:56 UTC",
+   "ok": [
+    {
+     "file": "cash__mvqg0saj0.jpg",
+     "id": "cash",
+     "saved": "cash__1.webp",
+     "kb": 209
+    },
+    {
+     "file": "safety-glasses__mvqfzzld0.jpg",
+     "id": "safety-glasses",
+     "saved": "safety-glasses__1.webp",
+     "kb": 67
+    },
+    {
+     "file": "safety-glasses__mvqg01vh1.jpg",
+     "id": "safety-glasses",
+     "saved": "safety-glasses__2.webp",
+     "kb": 64
+    }
+   ],
+   "failed": [
+    {
+     "file": "safety-glasses__mvqg0o7w0.jpg",
+     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: safety-glasses__2.webp)"
+    },
+    {
+     "file": "safety-glasses__mvqg0qtl1.jpg",
+     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: safety-glasses__1.webp)"
+    }
+   ]
   }
  ]
 }
