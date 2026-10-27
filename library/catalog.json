@@ -588,6 +588,17 @@
     "rubber-tire__3.webp"
    ]
   },
+  "secret-inspector": {
+   "id": "secret-inspector",
+   "en": "inspector wearing black raincoat",
+   "fa": "بازرس با بارونی مشکی",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "secret-inspector__1.webp",
+    "secret-inspector__2.webp"
+   ]
+  },
   "silverware-set": {
    "id": "silverware-set",
    "en": "silverware set",
