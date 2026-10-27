@@ -11,7 +11,7 @@
 :root{--bg:#14110f;--card:#211b17;--card2:#2b231d;--line:#3a2f27;--tx:#f6efe6;--mut:#a89a8a;--acc:#ffc21a;--acc-tx:#14100e;--ok:#5fe08a;--bad:#ff6b6b;--mag:#d4146e}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--tx);font-family:Vz,system-ui,sans-serif;font-weight:700}
-body{padding:0 16px calc(40px + env(safe-area-inset-bottom));max-width:720px;margin:0 auto}
+body{overflow-x:hidden;padding:0 16px calc(40px + env(safe-area-inset-bottom));max-width:720px;margin:0 auto}
 header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 10px}
 h1{font-size:20px;font-weight:900;margin:0}
 h1 span{color:var(--acc)}
@@ -46,6 +46,8 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 .vars{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
 .run{border-top:1px solid var(--line);padding-top:10px;margin-top:10px;font-size:13px}
 .run b{color:var(--acc)}
+.card,.row>*{min-width:0}
+.row a.btn{display:grid;place-items:center;text-decoration:none;flex:0 0 auto}
 .hint{color:var(--mut);font-size:13px;line-height:1.7}
 #toast{position:fixed;inset-inline:16px;bottom:calc(16px + env(safe-area-inset-bottom));background:var(--acc);color:var(--acc-tx);padding:12px 16px;border-radius:14px;text-align:center;transform:translateY(160%);transition:.25s;z-index:20}
 #toast.show{transform:none}
@@ -67,22 +69,20 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
   <div class="row"><button class="pri" id="btnSave">ذخیره و بررسی اتصال</button><button id="btnReset">قالب پیش‌فرض</button></div>
   <div class="st" id="setSt"></div>
   <p class="hint">توکن را فقط با دسترسی Contents (خواندن و نوشتن) و فقط برای همین ریپو بساز.</p>
+  <div class="row"><button id="btnLib">نمایش کتابخانه‌ی تصاویر</button></div>
+  <div id="lib" hidden style="margin-top:12px"></div>
 </section>
 
 <nav class="tabs">
   <button data-t="want" class="on">مورد نیاز</button>
   <button data-t="ep">قسمت</button>
   <button data-t="gen">عمومی</button>
-  <button data-t="lib">کتابخانه</button>
-  <button data-t="rep">گزارش</button>
 </nav>
 
 <main>
   <div id="want"></div>
   <div id="ep" hidden></div>
   <div id="gen" hidden></div>
-  <div id="lib" hidden></div>
-  <div id="rep" hidden></div>
 </main>
 
 <dialog id="dlg"><div id="dlgBody"></div><div class="row"><button onclick="dlg.close()">بستن</button></div></dialog>
@@ -189,25 +189,39 @@ async function renderEp(){
       <select id="bMin" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="3">حدود ۳ دقیقه (آزمایشی)</option><option value="5">حدود ۵ دقیقه</option><option value="7" selected>حدود ۷ دقیقه</option><option value="8">حدود ۸ دقیقه</option></select>
       <label>صدای خودت (اختیاری): اگر فایل صدا انتخاب کنی، به‌جای صدای هوش مصنوعی همان استفاده می‌شود</label>
       <input type="file" id="bOwn" accept="audio/*,.mp3,.m4a,.wav,.aac,.ogg,.opus" style="width:100%">
-      <label>متنی که در صدا خواندی (اختیاری، ولی زمان‌بندی زیرنویس را خیلی دقیق‌تر می‌کند)</label>
-      <textarea id="bSpoken" rows="5" style="width:100%;min-height:110px;direction:rtl;text-align:right;font-size:15px"></textarea>
+      <p class="hint">اگر صدای خودت را بدهی، همان متن بالا برای زمان‌بندی دقیق زیرنویس استفاده می‌شود؛ لازم نیست دوباره بفرستی.</p>
       <label><input type="checkbox" id="bSfx" checked> افکت‌های صوتی ریز (پاپ، ویژ، دینگ)</label>
-      <label>صدای راوی هوش مصنوعی (نمونه‌ها را در لیست پایین بشنو)</label>
+      <label>صدای راوی هوش مصنوعی </label>
       <select id="bVoice" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option>Algieba</option><option>Sulafat</option><option>Charon</option><option>Kore</option><option>Puck</option><option>Orus</option><option>Gacrux</option></select>
-      <label><input type="checkbox" id="bV" checked> عمودی (اینستاگرام و تیک‌تاک)</label>
-      <label><input type="checkbox" id="bH" checked> افقی (یوتیوب)</label>
+      <label><input type="checkbox" id="bV" checked> اینستاگرام (عمودی)</label>
+      <label><input type="checkbox" id="bH" checked> یوتیوب (افقی)</label>
       <p class="hint" id="bCover"></p><div class="row"><button class="pri" id="bGo">ساخت ویدیو از روی این قسمت</button></div><div class="st" id="bSt"></div>
       <p class="hint">بعد از زدن دکمه حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد. می‌توانی اپ را ببندی؛ ویدیوی آماده در لیست زیر می‌آید.</p>
       <div id="vids"></div></div>
     <div id="epNeeds"></div>`;
   $('#bGo').onclick = buildVideo; loadVids();
-  el.querySelectorAll('#epList button').forEach(b=>b.onclick=()=>{ ls.set('curEp',b.dataset.e); $('#epName').value=b.dataset.e; showNeeds(b.dataset.e); });
+  el.querySelectorAll('#epList button').forEach(b=>b.onclick=()=>{ ls.set('curEp',b.dataset.e); $('#epName').value=b.dataset.e; showNeeds(b.dataset.e); readText(b.dataset.e); });
   $('#epSend').onclick = sendEp;
-  if(cur) showNeeds(cur);
+  if(cur){ showNeeds(cur); readText(cur); }
 }
+async function readText(ep){ try{ const j=await api('/contents/episodes/'+ep+'/script.txt'); $('#epText').value=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))); }catch(e){} }
 async function loadVids(){
   const box=$('#vids'); if(!box) return;
-  try{ const rel=await api('/releases?per_page=8'); box.innerHTML = rel.length ? '<label>ویدیوهای ساخته‌شده</label>'+rel.map(r=>`<div class="row" style="align-items:center;margin:6px 0"><span class="en" style="flex:1">${r.name||r.tag_name}</span>${r.assets.map(a=>`<a class="btn" href="${a.browser_download_url}" target="_blank" rel="noopener">${/vertical/.test(a.name)?'عمودی':/horizontal/.test(a.name)?'افقی':a.name.replace(/\.[a-z0-9]+$/,'')}</a>`).join('')}</div>`).join('') : ''; }catch(e){}
+  try{ const rel=(await api('/releases?per_page=30')).filter(r=>!/^voices?-/.test(r.tag_name)&&!/sample/i.test(r.name||'')).slice(0,10);
+    box.innerHTML = rel.length ? '<label>ویدیوهای ساخته‌شده</label>'+rel.map(r=>`<div class="row" style="align-items:center;margin:6px 0"><span class="en" style="flex:1 1 100%;word-break:break-all">${r.name||r.tag_name}</span>${r.assets.map(a=>`<a class="btn" href="${a.browser_download_url}" target="_blank" rel="noopener">${/vertical/.test(a.name)?'اینستاگرام':/horizontal/.test(a.name)?'یوتیوب':a.name.replace(/\.[a-z0-9]+$/,'')}</a>`).join('')}</div>`).join('')+'<div class="row"><button id="vidDel" style="color:var(--bad)">پاک کردن همه‌ی ویدیوهای ساخته‌شده</button></div>' : '';
+    const d=$('#vidDel'); if(d) d.onclick=delVids;
+  }catch(e){}
+}
+async function delVids(){
+  if(!S.token) return toast('اول در تنظیمات توکن را وارد کن');
+  if(!confirm('همه‌ی ویدیوهای ساخته‌شده پاک شوند؟ (قابل بازگشت نیست)')) return;
+  const d=$('#vidDel'); d.disabled=true; d.textContent='در حال پاک کردن…'; let n=0;
+  try{ const rel=await api('/releases?per_page=100');
+    for(const r of rel){ if(/^voices?-/.test(r.tag_name)) continue;
+      await api('/releases/'+r.id,{method:'DELETE'}); try{ await api('/git/refs/tags/'+r.tag_name,{method:'DELETE'}) }catch(e){} n++; }
+    toast(fa(n)+' ویدیو پاک شد ✓');
+  }catch(e){ toast('خطا: '+e.message) }
+  loadVids();
 }
 async function buildVideo(){
   const st=$('#bSt'), ep=slug($('#epName').value);
@@ -221,8 +235,9 @@ async function buildVideo(){
     if(ownF){ st.className='st'; st.textContent='در حال آپلود صدا…'; const ext=(ownF.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,'');
       const b64=await toB64(ownF); let osha; try{ osha=(await api('/contents/episodes/'+ep+'/voice_user.'+ext)).sha }catch(e){}
       await api('/contents/episodes/'+ep+'/voice_user.'+ext,{method:'PUT',body:JSON.stringify({message:'own voice: '+ep,content:b64,branch:'main',sha:osha})}); }
-    if(ownF && $('#bSpoken').value.trim().length>20){ let ssha; try{ ssha=(await api('/contents/episodes/'+ep+'/spoken.txt')).sha }catch(e){}
-      await api('/contents/episodes/'+ep+'/spoken.txt',{method:'PUT',body:JSON.stringify({message:'spoken text: '+ep,content:enc($('#bSpoken').value.trim()),branch:'main',sha:ssha})}); }
+    if(ownF){ let txt=$('#epText').value.trim(); if(txt.length<20){ try{ const j=await api('/contents/episodes/'+ep+'/script.txt'); txt=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))).trim() }catch(e){} }
+      if(txt.length>20){ let ssha; try{ ssha=(await api('/contents/episodes/'+ep+'/spoken.txt')).sha }catch(e){}
+        await api('/contents/episodes/'+ep+'/spoken.txt',{method:'PUT',body:JSON.stringify({message:'spoken text: '+ep,content:enc(txt),branch:'main',sha:ssha})}); } }
     let sha; try{ sha=(await api('/contents/episodes/'+ep+'/request.json')).sha }catch(e){}
     await api('/contents/episodes/'+ep+'/request.json',{method:'PUT',body:JSON.stringify({message:'build video: '+ep,content:enc(JSON.stringify(body)),branch:'main',sha})});
     st.className='st ok'; st.textContent='شروع شد. حدود ۱۰ تا ۳۰ دقیقه بعد ویدیو در همین لیست می‌آید.';
@@ -261,19 +276,12 @@ async function sendEp(){
 }
 function renderLib(){
   const its = Object.values(S.catalog.items||{});
+  $('#btnLib').textContent = 'نمایش کتابخانه‌ی تصاویر ('+fa(its.length)+' مورد)';
   $('#lib').innerHTML = its.length ? `<div class="grid">${its.map(i=>`<div class="tile" data-id="${i.id}"><div class="thumb"><img loading="lazy" src="${raw(i.variants[0])}"></div><small>${i.fa||i.en}</small><span class="badge">${fa(i.variants.length)}</span></div>`).join('')}</div>` : '<p class="hint">هنوز تصویری در کتابخانه نیست.</p>';
   document.querySelectorAll('#lib .tile').forEach(t=>t.onclick=()=>{ const i=S.catalog.items[t.dataset.id]; $('#dlgBody').innerHTML=`<div class="name">${i.fa||i.en}</div><div class="en">${i.id}</div>${i.has_text_in_image?'<p class="hint" style="color:var(--bad)">این تصویر متن دارد و برای نسخه‌ی چندزبانه مناسب نیست.</p>':''}<div class="vars">${i.variants.map(v=>`<div class="thumb" style="width:100%;height:auto;aspect-ratio:1"><img src="${raw(v)}"></div>`).join('')}</div>`; dlg.showModal(); });
 }
-function renderRep(){
-  const runs=[...(S.report.runs||[])].reverse();
-  let h=`<div class="row"><button id="btnRef" class="pri">به‌روزرسانی</button></div><p class="hint">${S.pending?`${fa(S.pending)} تصویر هنوز در صف پردازش است.`:'صف پردازش خالی است.'}</p>`;
-  h+= runs.length? runs.map(r=>`<div class="card"><b dir="ltr" style="color:var(--acc)">${r.time}</b>
-    ${r.ok.map(o=>`<div class="run">✅ <bdi>${o.id} ← ${o.saved}</bdi> <span class="hint">(${fa(o.kb)} کیلوبایت)</span></div>`).join('')}
-    ${r.failed.map(o=>`<div class="run" style="color:var(--bad)">❌ <bdi>${o.file}</bdi><br><span class="hint">${o.reason}</span></div>`).join('')}</div>`).join('') : '<p class="hint">هنوز گزارشی نیست.</p>';
-  $('#rep').innerHTML=h; $('#btnRef').onclick=async()=>{ await loadAll(); toast('به‌روز شد') };
-}
 let keepEpDone=false;
-function renderAll(){ if(!keepEpDone){ keepEpDone=true; renderEp(); } renderGen(); renderWant(); renderLib(); renderRep(); }
+function renderAll(){ if(!keepEpDone){ keepEpDone=true; renderEp(); } renderGen(); renderWant(); renderLib(); }
 
 /* ---------- upload ---------- */
 const toB64 = f => new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(f); });
@@ -296,9 +304,19 @@ async function upload(id, files, st, input){
     if(i<files.length-1) await sleep(1300);   // stay under GitHub's content-creation rate limit
   }
   input.value='';
-  if(ok){ st.className='st ok'; st.textContent=`${fa(ok)} تصویر ارسال شد${bad?` (${fa(bad)} ناموفق)`:''}. پردازش حدود ۱ تا ۲ دقیقه طول می‌کشد.`; toast('ارسال شد ✓'); S.pending+=ok; setTimeout(loadAll, 100000); }
+  if(ok){ st.className='st ok'; st.textContent=`${fa(ok)} تصویر ارسال شد${bad?` (${fa(bad)} ناموفق)`:''}. پردازش حدود ۱ تا ۲ دقیقه طول می‌کشد.`; toast('ارسال شد؛ منتظر ذخیره در کتابخانه…'); S.pending+=ok; watchUpload(ok); }
 }
 
+let watching=false;
+async function watchUpload(n){
+  if(watching) return; watching=true;
+  const count=()=>Object.values(S.catalog.items||{}).reduce((a,i)=>a+i.variants.length,0);
+  const before=count();
+  for(let k=0;k<40;k++){ await sleep(12000); await loadAll();
+    if(S.pending===0){ const got=count()-before;
+      toast(got>0?`✓ آپلود انجام شد: ${fa(got)} تصویر در کتابخانه ذخیره شد`:'پردازش تمام شد ولی تصویر جدیدی ذخیره نشد (تکراری یا نامعتبر بود)',5000); break; } }
+  watching=false;
+}
 /* ---------- settings / tabs ---------- */
 $('#btnSet').onclick=()=>{ $('#settings').hidden=!$('#settings').hidden; };
 $('#repo').value=S.repo; $('#token').value=S.token; $('#tpl').value=S.tpl;
@@ -310,7 +328,8 @@ $('#btnSave').onclick=async()=>{
   try{ const r=await api(''); st.className='st '+(r.permissions?.push?'ok':'bad'); st.textContent = r.permissions?.push ? 'اتصال برقرار است و اجازه‌ی نوشتن دارد ✓' : 'اتصال هست ولی اجازه‌ی نوشتن نداری؛ توکن را با دسترسی Contents بساز'; await loadAll(); }
   catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message; }
 };
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); ['want','ep','gen','lib','rep'].forEach(t=>$('#'+t).hidden=t!==b.dataset.t); });
+$('#btnLib').onclick=()=>{ const l=$('#lib'); l.hidden=!l.hidden; };
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); ['want','ep','gen'].forEach(t=>$('#'+t).hidden=t!==b.dataset.t); });
 if(!S.token) $('#settings').hidden=false;
 loadAll();
 </script>
