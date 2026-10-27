@@ -148,7 +148,7 @@ function cards(el, L, withAdd, head){
     return `<div class="card item" data-id="${w.id}">
       <div class="thumb">${v?`<img loading="lazy" src="${raw(v)}">`:'بدون تصویر'}</div>
       <div>
-        <div class="name">${w.fa||w.en}${w.n?`<span class="badge ok">${fa(w.n)} تصویر</span>`:''}</div>
+        <div class="name">${w.fa||w.en}<button class="bEdit" title="ویرایش نام" style="min-height:30px;padding:0 8px;margin-inline-start:8px">✎</button>${w.n?`<span class="badge ok">${fa(w.n)} تصویر</span>`:''}</div>
         <div class="en">${w.en}</div>
       </div>
       <div style="grid-column:1/-1">
@@ -166,6 +166,7 @@ function cards(el, L, withAdd, head){
   el.innerHTML = h;
   el.querySelectorAll('.item').forEach(c=>{
     const id=c.dataset.id, w=L.find(x=>x.id===id), st=c.querySelector('.st');
+    c.querySelector('.bEdit').onclick = ()=>renameItem(id, w.fa||w.en, w.en);
     c.querySelector('.bCopy').onclick = async()=>{ const ok = await copy(prompt(w.en)); st.className='st '+(ok?'ok':'bad'); st.textContent = ok?'پرامپت کپی شد؛ در Gemini بچسبان':'کپی نشد'; };
     c.querySelector('.bFile').onchange = e => upload(id, [...e.target.files], st, e.target);
   });
@@ -291,7 +292,7 @@ function renderLib(){
   const its = Object.values(S.catalog.items||{});
   $('#btnLib').textContent = 'نمایش کتابخانه‌ی تصاویر ('+fa(its.length)+' مورد)';
   $('#lib').innerHTML = its.length ? `<div class="grid">${its.map(i=>`<div class="tile" data-id="${i.id}"><div class="thumb"><img loading="lazy" src="${raw(i.variants[0])}"></div><small>${i.fa||i.en}</small><span class="badge">${fa(i.variants.length)}</span></div>`).join('')}</div>` : '<p class="hint">هنوز تصویری در کتابخانه نیست.</p>';
-  document.querySelectorAll('#lib .tile').forEach(t=>t.onclick=()=>{ const i=S.catalog.items[t.dataset.id]; $('#dlgBody').innerHTML=`<div class="name">${i.fa||i.en}</div><div class="en">${i.id}</div>${i.has_text_in_image?'<p class="hint" style="color:var(--bad)">این تصویر متن دارد و برای نسخه‌ی چندزبانه مناسب نیست.</p>':''}<div class="vars">${i.variants.map(v=>`<div class="thumb" style="width:100%;height:auto;aspect-ratio:1"><img src="${raw(v)}"></div>`).join('')}</div>`; dlg.showModal(); });
+  document.querySelectorAll('#lib .tile').forEach(t=>t.onclick=()=>{ const i=S.catalog.items[t.dataset.id]; $('#dlgBody').innerHTML=`<div class="name">${i.fa||i.en}</div><div class="en">${i.id}</div><div class="row"><button id="dlgEdit">ویرایش نام</button></div>${i.has_text_in_image?'<p class="hint" style="color:var(--bad)">این تصویر متن دارد و برای نسخه‌ی چندزبانه مناسب نیست.</p>':''}<div class="vars">${i.variants.map(v=>`<div class="thumb" style="width:100%;height:auto;aspect-ratio:1"><img src="${raw(v)}"></div>`).join('')}</div>`; dlg.showModal(); $('#dlgEdit').onclick=()=>{ dlg.close(); renameItem(i.id, i.fa||i.en, i.en) }; });
 }
 let keepEpDone=false;
 function renderAll(){ if(!keepEpDone){ keepEpDone=true; renderEp(); } renderGen(); renderWant(); renderLib(); }
@@ -320,6 +321,19 @@ async function upload(id, files, st, input){
   if(ok){ st.className='st ok'; st.textContent=`${fa(ok)} تصویر ارسال شد${bad?` (${fa(bad)} ناموفق)`:''}. پردازش حدود ۱ تا ۲ دقیقه طول می‌کشد.`; toast('ارسال شد؛ منتظر ذخیره در کتابخانه…'); S.pending+=ok; watchUpload(ok); }
 }
 
+function renameItem(id, curFa, curEn){
+  $('#dlgBody').innerHTML=`<div class="name">ویرایش نام</div><div class="en">${id}</div><label>نام فارسی جدید (انگلیسی‌اش خودکار ترجمه می‌شود و در پرامپت می‌آید)</label><input type="text" id="rnFa" value="${(curFa||'').replace(/"/g,'&quot;')}"><p class="hint">نام انگلیسی فعلی: <bdi>${curEn||''}</bdi></p><div class="row"><button class="pri" id="rnGo">ذخیره</button></div><div class="st" id="rnSt"></div>`;
+  dlg.showModal(); $('#rnFa').focus();
+  $('#rnGo').onclick=async()=>{ const fa2=$('#rnFa').value.trim(), st=$('#rnSt'); if(!fa2) return; if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return }
+    st.className='st'; st.textContent='در حال ارسال…';
+    try{ await put('renames/'+id+'__'+Date.now().toString(36)+'.json', enc(JSON.stringify({id, fa:fa2})), 'rename: '+id);
+      S.custom=S.custom.filter(c=>c.id!==id); ls.set('custom',JSON.stringify(S.custom));
+      st.textContent='ارسال شد؛ ترجمه و ذخیره حدود یک دقیقه طول می‌کشد…'; toast('نام در حال تغییر است…');
+      for(let k=0;k<30;k++){ await sleep(8000); const cat=await readJson('library/catalog.json',{items:{}}), wl=await readJson('wanted.json',[]); const it=cat.items[id]||wl.find(w=>w.id===id);
+        if(it && it.fa===fa2){ await loadAll(); dlg.close(); toast('✓ نام عوض شد: '+it.en,5000); return } }
+      st.className='st bad'; st.textContent='هنوز اعمال نشد؛ کمی بعد صفحه را تازه کن.';
+    }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message } };
+}
 let watching=false;
 async function watchUpload(n){
   if(watching) return; watching=true;

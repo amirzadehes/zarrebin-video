@@ -1,0 +1,30 @@
+name: Rename library item
+on:
+  push:
+    branches: [main]
+    paths: ['renames/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: rename-item
+  cancel-in-progress: false
+jobs:
+  rename:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Apply renames and commit
+        env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for round in 1 2 3 4 5 6; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            python tools/rename_item.py
+            git add -A
+            if git diff --cached --quiet; then echo "nothing to do"; exit 0; fi
+            git commit -qm "rename library item(s)"
+            if git push -q origin main; then echo pushed; exit 0; fi; sleep 4
+          done; exit 1
