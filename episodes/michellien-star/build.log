@@ -1,13 +1,9 @@
 model: openai/gpt-oss-120b
-chunk 0 sentences 31 seconds 215.0
-chunk 1 sentences 23 seconds 148.8
-whisper-aligned words: 96%
-engine gemini Algieba | sentences 54 words 781 seconds 364.8
+chunk 0 sentences 39 seconds 234.2
+whisper-aligned words: 95%
+engine gemini Algieba | sentences 39 words 501 seconds 234.7
 using only this episode's objects: 2 of 37 planned
 model: openai/gpt-oss-120b
-rate limited, waiting 9s
-scenes 43 total 365.96 templates {'hero': 12, 'duo': 1, 'trio': 1, 'statement': 29, 'stat': 0}
-sfx events 278 peak 0.54 seconds 367.0
-model: openai/gpt-oss-120b
-music mood: curious seconds 366
--rw-r--r-- 1 runner runner 64555388 Oct 27 06:58 episodes/michellien-star/music.wav
+scenes 25 total 235.86 templates {'hero': 0, 'duo': 0, 'trio': 0, 'statement': 25, 'stat': 0}
+sfx events 189 peak 0.60 seconds 236.9
+music off
