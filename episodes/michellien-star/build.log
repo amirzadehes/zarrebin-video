@@ -1,9 +1,9 @@
-whisper-aligned words: 95%
-engine edge fa-IR-FaridNeural | sentences 37 words 515 seconds 247.9
+reusing the saved voice (same text, engine and voice) - no new TTS request
 using only this episode's objects: 2 of 37 planned
 model: openai/gpt-oss-120b
+scenes 26 total 249.15 templates {'hero': 1, 'duo': 2, 'trio': 0, 'statement': 22, 'stat': 1}
+sfx events 160 peak 0.58 seconds 250.2
+model: openai/gpt-oss-120b
 rate limited, waiting 4s
-rate limited, waiting 10s
-scenes 31 total 249.15 templates {'hero': 7, 'duo': 0, 'trio': 0, 'statement': 24, 'stat': 0}
-sfx events 183 peak 0.57 seconds 250.2
-GROQ_API_KEY is not set (repo Settings > Secrets > Actions)
+music mood: curious seconds 249
+-rw-r--r-- 1 runner runner 43950100 Oct 27 06:49 episodes/michellien-star/music.wav
