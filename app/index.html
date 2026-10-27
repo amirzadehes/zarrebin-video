@@ -88,14 +88,14 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 </section>
 
 <nav class="tabs">
-  <button data-t="want" class="on">مورد نیاز</button>
-  <button data-t="ep">قسمت</button>
+  <button data-t="ep" class="on">ساخت ویدیو</button>
+  <button data-t="want">مورد نیاز</button>
   <button data-t="gen">عمومی</button>
 </nav>
 
 <main>
-  <div id="want"></div>
-  <div id="ep" hidden></div>
+  <div id="ep"></div>
+  <div id="want" hidden></div>
   <div id="gen" hidden></div>
 </main>
 
@@ -140,10 +140,7 @@ function items(){
   const list = [...S.wanted, ...S.custom.filter(c=>!S.wanted.some(w=>w.id===c.id))];
   return list.map(w=>({ ...w, n: (S.catalog.items[w.id]?.variants||[]).length })).sort((a,b)=> (a.n>0)-(b.n>0));
 }
-function renderWant(){
-  const el = $('#want'); const L = items();
-  cards(el, L, true);
-}
+function renderWant(){ showNeeds(ls.get('curEp','')) }
 function cards(el, L, withAdd, head){
   const missing = L.filter(x=>x.n===0).length;
   let h = `<p class="hint styleNote" style="color:var(--acc)">${styleNote()}</p>` + (head || `<p class="hint">${fa(missing)} مورد هنوز تصویر ندارد.${S.pending?` · ${fa(S.pending)} تصویر در انتظار پردازش`:''}</p>`);
@@ -174,8 +171,8 @@ function cards(el, L, withAdd, head){
     c.querySelector('.bCopy').onclick = async()=>{ const ok = await copy(prompt(w.en)); st.className='st '+(ok?'ok':'bad'); st.textContent = ok?'پرامپت کپی شد؛ در Gemini بچسبان':'کپی نشد'; };
     c.querySelector('.bFile').onchange = e => upload(id, [...e.target.files], st, e.target);
   });
-  if(withAdd) $('#btnAdd').onclick = ()=>{ const en=$('#newEn').value.trim(), id=slug(en); if(!id) return toast('نام انگلیسی را بنویس');
-    if(!S.custom.some(c=>c.id===id)&&!S.wanted.some(c=>c.id===id)){ S.custom.push({id,en,fa:$('#newFa').value.trim(),tags:[]}); ls.set('custom',JSON.stringify(S.custom)); }
+  if(withAdd) el.querySelector('#btnAdd').onclick = ()=>{ const en=el.querySelector('#newEn').value.trim(), id=slug(en); if(!id) return toast('نام انگلیسی را بنویس');
+    if(!S.custom.some(c=>c.id===id)&&!S.wanted.some(c=>c.id===id)){ S.custom.push({id,en,fa:el.querySelector('#newFa').value.trim(),tags:[]}); ls.set('custom',JSON.stringify(S.custom)); }
     renderWant(); toast('اضافه شد'); };
 }
 function renderGen(){
@@ -193,7 +190,7 @@ function renderGen(){
 const enc = t => btoa(String.fromCharCode(...new TextEncoder().encode(t)));
 async function renderEp(){
   const el = $('#ep'); let eps=[];
-  try{ eps = (await api('/contents/episodes')).filter(x=>x.type==='dir').map(x=>x.name) }catch(e){}
+  try{ eps = (await api('/contents/episodes')).filter(x=>x.type==='dir').map(x=>x.name) }catch(e){} S.eps=eps;
   const cur = ls.get('curEp','');
   el.innerHTML = `<div class="card"><div class="name">قسمت جدید</div>
     <label>نام قسمت به انگلیسی (مثلاً sleep-debt)</label><input type="text" class="ltr" id="epName" value="${cur}">
@@ -222,13 +219,13 @@ async function renderEp(){
       <p class="hint" id="bCover"></p><div class="row"><button class="pri" id="bGo">ساخت ویدیو از روی این قسمت</button></div><div class="st" id="bSt"></div>
       <p class="hint">بعد از زدن دکمه حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد. می‌توانی اپ را ببندی؛ ویدیوی آماده در لیست زیر می‌آید.</p>
       <div id="vids"></div></div>
-    <div id="epNeeds"></div>`;
+    `;
   fillPal(); $('#bPal').value=ls.get('pal_'+S.style,''); $('#bPal').onchange=()=>ls.set('pal_'+S.style,$('#bPal').value);
   $('#bStyle').value=S.style; $('#bStyle').onchange=()=>setStyle($('#bStyle').value);
   $('#bGo').onclick = buildVideo; loadVids();
-  el.querySelectorAll('#epList button').forEach(b=>b.onclick=()=>{ ls.set('curEp',b.dataset.e); $('#epName').value=b.dataset.e; showNeeds(b.dataset.e); readText(b.dataset.e); });
+  el.querySelectorAll('#epList button').forEach(b=>b.onclick=()=>setEpisode(b.dataset.e));
   $('#epSend').onclick = sendEp;
-  if(cur){ showNeeds(cur); readText(cur); }
+  if(cur){ readText(cur) } renderWant();
 }
 async function readText(ep){ try{ const j=await api('/contents/episodes/'+ep+'/script.txt'); $('#epText').value=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))); }catch(e){} }
 const STEPFA=[[/Narration/,'نوشتن روایت و ساخت صدا'],[/Scene director/,'طراحی صحنه‌ها'],[/Sound effects/,'ساخت افکت‌های صوتی'],[/Background music/,'انتخاب موزیک'],[/Save narration/,'ذخیره‌ی نتایج'],[/Render chunk/,'رندر تصویر'],[/Join/,'ترکیب نهایی و بهینه‌سازی حجم'],[/Publish/,'انتشار ویدیو']];
@@ -290,16 +287,22 @@ async function buildVideo(){
         if(/daily free limit|Gemini TTS failed|Groq failed|Groq error|Traceback|GEMINI_API_KEY is not set|GROQ_API_KEY is not set/.test(txt)){ st.className='st bad'; st.textContent=/daily free limit/.test(txt)?'سهمیه‌ی روزانه‌ی رایگان صدای گوگل (۱۰ درخواست در روز) تمام شده؛ چند ساعت بعد دوباره بزن.':'ساخت متوقف شد: '+txt.trim().split('\n').slice(-1)[0].slice(0,200); return } } }catch(e){} }
   }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message }
 }
+function epHead(ep){ const eps=S.eps||[]; return `<div class="card"><label>قسمت</label><select id="needEp" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px">${(eps.includes(ep)||!ep?'':`<option>${ep}</option>`)+eps.map(e=>`<option ${e===ep?'selected':''}>${e}</option>`).join('')}${!ep?'<option value="">— یک قسمت انتخاب کن —</option>':''}</select></div>` }
+function bindEpHead(){ const s=$('#needEp'); if(s) s.onchange=()=>{ if(s.value) setEpisode(s.value) } }
+function setEpisode(e){ ls.set('curEp',e); const n=$('#epName'); if(n) n.value=e; readText(e); showNeeds(e) }
 async function showNeeds(ep){
-  const box = $('#epNeeds'); box.innerHTML='<p class="hint">در حال خواندن…</p>';
+  const box = $('#want'); const head = epHead(ep);
+  if(!ep){ box.innerHTML=head+'<p class="hint">اول در تب «ساخت ویدیو» متن یک قسمت را بفرست تا تحلیل شود؛ فهرست تصویرهای لازم همین‌جا می‌آید. یا از بالا قسمت قبلی را انتخاب کن.</p>'; bindEpHead(); return false }
+  if(!box.children.length){ box.innerHTML=head+'<p class="hint">در حال خواندن…</p>'; bindEpHead(); }
   const j = await readJson('episodes/'+ep+'/needs.json', null);
-  if(!j){ box.innerHTML='<p class="hint">هنوز تحلیلی برای این قسمت نیست (اگر تازه فرستاده‌ای، یک دقیقه صبر کن و دوباره بزن).</p>'; return false; }
-  if(j.error){ box.innerHTML=`<p class="hint" style="color:var(--bad)">تحلیل خطا داد. ${/GROQ_API_KEY is not set/.test(j.message||'')?'کلید Groq هنوز در Secrets ریپو گذاشته نشده است.':'دلیل: '+(j.message||'نامشخص')}</p>`; return true; }
-  const L = j.items.map(w=>({...w, n:(S.catalog.items[w.id]?.variants||[]).length})).sort((a,b)=>(a.n>0)-(b.n>0));
+  if(!j){ box.innerHTML=head+'<p class="hint">هنوز تحلیلی برای این قسمت نیست (اگر تازه فرستاده‌ای، یک دقیقه صبر کن).</p>'; bindEpHead(); return false; }
+  if(j.error){ box.innerHTML=head+`<p class="hint" style="color:var(--bad)">تحلیل خطا داد. ${/GROQ_API_KEY is not set/.test(j.message||'')?'کلید Groq هنوز در Secrets ریپو گذاشته نشده است.':'دلیل: '+(j.message||'نامشخص')}</p>`; bindEpHead(); return true; }
+  const ids=new Set(j.items.map(w=>w.id)); const extra=S.custom.filter(c=>!ids.has(c.id));
+  const L = [...j.items, ...extra].map(w=>({...w, n:(S.catalog.items[w.id]?.variants||[]).length})).sort((a,b)=>(a.n>0)-(b.n>0));
   const miss = L.filter(x=>x.n===0).length;
-  const tmp = document.createElement('div'); cards(tmp, L, false, `<p class="hint">این قسمت ${fa(L.length)} شیء لازم دارد؛ ${fa(miss)} مورد را هنوز نداریم (بالای فهرست). مواردی که در کتابخانه هست دوباره ساخته نمی‌شود.</p>`);
+  const tmp = document.createElement('div'); cards(tmp, L, true, `<p class="hint"><b>${ep}</b>: ${fa(L.length)} تصویر لازم است؛ ${fa(miss)} مورد را هنوز نداریم (بالای فهرست). هر مورد را همین‌جا آپلود کن؛ آنچه در کتابخانه هست دوباره ساخته نمی‌شود.${S.pending?` · ${fa(S.pending)} تصویر در صف پردازش`:''}</p>`);
   const have=L.length-miss; const bs=$('#bCover'); if(bs) bs.textContent=`تصاویر این قسمت: ${fa(have)} از ${fa(L.length)} آماده است. هرچه بیشتر باشد، ویدیو بهتر و مرتبط‌تر می‌شود.`;
-  box.innerHTML=''; while(tmp.firstChild) box.appendChild(tmp.firstChild);
+  box.innerHTML=head; while(tmp.firstChild) box.appendChild(tmp.firstChild); bindEpHead();
   return true;
 }
 async function sendEp(){
@@ -313,8 +316,8 @@ async function sendEp(){
     await api('/contents/episodes/'+ep+'/script.txt',{method:'PUT',body:JSON.stringify({message:'episode script: '+ep,content:enc(text),branch:'main',sha})});
     ls.set('curEp',ep); st.className='st ok'; st.textContent='ارسال شد؛ تحلیل حدود یک تا دو دقیقه طول می‌کشد…';
     for(let k=0;k<30;k++){ await sleep(8000); let n; try{ n=(await api('/contents/episodes/'+ep+'/needs.json')).sha }catch(e){}
-      if(n && n!==oldN){ await loadAll(true); await showNeeds(ep); st.textContent='فهرست آماده شد'; return; } }
-    st.className='st bad'; st.textContent='هنوز آماده نشد؛ بعداً از «قسمت‌های قبلی» باز کن.';
+      if(n && n!==oldN){ S.eps=[...new Set([...(S.eps||[]),ep])]; await loadAll(true); await showNeeds(ep); st.textContent='فهرست آماده شد؛ تب «مورد نیاز» را ببین'; toast('✓ تحلیل تمام شد؛ تصویرهای لازم در «مورد نیاز» است'); document.querySelector('.tabs button[data-t=want]').click(); return; } }
+    st.className='st bad'; st.textContent='هنوز آماده نشد؛ بعداً از تب «مورد نیاز» همان قسمت را انتخاب کن.';
   }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message; }
 }
 function renderLib(){
