@@ -5,6 +5,7 @@ PREF = ['gpt-oss-120b', 'llama-4-maverick', 'llama-3.3-70b', 'qwen', 'gpt-oss-20
 BAD = ('whisper', 'guard', 'tts', 'orpheus', 'embed', 'compound', 'safeguard', 'distil')
 API = 'https://api.groq.com/openai/v1'
 _model = None
+_bad = set()   # models whose daily/long rate limit is used up; each Groq model has its own quota
 
 def _req(path, payload=None):
     key = os.environ.get('GROQ_API_KEY', '')
@@ -17,12 +18,15 @@ def model():
     global _model
     if _model: return _model
     ids = [m['id'] for m in _req('/models')['data'] if not any(b in m['id'].lower() for b in BAD)]
+    ids = [i for i in ids if i not in _bad]
+    if not ids: sys.exit('Groq: every model has hit its rate limit; try again later')
     for p in PREF:
         for i in ids:
             if p in i.lower(): _model = i; print('model:', i); return i
     _model = ids[0]; return _model
 
 def chat(system, user, max_tokens=4000, json_mode=False, temperature=.3, tries=7):
+    global _model
     effort = True
     msgs = [{'role': 'system', 'content': system}, {'role': 'user', 'content': user}]
     last = ''
@@ -38,6 +42,9 @@ def chat(system, user, max_tokens=4000, json_mode=False, temperature=.3, tries=7
             if e.code in (429, 500, 502, 503):
                 m = re.search(r'try again in ([\d.]+)(ms|s|m)', body); w = 20 * (k + 1)
                 if m: w = float(m.group(1)) * {'ms': .001, 's': 1, 'm': 60}[m.group(2)] + 2
+                if w > 60 or 'per day' in body.lower():
+                    print('model %s is rate limited for a long time (%.0fs): switching model' % (model(), w))
+                    _bad.add(_model); _model = None; continue
                 print('rate limited, waiting %.0fs' % w); time.sleep(min(w, 120)); continue
             sys.exit('Groq error ' + last)
     sys.exit('Groq failed: ' + last)
