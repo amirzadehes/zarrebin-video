@@ -1,3 +1,9 @@
+whisper-aligned words: 95%
+engine edge fa-IR-FaridNeural | sentences 37 words 515 seconds 247.9
+using only this episode's objects: 2 of 37 planned
 model: openai/gpt-oss-120b
-gemini tts: HTTP 429 {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 20m2s or upgrade your tier at https://ai.dev/rate-limit.","code":"too_many_requests"}}
-Gemini TTS daily free limit reached (10 requests/day): {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 20m2s or upgrade your tier at https://ai.dev/rate-limit.","code":"too
+rate limited, waiting 4s
+rate limited, waiting 10s
+scenes 31 total 249.15 templates {'hero': 7, 'duo': 0, 'trio': 0, 'statement': 24, 'stat': 0}
+sfx events 183 peak 0.57 seconds 250.2
+GROQ_API_KEY is not set (repo Settings > Secrets > Actions)
