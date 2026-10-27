@@ -46,6 +46,8 @@ jobs:
           python tools/direct_scenes.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
       - name: Sound effects
         run: python tools/make_sfx.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
+      - name: Background music
+        run: python tools/make_music.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
       - name: Save narration, scenes and log in the repo
         if: always()
         run: |
@@ -61,6 +63,7 @@ jobs:
             episodes/${{ steps.ep.outputs.ep }}/voice.mp3
             episodes/${{ steps.ep.outputs.ep }}/scenes.json
             episodes/${{ steps.ep.outputs.ep }}/sfx.wav
+            episodes/${{ steps.ep.outputs.ep }}/music.wav
           retention-days: 2
   render:
     needs: prepare
@@ -102,7 +105,13 @@ jobs:
         run: |
           total="${{ needs.prepare.outputs.total }}"; v=$(find episode-data -name voice.mp3 | head -1); sfx=$(find episode-data -name sfx.wav | head -1)
           fade="afade=t=out:st=$(python3 -c "print(max(0,$total-0.6))"):d=0.6,apad,loudnorm=I=-14:TP=-2.2:LRA=11"
-          if [ -n "$sfx" ]; then inputs="-i $v -i $sfx"; fc="[1:a][2:a]amix=inputs=2:duration=first:weights=1 0.4:normalize=0,$fade[a]"; else inputs="-i $v"; fc="[1:a]$fade[a]"; fi
+          mus=$(find episode-data -name music.wav | head -1)
+          inputs="-i $v"; n=1; mix="[vo]"; w="1"
+          [ -n "$sfx" ] && { inputs="$inputs -i $sfx"; n=$((n+1)); mix="$mix[$n:a]"; w="$w 0.4"; }
+          if [ -n "$mus" ]; then inputs="$inputs -i $mus"; mi=$((n+1)); n=$((n+1)); mix="$mix[mduck]"; w="$w 1"
+            fc="[1:a]asplit=2[vo][key];[$mi:a][key]sidechaincompress=threshold=0.015:ratio=6:attack=30:release=600:makeup=1[mduck];"
+          else fc="[1:a]anull[vo];"; fi
+          fc="$fc${mix}amix=inputs=$(echo $w | wc -w):duration=first:weights=$w:normalize=0,$fade[a]"
           for f in v h; do
             ls parts | grep "^${f}_" | sort -V | sed "s|^|file parts/|" > list_$f.txt
             [ -s list_$f.txt ] || continue
