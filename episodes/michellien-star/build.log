@@ -1,7 +1,4 @@
-model: openai/gpt-oss-120b
-chunk 0 sentences 39 seconds 234.2
-whisper-aligned words: 95%
-engine gemini Algieba | sentences 39 words 501 seconds 234.7
+reusing the saved voice (same text, engine and voice) - no new TTS request
 using only this episode's objects: 2 of 37 planned
 model: openai/gpt-oss-120b
 scenes 25 total 235.86 templates {'hero': 0, 'duo': 0, 'trio': 0, 'statement': 25, 'stat': 0}
