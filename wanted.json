@@ -219,5 +219,11 @@
    "thief",
    "hack"
   ]
+ },
+ {
+  "id": "secret-inspector",
+  "en": "inspector wearing black raincoat",
+  "fa": "بازرس با بارونی مشکی",
+  "tags": []
  }
 ]
