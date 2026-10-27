@@ -53,6 +53,10 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 .vrow .vname small{display:block;color:var(--mut);font-size:11px;direction:rtl;text-align:right}
 .vrow .btn,.vrow button{min-height:40px;padding:0 12px;flex:0 0 auto}
 .vrow .vdel{padding:0 10px}
+.prog{margin:10px 0 4px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#17120f}
+.prog .bar{height:12px;border-radius:99px;background:#2d241d;overflow:hidden;margin:8px 0}
+.prog .bar i{display:block;height:100%;background:var(--acc);border-radius:99px;transition:width .6s}
+.prog .top{display:flex;justify-content:space-between;align-items:baseline;font-size:14px}
 .hint{color:var(--mut);font-size:13px;line-height:1.7}
 #toast{position:fixed;inset-inline:16px;bottom:calc(16px + env(safe-area-inset-bottom));background:var(--acc);color:var(--acc-tx);padding:12px 16px;border-radius:14px;text-align:center;transform:translateY(160%);transition:.25s;z-index:20}
 #toast.show{transform:none}
@@ -197,6 +201,7 @@ async function renderEp(){
     <div class="row"><button class="pri" id="epSend">ارسال و تحلیل</button></div><div class="st" id="epSt"></div></div>
     ${eps.length?`<div class="card"><label>قسمت‌های قبلی</label><div class="row" id="epList">${eps.map(e=>`<button data-e="${e}">${e}</button>`).join('')}</div></div>`:''}
     <div class="card" id="epBuild"><div class="name">ساخت ویدیو</div>
+      <div id="bProg" class="prog" hidden></div>
       <label>طول تقریبی ویدیو (اگر صدای خودت را بدهی، طول ویدیو دقیقاً به اندازه‌ی صدای توست و این گزینه نادیده گرفته می‌شود)</label>
       <select id="bMin" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="3">حدود ۳ دقیقه (آزمایشی)</option><option value="5">حدود ۵ دقیقه</option><option value="7" selected>حدود ۷ دقیقه</option><option value="8">حدود ۸ دقیقه</option></select>
       <label>صدای خودت (اختیاری): اگر فایل صدا انتخاب کنی، به‌جای صدای هوش مصنوعی همان استفاده می‌شود</label>
@@ -222,6 +227,26 @@ async function renderEp(){
   if(cur){ showNeeds(cur); readText(cur); }
 }
 async function readText(ep){ try{ const j=await api('/contents/episodes/'+ep+'/script.txt'); $('#epText').value=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))); }catch(e){} }
+const STEPFA=[[/Narration/,'نوشتن روایت و ساخت صدا'],[/Scene director/,'طراحی صحنه‌ها'],[/Sound effects/,'ساخت افکت‌های صوتی'],[/Background music/,'انتخاب موزیک'],[/Save narration/,'ذخیره‌ی نتایج'],[/Render chunk/,'رندر تصویر'],[/Join/,'ترکیب نهایی و بهینه‌سازی حجم'],[/Publish/,'انتشار ویدیو']];
+async function buildStatus(){
+  const box=$('#bProg'); if(!box || document.hidden) return;
+  try{ const runs=(await api('/actions/runs?per_page=6')).workflow_runs.filter(r=>r.name==='Make video'); const r=runs[0];
+    if(!r){ box.hidden=true; return }
+    if(r.status==='completed'){ const recent=Date.now()-new Date(r.updated_at)<45*60000;
+      if(recent && r.conclusion==='failure'){ box.hidden=false; box.innerHTML='<div class="top"><b style="color:var(--bad)">ساخت آخر ناموفق بود</b></div><div class="hint">دلیلش پایین، در پیام وضعیت یا در «build.log» قسمت نوشته می‌شود.</div>' }
+      else box.hidden=true; return }
+    const jobs=(await api('/actions/runs/'+r.id+'/jobs?per_page=100')).jobs; let pct=0, label='در صف شروع';
+    const frac=j=>{ const s=j.steps||[]; if(!s.length) return j.status==='completed'?1:0; return s.filter(x=>x.status==='completed').length/s.length };
+    const prep=jobs.find(j=>j.name==='prepare'), ren=jobs.filter(j=>/^render/.test(j.name)), mer=jobs.find(j=>j.name==='merge');
+    if(prep){ pct+=25*frac(prep); label='آماده‌سازی' }
+    if(ren.length){ pct+=65*ren.reduce((a,j)=>a+frac(j),0)/ren.length; const done=ren.filter(j=>j.status==='completed').length; label=`رندر تصویر (${fa(done)} از ${fa(ren.length)} بخش)` }
+    if(mer){ pct+=10*frac(mer); if(mer.status!=='queued') label='ترکیب نهایی و بهینه‌سازی حجم' }
+    const cur=[prep,mer,...ren].filter(Boolean).flatMap(j=>j.steps||[]).find(s=>s.status==='in_progress'); if(cur && !ren.length){ const m=STEPFA.find(x=>x[0].test(cur.name)); if(m) label=m[1] }
+    pct=Math.max(2,Math.min(99,Math.round(pct))); const mins=Math.max(0,Math.round((Date.now()-new Date(r.created_at))/60000));
+    box.hidden=false; box.innerHTML=`<div class="top"><b>در حال ساخت ویدیو…</b><b style="color:var(--acc)">${fa(pct)}٪</b></div><div class="bar"><i style="width:${pct}%"></i></div><div class="hint">${label} · ${fa(mins)} دقیقه گذشته</div>`;
+  }catch(e){}
+}
+setInterval(buildStatus,10000); setTimeout(buildStatus,1500);
 async function loadVids(){
   const box=$('#vids'); if(!box) return;
   try{ const rel=(await api('/releases?per_page=30')).filter(r=>!/^voices?-/.test(r.tag_name)&&!/sample/i.test(r.name||'')).slice(0,12);
@@ -254,7 +279,7 @@ async function buildVideo(){
         await api('/contents/episodes/'+ep+'/spoken.txt',{method:'PUT',body:JSON.stringify({message:'spoken text: '+ep,content:enc(txt),branch:'main',sha:ssha})}); } }
     let sha; try{ sha=(await api('/contents/episodes/'+ep+'/request.json')).sha }catch(e){}
     await api('/contents/episodes/'+ep+'/request.json',{method:'PUT',body:JSON.stringify({message:'build video: '+ep,content:enc(JSON.stringify(body)),branch:'main',sha})});
-    st.className='st ok'; st.textContent='شروع شد. حدود ۱۰ تا ۳۰ دقیقه بعد ویدیو در همین لیست می‌آید.';
+    st.className='st ok'; st.textContent='شروع شد. حدود ۱۰ تا ۳۰ دقیقه بعد ویدیو در همین لیست می‌آید.'; setTimeout(buildStatus,6000); setTimeout(buildStatus,20000);
     let logSha; try{ logSha=(await api('/contents/episodes/'+ep+'/build.log')).sha }catch(e){}
     for(let k=0;k<90;k++){ await sleep(30000); const before=$('#vids')?.textContent.length||0; await loadVids(); if(($('#vids')?.textContent.length||0)!==before){ st.textContent='ویدیو آماده شد!'; return }
       try{ const j=await api('/contents/episodes/'+ep+'/build.log'); if(j.sha!==logSha){ const txt=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0)));
