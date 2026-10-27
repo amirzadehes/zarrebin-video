@@ -45,6 +45,21 @@ function vbg(t, th, sc) {
   if (PAPER) { ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .22; ctx.fillStyle = PAPER; ctx.fillRect(-300, -300, W + 600, H + 600); ctx.restore() }
 }
 let CUR = null; const VT = sc => VTHEMES[((sc || CUR).theme || 0) % VTHEMES.length];
+/* palettes: chosen in the app (meta.palette) or one custom base colour (meta.base) */
+function hex2hsl(h) { const n = parseInt(h.slice(1), 16), r = (n >> 16) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2; let hh = 0, ss = 0;
+  if (mx !== mn) { const d = mx - mn; ss = l > .5 ? d / (2 - mx - mn) : d / (mx + mn); hh = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; hh *= 60 } return [hh, ss, l] }
+function hsl2hex(h, s, l) { h = ((h % 360) + 360) % 360; const a = s * Math.min(l, 1 - l), f = n => { const k = (n + h / 30) % 12, c = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)); return Math.round(255 * c).toString(16).padStart(2, '0') }; return '#' + f(0) + f(8) + f(4) }
+const lumOf = h => { const [, , l] = hex2hsl(h); return l };
+function comicTheme(base) { const [h, s, l] = hex2hsl(base); return { base, dot: hsl2hex(h, s, Math.max(l - .1, .05)), ray: hsl2hex(h, s, Math.min(l + .08, .95)), ra: l > .55 ? .6 : .75, dark: l < .5 } }
+const COMIC_PAL = { warm: ['#ff9d1c', '#f4c430', '#a3182b', '#c4521a', '#e8553d', '#8a4b1f', '#e0a800', '#7a0f1e'], cool: ['#2a7de1', '#0f4c5c', '#1f8a4c', '#171a3e', '#4a2c8a', '#12807a', '#3b5bdb', '#0b6e99'], pop: ['#c4166a', '#f4c430', '#171a3e', '#c4166a', '#f4c430', '#171a3e', '#ff6a00', '#2a7de1'] };
+const VOX_PAL = { cream: ['#f1e9d6', '#ece3cd', '#f4edda', '#e8dec6', '#f0e6d0', '#eadfc8', '#f3ebd8', '#e9e0ca'], grey: ['#d3cfc6', '#c9c5bb', '#dad6cd', '#c1bdb3', '#d0ccc2', '#cbc7bd', '#d7d3ca', '#c6c2b8'], dark: ['#7b6a52', '#6f5f49', '#85745b', '#67573f', '#76664e', '#6c5c45', '#80705a', '#705f48'] };
+function applyPalette(meta) {
+  const pal = meta.palette || '', base = /^#[0-9a-f]{6}$/i.test(meta.base || '') ? meta.base : null;
+  if (VOX) { let bases = VOX_PAL[pal]; if (base) { const [h, s, l] = hex2hsl(base); bases = [0, 1, 2, 3, 4, 5, 6, 7].map(i => hsl2hex(h + (i % 4 - 1.5) * 3, s, clamp(l + (i % 3 - 1) * .025, .05, .95))) }
+    if (bases) bases.forEach((b, i) => { const [h, s, l] = hex2hsl(b); VTHEMES[i] = { ...VTHEMES[i], base: b, sh: hsl2hex(h, s, Math.max(l - .07, .03)), dark: l < .35 } }) }
+  else { let bases = COMIC_PAL[pal]; if (base) { const [h, s, l] = hex2hsl(base); bases = [0, 1, 2, 3, 4, 5, 6, 7].map(i => hsl2hex(h + [0, 25, -25, 50, -50, 180, 150, 210][i], s, clamp(l + [0, .08, -.08, 0, .1, -.15, .05, -.05][i], .1, .85))) }
+    if (bases) bases.forEach((b, i) => { THEMES[i] = comicTheme(b) }) }
+}
 let D = null; const IM = {};
 function loadImg(src) { return new Promise(r => { const i = new Image(); i.onload = () => { IM[src] = i; r() }; i.onerror = () => r(); i.src = '../' + src }) }
 
@@ -151,8 +166,8 @@ const TPL = {
     if (sc.text) { const e = spr(t, sc.t0 + .4, .5, 12); if (e > 0) { card(W / 2, V ? c.y0 + 50 : c.y0 - 10, W * (V ? .8 : .5), B * .12, '#fff', .02, 1, e); ctx.save(); ctx.translate(W / 2, (V ? c.y0 + 50 : c.y0 - 10) + 4); ctx.scale(e, e); drawText(sc.text, 0, 0, B * .06, W * (V ? .76 : .46), {}); ctx.restore() } }
   },
   trio(t, sc) {
-    const c = CONTENT(), its = sc.items, n = Math.max(its.length, 1), sz = B * (n > 3 ? .36 : V ? .44 : .46);
-    its.forEach((it, i) => { let x, y; if (V) { const rows = n; y = c.y0 + 110 + (c.y1 - c.y0 - 130) * (i + .5) / rows; x = W * (i % 2 ? .66 : .34) } else { x = W * (i + .5) / n; y = H * .46 + (i % 2 ? 40 : -30) }
+    const c = CONTENT(), its = sc.items, n = Math.max(its.length, 1), sz = B * (n > 3 ? (V ? .46 : .36) : V ? .44 : .46);
+    its.forEach((it, i) => { let x, y; if (V && n > 3) { const rows = Math.ceil(n / 2); y = c.y0 + 150 + (c.y1 - c.y0 - 190) * (Math.floor(i / 2) + .5) / rows; x = (n % 2 && i === n - 1) ? W * .5 : W * (i % 2 ? .72 : .28) } else if (V) { const rows = n; y = c.y0 + 110 + (c.y1 - c.y0 - 130) * (i + .5) / rows; x = W * (i % 2 ? .66 : .34) } else { x = W * (i + .5) / n; y = H * .46 + (i % 2 ? 40 : -30) }
       drawItem(it, t, x, y, sz, i) });
     if (sc.text) { const e = spr(t, sc.t0 + .3, .5, 12); if (e > 0) { const y = V ? c.y0 + 50 : c.y0 - 10; card(W / 2, y, W * (V ? .82 : .5), B * .12, '#ffe15a', -.02, 1, e); ctx.save(); ctx.translate(W / 2, y + 4); ctx.scale(e, e); drawText(sc.text, 0, 0, B * .06, W * (V ? .78 : .46), {}); ctx.restore() } }
   },
@@ -174,8 +189,8 @@ const TPL = {
   }
 };
 function its_corner(t, sc, c) { // items peek in from the corners around a text/number card
-  const pos = V ? [[W * .17, c.y0 + 110], [W * .84, c.y1 - 90], [W * .8, c.y0 + 90]] : [[W * .12, H * .3], [W * .88, H * .68], [W * .86, H * .28]];
-  sc.items.slice(0, 3).forEach((it, i) => drawItem(it, t, pos[i][0], pos[i][1], B * (V ? .36 : .38), i + 2))
+  const pos = V ? [[W * .17, c.y0 + 110], [W * .84, c.y1 - 90], [W * .8, c.y0 + 90], [W * .16, c.y1 - 100]] : [[W * .12, H * .3], [W * .88, H * .68], [W * .86, H * .28], [W * .12, H * .72]];
+  sc.items.slice(0, 4).forEach((it, i) => drawItem(it, t, pos[i][0], pos[i][1], B * (V ? .36 : .38), i + 2))
 }
 
 /* ---------- scene, wipe, camera ---------- */
@@ -220,7 +235,7 @@ function subs(t) {
     if (rtl) x -= sp; else x += w.mw + sp }); ctx.restore()
 }
 function uiVox(t) {
-  const y0 = V ? 1400 : H - 230, g = ctx.createLinearGradient(0, y0, 0, H); g.addColorStop(0, 'rgba(25,15,5,0)'); g.addColorStop(1, 'rgba(25,15,5,.72)'); ctx.fillStyle = g; ctx.fillRect(0, y0, W, H - y0);
+  const y0 = V ? 1330 : H - 280, g = ctx.createLinearGradient(0, y0, 0, H); g.addColorStop(0, 'rgba(25,15,5,0)'); g.addColorStop(.45, 'rgba(25,15,5,.55)'); g.addColorStop(1, 'rgba(25,15,5,.9)'); ctx.fillStyle = g; ctx.fillRect(0, y0, W, H - y0);
   const m = V ? 70 : 90, ty = V ? 98 : 70, bw = W - 2 * m; ctx.save(); ctx.fillStyle = '#2a1f14'; ctx.globalAlpha = .75; ctx.font = '700 30px Vz'; ctx.textAlign = 'left'; ctx.direction = 'ltr'; ctx.fillText(D.meta.topLabel || '', m, ty);
   ctx.font = '900 38px Vz'; ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.fillText('ذره‌بین', W - m, ty + 2);
   const by = ty + 54; ctx.globalAlpha = .18; ctx.fillRect(m, by, bw, 4); ctx.globalAlpha = .8; const pr = clamp(t / D.meta.total); ctx.fillRect(D.meta.rtl ? m + bw * (1 - pr) : m, by, bw * pr, 4); ctx.restore()
@@ -245,7 +260,7 @@ function draw(t) {
 window.frame = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0); if (MB) { draw(t + .6 / 30); octx.globalAlpha = .5; octx.drawImage(cv, 0, 0); octx.globalAlpha = 1 } };
 window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
 window.ready = (async () => {
-  D = await (await fetch('../episodes/' + EP + '/scenes.json?' + Date.now())).json(); VOX = (Q.get('style') || D.meta.style) === 'vox';
+  D = await (await fetch('../episodes/' + EP + '/scenes.json?' + Date.now())).json(); VOX = (Q.get('style') || D.meta.style) === 'vox'; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
   D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach(s => { (s.items || []).forEach(i => srcs.add(i.src)); (s.decor || []).forEach(d => srcs.add(d)) });
   await Promise.all([...[...srcs].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
   mkGrain(); mkPaper(); buildCaptions(); seek(0); return true

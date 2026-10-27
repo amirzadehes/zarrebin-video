@@ -34,11 +34,15 @@ SYSTEM = """تو کارگردان هنری یک ویدیوی توضیحی انی
 اگر شیء مناسب نبود، قالب statement یا hero با شیء کمتر بگذار. برای هر شیء، در فیلد at یک کلمه (دقیقاً همان‌طور که در جمله آمده) بنویس که با گفتنش شیء وارد می‌شود.
 text یک عبارت بسیار کوتاه فارسی (حداکثر ۶ کلمه برای برچسب، حداکثر ۱۰ کلمه برای statement) است و کلمه‌ی مهم را بین دو ستاره بگذار، مثل: *انرژی* مغز.
 kw فهرست حداکثر ۳ کلمه‌ی مهم همان صحنه برای هایلایت زیرنویس است (دقیقاً از متن جمله‌ها). decor حداکثر ۲ شناسه برای تزئین پس‌زمینه است (اختیاری، مرتبط با موضوع).
+استفاده از تصویرها: ویدیو هرچه تصویرهای بیشتری داشته باشد جذاب‌تر است. تقریباً هر صحنه‌ی غیر از statement باید ۲ تا ۵ شیء مرتبط داشته باشد (hero: یک شیء بزرگ + تا ۳ شیء کوچک؛ trio: ۳ تا ۵ شیء؛ duo دقیقاً ۲ شیء).
+هر شیءِ فهرست را باید دست‌کم یک‌بار در کل ویدیو در صحنه‌ای که واقعاً به آن مربوط است بیاوری. شیء نامرتبط را هرگز فقط برای پرکردن نگذار.
+اشیای «اولویت‌دار» مال همین قسمت هستند و باید حتماً استفاده شوند؛ اشیای «سایر» فقط اگر دقیقاً مرتبط بودند.
 خروجی فقط JSON: {"scenes":[{"from":0,"to":1,"tpl":"hero","items":[{"id":"...","at":"..."}],"text":"...","number":"","link":"vs","decor":[],"kw":[]}]}"""
 
-def direct(ep, T, lib):
+def direct(ep, T, lib, prio=None):
     S = T['sentences']; scenes = []; prev = ''
-    ids = ', '.join(f"{i}={v.get('fa','')}" for i, v in sorted(lib.items()))
+    prio = prio or set()
+    ids = 'اولویت‌دار: ' + ', '.join(f"{i}={v.get('fa','')}" for i, v in sorted(lib.items()) if i in prio) + '\nسایر: ' + ', '.join(f"{i}={v.get('fa','')}" for i, v in sorted(lib.items()) if i not in prio)
     B = 12
     for b in range(0, len(S), B):
         chunk = S[b:b + B]
@@ -49,6 +53,31 @@ def direct(ep, T, lib):
         got = [o for o in got if b <= o['from'] < b + B] or [{'from': b, 'to': min(b + B, len(S)) - 1, 'tpl': 'statement'}]
         scenes += got; prev = got[-1].get('tpl', '')
     return scenes
+
+def cover_missing(T, raw, lib, prio):
+    """every priority image of this episode that the director did not use gets placed in the scene whose sentence fits it best"""
+    used = {it.get('id') for r in raw for it in (r.get('items') or []) if isinstance(it, dict)}
+    miss = sorted(i for i in prio if i in lib and i not in used)
+    if not miss: return raw
+    S = T['sentences']
+    try:
+        user = 'تصویرهای استفاده‌نشده:\n' + '\n'.join(f"{i}={lib[i].get('fa','')} ({lib[i].get('en','')})" for i in miss) + '\n\nجمله‌ها:\n' + '\n'.join(f"{s['i']}|{s['text'][:90]}" for s in S)
+        a = groqlib.chat('برای هر تصویر استفاده‌نشده بهترین جمله‌ی مرتبط را از فهرست جمله‌ها انتخاب کن. اگر هیچ جمله‌ای واقعاً مرتبط نیست آن تصویر را حذف کن. خروجی فقط JSON: {"place":[{"id":"...","sentence":0}]}',
+                         user, max_tokens=2500, json_mode=True, temperature=.2)
+        place = [o for o in groqlib.objects(a, 'sentence') if o.get('id') in lib and isinstance(o.get('sentence'), int)]
+    except (Exception, SystemExit) as e:
+        print('coverage pass skipped:', e); return raw
+    add = 0
+    for o in place:
+        for r in raw:
+            if isinstance(r.get('from'), int) and r['from'] <= o['sentence'] <= r.get('to', r['from']):
+                its = r.setdefault('items', [])
+                if len(its) < 5 and not any(isinstance(x, dict) and x.get('id') == o['id'] for x in its):
+                    its.append({'id': o['id'], 'sent': o['sentence']}); add += 1
+                    if r.get('tpl') in ('statement', 'stat'): r['_up'] = True
+                break
+    print('coverage pass: placed', add, 'of', len(miss), 'unused priority images')
+    return raw
 
 def compile_scenes(ep, T, raw, lib, req):
     S, Wd = T['sentences'], T['words']; n = len(S); total = round(T['voice_seconds'] + 1.2, 2)
@@ -84,6 +113,7 @@ def compile_scenes(ep, T, raw, lib, req):
             iid = it.get('id') if isinstance(it, dict) else None
             if iid not in lib or any(x['id'] == iid for x in its): continue
             at = norm(it.get('at', '')); tt = None
+            if isinstance(it.get('sent'), int) and 0 <= it['sent'] < n: tt = S[it['sent']]['t0'] + .3
             if at:
                 for w in words:
                     if w['t0'] >= last_t - .05 and (at in norm(w['w']) or (len(norm(w['w'])) > 2 and norm(w['w']) in at)): tt = w['t0']; break
@@ -99,6 +129,9 @@ def compile_scenes(ep, T, raw, lib, req):
         for j, it in enumerate(its):
             v = lib[it['id']]['variants']; it['src'] = 'library/' + v[uses.get(it['id'], 0) % len(v)]; uses[it['id']] = uses.get(it['id'], 0) + 1
             it['en'] = ('pop' if j == 0 and tpl == 'hero' else ENTS[(k * 2 + j) % len(ENTS)])
+        if r.get('_up') and tpl in ('statement',) and its: tpl = 'hero' if len(its) < 3 else 'trio'
+        if tpl == 'duo' and len(its) > 2: tpl = 'trio'
+        if tpl == 'hero' and len(its) > 4: tpl = 'trio'
         text = (r.get('text') or '').strip(); number = (r.get('number') or '').strip()
         if tpl == 'stat' and not number: tpl = 'statement'
         if tpl in ('duo',) and len(its) < 2: tpl = 'hero' if its else 'statement'
@@ -120,7 +153,7 @@ def compile_scenes(ep, T, raw, lib, req):
             sc['text'] = fadig(sc['text']); sc['number'] = fadig(sc['number']) if sc.get('number') else None
             if sc['number'] is None: sc.pop('number')
     for w in Wd: w['kw'] = bool(norm(w['w'])) and any(len(q) > 1 and q in norm(w['w']) for q in kwall)
-    meta = {'total': total, 'rtl': T.get('lang', 'fa') == 'fa', 'topLabel': req.get('label') or ep.upper().replace('-', ' '), 'lang': T.get('lang', 'fa'), 'episode': ep, 'style': req.get('style', 'comic')}
+    meta = {'total': total, 'rtl': T.get('lang', 'fa') == 'fa', 'topLabel': req.get('label') or ep.upper().replace('-', ' '), 'lang': T.get('lang', 'fa'), 'episode': ep, 'style': req.get('style', 'comic'), 'palette': req.get('palette', ''), 'base': req.get('base', '')}
     json.dump({'meta': meta, 'words': Wd, 'scenes': scenes}, open(f'episodes/{ep}/scenes.json', 'w', encoding='utf8'), ensure_ascii=False)
     return meta, scenes
 
@@ -128,13 +161,14 @@ def main(ep):
     d = f'episodes/{ep}'; T = load(f'{d}/timing.json', None); req = load(f'{d}/request.json', {})
     if not T: sys.exit('timing.json missing; run narrate_tts.py first')
     lib = library()
-    needs = load(f'{d}/needs.json', {}).get('items') or []
-    if needs and not req.get('all_library'):
-        ids = {n['id'] for n in needs}; lib = {i: v for i, v in lib.items() if i in ids}
-        print('using only this episode\'s objects:', len(lib), 'of', len(ids), 'planned')
+    needs = load(f'{d}/needs.json', {}).get('items') or []; prio = {n['id'] for n in needs} & set(lib)
+    if req.get('only_needs'):
+        lib = {i: v for i, v in lib.items() if i in prio}; print('using only this episode\'s objects:', len(lib))
+    else: print('library images offered to the director:', len(lib), '| priority (this episode):', len(prio))
     raw = load(f'{d}/director.json', None) if req.get('keep_direction') else None
     if raw is None:
-        raw = direct(ep, T, lib); json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
+        raw = direct(ep, T, lib, prio); raw = cover_missing(T, raw, lib, prio)
+        json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
     meta, scenes = compile_scenes(ep, T, raw, lib, req)
     print('scenes', len(scenes), 'total', meta['total'], 'templates', {t: sum(1 for s in scenes if s['tpl'] == t) for t in TPLS})
     # render plan for the workflow

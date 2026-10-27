@@ -210,6 +210,9 @@ async function renderEp(){
       <label><input type="checkbox" id="bSfx" checked> افکت‌های صوتی ریز (پاپ، ویژ، دینگ)</label>
       <label>سبک تصویر</label>
       <select id="bStyle" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="comic" selected>کمیک (رنگارنگ و پرانرژی)</option><option value="vox">ووکس (ساده، مدرن، شبیه ویدیوهای توضیحی Vox)</option></select>
+      <label>پالت رنگی</label>
+      <select id="bPal" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"></select>
+      <label style="display:flex;align-items:center;gap:10px;margin-top:10px"><input type="checkbox" id="bBaseOn"> رنگ دلخواه خودم <input type="color" id="bBase" value="#c4166a" style="width:54px;height:36px;border:0;background:none"></label>
       <label>موزیک پس‌زمینه (رایگان، ساخته‌شده توسط خودمان، زیر صدا آرام می‌شود)</label>
       <select id="bMusic" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="auto" selected>خودکار (از موزیک‌های آپلودشده، بر اساس موضوع)</option><option value="calm">آرام و گرم</option><option value="curious">کنجکاو و علمی</option><option value="mystery">رازآلود</option><option value="upbeat">شاد و پرانرژی</option><option value="dramatic">جدی و دراماتیک</option><option value="synth">موزیک ساخته‌شده با کد (ساده)</option><option value="none">بدون موزیک</option></select>
       <label>صدای راوی هوش مصنوعی </label>
@@ -220,6 +223,7 @@ async function renderEp(){
       <p class="hint">بعد از زدن دکمه حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد. می‌توانی اپ را ببندی؛ ویدیوی آماده در لیست زیر می‌آید.</p>
       <div id="vids"></div></div>
     <div id="epNeeds"></div>`;
+  fillPal(); $('#bPal').value=ls.get('pal_'+S.style,''); $('#bPal').onchange=()=>ls.set('pal_'+S.style,$('#bPal').value);
   $('#bStyle').value=S.style; $('#bStyle').onchange=()=>setStyle($('#bStyle').value);
   $('#bGo').onclick = buildVideo; loadVids();
   el.querySelectorAll('#epList button').forEach(b=>b.onclick=()=>{ ls.set('curEp',b.dataset.e); $('#epName').value=b.dataset.e; showNeeds(b.dataset.e); readText(b.dataset.e); });
@@ -268,7 +272,7 @@ async function buildVideo(){
   if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس (همان که متن را با آن فرستادی)'; return; }
   const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
   try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده'; return; }
-  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.music=$('#bMusic').value; body.style=S.style;
+  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.music=$('#bMusic').value; body.style=S.style; body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
   st.className='st'; st.textContent='در حال شروع…';
   try{
     if(ownF){ st.className='st'; st.textContent='در حال آپلود صدا…'; const ext=(ownF.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -372,7 +376,9 @@ async function watchUpload(n){
 /* ---------- settings / tabs ---------- */
 $('#btnSet').onclick=()=>{ $('#settings').hidden=!$('#settings').hidden; };
 $('#repo').value=S.repo; $('#token').value=S.token;
-function setStyle(v,quiet){ S.style=v; ls.set('style',v); const a=$('#tplStyle'), b=$('#bStyle'); if(a) a.value=v; if(b) b.value=v; document.querySelectorAll('.styleNote').forEach(e=>e.textContent=styleNote()); if(!quiet) toast(v==='vox'?'سبک ووکس: پرامپت عکس و ویدیو عوض شد ✓':'سبک کمیک: پرامپت عکس و ویدیو عوض شد ✓') }
+const PALS={comic:[['','پیش‌فرض (رنگارنگ)'],['warm','گرم: نارنجی، زرد، قرمز'],['cool','سرد: آبی، سبز، بنفش'],['pop','پاپ: سرخابی، زرد، سرمه‌ای']],vox:[['','کاغذ کهنه (پیش‌فرض)'],['cream','کاغذ روشن و کرم'],['grey','کاغذ روزنامه‌ی خاکستری'],['dark','کاغذ تیره و قهوه‌ای']]};
+function fillPal(){ const el=$('#bPal'); if(!el) return; el.innerHTML=PALS[S.style].map(([v,t])=>`<option value="${v}">${t}</option>`).join(''); el.value=ls.get('pal_'+S.style,'') }
+function setStyle(v,quiet){ S.style=v; fillPal(); ls.set('style',v); const a=$('#tplStyle'), b=$('#bStyle'); if(a) a.value=v; if(b) b.value=v; document.querySelectorAll('.styleNote').forEach(e=>e.textContent=styleNote()); if(!quiet) toast(v==='vox'?'سبک ووکس: پرامپت عکس و ویدیو عوض شد ✓':'سبک کمیک: پرامپت عکس و ویدیو عوض شد ✓') }
 const styleNote=()=>'سبک فعلی پرامپت عکس: '+(S.style==='vox'?'ووکس (گراوور و عکس قدیمی رنگی)':'کمیک رنگی');
 $('#tplStyle').value=S.style; $('#tplStyle').onchange=()=>setStyle($('#tplStyle').value);
 $('#btnSave').onclick=async()=>{
