@@ -76,6 +76,12 @@ jobs:
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           for f in narration.txt narration.meta voice.mp3 timing.json scenes.json director.json build.log; do [ -f episodes/$ep/$f ] && git add episodes/$ep/$f; done
           git diff --cached --quiet || { git commit -qm "episode $ep: narration, scenes, log"; for i in 1 2 3 4 5 6; do git pull -q --rebase --autostash origin main && git push -q origin main && break; sleep 5; done; }
+      - name: Notify (review ready)
+        if: success() && steps.mode.outputs.review == 'true'
+        run: 'python tools/notify.py "بازبینی آماده است" "صحنه‌های ${{ steps.ep.outputs.ep }} آماده‌ی بازبینی‌اند."'
+      - name: Notify (failed)
+        if: failure()
+        run: 'python tools/notify.py "ساخت ناموفق بود" "${{ steps.ep.outputs.ep }}: در build.log دلیلش هست."'
       - uses: actions/upload-artifact@v4
         with:
           name: episode-data
@@ -122,6 +128,7 @@ jobs:
     if: needs.prepare.outputs.review != 'true'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: FedericoCarboni/setup-ffmpeg@v3
         id: ff1
         continue-on-error: true
@@ -156,3 +163,12 @@ jobs:
           [ -f final_v.mp4 ] && cp final_v.mp4 "${ep}_vertical.mp4" && files="$files ${ep}_vertical.mp4"
           [ -f final_h.mp4 ] && cp final_h.mp4 "${ep}_horizontal.mp4" && files="$files ${ep}_horizontal.mp4"
           gh release create "$tag" $files --title "$ep" --notes "Rendered automatically" -R "${{ github.repository }}"
+      - name: Notify (video ready)
+        run: 'python tools/notify.py "ویدیو آماده شد 🎬" "${{ needs.prepare.outputs.ep }} در لیست ویدیوهای اپ است."'
+  notify_fail:
+    needs: [prepare, render, merge]
+    if: always() && (needs.render.result == 'failure' || needs.merge.result == 'failure')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: 'python tools/notify.py "ساخت ویدیو ناموفق بود" "${{ needs.prepare.outputs.ep }}: رندر یا ترکیب خطا داد."'
