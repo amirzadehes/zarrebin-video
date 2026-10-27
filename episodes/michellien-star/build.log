@@ -1,27 +1,17 @@
+reusing the saved voice (same text, engine and voice) - no new TTS request
+library images offered to the director: 67 | priority (this episode): 33
 model: openai/gpt-oss-120b
-model openai/gpt-oss-120b is rate limited for a long time (1022s): switching model
+rate limited, waiting 10s
+model openai/gpt-oss-120b is rate limited for a long time (1262s): switching model
 model: qwen/qwen3.8-27b
-chunk 0 sentences 68 seconds 186.7
-chunk 1 sentences 41 seconds 129.4
-whisper-aligned words: 96%
-engine gemini Algieba | sentences 109 words 685 seconds 317.0
-using only this episode's objects: 27 of 37 planned
-model: openai/gpt-oss-120b
-model openai/gpt-oss-120b is rate limited for a long time (122s): switching model
-model: qwen/qwen3.8-27b
-rate limited, waiting 40s
-rate limited, waiting 41s
-rate limited, waiting 17s
+rate limited, waiting 23s
+rate limited, waiting 36s
 rate limited, waiting 37s
-rate limited, waiting 57s
-rate limited, waiting 28s
-rate limited, waiting 49s
-rate limited, waiting 49s
-rate limited, waiting 43s
-rate limited, waiting 48s
-rate limited, waiting 27s
-rate limited, waiting 25s
-rate limited, waiting 53s
-scenes 57 total 318.24 templates {'hero': 23, 'duo': 7, 'trio': 3, 'statement': 18, 'stat': 6}
-sfx events 312 peak 0.70 seconds 319.2
+rate limited, waiting 54s
+rate limited, waiting 45s
+rate limited, waiting 8s
+rate limited, waiting 9s
+coverage pass: placed 1 of 2 unused priority images
+scenes 51 total 318.24 templates {'hero': 17, 'duo': 13, 'trio': 5, 'statement': 14, 'stat': 2}
+sfx events 322 peak 0.59 seconds 319.2
 music off
