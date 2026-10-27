@@ -23,6 +23,7 @@ jobs:
           for round in 1 2 3 4 5 6; do
             git fetch -q origin main && git reset -q --hard origin/main
             python tools/rename_item.py
+            git diff --quiet library/catalog.json wanted.json episodes || python tools/find_similar.py || true
             git add -A
             if git diff --cached --quiet; then echo "nothing to do"; exit 0; fi
             git commit -qm "rename library item(s)"

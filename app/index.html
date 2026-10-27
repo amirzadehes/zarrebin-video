@@ -109,7 +109,7 @@ const $ = s => document.querySelector(s);
 const ls = { get:(k,d)=>{try{return localStorage.getItem(k)??d}catch(e){return d}}, set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}} };
 const fa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-let S = { repo: ls.get('repo','amirzadehes/zarrebin-video'), token: ls.get('token',''), style: ls.get('style','comic'), wanted: [], pool: [], genN: +ls.get('genN','30'), catalog: {items:{}}, report: {runs:[]}, pending: 0, custom: JSON.parse(ls.get('custom','[]')) };
+let S = { repo: ls.get('repo','amirzadehes/zarrebin-video'), token: ls.get('token',''), style: ls.get('style','comic'), wanted: [], pool: [], genN: +ls.get('genN','30'), catalog: {items:{}}, report: {runs:[]}, pending: 0, custom: JSON.parse(ls.get('custom','[]')), picks: {} };
 
 function toast(t, ms=3200){ const e=$('#toast'); e.textContent=t; e.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>e.classList.remove('show'), ms); }
 async function api(path, opt={}){
@@ -141,7 +141,7 @@ function items(){
   return list.map(w=>({ ...w, n: (S.catalog.items[w.id]?.variants||[]).length })).sort((a,b)=> (a.n>0)-(b.n>0));
 }
 function renderWant(){ showNeeds(ls.get('curEp','')) }
-function cards(el, L, withAdd, head){
+function cards(el, L, withAdd, head, ep){
   const missing = L.filter(x=>x.n===0).length;
   let h = `<p class="hint styleNote" style="color:var(--acc)">${styleNote()}</p>` + (head || `<p class="hint">${fa(missing)} مورد هنوز تصویر ندارد.${S.pending?` · ${fa(S.pending)} تصویر در انتظار پردازش`:''}</p>`);
   h += L.map(w=>{
@@ -157,13 +157,13 @@ function cards(el, L, withAdd, head){
           <button class="bCopy">کپی پرامپت</button>
           <label class="btn pri" style="display:grid;place-items:center;margin:0;color:var(--acc-tx)">آپلود تصویر<input type="file" accept="image/*" multiple hidden class="bFile"></label>
         </div>
+        ${w.sim&&w.sim.length?`<button class="bSim" style="width:100%;margin-top:8px">مشابه در کتابخانه (${fa(w.sim.length)})${(S.picks[w.id]||[]).length?` · ✓ ${fa(S.picks[w.id].length)} انتخاب‌شده`:''}</button><div class="simBox" hidden></div>`:''}
         <div class="st"></div>
       </div>
     </div>`}).join('');
   if(withAdd) h += `<div class="card"><div class="name">شیء جدید</div>
-     <label>نام شیء به انگلیسی (مثلاً: red apple)</label><input type="text" class="ltr" id="newEn">
-     <label>نام فارسی (اختیاری)</label><input type="text" id="newFa">
-     <div class="row"><button class="pri" id="btnAdd">افزودن به فهرست</button></div></div>`;
+     <label>نام فارسی شیء (انگلیسی‌اش خودکار ترجمه می‌شود)</label><input type="text" id="newFa" placeholder="مثلاً: هواپیمای جنگی">
+     <div class="row"><button class="pri" id="btnAdd">افزودن به فهرست</button></div><div class="st" id="newSt"></div></div>`;
   el.innerHTML = h;
   el.querySelectorAll('.item').forEach(c=>{
     const id=c.dataset.id, w=L.find(x=>x.id===id), st=c.querySelector('.st');
@@ -171,16 +171,31 @@ function cards(el, L, withAdd, head){
     c.querySelector('.bCopy').onclick = async()=>{ const ok = await copy(prompt(w.en)); st.className='st '+(ok?'ok':'bad'); st.textContent = ok?'پرامپت کپی شد؛ در Gemini بچسبان':'کپی نشد'; };
     c.querySelector('.bFile').onchange = e => upload(id, [...e.target.files], st, e.target);
   });
-  if(withAdd) el.querySelector('#btnAdd').onclick = ()=>{ const en=el.querySelector('#newEn').value.trim(), id=slug(en); if(!id) return toast('نام انگلیسی را بنویس');
-    if(!S.custom.some(c=>c.id===id)&&!S.wanted.some(c=>c.id===id)){ S.custom.push({id,en,fa:el.querySelector('#newFa').value.trim(),tags:[]}); ls.set('custom',JSON.stringify(S.custom)); }
-    renderWant(); toast('اضافه شد'); };
+  el.querySelectorAll('.bSim').forEach(btn=>btn.onclick=()=>{ const c=btn.closest('.item'), id=c.dataset.id, w=L.find(x=>x.id===id), box=c.querySelector('.simBox'); box.hidden=!box.hidden; if(box.hidden||box.dataset.f) return; box.dataset.f=1;
+    box.innerHTML='<p class="hint">هر کدام را که می‌خواهی در ویدیو برای این مورد استفاده شود تیک بزن. اگر هیچ‌کدام خوب نیست، خودت یکی بساز و آپلود کن.</p><div class="grid">'+w.sim.map(sid=>{ const it=S.catalog.items[sid]; if(!it) return ''; return `<label class="tile" style="cursor:pointer"><div class="thumb"><img loading="lazy" src="${raw(it.variants[0])}"></div><small>${it.fa||it.en}</small><input type="checkbox" data-s="${sid}" ${(S.picks[id]||[]).includes(sid)?'checked':''}></label>` }).join('')+'</div>';
+    box.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.onchange=()=>{ const cur=new Set(S.picks[id]||[]); cb.checked?cur.add(cb.dataset.s):cur.delete(cb.dataset.s); S.picks[id]=[...cur]; if(!cur.size) delete S.picks[id]; btn.textContent=`مشابه در کتابخانه (${fa(w.sim.length)})`+(cur.size?` · ✓ ${fa(cur.size)} انتخاب‌شده`:''); savePicks(ep); }) });
+  if(withAdd) el.querySelector('#btnAdd').onclick = ()=>addItem(el, ep||'');
 }
+let picksT=null;
+function savePicks(ep){ if(!ep||!S.token) return toast('اول توکن را در تنظیمات وارد کن'); clearTimeout(picksT); picksT=setTimeout(async()=>{
+  for(let k=0;k<3;k++){ try{ let sha; try{ sha=(await api('/contents/episodes/'+ep+'/picks.json')).sha }catch(e){}
+    await api('/contents/episodes/'+ep+'/picks.json',{method:'PUT',body:JSON.stringify({message:'picks: '+ep,content:enc(JSON.stringify(S.picks)),branch:'main',sha})}); toast('✓ انتخاب ذخیره شد'); return }catch(e){ await sleep(1200) } }
+  toast('ذخیره نشد؛ دوباره تیک بزن') },700) }
+async function addItem(el, ep){ const inp=el.querySelector('#newFa'), st=el.querySelector('#newSt'), fa2=inp.value.trim(); if(!fa2) return toast('نام فارسی را بنویس');
+  if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return }
+  st.className='st'; st.textContent='در حال ارسال…';
+  try{ await put('renames/new__'+Date.now().toString(36)+'.json', enc(JSON.stringify({new:true,fa:fa2,episode:ep})), 'new item');
+    st.textContent='ارسال شد؛ ترجمه و ذخیره حدود یک دقیقه طول می‌کشد…';
+    for(let k=0;k<30;k++){ await sleep(8000); const wl=await readJson('wanted.json',[]); const it=wl.find(w=>w.fa===fa2&&(w.tags||[]).includes('mine'));
+      if(it){ await loadAll(); toast('✓ اضافه شد: '+it.en,5000); if(ep) showNeeds(ep); return } }
+    st.className='st bad'; st.textContent='هنوز آماده نشد؛ کمی بعد صفحه را تازه کن.';
+  }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message } }
 function renderGen(){
   const have = id => (S.catalog.items[id]?.variants||[]).length>0;
   const miss = S.pool.filter(p=>!have(p.id));
-  const shown = miss.slice(0, S.genN).map(w=>({...w,n:0}));
+  const mine = S.wanted.filter(w=>(w.tags||[]).includes('mine')&&!have(w.id)).map(w=>({...w,n:0})); const shown = [...mine, ...miss.filter(w=>!mine.some(m=>m.id===w.id)).slice(0, S.genN).map(w=>({...w,n:0}))];
   const head = `<p class="hint">پرکاربردترین‌ها در بالا هستند. ${fa(miss.length)} مورد عمومی هنوز ساخته نشده؛ ${fa(shown.length)} مورد نمایش داده می‌شود. بعد از هر آپلود موفق، همان مورد از این فهرست می‌رود و به کتابخانه می‌آید.</p>`;
-  cards($('#gen'), shown, false, head);
+  cards($('#gen'), shown, true, head, '');
   const more = document.createElement('div'); more.className='card';
   more.innerHTML = miss.length>shown.length ? `<button class="pri" id="btnMore" style="width:100%">۳۰ مورد دیگر اضافه کن (${fa(miss.length-shown.length)} باقی‌مانده)</button>` : '<p class="hint">همه‌ی موارد پیشنهادی نمایش داده شد. اگر مورد دیگری خواستی در «مورد نیاز» اضافه کن یا به من بگو تا فهرست را بزرگ‌تر کنم.</p>';
   $('#gen').appendChild(more);
@@ -297,9 +312,9 @@ async function showNeeds(ep){
   const j = await readJson('episodes/'+ep+'/needs.json', null);
   if(!j){ box.innerHTML=head+'<p class="hint">هنوز تحلیلی برای این قسمت نیست (اگر تازه فرستاده‌ای، یک دقیقه صبر کن).</p>'; bindEpHead(); return false; }
   if(j.error){ box.innerHTML=head+`<p class="hint" style="color:var(--bad)">تحلیل خطا داد. ${/GROQ_API_KEY is not set/.test(j.message||'')?'کلید Groq هنوز در Secrets ریپو گذاشته نشده است.':'دلیل: '+(j.message||'نامشخص')}</p>`; bindEpHead(); return true; }
-  const ids=new Set(j.items.map(w=>w.id)); const extra=S.custom.filter(c=>!ids.has(c.id));
-  const L = [...j.items, ...extra].map(w=>({...w, n:(S.catalog.items[w.id]?.variants||[]).length})).sort((a,b)=>(a.n>0)-(b.n>0));
-  const miss = L.filter(x=>x.n===0).length;
+  const sim = await readJson('episodes/'+ep+'/similar.json', {}); S.picks = await readJson('episodes/'+ep+'/picks.json', {});
+  const L = j.items.map(w=>({...w, n:(S.catalog.items[w.id]?.variants||[]).length, sim:(sim[w.id]||[]).filter(i=>S.catalog.items[i])})).sort((a,b)=>((a.n>0||(S.picks[a.id]||[]).length>0)-(b.n>0||(S.picks[b.id]||[]).length>0)));
+  const miss = L.filter(x=>x.n===0&&!(S.picks[x.id]||[]).length).length;
   const tmp = document.createElement('div'); cards(tmp, L, true, `<p class="hint"><b>${ep}</b>: ${fa(L.length)} تصویر لازم است؛ ${fa(miss)} مورد را هنوز نداریم (بالای فهرست). هر مورد را همین‌جا آپلود کن؛ آنچه در کتابخانه هست دوباره ساخته نمی‌شود.${S.pending?` · ${fa(S.pending)} تصویر در صف پردازش`:''}</p>`);
   const have=L.length-miss; const bs=$('#bCover'); if(bs) bs.textContent=`تصاویر این قسمت: ${fa(have)} از ${fa(L.length)} آماده است. هرچه بیشتر باشد، ویدیو بهتر و مرتبط‌تر می‌شود.`;
   box.innerHTML=head; while(tmp.firstChild) box.appendChild(tmp.firstChild); bindEpHead();

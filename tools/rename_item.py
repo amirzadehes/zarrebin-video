@@ -27,6 +27,17 @@ def main():
     for rp in reqs:
         r = load(rp, {}); iid, fa = r.get('id'), (r.get('fa') or '').strip()
         os.remove(rp)
+        if r.get('new') and fa:   # a brand-new item: Persian name typed in the app -> English name + id
+            import re
+            en = translate(fa, ''); base = re.sub(r'[^a-z0-9]+', '-', en.lower()).strip('-') or 'item'; iid = base; k = 2
+            taken = set(cat['items']) | {w['id'] for w in wanted + pool}
+            while iid in taken: iid = f'{base}-{k}'; k += 1
+            wanted.append({'id': iid, 'en': en, 'fa': fa, 'tags': ['mine']}); print('new item', iid, '|', fa, '->', en)
+            ep = r.get('episode')
+            if ep and os.path.exists(os.path.join(ROOT, 'episodes', ep, 'needs.json')):
+                p2 = os.path.join(ROOT, 'episodes', ep, 'needs.json'); j = needs.get(p2) or load(p2, None)
+                if isinstance(j, dict) and isinstance(j.get('items'), list): j['items'].append({'id': iid, 'en': en, 'fa': fa, 'why': 'افزوده‌ی دستی'}); needs[p2] = j
+            continue
         if not iid or not fa: continue
         old = (cat['items'].get(iid) or next((w for w in wanted + pool if w['id'] == iid), {})).get('en', '')
         en = r.get('en') or translate(fa, old); print(iid, '|', fa, '->', en)

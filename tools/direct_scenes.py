@@ -22,6 +22,7 @@ def library():
     cat = load('library/catalog.json', {'items': {}})['items']
     return {i: v for i, v in cat.items() if v.get('variants')}
 
+PICK_NOTE = []
 SYSTEM = """تو کارگردان هنری یک ویدیوی توضیحی انیمیشنی به سبک کمیک آمریکایی هستی. روایت به جمله‌ها تقسیم شده است (شماره، زمان، متن).
 جمله‌های پشت‌سرهم را در «صحنه» گروه‌بندی کن. هر صحنه ۳ تا ۸ ثانیه (معمولاً ۱ تا ۳ جمله) و کل جمله‌ها را بدون فاصله و همپوشانی پوشش بده.
 برای هر صحنه یک قالب انتخاب کن:
@@ -46,8 +47,8 @@ def direct(ep, T, lib, prio=None):
     B = 12
     for b in range(0, len(S), B):
         chunk = S[b:b + B]
-        user = 'قالب آخرین صحنه‌ی قبلی: %s\n\nفهرست اشیای موجود (شناسه: نام):\n%s\n\nجمله‌ها:\n%s' % (
-            prev or '-', ids, '\n'.join(f"{s['i']} | {s['t0']:.1f}-{s['t1']:.1f}s | {s['text']}" for s in chunk))
+        user = 'قالب آخرین صحنه‌ی قبلی: %s\n\nفهرست اشیای موجود (شناسه: نام):\n%s\n%s\nجمله‌ها:\n%s' % (
+            prev or '-', ids, ('انتخاب صاحب ویدیو (هرجا متن به نیاز اول اشاره می‌کند از همین تصویرها استفاده کن):\n' + '\n'.join(PICK_NOTE) + '\n') if PICK_NOTE else '', '\n'.join(f"{s['i']} | {s['t0']:.1f}-{s['t1']:.1f}s | {s['text']}" for s in chunk))
         raw = groqlib.chat(SYSTEM, user, max_tokens=3500, json_mode=True, temperature=.4)
         got = [o for o in groqlib.objects(raw, 'from') if isinstance(o.get('from'), int)]
         got = [o for o in got if b <= o['from'] < b + B] or [{'from': b, 'to': min(b + B, len(S)) - 1, 'tpl': 'statement'}]
@@ -162,6 +163,9 @@ def main(ep):
     if not T: sys.exit('timing.json missing; run narrate_tts.py first')
     lib = library()
     needs = load(f'{d}/needs.json', {}).get('items') or []; prio = {n['id'] for n in needs} & set(lib)
+    picks = {k: [i for i in v if i in lib] for k, v in (load(f'{d}/picks.json', {}) or {}).items() if isinstance(v, list)}   # images the owner chose for a need (similar ones from the library)
+    for v in picks.values(): prio |= set(v)
+    PICK_NOTE.clear(); PICK_NOTE.extend(f"«{(next((n.get('fa') for n in needs if n['id'] == k), '') or k)}» ← {', '.join(v)}" for k, v in picks.items() if v)
     if req.get('only_needs'):
         lib = {i: v for i, v in lib.items() if i in prio}; print('using only this episode\'s objects:', len(lib))
     else: print('library images offered to the director:', len(lib), '| priority (this episode):', len(prio))

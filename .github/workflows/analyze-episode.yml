@@ -35,6 +35,7 @@ jobs:
             fi
           done
           rm -f err.txt
+          [ -n "$eps" ] && python tools/find_similar.py $eps || true
           git add -A
           git diff --cached --quiet && exit 0
           git commit -qm "episode needs: analyzed"
