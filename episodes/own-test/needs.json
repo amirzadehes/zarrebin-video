@@ -1,0 +1,320 @@
+{
+ "episode": "own-test",
+ "items": [
+  {
+   "id": "plate",
+   "en": "white dinner plate",
+   "fa": "بشقاب",
+   "why": "رستوران لوکس",
+   "tags": []
+  },
+  {
+   "id": "fork",
+   "en": "silver fork",
+   "fa": "چنگال",
+   "why": "سرو غذا",
+   "tags": []
+  },
+  {
+   "id": "knife",
+   "en": "silver knife",
+   "fa": "چاقو",
+   "why": "سرو غذا",
+   "tags": []
+  },
+  {
+   "id": "wine-glass",
+   "en": "red wine glass",
+   "fa": "لیوان شراب",
+   "why": "رستوران لوکس",
+   "tags": []
+  },
+  {
+   "id": "chef-hat",
+   "en": "chef's white hat",
+   "fa": "کلاه سرآشپز",
+   "why": "آشپز",
+   "tags": []
+  },
+  {
+   "id": "star",
+   "en": "golden star",
+   "fa": "ستاره",
+   "why": "ستاره میشلین",
+   "tags": []
+  },
+  {
+   "id": "tire",
+   "en": "black car tire",
+   "fa": "لاستیک خودرو",
+   "why": "شرکت لاستیک",
+   "tags": []
+  },
+  {
+   "id": "car",
+   "en": "vintage car",
+   "fa": "ماشین",
+   "why": "ماشین‌های اولیه",
+   "tags": []
+  },
+  {
+   "id": "vintage-car",
+   "en": "early 1900s car",
+   "fa": "ماشین قدیمی",
+   "why": "سال ۱۹۰۰",
+   "tags": []
+  },
+  {
+   "id": "map-folded",
+   "en": "folded road map",
+   "fa": "نقشه جاده",
+   "why": "کتابچه راهنمای",
+   "tags": []
+  },
+  {
+   "id": "gas-pump",
+   "en": "old gas pump",
+   "fa": "پمپ بنزین",
+   "why": "نقشه جاده",
+   "tags": []
+  },
+  {
+   "id": "hotel",
+   "en": "hotel building icon",
+   "fa": "هتل",
+   "why": "لیست هتل‌ها",
+   "tags": []
+  },
+  {
+   "id": "book-open",
+   "en": "red open guidebook",
+   "fa": "کتاب راهنما",
+   "why": "کتابچه قرمز",
+   "tags": []
+  },
+  {
+   "id": "magnifier-search",
+   "en": "magnifying glass",
+   "fa": "ذره‌بین",
+   "why": "بازرس مخفی",
+   "tags": []
+  },
+  {
+   "id": "star-1",
+   "en": "one gold star",
+   "fa": "یک ستاره",
+   "why": "سیستم یک ستاره",
+   "tags": []
+  },
+  {
+   "id": "star-2",
+   "en": "two gold stars",
+   "fa": "دو ستاره",
+   "why": "سیستم دو ستاره",
+   "tags": []
+  },
+  {
+   "id": "star-3",
+   "en": "three gold stars",
+   "fa": "سه ستاره",
+   "why": "سیستم سه ستاره",
+   "tags": []
+  },
+  {
+   "id": "road",
+   "en": "curvy road",
+   "fa": "جاده",
+   "why": "مسیر سفر",
+   "tags": []
+  },
+  {
+   "id": "dish",
+   "en": "gourmet dish on plate",
+   "fa": "غذا",
+   "why": "غذای باکیفیت",
+   "tags": []
+  },
+  {
+   "id": "flame",
+   "en": "flame cooking",
+   "fa": "آتش",
+   "why": "پخت روی آتش",
+   "tags": []
+  },
+  {
+   "id": "plastic-stool",
+   "en": "plastic stool",
+   "fa": "چهارپایه پلاستیکی",
+   "why": "دکه خیابانی",
+   "tags": []
+  },
+  {
+   "id": "money-bag",
+   "en": "money bag",
+   "fa": "کیسه پول",
+   "why": "قیمت غذا",
+   "tags": []
+  },
+  {
+   "id": "price-tag",
+   "en": "price tag",
+   "fa": "برچسب قیمت",
+   "why": "قیمت‌گذاری",
+   "tags": []
+  },
+  {
+   "id": "dollar-sign",
+   "en": "dollar sign",
+   "fa": "علامت دلار",
+   "why": "قیمت به دلار",
+   "tags": []
+  },
+  {
+   "id": "chart-up",
+   "en": "upward chart",
+   "fa": "نمودار صعودی",
+   "why": "قیمت بالاتر",
+   "tags": []
+  },
+  {
+   "id": "chart-down",
+   "en": "downward chart",
+   "fa": "نمودار نزولی",
+   "why": "قیمت پایین‌تر",
+   "tags": []
+  },
+  {
+   "id": "calculator",
+   "en": "calculator",
+   "fa": "ماشین حساب",
+   "why": "محاسبه هزینه",
+   "tags": []
+  },
+  {
+   "id": "phone-smartphone",
+   "en": "smartphone",
+   "fa": "تلفن هوشمند",
+   "why": "اپلیکیشن",
+   "tags": []
+  },
+  {
+   "id": "wifi",
+   "en": "wifi signal",
+   "fa": "وای‑فای",
+   "why": "وب‌سایت",
+   "tags": []
+  },
+  {
+   "id": "spy",
+   "en": "spy silhouette",
+   "fa": "جاسوس",
+   "why": "بازرس مخفی",
+   "tags": []
+  },
+  {
+   "id": "pencil",
+   "en": "pencil",
+   "fa": "مداد",
+   "why": "ثبت نکات",
+   "tags": []
+  },
+  {
+   "id": "notebook",
+   "en": "notebook",
+   "fa": "دفتر یادداشت",
+   "why": "ثبت بازدید",
+   "tags": []
+  },
+  {
+   "id": "trophy",
+   "en": "trophy",
+   "fa": "جایزه",
+   "why": "ستاره میشلین",
+   "tags": []
+  },
+  {
+   "id": "traffic-light",
+   "en": "traffic light",
+   "fa": "چراغ راهنمایی",
+   "why": "قوانین رانندگی",
+   "tags": []
+  },
+  {
+   "id": "factory",
+   "en": "factory building",
+   "fa": "کارخانه",
+   "why": "شرکت لاستیک میشلین",
+   "tags": []
+  },
+  {
+   "id": "gear",
+   "en": "gear wheel",
+   "fa": "چرخ‌دنده",
+   "why": "تولید لاستیک",
+   "tags": []
+  },
+  {
+   "id": "megaphone",
+   "en": "megaphone",
+   "fa": "میکروفن",
+   "why": "بازاریابی",
+   "tags": []
+  },
+  {
+   "id": "billboard",
+   "en": "billboard advertisement",
+   "fa": "بیلبورد",
+   "why": "تبلیغ",
+   "tags": []
+  },
+  {
+   "id": "suitcase",
+   "en": "suitcase",
+   "fa": "چمدان",
+   "why": "سفر",
+   "tags": []
+  },
+  {
+   "id": "compass",
+   "en": "compass",
+   "fa": "قطب‌نمای",
+   "why": "مسیر سفر",
+   "tags": []
+  },
+  {
+   "id": "map-pin",
+   "en": "map pin",
+   "fa": "نشان‌گر مکان",
+   "why": "موقعیت رستوران",
+   "tags": []
+  },
+  {
+   "id": "newspaper",
+   "en": "newspaper",
+   "fa": "روزنامه",
+   "why": "نقدهای روزنامه",
+   "tags": []
+  },
+  {
+   "id": "table",
+   "en": "restaurant table",
+   "fa": "میز رستوران",
+   "why": "محیط رستوران",
+   "tags": []
+  },
+  {
+   "id": "chair",
+   "en": "restaurant chair",
+   "fa": "صندلی رستوران",
+   "why": "محیط رستوران",
+   "tags": []
+  },
+  {
+   "id": "glass-water",
+   "en": "glass of water",
+   "fa": "لیوان آب",
+   "why": "نوشیدنی در رستوران",
+   "tags": []
+  }
+ ]
+}
