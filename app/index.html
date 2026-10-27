@@ -235,7 +235,9 @@ async function renderEp(){
   const cur = ls.get('curEp','');
   el.innerHTML = `<div class="card"><div class="name">قسمت جدید</div>
     <label>نام قسمت به انگلیسی (مثلاً sleep-debt)</label><input type="text" class="ltr" id="epName" value="${cur}">
-    <label>متن کامل پادکست / روایت (فارسی)</label><textarea id="epText" rows="8" style="width:100%;min-height:200px;direction:rtl;text-align:right;font-size:15px"></textarea>
+    <label>متن نسخه‌ی بلند (یوتیوب) — فارسی</label><textarea id="epText" rows="8" style="width:100%;min-height:200px;direction:rtl;text-align:right;font-size:15px"></textarea>
+    <label>متن نسخه‌ی کوتاه (اینستاگرام و تیک‌تاک، حدود ۶۰ ثانیه) — اختیاری</label><textarea id="epTextS" rows="5" style="width:100%;min-height:130px;direction:rtl;text-align:right;font-size:15px"></textarea>
+    <p class="hint">اگر متن کوتاه را هم بدهی، یک قسمت جدا به نام <b>نام‌قسمت-short</b> ساخته می‌شود. تصویرها و کتابخانه بین هر دو مشترک است. نسخه‌ی کوتاه فقط عمودی و با برش‌های سریع‌تر ساخته می‌شود. صدای هر کدام را جدا در «ساخت ویدیو» همان قسمت آپلود کن.</p>
     <div class="row"><button class="pri" id="epSend">ارسال و تحلیل</button></div><div class="st" id="epSt"></div></div>
     ${eps.length?`<div class="card"><label>قسمت‌های قبلی</label><div class="row" id="epList">${eps.map(e=>`<button data-e="${e}">${e}</button>`).join('')}</div></div>`:''}
     <div class="card" id="epBuild"><div class="name">ساخت ویدیو</div>
@@ -258,6 +260,7 @@ async function renderEp(){
       <select id="bVoice" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option>Algieba</option><option>Sulafat</option><option>Charon</option><option>Kore</option><option>Puck</option><option>Orus</option><option>Gacrux</option></select>
       <label><input type="checkbox" id="bV" checked> اینستاگرام (عمودی)</label>
       <label><input type="checkbox" id="bH" checked> یوتیوب (افقی)</label>
+      <p class="hint" id="bShortNote" hidden>قسمت کوتاه: فقط اینستاگرام/تیک‌تاک (عمودی) ساخته می‌شود و برش‌ها سریع‌تر است.</p>
       <p class="hint" id="bCover"></p><div class="row"><button class="pri" id="bGo">۱. آماده‌سازی صحنه‌ها برای بازبینی</button><button id="bGoDirect">ساخت مستقیم (بدون بازبینی)</button></div><div class="st" id="bSt"></div>
       <details id="rvBox" class="rv" style="margin-top:12px"><summary class="btn" style="display:block;text-align:center;cursor:pointer">بازبینی صحنه‌ها و تصویرها</summary><div id="rvBody"><p class="hint">بعد از «آماده‌سازی صحنه‌ها» (حدود ۲ تا ۵ دقیقه) اینجا می‌بینی هر صحنه چه نوشته‌ای و چه تصویرهایی دارد؛ می‌توانی تصویر کم یا از کتابخانه اضافه کنی و بعد ویدیو را بسازی.</p></div></details>
       <p class="hint">ساخت نهایی حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد. می‌توانی اپ را ببندی؛ ویدیوی آماده در لیست زیر می‌آید.</p>
@@ -265,6 +268,7 @@ async function renderEp(){
     `;
   fillPal(); $('#bPal').value=ls.get('pal_'+S.style,''); $('#bPal').onchange=()=>ls.set('pal_'+S.style,$('#bPal').value);
   $('#bStyle').value=S.style; $('#bStyle').onchange=()=>setStyle($('#bStyle').value);
+  $('#epName').addEventListener('input',shortDefaults); shortDefaults();
   $('#bGo').onclick = ()=>buildVideo('review'); $('#bGoDirect').onclick = ()=>buildVideo('direct'); loadVids(); if(cur) loadReview(cur,true);
   el.querySelectorAll('#epList button').forEach(b=>b.onclick=()=>setEpisode(b.dataset.e));
   $('#epSend').onclick = sendEp;
@@ -312,7 +316,7 @@ async function buildVideo(mode){
   if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس (همان که متن را با آن فرستادی)'; return; }
   const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
   try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده'; return; }
-  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.subs=$('#bSubs').checked; body.music=$('#bMusic').value; body.style=S.style; body.review=(mode==='review'); body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
+  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.subs=$('#bSubs').checked; body.music=$('#bMusic').value; body.style=S.style; body.review=(mode==='review'); if(/-short$/.test(ep)) body.short=true; body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
   st.className='st'; st.textContent='در حال شروع…';
   try{
     if(ownF){ st.className='st'; st.textContent='در حال آپلود صدا…'; const ext=(ownF.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -459,7 +463,8 @@ async function rvContinue(){ const st=$('#rvSt'); const rq=await readJson('episo
   }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message } }
 function epHead(ep){ const eps=S.eps||[]; return `<div class="card"><label>قسمت</label><select id="needEp" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px">${(eps.includes(ep)||!ep?'':`<option>${ep}</option>`)+eps.map(e=>`<option ${e===ep?'selected':''}>${e}</option>`).join('')}${!ep?'<option value="">— یک قسمت انتخاب کن —</option>':''}</select></div>` }
 function bindEpHead(){ const s=$('#needEp'); if(s) s.onchange=()=>{ if(s.value) setEpisode(s.value) } }
-function setEpisode(e){ ls.set('curEp',e); const n=$('#epName'); if(n) n.value=e; readText(e); showNeeds(e) }
+function shortDefaults(){ const n=$('#epName'); if(!n||!$('#bH')) return; const sh=/-short$/.test(slug(n.value)); if(sh){ $('#bV').checked=true; $('#bH').checked=false } $('#bH').disabled=sh; $('#bShortNote').hidden=!sh }
+function setEpisode(e){ ls.set('curEp',e); const n=$('#epName'); if(n) n.value=e; readText(e); showNeeds(e); shortDefaults() }
 async function showNeeds(ep){
   const box = $('#want'); const head = epHead(ep);
   if(!ep){ box.innerHTML=head+'<p class="hint">اول در تب «ساخت ویدیو» متن یک قسمت را بفرست تا تحلیل شود؛ فهرست تصویرهای لازم همین‌جا می‌آید. یا از بالا قسمت قبلی را انتخاب کن.</p>'; bindEpHead(); return false }
@@ -484,9 +489,12 @@ async function sendEp(){
     let sha, oldN; try{ sha=(await api('/contents/episodes/'+ep+'/script.txt')).sha }catch(e){}
     try{ oldN=(await api('/contents/episodes/'+ep+'/needs.json')).sha }catch(e){}
     await api('/contents/episodes/'+ep+'/script.txt',{method:'PUT',body:JSON.stringify({message:'episode script: '+ep,content:enc(text),branch:'main',sha})});
-    ls.set('curEp',ep); st.className='st ok'; st.textContent='ارسال شد؛ تحلیل حدود یک تا دو دقیقه طول می‌کشد…';
+    const tS=($('#epTextS')||{value:''}).value.trim(); let shortEp='';
+    if(tS.length>=20&&!/-short$/.test(ep)){ shortEp=ep+'-short'; let s2; try{ s2=(await api('/contents/episodes/'+shortEp+'/script.txt')).sha }catch(e){}
+      await api('/contents/episodes/'+shortEp+'/script.txt',{method:'PUT',body:JSON.stringify({message:'episode script (short): '+shortEp,content:enc(tS),branch:'main',sha:s2})}); S.eps=[...new Set([...(S.eps||[]),shortEp])] }
+    ls.set('curEp',ep); st.className='st ok'; st.textContent='ارسال شد'+(shortEp?' (بلند و کوتاه)':'')+'؛ تحلیل حدود یک تا دو دقیقه طول می‌کشد…';
     for(let k=0;k<30;k++){ await sleep(8000); let n; try{ n=(await api('/contents/episodes/'+ep+'/needs.json')).sha }catch(e){}
-      if(n && n!==oldN){ S.eps=[...new Set([...(S.eps||[]),ep])]; await loadAll(true); await showNeeds(ep); st.textContent='فهرست آماده شد؛ تب «مورد نیاز» را ببین'; toast('✓ تحلیل تمام شد؛ تصویرهای لازم در «مورد نیاز» است'); document.querySelector('.tabs button[data-t=want]').click(); return; } }
+      if(n && n!==oldN){ S.eps=[...new Set([...(S.eps||[]),ep])]; await loadAll(true); await showNeeds(ep); st.textContent='فهرست آماده شد؛ تب «مورد نیاز» را ببین'+(shortEp?'. تحلیل نسخه‌ی کوتاه هم در راه است؛ از فهرست قسمت‌ها ('+shortEp+') انتخابش کن.':''); toast('✓ تحلیل تمام شد؛ تصویرهای لازم در «مورد نیاز» است'); document.querySelector('.tabs button[data-t=want]').click(); return; } }
     st.className='st bad'; st.textContent='هنوز آماده نشد؛ بعداً از تب «مورد نیاز» همان قسمت را انتخاب کن.';
   }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message; }
 }

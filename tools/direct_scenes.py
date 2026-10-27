@@ -23,6 +23,7 @@ def library():
     return {i: v for i, v in cat.items() if v.get('variants')}
 
 PICK_NOTE = []
+SHORT = False   # vertical ~60 s version: faster cuts
 SYSTEM = """تو کارگردان هنری یک ویدیوی توضیحی انیمیشنی به سبک کمیک آمریکایی هستی. روایت به جمله‌ها تقسیم شده است (شماره، زمان، متن).
 جمله‌های پشت‌سرهم را در «صحنه» گروه‌بندی کن. هر صحنه ۳ تا ۸ ثانیه (معمولاً ۱ تا ۳ جمله) و کل جمله‌ها را بدون فاصله و همپوشانی پوشش بده.
 برای هر صحنه یک قالب انتخاب کن:
@@ -49,7 +50,7 @@ def direct(ep, T, lib, prio=None):
         chunk = S[b:b + B]
         user = 'قالب آخرین صحنه‌ی قبلی: %s\n\nفهرست اشیای موجود (شناسه: نام):\n%s\n%s\nجمله‌ها:\n%s' % (
             prev or '-', ids, ('انتخاب صاحب ویدیو (هرجا متن به نیاز اول اشاره می‌کند از همین تصویرها استفاده کن):\n' + '\n'.join(PICK_NOTE) + '\n') if PICK_NOTE else '', '\n'.join(f"{s['i']} | {s['t0']:.1f}-{s['t1']:.1f}s | {s['text']}" for s in chunk))
-        raw = groqlib.chat(SYSTEM, user, max_tokens=3500, json_mode=True, temperature=.4)
+        raw = groqlib.chat(SYSTEM.replace('۳ تا ۸ ثانیه', '۲ تا ۴ ثانیه').replace('حداکثر ۸ ثانیه', 'حداکثر ۴ ثانیه') if SHORT else SYSTEM, user, max_tokens=3500, json_mode=True, temperature=.4)
         got = [o for o in groqlib.objects(raw, 'from') if isinstance(o.get('from'), int)]
         got = [o for o in got if b <= o['from'] < b + B] or [{'from': b, 'to': min(b + B, len(S)) - 1, 'tpl': 'statement'}]
         scenes += got; prev = got[-1].get('tpl', '')
@@ -96,9 +97,9 @@ def compile_scenes(ep, T, raw, lib, req):
     out = []
     for r in cov:
         a, bnd = r['from'], r['to']
-        while bnd > a and S[bnd]['t1'] - S[a]['t0'] > 9.5:
+        while bnd > a and S[bnd]['t1'] - S[a]['t0'] > (5 if SHORT else 9.5):
             m = a
-            while m < bnd and S[m]['t1'] - S[a]['t0'] < 6: m += 1
+            while m < bnd and S[m]['t1'] - S[a]['t0'] < (3 if SHORT else 6): m += 1
             if m >= bnd: break
             out.append({**r, 'from': a, 'to': m, 'items': r.get('items', [])[:2], 'tpl': r.get('tpl') if len(out) % 2 == 0 else 'statement'}); a = m + 1
         out.append({**r, 'from': a})
@@ -165,7 +166,8 @@ def emit_plan(meta, req):
     if gh: open(gh, 'a').write('matrix=' + json.dumps(plan) + '\ntotal=%s\n' % meta['total'])
 
 def main(ep):
-    d = f'episodes/{ep}'; T = load(f'{d}/timing.json', None); req = load(f'{d}/request.json', {})
+    global SHORT
+    d = f'episodes/{ep}'; T = load(f'{d}/timing.json', None); req = load(f'{d}/request.json', {}); SHORT = bool(req.get('short')) or ep.endswith('-short')
     if req.get('use_plan') and os.path.exists(f'{d}/scenes.json'):   # the owner reviewed / edited scenes.json in the app: keep it as is
         meta = load(f'{d}/scenes.json', {}).get('meta') or {}
         for k in ('style', 'palette', 'base', 'subs'):
