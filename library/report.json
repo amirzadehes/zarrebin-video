@@ -1,36 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-26 21:26:34 UTC",
-   "ok": [
-    {
-     "file": "hourglass__mvprng160.jpg",
-     "id": "hourglass",
-     "saved": "hourglass__1.webp",
-     "kb": 186
-    },
-    {
-     "file": "hourglass__mvprniq21.jpg",
-     "id": "hourglass",
-     "saved": "hourglass__2.webp",
-     "kb": 209
-    },
-    {
-     "file": "hourglass__mvprnlbn2.jpg",
-     "id": "hourglass",
-     "saved": "hourglass__3.webp",
-     "kb": 223
-    },
-    {
-     "file": "hourglass__mvprno773.jpg",
-     "id": "hourglass",
-     "saved": "hourglass__4.webp",
-     "kb": 166
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-10-26 21:27:25 UTC",
    "ok": [
     {
@@ -872,6 +842,18 @@
      "id": "eiffel-tower",
      "saved": "eiffel-tower__1.webp",
      "kb": 110
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-10-27 17:46:13 UTC",
+   "ok": [
+    {
+     "file": "dinner-plate__mvqz2wzd.jpg",
+     "id": "dinner-plate",
+     "saved": "dinner-plate__1.webp",
+     "kb": 190
     }
    ],
    "failed": []

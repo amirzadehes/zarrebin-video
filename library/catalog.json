@@ -479,6 +479,27 @@
    ],
    "fa_tags_for": "ماه و ستاره"
   },
+  "dinner-plate": {
+   "id": "dinner-plate",
+   "en": "dinner plate",
+   "fa": "بشقاب غذا",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "dinner-plate__1.webp"
+   ],
+   "fa_tags": [
+    "بشقاب",
+    "ظرف غذا",
+    "سرویس غذا",
+    "سفره",
+    "ظرف",
+    "غذای روزانه"
+   ],
+   "fa_tags_for": "بشقاب غذا"
+  },
   "eiffel-tower": {
    "id": "eiffel-tower",
    "en": "eiffel tower",

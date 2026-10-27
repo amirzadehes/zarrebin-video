@@ -1,55 +1,18 @@
 {
  "star": [
-  "one-star",
-  "two-stars",
-  "three-stars",
   "star-rating"
  ],
- "rubber-tire": [
-  "tire-company-logo"
- ],
- "book-open": [
-  "book"
- ],
  "star-rating": [
-  "one-star",
-  "two-stars",
-  "three-stars",
   "star"
  ],
  "one-star": [
-  "two-stars",
-  "three-stars",
-  "star",
-  "star-rating"
+  "star"
  ],
  "two-stars": [
-  "one-star",
-  "three-stars",
-  "star",
-  "star-rating"
+  "star"
  ],
  "three-stars": [
-  "one-star",
-  "two-stars",
-  "star",
-  "star-rating"
- ],
- "money-bag": [
-  "banknotes",
-  "cash"
- ],
- "clock-wall": [
-  "alarm-clock",
-  "hourglass"
- ],
- "cash": [
-  "banknotes",
-  "money-bag"
- ],
- "banknotes": [
-  "cash",
-  "money-bag"
+  "star"
  ],
  "tire-company-logo": [
   "rubber-tire"
