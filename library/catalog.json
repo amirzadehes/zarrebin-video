@@ -589,6 +589,28 @@
    ],
    "fa_tags_for": "کارخانه"
   },
+  "football-referee": {
+   "id": "football-referee",
+   "en": "football referee",
+   "fa": "داور فوتبال",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "football-referee__1.webp"
+   ],
+   "fa_tags": [
+    "فوتبال",
+    "داور",
+    "قضاوت",
+    "مسابقه",
+    "ورزش",
+    "قوانین",
+    "قضاوت‌ورزشی"
+   ],
+   "fa_tags_for": "داور فوتبال"
+  },
   "gas-pump": {
    "id": "gas-pump",
    "en": "gas pump",
