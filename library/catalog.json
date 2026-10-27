@@ -436,6 +436,16 @@
     "silverware-set__2.webp"
    ]
   },
+  "star": {
+   "id": "star",
+   "en": "star",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "star__1.webp"
+   ]
+  },
   "sun": {
    "id": "sun",
    "en": "sun",
