@@ -17,6 +17,16 @@
     "alarm-clock__4.webp"
    ]
   },
+  "apple": {
+   "id": "apple",
+   "en": "apple",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "apple__1.webp"
+   ]
+  },
   "banknotes": {
    "id": "banknotes",
    "en": "banknotes",
@@ -167,6 +177,17 @@
    "variants": [
     "car__1.webp",
     "car__2.webp"
+   ]
+  },
+  "chef-hat": {
+   "id": "chef-hat",
+   "en": "chef hat",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "chef-hat__1.webp",
+    "chef-hat__2.webp"
    ]
   },
   "cityscape-chicago": {
@@ -563,6 +584,16 @@
    "has_text_in_image": false,
    "variants": [
     "social-media__1.webp"
+   ]
+  },
+  "spice-jar": {
+   "id": "spice-jar",
+   "en": "spice jar",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "spice-jar__1.webp"
    ]
   },
   "star": {
