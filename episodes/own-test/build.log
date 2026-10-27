@@ -1,5 +1,0 @@
-model: openai/gpt-oss-120b
-transcript cleaned, words matched 98%
-own voice: seconds 23.1 sentences 4 words 42
-model: openai/gpt-oss-120b
-scenes 3 total 24.27 templates {'hero': 0, 'duo': 0, 'trio': 0, 'statement': 3, 'stat': 0}
