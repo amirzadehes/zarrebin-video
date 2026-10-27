@@ -120,6 +120,9 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 <dialog id="dlg"><div id="dlgBody"></div><div class="row"><button onclick="dlg.close()">بستن</button></div></dialog>
 <div id="toast"></div>
 
+<div id="pvModal" hidden style="position:fixed;inset:0;background:#000e;z-index:60;display:grid;place-items:center;align-content:center;gap:8px">
+  <iframe id="pvFrame" src="../engine/preview.html?inline=1&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(80vh*9/16));height:min(80vh,calc(94vw*16/9))"></iframe>
+  <div class="row" style="justify-content:center;width:100%"><button id="pvAgain">▶ دوباره</button><button class="pri" id="pvOk">✓ این صحنه خوب است</button><button id="pvClose">بستن</button></div></div>
 <script>
 const DEFAULT_TPL = "{subject}, hand-drawn comic ink illustration, bold black outline, vivid saturated colors, single object centered, isolated on a flat solid magenta background (#DD0F7A), no shadow, no text, vertical 9:16, closed outline, no glow or rays outside the outline";
 const VOX_TPL = "A modern, present-day {subject} (the object itself must look contemporary and current, NOT antique or old-fashioned), drawn and rendered in the style of a vintage engraving illustration hand-colored with rich vivid watercolor: strong saturated yet slightly aged palette (deep ochre, teal, brick red, olive green, golden yellow, warm cream), bold colors with good contrast, fine dark ink linework with crosshatching, rich detail. Only the drawing technique is vintage, the subject is modern. Single subject centered, isolated on a flat solid magenta background (#DD0F7A), no shadow, no text, no frame, vertical 9:16, closed clean outline, no glow or rays outside the outline";
@@ -561,8 +564,5 @@ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.qu
 if(!S.token) $('#settings').hidden=false;
 loadAll();
 </script>
-<div id="pvModal" hidden style="position:fixed;inset:0;background:#000e;z-index:60;display:grid;place-items:center;align-content:center;gap:8px">
-  <iframe id="pvFrame" src="../engine/preview.html?inline=1&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(80vh*9/16));height:min(80vh,calc(94vw*16/9))"></iframe>
-  <div class="row" style="justify-content:center;width:100%"><button id="pvAgain">▶ دوباره</button><button class="pri" id="pvOk">✓ این صحنه خوب است</button><button id="pvClose">بستن</button></div></div>
 </body>
 </html>
