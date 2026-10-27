@@ -47,7 +47,10 @@ jobs:
       - name: Sound effects
         run: python tools/make_sfx.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
       - name: Background music
-        run: python tools/make_music.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
+        run: |
+          set -o pipefail
+          python tools/make_music.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
+          ls -la episodes/${{ steps.ep.outputs.ep }}/music.wav | tee -a build.log
       - name: Save narration, scenes and log in the repo
         if: always()
         run: |
@@ -109,7 +112,7 @@ jobs:
           inputs="-i $v"; n=1; mix="[vo]"; w="1"
           [ -n "$sfx" ] && { inputs="$inputs -i $sfx"; n=$((n+1)); mix="$mix[$n:a]"; w="$w 0.4"; }
           if [ -n "$mus" ]; then inputs="$inputs -i $mus"; mi=$((n+1)); n=$((n+1)); mix="$mix[mduck]"; w="$w 1"
-            fc="[1:a]asplit=2[vo][key];[$mi:a][key]sidechaincompress=threshold=0.015:ratio=6:attack=30:release=600:makeup=1[mduck];"
+            fc="[1:a]asplit=2[vo][key];[$mi:a][key]sidechaincompress=threshold=0.04:ratio=3:attack=30:release=600:makeup=1[mduck];"
           else fc="[1:a]anull[vo];"; fi
           fc="$fc${mix}amix=inputs=$(echo $w | wc -w):duration=first:weights=$w:normalize=0,$fade[a]"
           for f in v h; do

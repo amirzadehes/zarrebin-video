@@ -71,7 +71,7 @@ def render(mood, total, seed=7):
     n = y.shape[1]; fi = int(2.5 * SR); fo = int(4 * SR)
     y[:, :fi] *= np.linspace(0, 1, fi); y[:, -fo:] *= np.linspace(1, 0, fo)
     y = np.tanh(y / (np.abs(y).max() + 1e-9) * 1.4) / 1.4
-    return y * 0.08
+    return y * 0.3
 def pick_mood(ep, req):
     m = req.get('music', 'auto')
     if m in MOODS: return m
