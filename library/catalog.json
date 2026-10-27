@@ -97,6 +97,17 @@
     "book__1.webp"
    ]
   },
+  "book-open": {
+   "id": "book-open",
+   "en": "book open",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "book-open__1.webp",
+    "book-open__2.webp"
+   ]
+  },
   "brain-colorful": {
    "id": "brain-colorful",
    "en": "colorful brain",
