@@ -1,17 +1,60 @@
 {
  "coffee-cup": [
+  "espresso-cup",
+  "moka-pot",
+  "coffee-beans",
+  "coffee-plant"
+ ],
+ "tea-cup": [
+  "coffee-cup",
   "espresso-cup"
+ ],
+ "battery-empty": [
+  "battery-full",
+  "battery-power"
+ ],
+ "battery-full": [
+  "battery-empty",
+  "battery-power"
  ],
  "light-bulb-idea": [
   "bulb"
  ],
+ "caffeine-molecule": [
+  "purple-molecule"
+ ],
  "brain-hacker": [
+  "brain-colorful",
+  "brain-pink",
+  "tired-brain",
+  "neuron"
+ ],
+ "person-sleeping": [
+  "eye-sleepy",
+  "eye-open",
+  "head-profile",
+  "tired-brain"
+ ],
+ "adenosine": [
+  "caffeine-molecule",
+  "purple-molecule"
+ ],
+ "receptor": [
+  "neuron",
   "brain-colorful",
   "brain-pink",
   "tired-brain"
  ],
+ "brain-colorful": [
+  "brain-pink",
+  "tired-brain",
+  "neuron"
+ ],
  "fatigue-brain": [
-  "tired-brain"
+  "tired-brain",
+  "brain-colorful",
+  "brain-pink",
+  "eye-sleepy"
  ],
  "key-fake": [
   "old-key"
@@ -26,8 +69,22 @@
  "hand-tremble": [
   "pointing-hand"
  ],
+ "anxiety": [
+  "tired-brain",
+  "eye-sleepy"
+ ],
+ "sleep-deep": [
+  "crescent-moon",
+  "eye-sleepy",
+  "tired-brain"
+ ],
  "brain-adaptation": [
   "brain-colorful",
-  "brain-pink"
+  "brain-pink",
+  "tired-brain"
+ ],
+ "l-theanine": [
+  "caffeine-molecule",
+  "purple-molecule"
  ]
 }

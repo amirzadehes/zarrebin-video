@@ -1,30 +1,90 @@
 {
- "star-rating": [
-  "star",
+ "star": [
   "one-star",
   "two-stars",
-  "three-stars"
+  "three-stars",
+  "star-rating"
+ ],
+ "rubber-tire": [
+  "tire-company-logo"
+ ],
+ "book-open": [
+  "book"
+ ],
+ "star-rating": [
+  "one-star",
+  "two-stars",
+  "three-stars",
+  "star"
  ],
  "one-star": [
-  "star",
-  "star-rating",
   "two-stars",
-  "three-stars"
+  "three-stars",
+  "star",
+  "star-rating"
  ],
  "two-stars": [
-  "star",
-  "star-rating",
   "one-star",
-  "three-stars"
+  "three-stars",
+  "star",
+  "star-rating"
  ],
  "three-stars": [
-  "star",
-  "star-rating",
   "one-star",
-  "two-stars"
+  "two-stars",
+  "star",
+  "star-rating"
+ ],
+ "money-bag": [
+  "banknotes",
+  "cash"
  ],
  "clock-wall": [
-  "alarm-clock"
+  "alarm-clock",
+  "hourglass"
+ ],
+ "street-food-stall": [
+  "chef-hat",
+  "silverware-set"
+ ],
+ "plastic-stool": [
+  "bed"
+ ],
+ "safety-glasses": [
+  "eye-open",
+  "eye-sleepy"
+ ],
+ "reservation-card": [
+  "book",
+  "book-open",
+  "red-guidebook"
+ ],
+ "cash": [
+  "banknotes",
+  "money-bag"
+ ],
+ "banknotes": [
+  "cash",
+  "money-bag"
+ ],
+ "price-tag": [
+  "red-guidebook"
+ ],
+ "restaurant-sign": [
+  "chef-hat",
+  "street-food-stall"
+ ],
+ "cityscape-chicago": [
+  "hotel-building",
+  "factory"
+ ],
+ "wine-glass": [
+  "coffee-cup",
+  "espresso-cup",
+  "tea-cup"
+ ],
+ "mobile-app": [
+  "social-media"
  ],
  "tire-company-logo": [
   "rubber-tire"
