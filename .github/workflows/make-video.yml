@@ -51,7 +51,7 @@ jobs:
         run: |
           set -o pipefail
           python tools/make_music.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
-          ls -la episodes/${{ steps.ep.outputs.ep }}/music.wav | tee -a build.log
+          ls -la episodes/${{ steps.ep.outputs.ep }}/music.wav 2>/dev/null | tee -a build.log || true
       - name: Save narration, scenes and log in the repo
         if: always()
         run: |
