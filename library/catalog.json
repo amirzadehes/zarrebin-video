@@ -425,6 +425,17 @@
     "purple-molecule__4.webp"
    ]
   },
+  "silverware-set": {
+   "id": "silverware-set",
+   "en": "silverware set",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "silverware-set__1.webp",
+    "silverware-set__2.webp"
+   ]
+  },
   "sun": {
    "id": "sun",
    "en": "sun",
