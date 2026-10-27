@@ -1,22 +1,15 @@
-model: openai/gpt-oss-120b
-chunk 0 sentences 30 seconds 168.4
-chunk 1 sentences 27 seconds 146.6
-whisper-aligned words: 97%
-engine gemini Algieba | sentences 57 words 737 seconds 316.0
+reusing the saved voice (same text, engine and voice) - no new TTS request
 library images offered to the director: 67 | priority (this episode): 33
 model: openai/gpt-oss-120b
-model openai/gpt-oss-120b is rate limited for a long time (842s): switching model
+model openai/gpt-oss-120b is rate limited for a long time (1142s): switching model
 model: qwen/qwen3.8-27b
-rate limited, waiting 41s
-rate limited, waiting 20s
-rate limited, waiting 40s
-rate limited, waiting 60s
-rate limited, waiting 20s
-rate limited, waiting 40s
-rate limited, waiting 13s
 rate limited, waiting 40s
 rate limited, waiting 60s
 model qwen/qwen3.8-27b is rate limited for a long time (80s): switching model
 model: openai/gpt-oss-20b
-coverage pass: placed 2 of 6 unused priority images
-scenes 39 total 317.24 templates {'hero': 13, 'duo': 12, 'trio': 4, 'statement': 8, 'stat': 2}
+rate limited, waiting 18s
+rate limited, waiting 15s
+rate limited, waiting 15s
+rate limited, waiting 10s
+coverage pass: placed 18 of 31 unused priority images
+scenes 35 total 317.24 templates {'hero': 27, 'duo': 2, 'trio': 4, 'statement': 2, 'stat': 0}

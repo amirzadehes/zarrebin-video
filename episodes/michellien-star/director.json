@@ -1,786 +1,145 @@
 [
  {
   "from": 0,
-  "to": 7.3,
-  "tpl": "duo",
+  "to": 3,
+  "tpl": "statement",
   "items": [
    {
-    "id": "apple",
-    "at": "قاضی"
-   },
-   {
-    "id": "tire-company-logo",
-    "at": "لاستیک"
-   },
-   {
-    "id": "factory",
+    "id": "car",
     "sent": 1
    },
    {
-    "id": "two-brothers",
-    "sent": 4
-   }
-  ],
-  "text": "*قاضی* غذا vs *لاستیک*",
-  "number": "",
-  "link": "vs",
-  "decor": [],
-  "kw": [
-   "قاضی غذا",
-   "لاستیک"
-  ]
- },
- {
-  "from": 9,
-  "to": 15.7,
-  "tpl": "hero",
-  "items": [
-   {
-    "id": "book-open",
-    "at": "میشلین"
+    "id": "rubber-tire",
+    "sent": 1
    },
    {
-    "id": "clock-wall",
-    "at": "قرن"
+    "id": "tire-company-logo",
+    "sent": 1
    }
   ],
-  "text": "*میشلین* تاریخ",
+  "text": "*قاضی* غذا",
   "number": "",
   "link": "",
   "decor": [],
   "kw": [
-   "میشلین تاریخ"
+   "قاضی",
+   "غذا"
+  ],
+  "_up": true
+ },
+ {
+  "from": 4,
+  "to": 11,
+  "tpl": "duo",
+  "items": [
+   {
+    "id": "factory",
+    "at": "شرکت"
+   },
+   {
+    "id": "book-open",
+    "at": "قاضی"
+   },
+   {
+    "id": "gas-pump",
+    "sent": 8
+   },
+   {
+    "id": "hotel-building",
+    "sent": 8
+   },
+   {
+    "id": "map-folded",
+    "sent": 8
+   }
+  ],
+  "text": "شرکت لاستیک vs قاضی غذا",
+  "number": "",
+  "link": "vs",
+  "decor": [],
+  "kw": [
+   "شرکت",
+   "قاضی"
   ]
  },
  {
   "from": 12,
-  "to": 12,
-  "tpl": "hero",
+  "to": 23,
+  "tpl": "statement",
   "items": [
+   {
+    "id": "one-star",
+    "sent": 13
+   },
    {
     "id": "secret-inspector",
-    "at": "بازرس‌های"
+    "sent": 12
    },
-   {
-    "id": "street-food-stall",
-    "at": "رستوران‌ها"
-   }
-  ],
-  "text": "استخدام *بازرس‌های* مخفی",
-  "number": "12",
-  "decor": [
-   "map-folded"
-  ],
-  "kw": [
-   "بازرس‌های",
-   "مخفی",
-   "کیفیت"
-  ]
- },
- {
-  "from": 13,
-  "to": 13,
-  "tpl": "stat",
-  "items": [
-   {
-    "id": "one-star",
-    "at": "ستاره"
-   }
-  ],
-  "text": "اولین *ستاره* میشلین",
-  "number": "1926",
-  "decor": [
-   "clock-wall"
-  ],
-  "kw": [
-   "۱۹۲۶",
-   "اولین",
-   "ستاره"
-  ]
- },
- {
-  "from": 14,
-  "to": 14,
-  "tpl": "duo",
-  "items": [
-   {
-    "id": "one-star",
-    "at": "یک"
-   },
-   {
-    "id": "three-stars",
-    "at": "سه‌ستاره‌ای"
-   }
-  ],
-  "text": "از یک به *سه* ستاره",
-  "number": "14",
-  "link": "arrow",
-  "decor": [],
-  "kw": [
-   "یک",
-   "سه‌ستاره‌ای",
-   "۱۹۳۱"
-  ]
- },
- {
-  "from": 15,
-  "to": 15,
-  "tpl": "statement",
-  "items": [],
-  "text": "ستاره‌ها ربط به *رانندگی* دارن",
-  "number": "15",
-  "decor": [
-   "car"
-  ],
-  "kw": [
-   "ستاره‌ها",
-   "رانندگی",
-   "ربط"
-  ]
- },
- {
-  "from": 16,
-  "to": 16,
-  "tpl": "duo",
-  "items": [
-   {
-    "id": "one-star",
-    "at": "ستاره"
-   },
-   {
-    "id": "road",
-    "at": "مسیر"
-   }
-  ],
-  "text": "یک ستاره: *توقف* در مسیر",
-  "number": "16",
-  "link": "plus",
-  "decor": [
-   "gas-pump"
-  ],
-  "kw": [
-   "یک",
-   "توقف",
-   "مسیر"
-  ]
- },
- {
-  "from": 17,
-  "to": 17,
-  "tpl": "duo",
-  "items": [
-   {
-    "id": "two-stars",
-    "at": "دو"
-   },
-   {
-    "id": "car",
-    "at": "مسیرت"
-   }
-  ],
-  "text": "دو ستاره: *کج* کردن مسیر",
-  "number": "17",
-  "link": "plus",
-  "decor": [
-   "map-folded"
-  ],
-  "kw": [
-   "دو",
-   "کج",
-   "مسیرت"
-  ]
- },
- {
-  "from": 18,
-  "to": 18,
-  "tpl": "hero",
-  "items": [
-   {
-    "id": "three-stars",
-    "at": "سه"
-   },
-   {
-    "id": "chef-hat",
-    "at": "آشپزی"
-   }
-  ],
-  "text": "سه ستاره: *سفر* ویژه",
-  "number": "18",
-  "decor": [
-   "wine-glass"
-  ],
-  "kw": [
-   "سه",
-   "استثنایی",
-   "سفر"
-  ]
- },
- {
-  "from": 19,
-  "to": 20,
-  "tpl": "statement",
-  "items": [],
-  "text": "قانون: *پول* نمی‌گیرن",
-  "number": "19-20",
-  "decor": [
-   "padlock"
-  ],
-  "kw": [
-   "پول",
-   "نمی‌گیرن",
-   "قوانین"
-  ]
- },
- {
-  "from": 21,
-  "to": 21,
-  "tpl": "hero",
-  "items": [
-   {
-    "id": "secret-inspector",
-    "at": "بازرس‌ها"
-   },
-   {
-    "id": "magnifying-glass",
-    "at": "کارآگاه‌های"
-   }
-  ],
-  "text": "کارآگاه‌های *مخفی* غذا",
-  "number": "21",
-  "decor": [
-   "thief-mask"
-  ],
-  "kw": [
-   "کارآگاه‌های",
-   "مخفی",
-   "غذا"
-  ]
- },
- {
-  "from": 22,
-  "to": 22,
-  "tpl": "trio",
-  "items": [
    {
     "id": "social-media",
-    "at": "شبکه‌های"
-   },
-   {
-    "id": "book-open",
-    "at": "وبلاگ‌ها"
-   },
-   {
-    "id": "eye-open",
-    "at": "رصد"
-   }
-  ],
-  "text": "رصد *نقدها* و وبلاگ‌ها",
-  "number": "22",
-  "decor": [],
-  "kw": [
-   "شبکه‌های",
-   "وبلاگ‌ها",
-   "رصد"
-  ]
- },
- {
-  "from": 23,
-  "to": 23,
-  "tpl": "duo",
-  "items": [
-   {
-    "id": "street-food-stall",
-    "at": "رستورانی"
-   },
-   {
-    "id": "secret-inspector",
-    "at": "ناشناس"
-   }
-  ],
-  "text": "بازرسی *ناشناس* و مخفی",
-  "number": "23",
-  "link": "arrow",
-  "decor": [
-   "social-media"
-  ],
-  "kw": [
-   "ناشناس",
-   "تعریف",
-   "بازرس‌ها"
-  ]
- },
- {
-  "from": 24,
-  "to": 25,
-  "tpl": "trio",
-  "items": [
-   {
-    "id": "spice-jar",
-    "at": "مواد"
-   },
-   {
-    "id": "chef-hat",
-    "at": "سرآشپز"
-   },
-   {
-    "id": "price-tag",
-    "at": "ارزش"
-   }
-  ],
-  "text": "پنج *فاکتور* اصلی",
-  "number": "24-25",
-  "link": "",
-  "decor": [
-   "star-rating"
-  ],
-  "kw": [
-   "فاکتور",
-   "کیفیت",
-   "ارزش"
-  ]
- },
- {
-  "from": 26,
-  "to": 27,
-  "tpl": "hero",
-  "items": [
-   {
-    "id": "street-food-stall",
-    "at": "دکه"
-   },
-   {
-    "id": "plastic-stool",
-    "at": "چهارپایه"
-   },
-   {
-    "id": "safety-glasses",
-    "at": "عینک"
-   },
-   {
-    "id": "one-star",
-    "at": "ستاره"
-   }
-  ],
-  "text": "دکه *خیابونی* با ستاره",
-  "number": "26-27",
-  "link": "",
-  "decor": [
-   "cityscape-chicago"
-  ],
-  "kw": [
-   "بانکوک",
-   "چهارپایه",
-   "ستاره"
-  ]
- },
- {
-  "from": 28,
-  "to": 29,
-  "tpl": "duo",
-  "items": [
-   {
-    "id": "secret-inspector",
-    "at": "بازرس‌ها"
-   },
-   {
-    "id": "cash",
-    "at": "پول"
-   }
-  ],
-  "text": "بازرس *مخفی* و پول نقد",
-  "number": "28-29",
-  "link": "plus",
-  "decor": [],
-  "kw": [
-   "مخفی",
-   "مستعار",
-   "جیب"
-  ]
- },
- {
-  "from": 30,
-  "to": 31,
-  "tpl": "stat",
-  "items": [
-   {
-    "id": "cash",
-    "at": "دلار"
-   }
-  ],
-  "text": "شام *معمولی* ۲۰ دلار",
-  "number": "30-31",
-  "link": "",
-  "decor": [],
-  "kw": [
-   "قیمت‌ها",
-   "آمریکا",
-   "۲۰ دلار"
-  ]
- },
- {
-  "from": 32,
-  "to": 33,
-  "tpl": "hero",
-  "items": [
-   {
-    "id": "one-star",
-    "at": "ستاره"
-   },
-   {
-    "id": "banknotes",
-    "at": "دلار"
-   }
-  ],
-  "text": "یک ستاره: *۱۶۵ دلار*",
-  "number": "32-33",
-  "link": "",
-  "decor": [
-   "wine-glass"
-  ],
-  "kw": [
-   "هزینه‌ها",
-   "۱۶۵ دلار",
-   "منوی کامل"
-  ]
- },
- {
-  "from": 34,
-  "to": 35,
-  "tpl": "duo",
-  "items": [
-   {
-    "id": "one-star",
-    "at": "ستاره"
-   },
-   {
-    "id": "cash",
-    "at": "۲ دلار"
-   }
-  ],
-  "text": "تیم هو وان: *۲ دلار*",
-  "number": "34-35",
-  "link": "vs",
-  "decor": [
-   "street-food-stall"
-  ],
-  "kw": [
-   "هنگ‌کنگ",
-   "۲ دلار",
-   "۱۷ دلار"
-  ]
- },
- {
-  "from": 36,
-  "to": 37,
-  "tpl": "duo",
-  "items": [
-   {
-    "id": "two-stars",
-    "at": "دو ستاره"
-   },
-   {
-    "id": "cash",
-    "at": "دلار"
-   }
-  ],
-  "text": "هزینه *دو ستاره* حدود ۲۵۶ دلار",
-  "number": "256$",
-  "link": "vs",
-  "decor": [],
-  "kw": [
-   "دو ستاره",
-   "۲۵۶ دلار"
-  ]
- },
- {
-  "from": 38,
-  "to": 38,
-  "tpl": "stat",
-  "items": [
-   {
-    "id": "three-stars",
-    "at": "سه ستاره"
-   },
-   {
-    "id": "money-bag",
-    "at": "دلار"
-   }
-  ],
-  "text": "میانگین *سه ستاره* ۳۵۶ دلار",
-  "number": "356$",
-  "link": "",
-  "decor": [],
-  "kw": [
-   "سه ستاره",
-   "۳۵۶ دلار"
-  ]
- },
- {
-  "from": 39,
-  "to": 40,
-  "tpl": "hero",
-  "items": [
-   {
-    "id": "cityscape-chicago",
-    "at": "شیکاگو"
-   },
-   {
-    "id": "silverware-set",
-    "at": "منو"
-   },
-   {
-    "id": "chef-hat",
-    "at": "آلینیا"
-   }
-  ],
-  "text": "منوی *آلینیا* در شیکاگو",
-  "number": "",
-  "link": "",
-  "decor": [
-   "star"
-  ],
-  "kw": [
-   "آلینیا",
-   "شیکاگو"
-  ]
- },
- {
-  "from": 41,
-  "to": 41,
-  "tpl": "statement",
-  "items": [
-   {
-    "id": "two-stars",
-    "at": "دو ستاره"
-   },
-   {
-    "id": "cash",
-    "at": "۲۰۰۰ دلار"
-   }
-  ],
-  "text": "شام *دو ستاره* تا ۲۰۰۰ دلار",
-  "number": "",
-  "link": "",
-  "decor": [],
-  "kw": [
-   "دو ستاره",
-   "۲۰۰۰ دلار"
-  ]
- },
- {
-  "from": 42,
-  "to": 43,
-  "tpl": "duo",
-  "items": [
-   {
-    "id": "star-rating",
-    "at": "ستاره"
-   },
-   {
-    "id": "secret-inspector",
-    "at": "بازدید"
-   }
-  ],
-  "text": "ستاره‌ها *دائمی* نیستند",
-  "number": "",
-  "link": "arrow",
-  "decor": [],
-  "kw": [
-   "دائمی",
-   "بازدید"
-  ]
- },
- {
-  "from": 44,
-  "to": 45,
-  "tpl": "hero",
-  "items": [
-   {
-    "id": "chef-hat",
-    "at": "سرآشپز"
-   },
-   {
-    "id": "warning-sign",
-    "at": "فشار"
+    "sent": 22
    },
    {
     "id": "star",
-    "at": "ستاره"
+    "sent": 13
+   },
+   {
+    "id": "star-rating",
+    "sent": 14
    }
   ],
-  "text": "*فشار* بر سرآشپزها",
-  "number": "",
-  "link": "",
-  "decor": [],
-  "kw": [
-   "فشار",
-   "سرآشپز"
-  ]
+  "_up": true
  },
  {
-  "from": 46,
-  "to": 46,
+  "from": 24,
+  "to": 35,
   "tpl": "statement",
   "items": [
    {
     "id": "banknotes",
-    "at": "ورشکستگی"
+    "sent": 31
    },
    {
-    "id": "one-star",
-    "at": "ستاره"
-   }
-  ],
-  "text": "از دست دادن ستاره = *ورشکستگی*",
-  "number": "",
-  "link": "",
-  "decor": [],
-  "kw": [
-   "ورشکستگی",
-   "ستاره"
-  ]
- },
- {
-  "from": 47,
-  "to": 47,
-  "tpl": "hero",
-  "items": [
-   {
-    "id": "tire-company-logo",
-    "at": "لاستیک"
-   },
-   {
-    "id": "rubber-tire",
-    "at": "لاستیک"
-   }
-  ],
-  "text": "صاحب *ستاره‌ها* کیست؟",
-  "number": "",
-  "link": "",
-  "decor": [],
-  "kw": [
-   "شرکت لاستیک",
-   "ستاره"
-  ]
- },
- {
-  "from": 48,
-  "to": 49,
-  "tpl": "duo",
-  "items": [
-   {
-    "id": "tire-company-logo",
-    "at": "میشلین"
-   },
-   {
-    "id": "rubber-tire",
-    "at": "لاستیک"
-   }
-  ],
-  "text": "زیر *میشلین* و لاستیک",
-  "number": "",
-  "link": "plus",
-  "decor": [
-   "factory"
-  ],
-  "kw": [
-   "میشلین",
-   "لاستیک"
-  ]
- },
- {
-  "from": 50,
-  "to": 51,
-  "tpl": "hero",
-  "items": [
-   {
-    "id": "red-guidebook",
-    "at": "کتابچه"
-   },
-   {
-    "id": "mobile-app",
-    "at": "دیجیتال"
+    "id": "cash",
+    "sent": 31
    },
    {
     "id": "chef-hat",
-    "at": "سرآشپزها"
+    "sent": 27
+   },
+   {
+    "id": "money-bag",
+    "sent": 31
+   },
+   {
+    "id": "plastic-stool",
+    "sent": 27
    }
   ],
-  "text": "*کتابچه* قرمز و دیجیتال",
-  "number": "",
-  "link": "",
-  "decor": [
-   "star"
-  ],
-  "kw": [
-   "کتابچه",
-   "دیجیتال"
-  ]
+  "_up": true
  },
  {
-  "from": 52,
-  "to": 53,
+  "from": 36,
+  "to": 47,
   "tpl": "statement",
   "items": [
    {
-    "id": "star-rating",
-    "at": "ستاره‌دار"
+    "id": "cityscape-chicago",
+    "sent": 39
    }
   ],
-  "text": "راز *لوکس* و سخت‌گیرانه",
-  "number": "",
-  "link": "",
-  "decor": [
-   "magnifying-glass"
-  ],
-  "kw": [
-   "لوکس",
-   "سخت‌گیرانه"
-  ]
+  "_up": true
  },
  {
-  "from": 54,
-  "to": 55,
-  "tpl": "duo",
-  "items": [
-   {
-    "id": "car",
-    "at": "ماشین"
-   },
-   {
-    "id": "road",
-    "at": "جاده‌ها"
-   }
-  ],
-  "text": "ماشین روی *جاده*",
-  "number": "",
-  "link": "arrow",
-  "decor": [
-   "gas-pump"
-  ],
-  "kw": [
-   "ماشین",
-   "جاده"
-  ]
- },
- {
-  "from": 56,
+  "from": 48,
   "to": 56,
-  "tpl": "hero",
+  "tpl": "statement",
   "items": [
    {
-    "id": "magnifying-glass",
-    "at": "ذره‌بین"
+    "id": "mobile-app",
+    "sent": 51
    }
   ],
-  "text": "دنبال *ذره‌بین* بمان",
-  "number": "",
-  "link": "",
-  "decor": [
-   "bulb"
-  ],
-  "kw": [
-   "ذره‌بین"
-  ]
+  "_up": true
  }
 ]
