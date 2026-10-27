@@ -1,4 +1,68 @@
 model: openai/gpt-oss-120b
-chunk 0 sentences 28 seconds 196.4
-gemini tts: HTTP 429 {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 1h16m or upgrade your tier at https://ai.dev/rate-limit.","code":"too_many_requests"}}
-Gemini TTS daily free limit reached (10 requests/day): {"error":{"message":"Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). Please retry in 1h16m or upgrade your tier at https://ai.dev/rate-limit.","code":"too
+tts retry 0 Invalid voice 'Algieba'.
+tts retry 0 Invalid voice 'Algieba'.
+tts retry 0 Invalid voice 'Algieba'.
+tts retry 0 Invalid voice 'Algieba'.
+tts retry 0 Invalid voice 'Algieba'.
+tts retry 0 Invalid voice 'Algieba'.
+tts retry 1 Invalid voice 'Algieba'.
+tts retry 1 Invalid voice 'Algieba'.
+tts retry 1 Invalid voice 'Algieba'.
+tts retry 1 Invalid voice 'Algieba'.
+tts retry 1 Invalid voice 'Algieba'.
+tts retry 1 Invalid voice 'Algieba'.
+tts retry 2 Invalid voice 'Algieba'.
+tts retry 2 Invalid voice 'Algieba'.
+tts retry 2 Invalid voice 'Algieba'.
+tts retry 2 Invalid voice 'Algieba'.
+tts retry 2 Invalid voice 'Algieba'.
+tts retry 2 Invalid voice 'Algieba'.
+tts retry 3 Invalid voice 'Algieba'.
+tts retry 3 Invalid voice 'Algieba'.
+tts retry 3 Invalid voice 'Algieba'.
+tts retry 3 Invalid voice 'Algieba'.
+tts retry 3 Invalid voice 'Algieba'.
+tts retry 3 Invalid voice 'Algieba'.
+edge-tts failed for: تا حالا فکر کردی چرا توی رستوران‌های لوکس، ستاره‌ها از یه شر
+Task exception was never retrieved
+future: <Task finished name='Task-1' coro=<run() done, defined at /home/runner/work/zarrebin-video/zarrebin-video/tools/narrate_tts.py:160> exception=SystemExit('edge-tts failed for: تا حالا فکر کردی چرا توی رستوران\u200cهای لوکس، ستاره\u200cها از یه شر')>
+Traceback (most recent call last):
+  File "/home/runner/work/zarrebin-video/zarrebin-video/tools/narrate_tts.py", line 219, in <module>
+    asyncio.run(run(sys.argv[1]))
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/runners.py", line 194, in run
+    with Runner(debug=debug, loop_factory=loop_factory) as runner:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/runners.py", line 62, in __exit__
+    self.close()
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/runners.py", line 70, in close
+    _cancel_all_tasks(loop)
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/runners.py", line 206, in _cancel_all_tasks
+    loop.run_until_complete(tasks.gather(*to_cancel, return_exceptions=True))
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/base_events.py", line 678, in run_until_complete
+    self.run_forever()
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/base_events.py", line 645, in run_forever
+    self._run_once()
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/base_events.py", line 1999, in _run_once
+    handle._run()
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/runner/work/zarrebin-video/zarrebin-video/tools/narrate_tts.py", line 175, in run
+    res = await asyncio.gather(*[synth(sents[i][0], voice, rate, src[i]) for i in range(b, min(b + 6, len(sents)))])
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/base_events.py", line 678, in run_until_complete
+    self.run_forever()
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/base_events.py", line 645, in run_forever
+    self._run_once()
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/base_events.py", line 1999, in _run_once
+    handle._run()
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/home/runner/work/zarrebin-video/zarrebin-video/tools/narrate_tts.py", line 69, in synth
+    sys.exit('edge-tts failed for: ' + text[:60])
+SystemExit: edge-tts failed for: تا حالا فکر کردی چرا توی رستوران‌های لوکس، ستاره‌ها از یه شر
