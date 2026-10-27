@@ -1,0 +1,320 @@
+{
+ "episode": "michellien-star-short",
+ "items": [
+  {
+   "id": "star",
+   "en": "Michelin star symbol",
+   "fa": "ستاره میشلین",
+   "why": "معتبرترین جایزه آشپزی",
+   "tags": []
+  },
+  {
+   "id": "rubber-tire",
+   "en": "Rubber tire",
+   "fa": "لاستیک",
+   "why": "شرکت لاستیک میشلین",
+   "tags": []
+  },
+  {
+   "id": "map-folded",
+   "en": "Folded map guide",
+   "fa": "نقشه راهنما",
+   "why": "کتاب راهنمای رایگان برای رانندگان",
+   "tags": []
+  },
+  {
+   "id": "gas-pump",
+   "en": "Gas pump station",
+   "fa": "پمپ بنزین",
+   "why": "یکی از مکان‌های راهنمایی شده",
+   "tags": []
+  },
+  {
+   "id": "wrench",
+   "en": "Wrench tool",
+   "fa": "آچار تعمیرگاه",
+   "why": "تعمیرگاه در کتاب راهنما",
+   "tags": []
+  },
+  {
+   "id": "hotel-building",
+   "en": "Hotel building",
+   "fa": "هتل",
+   "why": "هتل در کتاب راهنما",
+   "tags": []
+  },
+  {
+   "id": "restaurant",
+   "en": "Restaurant sign",
+   "fa": "رستوران",
+   "why": "رستوران در کتاب راهنما",
+   "tags": []
+  },
+  {
+   "id": "car",
+   "en": "Early 1900s car",
+   "fa": "ماشین",
+   "why": "تعداد کم ماشین در فرانسه 1900",
+   "tags": []
+  },
+  {
+   "id": "eiffel-tower",
+   "en": "Eiffel Tower silhouette",
+   "fa": "فرانسه",
+   "why": "نمایش مکان جغرافیایی فرانسه",
+   "tags": []
+  },
+  {
+   "id": "two-brothers",
+   "en": "Two brothers illustration",
+   "fa": "برادران میشلین",
+   "why": "برادران سازنده لاستیک",
+   "tags": []
+  },
+  {
+   "id": "road",
+   "en": "Road stretching",
+   "fa": "جاده",
+   "why": "تشویق به سفر بیشتر",
+   "tags": []
+  },
+  {
+   "id": "calendar",
+   "en": "Calendar page 1926",
+   "fa": "سال ۱۹۲۶",
+   "why": "سال شروع اعطای ستاره‌ها",
+   "tags": []
+  },
+  {
+   "id": "one-star",
+   "en": "One Michelin star badge",
+   "fa": "یک ستاره",
+   "why": "تعریف یک ستاره",
+   "tags": []
+  },
+  {
+   "id": "two-stars",
+   "en": "Two Michelin stars badge",
+   "fa": "دو ستاره",
+   "why": "تعریف دو ستاره",
+   "tags": []
+  },
+  {
+   "id": "three-stars",
+   "en": "Three Michelin stars badge",
+   "fa": "سه ستاره",
+   "why": "تعریف سه ستاره",
+   "tags": []
+  },
+  {
+   "id": "compass",
+   "en": "Compass rose",
+   "fa": "کومپاس",
+   "why": "ستاره‌ها بر حسب کیلومتر",
+   "tags": []
+  },
+  {
+   "id": "chart-up",
+   "en": "Upward chart arrow",
+   "fa": "نمودار صعودی",
+   "why": "ستاره‌های بیشتر = فروش لاستیک بیشتر",
+   "tags": []
+  },
+  {
+   "id": "money-bag",
+   "en": "Bag of money",
+   "fa": "پول",
+   "why": "سود فروش لاستیک",
+   "tags": []
+  },
+  {
+   "id": "thief-mask",
+   "en": "Anonymous inspector mask",
+   "fa": "ماسک بازرس مخفی",
+   "why": "بازرس‌های ناشناس میشلین",
+   "tags": []
+  },
+  {
+   "id": "reservation-card",
+   "en": "Reservation card",
+   "fa": "کارت رزرو",
+   "why": "رزرو با اسم جعلی",
+   "tags": []
+  },
+  {
+   "id": "chef-hat",
+   "en": "Chef's hat",
+   "fa": "سرآشپز",
+   "why": "سرآشپز نمی‌داند بازرس کیست",
+   "tags": []
+  },
+  {
+   "id": "dinner-plate",
+   "en": "Dinner plate with food",
+   "fa": "بشقاب غذا",
+   "why": "هر بشقاب باید عالی باشد",
+   "tags": []
+  },
+  {
+   "id": "trophy",
+   "en": "Trophy award",
+   "fa": "جایزه",
+   "why": "ستاره‌های میشلین به عنوان جایزه",
+   "tags": []
+  },
+  {
+   "id": "earth-globe",
+   "en": "Globe showing world",
+   "fa": "جهان",
+   "why": "حدود ۱۵۰ رستوران سه ستاره در جهان",
+   "tags": []
+  },
+  {
+   "id": "video-play",
+   "en": "Play button for video",
+   "fa": "ویدیو یوتیوب",
+   "why": "ویدیو کامل در یوتیوب",
+   "tags": []
+  },
+  {
+   "id": "magnifier-search",
+   "en": "Magnifying glass",
+   "fa": "ذره‌بین",
+   "why": "دعوت به مشارکت مخاطب",
+   "tags": []
+  },
+  {
+   "id": "clock-wall",
+   "en": "Wall clock",
+   "fa": "ساعت دیواری",
+   "why": "گذشت زمان از 1900 تا امروز",
+   "tags": []
+  },
+  {
+   "id": "hourglass",
+   "en": "Hourglass timer",
+   "fa": "ساعت شنی",
+   "why": "تاریخچه طولانی",
+   "tags": []
+  },
+  {
+   "id": "question-mark",
+   "en": "Question mark symbol",
+   "fa": "علامت سؤال",
+   "why": "پرسش از منبع ستاره‌ها",
+   "tags": []
+  },
+  {
+   "id": "exclamation-mark",
+   "en": "Exclamation mark symbol",
+   "fa": "علامت تعجب",
+   "why": "شگفتی از ترفند فروش لاستیک",
+   "tags": []
+  },
+  {
+   "id": "chart-down",
+   "en": "Downward chart arrow",
+   "fa": "نمودار نزولی",
+   "why": "اگر ستاره‌ها از دست بروند",
+   "tags": []
+  },
+  {
+   "id": "credit-card",
+   "en": "Credit card",
+   "fa": "کارت اعتباری",
+   "why": "خرید راهنمای میشلین",
+   "tags": []
+  },
+  {
+   "id": "newspaper",
+   "en": "Newspaper article",
+   "fa": "روزنامه",
+   "why": "خبرهای رسانه‌ای درباره میشلین",
+   "tags": []
+  },
+  {
+   "id": "microphone",
+   "en": "Microphone",
+   "fa": "میکروفن",
+   "why": "مصاحبه یا توضیح بیشتر",
+   "tags": []
+  },
+  {
+   "id": "light-bulb-idea",
+   "en": "Idea light bulb",
+   "fa": "لامپ ایده",
+   "why": "ایدهٔ کتاب راهنما",
+   "tags": []
+  },
+  {
+   "id": "brain-colorful",
+   "en": "Colorful brain",
+   "fa": "مغز خلاق",
+   "why": "تفکر استراتژیک میشلین",
+   "tags": []
+  },
+  {
+   "id": "fire",
+   "en": "Flame fire",
+   "fa": "آتش",
+   "why": "لاستیک سوزانده می‌شود",
+   "tags": []
+  },
+  {
+   "id": "rocket",
+   "en": "Rocket launching",
+   "fa": "موشک",
+   "why": "رشد فروش لاستیک",
+   "tags": []
+  },
+  {
+   "id": "medal",
+   "en": "Medal",
+   "fa": "مدال",
+   "why": "نماد اعتبار میشلین",
+   "tags": []
+  },
+  {
+   "id": "star-rating",
+   "en": "Star rating icon",
+   "fa": "امتیاز ستاره‌ای",
+   "why": "ارزیابی رستوران‌ها",
+   "tags": []
+  },
+  {
+   "id": "map-pin",
+   "en": "Map pin marker",
+   "fa": "نشانگر نقشه",
+   "why": "موقعیت رستوران‌های ستاره‌دار",
+   "tags": []
+  },
+  {
+   "id": "traffic-light",
+   "en": "Traffic light",
+   "fa": "چراغ راهنمایی",
+   "why": "ایمنی رانندگی",
+   "tags": []
+  },
+  {
+   "id": "umbrella",
+   "en": "Umbrella",
+   "fa": "چتر",
+   "why": "سفر در هر آب و هوا",
+   "tags": []
+  },
+  {
+   "id": "sun",
+   "en": "Sun shining",
+   "fa": "خورشید",
+   "why": "سفر در روزهای آفتابی",
+   "tags": []
+  },
+  {
+   "id": "rain-cloud",
+   "en": "Rain cloud",
+   "fa": "ابر باران",
+   "why": "سفر در هوای بارانی",
+   "tags": []
+  }
+ ]
+}
