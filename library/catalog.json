@@ -628,6 +628,17 @@
     "star-rating__1.webp"
    ]
   },
+  "street-food-stall": {
+   "id": "street-food-stall",
+   "en": "street food stall",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "street-food-stall__1.webp",
+    "street-food-stall__2.webp"
+   ]
+  },
   "sun": {
    "id": "sun",
    "en": "sun",
