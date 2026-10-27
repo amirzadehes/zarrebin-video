@@ -323,7 +323,7 @@ async function buildVideo(mode){
       const b64=await toB64(ownF); let osha; try{ osha=(await api('/contents/episodes/'+ep+'/voice_user.'+ext)).sha }catch(e){}
       await api('/contents/episodes/'+ep+'/voice_user.'+ext,{method:'PUT',body:JSON.stringify({message:'own voice: '+ep,content:b64,branch:'main',sha:osha})}); }
     if(ownF){ let txt=$('#epText').value.trim(); if(txt.length<20){ try{ const j=await api('/contents/episodes/'+ep+'/script.txt'); txt=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))).trim() }catch(e){} }
-      if(txt.length>20){ let ssha; try{ ssha=(await api('/contents/episodes/'+ep+'/spoken.txt')).sha }catch(e){}
+      txt=cleanScript(txt); if(txt.length>20){ let ssha; try{ ssha=(await api('/contents/episodes/'+ep+'/spoken.txt')).sha }catch(e){}
         await api('/contents/episodes/'+ep+'/spoken.txt',{method:'PUT',body:JSON.stringify({message:'spoken text: '+ep,content:enc(txt),branch:'main',sha:ssha})}); } }
     let sha; try{ sha=(await api('/contents/episodes/'+ep+'/request.json')).sha }catch(e){}
     await api('/contents/episodes/'+ep+'/request.json',{method:'PUT',body:JSON.stringify({message:'build video: '+ep,content:enc(JSON.stringify(body)),branch:'main',sha})});
@@ -480,8 +480,9 @@ async function showNeeds(ep){
   box.innerHTML=head; while(tmp.firstChild) box.appendChild(tmp.firstChild); bindEpHead();
   return true;
 }
+const cleanScript=t=>String(t||'').replace(/\*{0,2}\[[^\]\n]{1,30}\]\s*:?\*{0,2}/g,'').replace(/<[^>\n]{1,24}>/g,' ').replace(/[ \t]+/g,' ').replace(/ *\n */g,'\n').replace(/\n{3,}/g,'\n\n').trim();   // speaker tags and TTS tags are for the voice, not for the video
 async function sendEp(){
-  const st=$('#epSt'), ep=slug($('#epName').value), text=$('#epText').value.trim();
+  const st=$('#epSt'), ep=slug($('#epName').value), text=cleanScript($('#epText').value);
   if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return; }
   if(!ep||text.length<50){ st.className='st bad'; st.textContent='نام انگلیسی و متن کامل را وارد کن'; return; }
   st.className='st'; st.textContent='در حال ارسال…';
@@ -489,7 +490,7 @@ async function sendEp(){
     let sha, oldN; try{ sha=(await api('/contents/episodes/'+ep+'/script.txt')).sha }catch(e){}
     try{ oldN=(await api('/contents/episodes/'+ep+'/needs.json')).sha }catch(e){}
     await api('/contents/episodes/'+ep+'/script.txt',{method:'PUT',body:JSON.stringify({message:'episode script: '+ep,content:enc(text),branch:'main',sha})});
-    const tS=($('#epTextS')||{value:''}).value.trim(); let shortEp='';
+    const tS=cleanScript(($('#epTextS')||{value:''}).value); let shortEp='';
     if(tS.length>=20&&!/-short$/.test(ep)){ shortEp=ep+'-short'; let s2; try{ s2=(await api('/contents/episodes/'+shortEp+'/script.txt')).sha }catch(e){}
       await api('/contents/episodes/'+shortEp+'/script.txt',{method:'PUT',body:JSON.stringify({message:'episode script (short): '+shortEp,content:enc(tS),branch:'main',sha:s2})}); S.eps=[...new Set([...(S.eps||[]),shortEp])] }
     ls.set('curEp',ep); st.className='st ok'; st.textContent='ارسال شد'+(shortEp?' (بلند و کوتاه)':'')+'؛ تحلیل حدود یک تا دو دقیقه طول می‌کشد…';
