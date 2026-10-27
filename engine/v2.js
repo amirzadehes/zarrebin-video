@@ -202,7 +202,7 @@ function ui(t) {
   const by = ty + 54; ctx.fillStyle = 'rgba(255,255,255,.28)'; ctx.fillRect(m, by, bw, 4); ctx.fillStyle = '#ffc21a'; const pr = clamp(t / D.meta.total); ctx.fillRect(D.meta.rtl ? m + bw * (1 - pr) : m, by, bw * pr, 4); ctx.restore()
 }
 const GR = []; function mkGrain() { for (let k = 0; k < 8; k++) { const c = document.createElement('canvas'); c.width = 480; c.height = 270; const g = c.getContext('2d'), im = g.createImageData(480, 270), r = rng(300 + k); for (let i = 0; i < im.data.length; i += 4) { const v = r() * 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255 } g.putImageData(im, 0, 0); GR.push(c) } }
-function finish(t) { ctx.save(); ctx.globalAlpha = .07; ctx.globalCompositeOperation = 'overlay'; ctx.drawImage(GR[Math.floor(t * 24) % 8], 0, 0, W, H); ctx.restore(); const v = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .5, W / 2, H / 2, Math.max(W, H) * .75); v.addColorStop(0, 'rgba(10,6,20,0)'); v.addColorStop(1, 'rgba(10,6,20,.4)'); ctx.fillStyle = v; ctx.fillRect(0, 0, W, H) }
+function finish(t) { const v = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .5, W / 2, H / 2, Math.max(W, H) * .75); v.addColorStop(0, 'rgba(10,6,20,0)'); v.addColorStop(1, 'rgba(10,6,20,.4)'); ctx.fillStyle = v; ctx.fillRect(0, 0, W, H) }
 
 function draw(t) {
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'none';
