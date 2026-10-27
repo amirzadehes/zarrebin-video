@@ -425,6 +425,18 @@
     "purple-molecule__4.webp"
    ]
   },
+  "rubber-tire": {
+   "id": "rubber-tire",
+   "en": "rubber tire",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "rubber-tire__1.webp",
+    "rubber-tire__2.webp",
+    "rubber-tire__3.webp"
+   ]
+  },
   "silverware-set": {
    "id": "silverware-set",
    "en": "silverware set",
