@@ -1,30 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-26 20:24:02 UTC",
-   "ok": [
-    {
-     "file": "alarm-clock__mvpp9zlm1.jpg",
-     "id": "alarm-clock",
-     "saved": "alarm-clock__2.webp",
-     "kb": 93
-    },
-    {
-     "file": "alarm-clock__mvppa23g2.jpg",
-     "id": "alarm-clock",
-     "saved": "alarm-clock__3.webp",
-     "kb": 97
-    },
-    {
-     "file": "alarm-clock__mvppa4ms3.jpg",
-     "id": "alarm-clock",
-     "saved": "alarm-clock__4.webp",
-     "kb": 102
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-10-26 20:28:04 UTC",
    "ok": [
     {
@@ -1000,6 +976,18 @@
      "id": "book-open",
      "saved": "book-open__2.webp",
      "kb": 117
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-10-27 08:04:39 UTC",
+   "ok": [
+    {
+     "file": "star-rating__mvqega2r0.jpg",
+     "id": "star-rating",
+     "saved": "star-rating__1.webp",
+     "kb": 63
     }
    ],
    "failed": []

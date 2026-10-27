@@ -545,6 +545,16 @@
     "star__1.webp"
    ]
   },
+  "star-rating": {
+   "id": "star-rating",
+   "en": "star rating",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "star-rating__1.webp"
+   ]
+  },
   "sun": {
    "id": "sun",
    "en": "sun",
