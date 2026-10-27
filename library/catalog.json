@@ -273,6 +273,16 @@
     "eye-sleepy__2.webp"
    ]
   },
+  "factory": {
+   "id": "factory",
+   "en": "factory",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "factory__1.webp"
+   ]
+  },
   "gas-pump": {
    "id": "gas-pump",
    "en": "gas pump",
@@ -458,6 +468,17 @@
     "purple-molecule__4.webp"
    ]
   },
+  "road": {
+   "id": "road",
+   "en": "road",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "road__1.webp",
+    "road__2.webp"
+   ]
+  },
   "rubber-tire": {
    "id": "rubber-tire",
    "en": "rubber tire",
@@ -549,6 +570,16 @@
     "tired-brain__1.webp",
     "tired-brain__2.webp",
     "tired-brain__3.webp"
+   ]
+  },
+  "two-brothers": {
+   "id": "two-brothers",
+   "en": "two brothers",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "two-brothers__1.webp"
    ]
   },
   "warning-sign": {
