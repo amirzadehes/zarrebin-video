@@ -1,6 +1,13 @@
-reusing the saved voice (same text, engine and voice) - no new TTS request
+model: openai/gpt-oss-120b
+chunk 0 sentences 25 seconds 166.0
+chunk 1 sentences 27 seconds 131.2
+whisper-aligned words: 96%
+engine gemini Algieba | sentences 52 words 644 seconds 298.2
 using only this episode's objects: 2 of 37 planned
 model: openai/gpt-oss-120b
-scenes 25 total 235.86 templates {'hero': 0, 'duo': 0, 'trio': 0, 'statement': 25, 'stat': 0}
-sfx events 189 peak 0.60 seconds 236.9
-music off
+rate limited, waiting 6s
+scenes 34 total 299.44 templates {'hero': 1, 'duo': 1, 'trio': 0, 'statement': 32, 'stat': 0}
+sfx events 250 peak 0.57 seconds 300.4
+model: openai/gpt-oss-120b
+rate limited, waiting 5s
+no music uploaded yet (app > settings > music) - video will have no background music
