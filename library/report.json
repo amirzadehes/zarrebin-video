@@ -925,6 +925,24 @@
      "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: rubber-tire__3.webp)"
     }
    ]
+  },
+  {
+   "time": "2026-10-27 07:49:47 UTC",
+   "ok": [
+    {
+     "file": "map-folded__mvqdwz1b0.jpg",
+     "id": "map-folded",
+     "saved": "map-folded__1.webp",
+     "kb": 342
+    },
+    {
+     "file": "map-folded__mvqdx22s1.jpg",
+     "id": "map-folded",
+     "saved": "map-folded__2.webp",
+     "kb": 306
+    }
+   ],
+   "failed": []
   }
  ]
 }

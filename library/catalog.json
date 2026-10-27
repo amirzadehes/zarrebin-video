@@ -346,6 +346,17 @@
     "magnifying-glass__3.webp"
    ]
   },
+  "map-folded": {
+   "id": "map-folded",
+   "en": "map folded",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "map-folded__1.webp",
+    "map-folded__2.webp"
+   ]
+  },
   "moka-pot": {
    "id": "moka-pot",
    "en": "moka pot",
