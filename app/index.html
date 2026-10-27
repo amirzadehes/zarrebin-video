@@ -74,6 +74,11 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
   <div class="row"><button class="pri" id="btnSave">ذخیره و بررسی اتصال</button><button id="btnReset">قالب پیش‌فرض</button></div>
   <div class="st" id="setSt"></div>
   <p class="hint">توکن را فقط با دسترسی Contents (خواندن و نوشتن) و فقط برای همین ریپو بساز.</p>
+  <div class="card" style="margin-top:14px"><div class="name">موزیک‌های پس‌زمینه</div>
+    <p class="hint">فایل موزیک (مثلاً از Gemini، Pixabay یا YouTube Audio Library) را همین‌جا بده و حالتش را مشخص کن. ساخت ویدیو بر اساس موضوع قسمت یکی از همین‌ها را زیر صدا می‌گذارد.</p>
+    <select id="mMood" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="any">برای همه‌ی موضوع‌ها</option><option value="calm">آرام و گرم</option><option value="curious">کنجکاو و علمی</option><option value="mystery">رازآلود</option><option value="upbeat">شاد و پرانرژی</option><option value="dramatic">جدی و دراماتیک</option></select>
+    <div class="row"><label class="btn pri" style="display:grid;place-items:center;margin:0;color:var(--acc-tx)">افزودن موزیک<input type="file" id="mFile" accept="audio/*,.mp3,.m4a,.wav,.ogg" multiple hidden></label></div>
+    <div class="st" id="mSt"></div><div id="mList"></div></div>
   <div class="row"><button id="btnLib">نمایش کتابخانه‌ی تصاویر</button></div>
   <div id="lib" hidden style="margin-top:12px"></div>
 </section>
@@ -199,7 +204,7 @@ async function renderEp(){
       <label>سبک تصویر</label>
       <select id="bStyle" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="comic" selected>کمیک (رنگارنگ و پرانرژی)</option><option value="vox">ووکس (ساده، مدرن، شبیه ویدیوهای توضیحی Vox)</option></select>
       <label>موزیک پس‌زمینه (رایگان، ساخته‌شده توسط خودمان، زیر صدا آرام می‌شود)</label>
-      <select id="bMusic" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="auto" selected>خودکار (بر اساس موضوع قسمت)</option><option value="calm">آرام و گرم</option><option value="curious">کنجکاو و علمی</option><option value="mystery">رازآلود</option><option value="upbeat">شاد و پرانرژی</option><option value="dramatic">جدی و دراماتیک</option><option value="none">بدون موزیک</option></select>
+      <select id="bMusic" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="auto" selected>خودکار (از موزیک‌های آپلودشده، بر اساس موضوع)</option><option value="calm">آرام و گرم</option><option value="curious">کنجکاو و علمی</option><option value="mystery">رازآلود</option><option value="upbeat">شاد و پرانرژی</option><option value="dramatic">جدی و دراماتیک</option><option value="synth">موزیک ساخته‌شده با کد (ساده)</option><option value="none">بدون موزیک</option></select>
       <label>صدای راوی هوش مصنوعی </label>
       <select id="bVoice" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option>Algieba</option><option>Sulafat</option><option>Charon</option><option>Kore</option><option>Puck</option><option>Orus</option><option>Gacrux</option></select>
       <label><input type="checkbox" id="bV" checked> اینستاگرام (عمودی)</label>
@@ -334,6 +339,16 @@ $('#btnSave').onclick=async()=>{
   try{ const r=await api(''); st.className='st '+(r.permissions?.push?'ok':'bad'); st.textContent = r.permissions?.push ? 'اتصال برقرار است و اجازه‌ی نوشتن دارد ✓' : 'اتصال هست ولی اجازه‌ی نوشتن نداری؛ توکن را با دسترسی Contents بساز'; await loadAll(); }
   catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message; }
 };
+const MOODFA={any:'همه',calm:'آرام',curious:'کنجکاو',mystery:'رازآلود',upbeat:'شاد',dramatic:'جدی'};
+async function loadMusic(){ const box=$('#mList'); if(!box) return; let L=[]; try{ L=(await api('/contents/music')).filter(x=>x.type==='file'&&/__/.test(x.name)) }catch(e){}
+  box.innerHTML=L.length?L.map(x=>{const [m,...r]=x.name.split('__'); return `<div class="vrow" data-n="${x.name}" data-sha="${x.sha}"><span class="vname" dir="ltr">${r.join('__')}<small>${MOODFA[m]||m}</small></span><button class="mdel">🗑</button></div>`}).join(''):'<p class="hint">هنوز موزیکی آپلود نشده؛ تا آن موقع ویدیوها بدون موزیک ساخته می‌شوند.</p>';
+  box.querySelectorAll('.mdel').forEach(b=>b.onclick=async()=>{ const r=b.closest('.vrow'); if(!confirm('این موزیک پاک شود؟')) return; try{ await api('/contents/music/'+r.dataset.n,{method:'DELETE',body:JSON.stringify({message:'remove music',sha:r.dataset.sha,branch:'main'})}); r.remove(); toast('پاک شد ✓') }catch(e){ toast('خطا: '+e.message) } }) }
+$('#mFile').onchange=async e=>{ const st=$('#mSt'); if(!S.token){ st.className='st bad'; st.textContent='اول توکن را ذخیره کن'; return }
+  const fs=[...e.target.files]; let ok=0; for(const f of fs){ if(f.size>40*1024*1024){ st.className='st bad'; st.textContent='فایل بزرگ‌تر از ۴۰ مگابایت است'; continue }
+    st.className='st'; st.textContent='در حال آپلود '+f.name+'…'; const ext=(f.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,''); const base=slug(f.name.replace(/\.[^.]+$/,''))||'track';
+    try{ await put('music/'+$('#mMood').value+'__'+base+'.'+ext, await toB64(f), 'music: '+base); ok++ }catch(er){ st.className='st bad'; st.textContent='خطا: '+er.message } }
+  e.target.value=''; if(ok){ st.className='st ok'; st.textContent=fa(ok)+' موزیک ذخیره شد'; toast('✓ موزیک ذخیره شد'); loadMusic() } };
+$('#btnSet').onclick=()=>{ $('#settings').hidden=!$('#settings').hidden; if(!$('#settings').hidden) loadMusic(); };
 $('#btnLib').onclick=()=>{ const l=$('#lib'); l.hidden=!l.hidden; };
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); ['want','ep','gen'].forEach(t=>$('#'+t).hidden=t!==b.dataset.t); });
 if(!S.token) $('#settings').hidden=false;

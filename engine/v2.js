@@ -24,16 +24,24 @@ const THEMES = [
 /* Vox-like editorial style: flat paper colours, soft shadows, marker highlights, calm motion (enabled with ?style=vox or meta.style) */
 let VOX = false;
 const VTHEMES = [
-  { base: '#f2ead9', fg: '#14213d', mark: '#ffd54a', acc: '#e8553d', sh: '#c9bfa8' }, { base: '#14213d', fg: '#f6efe0', mark: '#ffd54a', acc: '#4dd0c4', sh: '#0c1527', dark: true },
-  { base: '#f4b942', fg: '#1b1b1b', mark: '#fff3c4', acc: '#c8372d', sh: '#d99a1c' }, { base: '#e6efe7', fg: '#10302b', mark: '#ffd54a', acc: '#e8553d', sh: '#bdd0c1' },
-  { base: '#0f5c63', fg: '#f6efe0', mark: '#ffd54a', acc: '#ff8a5b', sh: '#0a444a', dark: true }, { base: '#f7e3dc', fg: '#2b1d3a', mark: '#ffd54a', acc: '#7a3fc4', sh: '#e2c4ba' },
-  { base: '#ece6dc', fg: '#14213d', mark: '#9be0d2', acc: '#e8553d', sh: '#cfc6b6' }, { base: '#e8553d', fg: '#fff7ea', mark: '#ffd54a', acc: '#14213d', sh: '#c43f2a', dark: true }];
-let PAPER = null; function mkPaper() { const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d'), im = g.createImageData(256, 256), r = rng(11); for (let i = 0; i < im.data.length; i += 4) { const v = 128 + (r() - .5) * 70; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255 } g.putImageData(im, 0, 0); PAPER = ctx.createPattern(c, 'repeat') }
+  { base: '#e0cfa9', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#bba67c' }, { base: '#d8c59c', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#b29c70' },
+  { base: '#e6d7b4', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#c4b185' }, { base: '#d4bf95', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#ae986c' },
+  { base: '#dcc9a2', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#b8a47a' }, { base: '#e2d1ac', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#bfab80' },
+  { base: '#d6c299', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#b5a074' }, { base: '#dac7a0', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#baa67c' }];
+let PAPER = null, TEX = null;
+function mkPaper() { const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d'), im = g.createImageData(512, 512), r = rng(11);
+  for (let i = 0; i < im.data.length; i += 4) { const v = 128 + (r() - .5) * 90; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255 } g.putImageData(im, 0, 0); PAPER = ctx.createPattern(c, 'repeat');
+  const m = document.createElement('canvas'); m.width = 540; m.height = 960; const q = m.getContext('2d'), r2 = rng(5);   // blotches, stains, creases (drawn once, scaled up)
+  for (let i = 0; i < 70; i++) { const x = r2() * 540, y = r2() * 960, R = 30 + r2() * 120, gr = q.createRadialGradient(x, y, 0, x, y, R); const dark = r2() < .6; gr.addColorStop(0, dark ? 'rgba(90,60,25,.10)' : 'rgba(255,245,220,.10)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); q.fillStyle = gr; q.fillRect(x - R, y - R, 2 * R, 2 * R) }
+  q.strokeStyle = 'rgba(70,45,20,.18)'; q.lineWidth = 1.4; for (let k = 0; k < 3; k++) { q.beginPath(); let x = r2() * 540, y = r2() * 960; q.moveTo(x, y); for (let j = 0; j < 14; j++) { x += (r2() - .5) * 70; y += (r2() - .35) * 80; q.lineTo(x, y) } q.stroke() }
+  const eg = q.createRadialGradient(270, 480, 200, 270, 480, 600); eg.addColorStop(0, 'rgba(60,35,10,0)'); eg.addColorStop(1, 'rgba(60,35,10,.2)'); q.fillStyle = eg; q.fillRect(0, 0, 540, 960); TEX = m }
+function torn(x, y, w, h, seed, jag = 9) { const r = rng(seed), pts = [], st = 22; const edge = (x0, y0, x1, y1) => { const n = Math.max(2, Math.round(Math.hypot(x1 - x0, y1 - y0) / st)); for (let i = 0; i < n; i++) { const p = i / n; pts.push([lerp(x0, x1, p) + (r() - .5) * jag * 2, lerp(y0, y1, p) + (r() - .5) * jag * 2]) } };
+  edge(x - w / 2, y - h / 2, x + w / 2, y - h / 2); edge(x + w / 2, y - h / 2, x + w / 2, y + h / 2); edge(x + w / 2, y + h / 2, x - w / 2, y + h / 2); edge(x - w / 2, y + h / 2, x - w / 2, y - h / 2);
+  ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath() }
 function vbg(t, th, sc) {
   ctx.fillStyle = th.base; ctx.fillRect(-300, -300, W + 600, H + 600);
-  const r = rng(sc.idx * 31 + 7), pos = (V ? [[.85, .2], [.1, .75], [.8, .85]] : [[.9, .25], [.08, .8], [.75, .9]]);   // large flat shapes, slowly drifting
-  ctx.fillStyle = th.sh; for (let i = 0; i < 3; i++) { const R = B * (.28 + r() * .22), dx = Math.sin(t * .15 + i * 2) * 30, dy = Math.cos(t * .12 + i) * 24; ctx.globalAlpha = .55; ctx.beginPath(); if (i === 1) ctx.rect(W * pos[i][0] - R * .6 + dx, H * pos[i][1] - R * .6 + dy, R * 1.2, R * 1.2); else ctx.arc(W * pos[i][0] + dx, H * pos[i][1] + dy, R, 0, TAU); ctx.fill() }
-  ctx.globalAlpha = 1; ctx.strokeStyle = th.dark ? 'rgba(255,255,255,.07)' : 'rgba(20,33,61,.07)'; ctx.lineWidth = 2; const g = 90; for (let x = 0; x < W; x += g) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke() } for (let y = 0; y < H; y += g) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke() }
+  const r = rng(sc.idx * 31 + 7); ctx.save(); ctx.translate(W / 2, H / 2); ctx.scale(V ? 1 : 1.8, V ? 1 : 1.8); ctx.rotate((sc.idx % 4) * Math.PI / 2 * (V ? 0 : 0)); ctx.drawImage(TEX, -W / 2 / (V ? 1 : 1.8) * (V ? 1 : 1), -H / 2 / (V ? 1 : 1.8), W / (V ? 1 : 1.8), H / (V ? 1 : 1.8)); ctx.restore();
+  ctx.save(); ctx.globalAlpha = .55; for (let i = 0; i < 3; i++) { const cx = W * (.2 + r() * .6), cy = H * (.2 + r() * .6), ww = B * (.5 + r() * .4), hh = B * (.35 + r() * .35); ctx.save(); ctx.translate(Math.sin(t * .1 + i) * 14, Math.cos(t * .08 + i) * 10); ctx.rotate((r() - .5) * .5); ctx.shadowColor = 'rgba(40,25,10,.35)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6; ctx.fillStyle = i % 2 ? '#e4d5b2' : '#c2ac80'; torn(cx, cy, ww, hh, sc.idx * 17 + i, 10); ctx.fill(); ctx.restore() } ctx.restore();
   if (PAPER) { ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .22; ctx.fillStyle = PAPER; ctx.fillRect(-300, -300, W + 600, H + 600); ctx.restore() }
 }
 let CUR = null; const VT = sc => VTHEMES[((sc || CUR).theme || 0) % VTHEMES.length];
@@ -43,14 +51,14 @@ function loadImg(src) { return new Promise(r => { const i = new Image(); i.onloa
 /* ---------- primitives ---------- */
 function drawImg(src, x, y, size, rot = 0, a = 1, filter = 'none', sx = 1, sy = 1, shadow = true) {
   const i = IM[src]; if (!i) return; const s = size / Math.max(i.width, i.height);
-  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s * sx, s * sy); ctx.globalAlpha = a; if (filter !== 'none') ctx.filter = filter;
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s * sx, s * sy); ctx.globalAlpha = a; if (VOX) filter = (filter !== 'none' ? filter + ' ' : '') + 'sepia(.55) saturate(.85) contrast(1.05)'; if (filter !== 'none') ctx.filter = filter;
   if (shadow) { if (VOX) { ctx.shadowColor = 'rgba(20,25,45,.32)'; ctx.shadowOffsetX = 6 / s; ctx.shadowOffsetY = 22 / s; ctx.shadowBlur = 34 / s } else { ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowOffsetX = 16 / s; ctx.shadowOffsetY = 20 / s; ctx.shadowBlur = 0 } }
   ctx.drawImage(i, -i.width / 2, -i.height / 2); ctx.restore()
 }
 function star(x, y, r1, r2, n, rot, fill, lw = 8) { ctx.beginPath(); for (let i = 0; i < n * 2; i++) { const r = i % 2 ? r1 : r2, a = rot + i * Math.PI / n; ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r) } ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); if (lw) { ctx.lineWidth = lw; ctx.strokeStyle = INK; ctx.lineJoin = 'round'; ctx.stroke() } }
 function sparkle(x, y, r, rot, fill = '#ffe15a') { if (VOX) return; ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.beginPath(); for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); ctx.lineTo(Math.cos(a + Math.PI / 4) * r * .28, Math.sin(a + Math.PI / 4) * r * .28) } ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); ctx.lineWidth = 6; ctx.strokeStyle = INK; ctx.lineJoin = 'round'; ctx.stroke(); ctx.restore() }
 function ring(x, y, r, a, col = '#ffe15a') { if (VOX) { ctx.save(); ctx.globalAlpha = a * .8; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.lineWidth = 5; ctx.strokeStyle = VT().acc; ctx.stroke(); ctx.restore(); return } ctx.save(); ctx.globalAlpha = a; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.lineWidth = 26; ctx.strokeStyle = INK; ctx.stroke(); ctx.lineWidth = 14; ctx.strokeStyle = col; ctx.stroke(); ctx.restore() }
-function card(x, y, w, h, fill = '#ffe15a', rot = 0, a = 1, sc = 1) { if (VOX) { const th = VT(); ctx.save(); ctx.translate(x, y); ctx.rotate(rot * .25); ctx.scale(sc, sc); ctx.globalAlpha = a; ctx.shadowColor = 'rgba(20,25,45,.28)'; ctx.shadowOffsetY = 14; ctx.shadowBlur = 30; ctx.fillStyle = (fill === '#ffe15a' || fill === '#fff') ? (th.dark ? '#f6efe0' : '#ffffff') : fill; ctx.beginPath(); ctx.roundRect(-w / 2, -h / 2, w, h, 10); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.fillStyle = th.acc; ctx.fillRect(-w / 2, -h / 2, 10, h); ctx.restore(); return } ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(sc, sc); ctx.globalAlpha = a; ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowOffsetX = 10; ctx.shadowOffsetY = 12; ctx.fillStyle = fill; ctx.beginPath(); ctx.roundRect(-w / 2, -h / 2, w, h, 14); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 7; ctx.strokeStyle = INK; ctx.stroke(); ctx.restore() }
+function card(x, y, w, h, fill = '#ffe15a', rot = 0, a = 1, sc = 1) { if (VOX) { ctx.save(); ctx.translate(x, y); ctx.rotate(rot * .5); ctx.scale(sc, sc); ctx.globalAlpha = a; ctx.shadowColor = 'rgba(40,25,10,.45)'; ctx.shadowOffsetY = 8; ctx.shadowBlur = 14; ctx.fillStyle = '#efe5cd'; torn(0, 0, w, h, Math.round(w * 7 + h) % 997, 7); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(80,55,25,.35)'; ctx.stroke(); ctx.restore(); return } ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(sc, sc); ctx.globalAlpha = a; ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowOffsetX = 10; ctx.shadowOffsetY = 12; ctx.fillStyle = fill; ctx.beginPath(); ctx.roundRect(-w / 2, -h / 2, w, h, 14); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 7; ctx.strokeStyle = INK; ctx.stroke(); ctx.restore() }
 function arrow(x, y, len, rot, col, a = 1, sc = 1) { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(sc, sc); ctx.globalAlpha = a; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
   (VOX ? [[VT().acc, 14]] : [[INK, 46], [col, 26]]).forEach(([c, w]) => { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(-len / 2, 0); ctx.lineTo(len / 2, 0); ctx.stroke(); ctx.beginPath(); ctx.moveTo(len / 2 - 50, -50); ctx.lineTo(len / 2, 0); ctx.lineTo(len / 2 - 50, 50); ctx.stroke() }); ctx.restore() }
 function plusSign(x, y, r, col, a = 1, sc = 1) { ctx.save(); ctx.translate(x, y); ctx.scale(sc, sc); ctx.globalAlpha = a; ctx.lineCap = 'round'; (VOX ? [[VT().acc, 16]] : [[INK, 46], [col, 26]]).forEach(([c, w]) => { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(-r, 0); ctx.lineTo(r, 0); ctx.moveTo(0, -r); ctx.lineTo(0, r); ctx.stroke() }); ctx.restore() }
@@ -81,7 +89,7 @@ function drawText(text, cx, cy, size, maxW, o = {}) {
     const y = cy - tot / 2 + lh * (li + .5); let x = D.meta.rtl ? cx + ln.w / 2 : cx - ln.w / 2;
     ln.ws.forEach(k => { const p = o.reveal ? o.reveal(idx++) : 1; const w = k.w; if (D.meta.rtl) x -= w; const mx = x + w / 2;
       if (p > 0) { ctx.save(); ctx.translate(mx, y); ctx.scale(.6 + .4 * p, .6 + .4 * p); ctx.globalAlpha = clamp(p * 1.6);
-        if (VOX && k.hl) { const th = VT(); ctx.fillStyle = th.mark; ctx.save(); ctx.rotate(-.015); ctx.fillRect(-w / 2 - 10, -size * .42, (w + 20) * clamp(p * 1.3), size * .9); ctx.restore(); ctx.fillStyle = '#14100e' } else if (k.hl) { ctx.fillStyle = o.hlBg || '#ff3b4a'; ctx.beginPath(); ctx.roundRect(-w / 2 - 14, -size * .6, w + 28, size * 1.2, 16); ctx.fill(); ctx.lineWidth = 6; ctx.strokeStyle = INK; ctx.stroke(); ctx.fillStyle = '#fff' } else ctx.fillStyle = VOX ? (o.color ? VT().fg : INK) : (o.color || INK);
+        if (VOX && k.hl) { const th = VT(); ctx.fillStyle = th.mark; ctx.save(); ctx.rotate(-.015); ctx.fillRect(-w / 2 - 10, -size * .42, (w + 20) * clamp(p * 1.3), size * .9); ctx.restore(); ctx.fillStyle = '#1c130b' } else if (k.hl) { ctx.fillStyle = o.hlBg || '#ff3b4a'; ctx.beginPath(); ctx.roundRect(-w / 2 - 14, -size * .6, w + 28, size * 1.2, 16); ctx.fill(); ctx.lineWidth = 6; ctx.strokeStyle = INK; ctx.stroke(); ctx.fillStyle = '#fff' } else ctx.fillStyle = VOX ? (o.color ? '#f3ead6' : '#1c130b') : (o.color || INK);
         if (o.stroke && !VOX) { ctx.lineWidth = 12; ctx.strokeStyle = INK; ctx.lineJoin = 'round'; ctx.strokeText(k.txt, -w / 2, 4) }
         ctx.fillText(k.txt, -w / 2, 4); ctx.restore() }
       if (D.meta.rtl) x -= L.sp; else x += w + L.sp })
@@ -204,18 +212,18 @@ function buildCaptions() {
 }
 function subs(t) {
   const c = CH.find(c => t >= c.t0 && t < c.t1); if (!c) return; const fs = V ? 62 : 54, a = clamp((t - c.t0) / .1) * clamp((c.t1 - t) / .12), rtl = D.meta.rtl;
-  ctx.save(); ctx.globalAlpha = a; ctx.font = `700 ${fs}px Vz`; ctx.direction = rtl ? 'rtl' : 'ltr'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; const sp = ctx.measureText(' ').width, y = VOX ? (V ? 1650 : H - 95) : (V ? 1590 : H - 105);
+  ctx.save(); ctx.globalAlpha = a; ctx.font = `700 ${fs}px Vz`; ctx.direction = rtl ? 'rtl' : 'ltr'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; const sp = ctx.measureText(' ').width, y = V ? 1590 : H - 105;
   const tot = c.words.reduce((q, w) => q + w.mw, 0) + sp * (c.words.length - 1); let x = rtl ? W / 2 + tot / 2 : W / 2 - tot / 2;
   c.words.forEach(w => { if (rtl) x -= w.mw; const on = t >= w.t0, p = spr(t, w.t0, .5, 16);
-    if (w.kw && on) { ctx.save(); ctx.translate(x + w.mw / 2, y); ctx.scale(.8 + .2 * p, .8 + .2 * p); ctx.fillStyle = VOX ? '#ffd54a' : '#ffc21a'; ctx.beginPath(); ctx.roundRect(-w.mw / 2 - 16, -fs * .78, w.mw + 32, fs * 1.56, VOX ? 6 : 16); ctx.fill(); if (!VOX) { ctx.lineWidth = 5; ctx.strokeStyle = INK; ctx.stroke(); } ctx.fillStyle = INK; ctx.fillText(w.txt, -w.mw / 2, 4); ctx.restore() }
+    if (w.kw && on) { ctx.save(); ctx.translate(x + w.mw / 2, y); ctx.scale(.8 + .2 * p, .8 + .2 * p); if (VOX) { ctx.shadowColor = 'rgba(0,0,0,.85)'; ctx.shadowBlur = 12; ctx.fillStyle = '#b6ff2e'; ctx.fillText(w.txt, -w.mw / 2, 4); ctx.restore() } else { ctx.fillStyle = '#ffc21a'; ctx.beginPath(); ctx.roundRect(-w.mw / 2 - 16, -fs * .78, w.mw + 32, fs * 1.56, 16); ctx.fill(); ctx.lineWidth = 5; ctx.strokeStyle = INK; ctx.stroke(); ctx.fillStyle = INK; ctx.fillText(w.txt, -w.mw / 2, 4); ctx.restore() } }
     else { ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.9)'; ctx.shadowBlur = 14; ctx.fillStyle = on ? '#fff' : 'rgba(255,255,255,.38)'; ctx.fillText(w.txt, x, y + 4 - (on ? bump(t, w.t0, 3) * 8 : 0)); ctx.restore() }
     if (rtl) x -= sp; else x += w.mw + sp }); ctx.restore()
 }
 function uiVox(t) {
-  const th = VT(D.scenes[sceneIndex(t)]), y0 = V ? 1490 : H - 190; ctx.fillStyle = 'rgba(16,24,44,.94)'; ctx.fillRect(0, y0, W, H - y0); ctx.fillStyle = th.acc; ctx.fillRect(0, y0, W, 6);
-  const m = V ? 70 : 90, ty = V ? 98 : 70, bw = W - 2 * m; ctx.save(); ctx.fillStyle = th.fg; ctx.globalAlpha = .9; ctx.font = '700 30px Vz'; ctx.textAlign = 'left'; ctx.direction = 'ltr'; ctx.fillText(D.meta.topLabel || '', m, ty);
-  ctx.font = '900 38px Vz'; ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.fillText('ذره‌بین', W - m, ty + 2); ctx.fillStyle = th.acc; ctx.globalAlpha = 1; ctx.fillRect(W - m - 90, ty + 14, 90, 5);
-  const by = ty + 54; ctx.fillStyle = th.fg; ctx.globalAlpha = .18; ctx.fillRect(m, by, bw, 4); ctx.globalAlpha = 1; ctx.fillStyle = th.acc; const pr = clamp(t / D.meta.total); ctx.fillRect(D.meta.rtl ? m + bw * (1 - pr) : m, by, bw * pr, 4); ctx.restore()
+  const y0 = V ? 1400 : H - 230, g = ctx.createLinearGradient(0, y0, 0, H); g.addColorStop(0, 'rgba(25,15,5,0)'); g.addColorStop(1, 'rgba(25,15,5,.72)'); ctx.fillStyle = g; ctx.fillRect(0, y0, W, H - y0);
+  const m = V ? 70 : 90, ty = V ? 98 : 70, bw = W - 2 * m; ctx.save(); ctx.fillStyle = '#2a1f14'; ctx.globalAlpha = .75; ctx.font = '700 30px Vz'; ctx.textAlign = 'left'; ctx.direction = 'ltr'; ctx.fillText(D.meta.topLabel || '', m, ty);
+  ctx.font = '900 38px Vz'; ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.fillText('ذره‌بین', W - m, ty + 2);
+  const by = ty + 54; ctx.globalAlpha = .18; ctx.fillRect(m, by, bw, 4); ctx.globalAlpha = .8; const pr = clamp(t / D.meta.total); ctx.fillRect(D.meta.rtl ? m + bw * (1 - pr) : m, by, bw * pr, 4); ctx.restore()
 }
 function ui(t) {
   if (VOX) return uiVox(t);

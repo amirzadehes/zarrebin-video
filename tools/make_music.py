@@ -85,11 +85,26 @@ def pick_mood(ep, req):
             if k in a: return k
     except (Exception, SystemExit) as e: print("mood pick failed:", e)
     return 'curious'
+def library_track(ep, mood):
+    """music files the owner uploaded in the app: music/<mood>__name.mp3 (mood may be 'any')"""
+    import glob, hashlib
+    fs = sorted(glob.glob(f'music/{mood}__*') + glob.glob('music/any__*'))
+    if not fs: fs = sorted(glob.glob('music/*__*'))
+    if not fs: return None
+    return fs[int(hashlib.md5(ep.encode()).hexdigest(), 16) % len(fs)]
 def main(ep):
     req = json.load(open(f'episodes/{ep}/request.json')) if os.path.exists(f'episodes/{ep}/request.json') else {}
     if req.get('music') in ('none', False): print('music off'); return
     T = json.load(open(f'episodes/{ep}/timing.json')); total = T['voice_seconds'] + 1.2
-    mood = pick_mood(ep, req); print('music mood:', mood, 'seconds', round(total))
-    y = render(mood, total); pcm = (np.clip(y, -1, 1) * 32767).astype('<i2').T.copy()
-    with wave.open(f'episodes/{ep}/music.wav', 'wb') as w: w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR); w.writeframes(pcm.tobytes())
+    if req.get('music') == 'synth':
+        mood = pick_mood(ep, {**req, 'music': 'auto'}); print('synth music mood:', mood)
+        y = render(mood, total); pcm = (np.clip(y, -1, 1) * 32767).astype('<i2').T.copy()
+        with wave.open(f'episodes/{ep}/music.wav', 'wb') as w: w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR); w.writeframes(pcm.tobytes())
+        return
+    mood = pick_mood(ep, req); tr = library_track(ep, mood)
+    if not tr: print('no music uploaded yet (app > settings > music) - video will have no background music'); return
+    import subprocess
+    print('music mood:', mood, '| track:', tr, '| seconds', round(total))
+    subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-stream_loop', '-1', '-i', tr, '-t', str(total), '-ac', '2', '-ar', str(SR),
+        '-af', f'loudnorm=I=-24:TP=-3:LRA=7,afade=t=in:d=2.5,afade=t=out:st={max(total - 4, 0)}:d=4', f'episodes/{ep}/music.wav'])
 if __name__ == '__main__': main(sys.argv[1])
