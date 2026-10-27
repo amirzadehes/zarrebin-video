@@ -9,16 +9,18 @@ def norm(s):
     s = re.sub(r'[ً-ٰٟ]', '', s)
     return re.sub(r'[^\w]', '', s.lower())
 
-def whisper_words(path, lang='fa', model='whisper-large-v3'):
+def whisper_words(path, lang='fa', model='whisper-large-v3', full=False):
     key = os.environ.get('GROQ_API_KEY', ''); boundary = uuid.uuid4().hex
-    fields = [('model', model), ('response_format', 'verbose_json'), ('timestamp_granularities[]', 'word'), ('language', lang), ('temperature', '0')]
+    fields = [('model', model), ('response_format', 'verbose_json'), ('timestamp_granularities[]', 'word'), ('timestamp_granularities[]', 'segment'), ('language', lang), ('temperature', '0')]
     body = b''
     for k, v in fields: body += ('--%s\r\nContent-Disposition: form-data; name="%s"\r\n\r\n%s\r\n' % (boundary, k, v)).encode()
     body += ('--%s\r\nContent-Disposition: form-data; name="file"; filename="a.mp3"\r\nContent-Type: audio/mpeg\r\n\r\n' % boundary).encode() + open(path, 'rb').read() + ('\r\n--%s--\r\n' % boundary).encode()
     for attempt in range(5):
         req = urllib.request.Request(URL, body, {'Authorization': 'Bearer ' + key, 'Content-Type': 'multipart/form-data; boundary=' + boundary, 'User-Agent': 'zarrebin'})
         try:
-            r = json.load(urllib.request.urlopen(req, timeout=600)); return [(w['word'], float(w['start']), float(w['end'])) for w in r.get('words', [])]
+            r = json.load(urllib.request.urlopen(req, timeout=600))
+            if full: return r
+            return [(w['word'], float(w['start']), float(w['end'])) for w in r.get('words', [])]
         except urllib.error.HTTPError as e:
             b = e.read().decode('utf8', 'ignore'); print('whisper HTTP', e.code, b[:200])
             if e.code in (429, 500, 503): import time; time.sleep(20 * (attempt + 1)); continue

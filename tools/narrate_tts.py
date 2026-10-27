@@ -88,8 +88,40 @@ def chunk_sentences(sents, limit=3200):
     if cur: out.append(cur)
     return out
 
+def own_voice(ep, req):
+    """the owner's own recording: Whisper gives the text, the sentences and the exact word times"""
+    import glob, align_whisper
+    d = f'episodes/{ep}'; cand = sorted(glob.glob(f'{d}/voice_user.*'))
+    if not cand: sys.exit('own_voice requested but no voice_user file was uploaded')
+    lang = req.get('lang', 'fa'); os.makedirs('tmp_tts', exist_ok=True)
+    subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-i', cand[0], '-ar', '44100', '-ac', '1', '-c:a', 'libmp3lame', '-b:a', '160k', f'{d}/voice.mp3'])
+    subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-i', cand[0], '-ar', '16000', '-ac', '1', '-c:a', 'libmp3lame', '-b:a', '48k', 'tmp_tts/for_whisper.mp3'])
+    total = dur(f'{d}/voice.mp3'); r = align_whisper.whisper_words('tmp_tts/for_whisper.mp3', lang, full=True)
+    if not r or not r.get('words'): sys.exit('Whisper could not transcribe the uploaded voice')
+    words = [(w['word'].strip(), float(w['start']), float(w['end'])) for w in r['words'] if w['word'].strip()]
+    segs = [(float(x['start']), float(x['end'])) for x in r.get('segments', [])] or [(0.0, total)]
+    cuts = []   # sentence boundaries: whisper segments, long ones split at the biggest pause
+    for a, b in segs:
+        ws = [i for i, w in enumerate(words) if a - .01 <= w[1] < b - .01 or (not cuts and w[1] < b)]
+        if not ws: continue
+        cuts.append(ws)
+    out = []
+    for ws in cuts:
+        while len(ws) > 3 and words[ws[-1]][2] - words[ws[0]][1] > 11:
+            gaps = [(words[ws[k + 1]][1] - words[ws[k]][2], k) for k in range(1, len(ws) - 2)]
+            g, k = max(gaps); out.append(ws[:k + 1]); ws = ws[k + 1:]
+        out.append(ws)
+    S, Wd = [], []
+    for si, ws in enumerate(out):
+        text = ' '.join(words[i][0] for i in ws); S.append({'i': si, 't0': round(max(words[ws[0]][1] - .12, 0), 3), 't1': round(words[ws[-1]][2], 3), 'text': text})
+        for i in ws: Wd.append({'w': words[i][0], 't0': round(words[i][1], 3), 't1': round(words[i][2], 3), 's': si})
+    open(f'{d}/narration.txt', 'w', encoding='utf8').write('\n'.join(x['text'] for x in S))
+    json.dump({'sentences': S, 'words': Wd, 'voice_seconds': round(total, 2), 'lang': lang, 'voice': 'own', 'engine': 'own'}, open(f'{d}/timing.json', 'w', encoding='utf8'), ensure_ascii=False)
+    print('own voice: seconds', round(total, 1), 'sentences', len(S), 'words', len(Wd))
+
 async def run(ep):
     d = f'episodes/{ep}'; req = load(f'{d}/request.json', {}); lang = req.get('lang', 'fa')
+    if req.get('own_voice'): return own_voice(ep, req)
     text = narrate(ep, req); engine = req.get('tts') or ('gemini' if os.environ.get('GEMINI_API_KEY') else 'edge')
     voice = req.get('voice') or (os.environ.get('GEMINI_VOICE', 'Algieba') if engine == 'gemini' else VOICES[lang]); rate = req.get('rate', '+0%')
     sents = split_sentences(text); os.makedirs('tmp_tts', exist_ok=True)
