@@ -2,7 +2,7 @@
  "items": {
   "alarm-clock": {
    "id": "alarm-clock",
-   "en": "alarm clock with two bells",
+   "en": "alarm clock",
    "fa": "ساعت زنگ‌دار",
    "tags": [
     "time",
