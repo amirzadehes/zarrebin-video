@@ -199,8 +199,8 @@
   },
   {
    "id": "reservation-card",
-   "en": "reservation card",
-   "fa": "کارت رزرو",
+   "en": "restaurant reservation card",
+   "fa": "کارت رزرو رستوران",
    "why": "رزرو مخفی توسط بازرس",
    "tags": []
   },

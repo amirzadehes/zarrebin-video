@@ -243,5 +243,11 @@
   "en": "20-dollar bill",
   "fa": "۲۰ دلاری",
   "tags": []
+ },
+ {
+  "id": "reservation-card",
+  "en": "restaurant reservation card",
+  "fa": "کارت رزرو رستوران",
+  "tags": []
  }
 ]
