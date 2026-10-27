@@ -235,9 +235,12 @@ async function renderEp(){
   const cur = ls.get('curEp','');
   el.innerHTML = `<div class="card"><div class="name">قسمت جدید</div>
     <label>نام قسمت به انگلیسی (مثلاً sleep-debt)</label><input type="text" class="ltr" id="epName" value="${cur}">
-    <label>متن نسخه‌ی بلند (یوتیوب) — فارسی</label><textarea id="epText" rows="8" style="width:100%;min-height:200px;direction:rtl;text-align:right;font-size:15px"></textarea>
-    <label>متن نسخه‌ی کوتاه (اینستاگرام و تیک‌تاک، حدود ۶۰ ثانیه) — اختیاری</label><textarea id="epTextS" rows="5" style="width:100%;min-height:130px;direction:rtl;text-align:right;font-size:15px"></textarea>
-    <p class="hint">اگر متن کوتاه را هم بدهی، یک قسمت جدا به نام <b>نام‌قسمت-short</b> ساخته می‌شود. تصویرها و کتابخانه بین هر دو مشترک است. نسخه‌ی کوتاه فقط عمودی و با برش‌های سریع‌تر ساخته می‌شود. صدای هر کدام را جدا در «ساخت ویدیو» همان قسمت آپلود کن.</p>
+    <label>کدام نسخه الان ساخته شود؟</label>
+    <label><input type="checkbox" id="chL" checked> نسخه‌ی بلند (یوتیوب)</label>
+    <label><input type="checkbox" id="chS"> نسخه‌ی کوتاه (اینستاگرام و تیک‌تاک)</label>
+    <div id="boxL"><label>متن نسخه‌ی بلند (یوتیوب) — فارسی</label><textarea id="epText" rows="8" style="width:100%;min-height:200px;direction:rtl;text-align:right;font-size:15px"></textarea></div>
+    <div id="boxS" hidden><label>متن نسخه‌ی کوتاه (اینستاگرام و تیک‌تاک، حدود ۶۰ ثانیه)</label><textarea id="epTextS" rows="5" style="width:100%;min-height:130px;direction:rtl;text-align:right;font-size:15px"></textarea>
+    <p class="hint">نسخه‌ی کوتاه یک قسمت جدا به نام <b>نام‌قسمت-short</b> ساخته می‌شود. تصویرها و کتابخانه بین هر دو مشترک است. نسخه‌ی کوتاه فقط عمودی و با برش‌های سریع‌تر ساخته می‌شود. صدای هر کدام را جدا در «ساخت ویدیو» همان قسمت آپلود کن.</p></div>
     <div class="row"><button class="pri" id="epSend">ارسال و تحلیل</button></div><div class="st" id="epSt"></div></div>
     ${eps.length?`<div class="card"><label>قسمت‌های قبلی</label><div class="row" id="epList">${eps.map(e=>`<button data-e="${e}">${e}</button>`).join('')}</div></div>`:''}
     <div class="card" id="epBuild"><div class="name">ساخت ویدیو</div>
@@ -269,6 +272,7 @@ async function renderEp(){
   fillPal(); $('#bPal').value=ls.get('pal_'+S.style,''); $('#bPal').onchange=()=>ls.set('pal_'+S.style,$('#bPal').value);
   $('#bStyle').value=S.style; $('#bStyle').onchange=()=>setStyle($('#bStyle').value);
   $('#epName').addEventListener('input',shortDefaults); shortDefaults();
+  const tg=()=>{ $('#boxL').hidden=!$('#chL').checked; $('#boxS').hidden=!$('#chS').checked }; $('#chL').onchange=tg; $('#chS').onchange=tg; tg();
   $('#bGo').onclick = ()=>buildVideo('review'); $('#bGoDirect').onclick = ()=>buildVideo('direct'); loadVids(); if(cur) loadReview(cur,true);
   el.querySelectorAll('#epList button').forEach(b=>b.onclick=()=>setEpisode(b.dataset.e));
   $('#epSend').onclick = sendEp;
@@ -482,20 +486,22 @@ async function showNeeds(ep){
 }
 const cleanScript=t=>String(t||'').replace(/\*{0,2}\[[^\]\n]{1,30}\]\s*:?\*{0,2}/g,'').replace(/<[^>\n]{1,40}>/g,' ').replace(/[ \t]+/g,' ').replace(/ *\n */g,'\n').replace(/\n{3,}/g,'\n\n').trim();   // speaker tags and TTS tags are for the voice, not for the video
 async function sendEp(){
-  const st=$('#epSt'), ep=slug($('#epName').value), text=cleanScript($('#epText').value);
+  const st=$('#epSt'), base=slug($('#epName').value).replace(/-short$/,''), wL=$('#chL').checked, wS=$('#chS').checked;
+  const tL=cleanScript($('#epText').value), tS=cleanScript($('#epTextS').value);
   if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return; }
-  if(!ep||text.length<50){ st.className='st bad'; st.textContent='نام انگلیسی و متن کامل را وارد کن'; return; }
+  if(!base){ st.className='st bad'; st.textContent='نام انگلیسی قسمت را بنویس'; return; }
+  if(!wL&&!wS){ st.className='st bad'; st.textContent='حداقل یک نسخه را تیک بزن'; return; }
+  if(wL&&tL.length<50){ st.className='st bad'; st.textContent='متن نسخه‌ی بلند را وارد کن'; return; }
+  if(wS&&tS.length<20){ st.className='st bad'; st.textContent='متن نسخه‌ی کوتاه را وارد کن'; return; }
+  const targets=[...(wL?[[base,tL]]:[]),...(wS?[[base+'-short',tS]]:[])];
   st.className='st'; st.textContent='در حال ارسال…';
   try{
-    let sha, oldN; try{ sha=(await api('/contents/episodes/'+ep+'/script.txt')).sha }catch(e){}
-    try{ oldN=(await api('/contents/episodes/'+ep+'/needs.json')).sha }catch(e){}
-    await api('/contents/episodes/'+ep+'/script.txt',{method:'PUT',body:JSON.stringify({message:'episode script: '+ep,content:enc(text),branch:'main',sha})});
-    const tS=cleanScript(($('#epTextS')||{value:''}).value); let shortEp='';
-    if(tS.length>=20&&!/-short$/.test(ep)){ shortEp=ep+'-short'; let s2; try{ s2=(await api('/contents/episodes/'+shortEp+'/script.txt')).sha }catch(e){}
-      await api('/contents/episodes/'+shortEp+'/script.txt',{method:'PUT',body:JSON.stringify({message:'episode script (short): '+shortEp,content:enc(tS),branch:'main',sha:s2})}); S.eps=[...new Set([...(S.eps||[]),shortEp])] }
-    ls.set('curEp',ep); st.className='st ok'; st.textContent='ارسال شد'+(shortEp?' (بلند و کوتاه)':'')+'؛ تحلیل حدود یک تا دو دقیقه طول می‌کشد…';
-    for(let k=0;k<30;k++){ await sleep(8000); let n; try{ n=(await api('/contents/episodes/'+ep+'/needs.json')).sha }catch(e){}
-      if(n && n!==oldN){ S.eps=[...new Set([...(S.eps||[]),ep])]; await loadAll(true); await showNeeds(ep); st.textContent='فهرست آماده شد؛ تب «مورد نیاز» را ببین'+(shortEp?'. تحلیل نسخه‌ی کوتاه هم در راه است؛ از فهرست قسمت‌ها ('+shortEp+') انتخابش کن.':''); toast('✓ تحلیل تمام شد؛ تصویرهای لازم در «مورد نیاز» است'); document.querySelector('.tabs button[data-t=want]').click(); return; } }
+    const old={}; for(const [e,t] of targets){ let sha; try{ sha=(await api('/contents/episodes/'+e+'/script.txt')).sha }catch(_){}
+      try{ old[e]=(await api('/contents/episodes/'+e+'/needs.json')).sha }catch(_){}
+      await api('/contents/episodes/'+e+'/script.txt',{method:'PUT',body:JSON.stringify({message:'episode script: '+e,content:enc(t),branch:'main',sha})}); S.eps=[...new Set([...(S.eps||[]),e])] }
+    const first=targets[0][0]; ls.set('curEp',first); st.className='st ok'; st.textContent='ارسال شد ('+targets.map(x=>x[0]).join(' و ')+')؛ تحلیل حدود یک تا دو دقیقه طول می‌کشد…';
+    for(let k=0;k<30;k++){ await sleep(8000); let n; try{ n=(await api('/contents/episodes/'+first+'/needs.json')).sha }catch(_){}
+      if(n && n!==old[first]){ await loadAll(true); setEpisode(first); await showNeeds(first); st.textContent='فهرست آماده شد؛ تب «مورد نیاز» را ببین'+(targets.length>1?'. تحلیل نسخه‌ی دیگر هم در راه است؛ از فهرست قسمت‌ها انتخابش کن.':''); toast('✓ تحلیل تمام شد؛ تصویرهای لازم را ببین',5000); return } }
     st.className='st bad'; st.textContent='هنوز آماده نشد؛ بعداً از تب «مورد نیاز» همان قسمت را انتخاب کن.';
   }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message; }
 }
