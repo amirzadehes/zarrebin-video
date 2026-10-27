@@ -545,6 +545,16 @@
     "silverware-set__2.webp"
    ]
   },
+  "social-media": {
+   "id": "social-media",
+   "en": "social media",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "social-media__1.webp"
+   ]
+  },
   "star": {
    "id": "star",
    "en": "star",
