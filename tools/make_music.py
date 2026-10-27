@@ -83,7 +83,7 @@ def pick_mood(ep, req):
                          txt, max_tokens=20, temperature=0).strip().lower()
         for k in MOODS:
             if k in a: return k
-    except Exception as e: print('mood pick failed:', e)
+    except (Exception, SystemExit) as e: print("mood pick failed:", e)
     return 'curious'
 def main(ep):
     req = json.load(open(f'episodes/{ep}/request.json')) if os.path.exists(f'episodes/{ep}/request.json') else {}
