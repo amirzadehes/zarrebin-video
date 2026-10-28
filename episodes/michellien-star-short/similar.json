@@ -1,9 +1,9 @@
 {
  "star": [
   "star-rating",
-  "three-stars",
+  "one-star",
   "two-stars",
-  "one-star"
+  "three-stars"
  ],
  "rubber-tire": [
   "tire-company-logo"
@@ -19,14 +19,6 @@
  "three-stars": [
   "one-star",
   "two-stars"
- ],
- "money-bag": [
-  "cash",
-  "banknotes",
-  "euro-sign"
- ],
- "thief-mask": [
-  "secret-inspector"
  ],
  "magnifier-search": [
   "magnifying-glass"

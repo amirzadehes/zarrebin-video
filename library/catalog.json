@@ -1464,6 +1464,25 @@
     "جشن"
    ],
    "fa_tags_for": "لیوان شراب"
+  },
+  "wrench": {
+   "id": "wrench",
+   "en": "wrench",
+   "fa": "آچار",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "wrench__1.webp"
+   ],
+   "fa_tags": [
+    "آچار",
+    "ابزار",
+    "تعمیر",
+    "کلید",
+    "مکانیک",
+    "کارگاه"
+   ],
+   "fa_tags_for": "آچار"
   }
  }
 }
