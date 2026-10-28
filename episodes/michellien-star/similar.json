@@ -1,32 +1,27 @@
 {
  "star-rating": [
-  "star",
   "one-star",
   "two-stars",
-  "three-stars"
+  "three-stars",
+  "star"
  ],
  "one-star": [
-  "star",
   "star-rating",
   "two-stars",
-  "three-stars"
+  "three-stars",
+  "star"
  ],
  "two-stars": [
-  "star",
   "star-rating",
   "one-star",
-  "three-stars"
+  "three-stars",
+  "star"
  ],
  "three-stars": [
-  "star",
   "star-rating",
   "one-star",
-  "two-stars"
- ],
- "money-bag": [
-  "banknotes",
-  "cash",
-  "euro-sign"
+  "two-stars",
+  "star"
  ],
  "clock-wall": [
   "alarm-clock"

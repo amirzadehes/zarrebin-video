@@ -9,22 +9,24 @@
   "tire-company-logo"
  ],
  "one-star": [
-  "star",
-  "star-rating",
   "two-stars",
   "three-stars"
  ],
  "two-stars": [
-  "star",
-  "star-rating",
   "one-star",
   "three-stars"
  ],
  "three-stars": [
-  "star",
-  "star-rating",
   "one-star",
   "two-stars"
+ ],
+ "money-bag": [
+  "cash",
+  "banknotes",
+  "euro-sign"
+ ],
+ "thief-mask": [
+  "secret-inspector"
  ],
  "magnifier-search": [
   "magnifying-glass"
@@ -37,8 +39,5 @@
  ],
  "brain-colorful": [
   "brain-pink"
- ],
- "star-rating": [
-  "star"
  ]
 }
