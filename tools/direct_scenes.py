@@ -122,6 +122,15 @@ def compile_scenes(ep, T, raw, lib, req):
                     if w['t0'] >= last_t - .05 and (at in norm(w['w']) or (len(norm(w['w'])) > 2 and norm(w['w']) in at)): tt = w['t0']; break
             its.append({'id': iid, 't': tt}); 
             if tt is not None: last_t = tt
+        # a scene must never be left without a picture: pick the library image whose Persian name/tags best match what is said here
+        if not its and tpl != 'stat':
+            nar = ' ' + norm(' '.join(w['w'] for w in words)) + ' '; best = None
+            for iid, v in lib.items():
+                keys = [norm(x) for x in [v.get('fa', '')] + list(v.get('fa_tags') or []) + list(v.get('tags') or []) if isinstance(x, str)]
+                sc_ = max([len(q) for q in keys if len(q) > 1 and q in nar] or [0])
+                if sc_: sc_ = sc_ - 4 * uses.get(iid, 0)
+                if sc_ > 0 and (best is None or sc_ > best[0]): best = (sc_, iid)
+            if best: its.append({'id': best[1], 't': None})
         # fallback times: spread evenly
         for j, it in enumerate(its):
             if it['t'] is None: it['t'] = round(t0 + .45 + j * max(t1 - t0 - 1.3, .6) / max(len(its), 1), 3)
@@ -133,6 +142,7 @@ def compile_scenes(ep, T, raw, lib, req):
             v = lib[it['id']]['variants']; it['src'] = 'library/' + v[uses.get(it['id'], 0) % len(v)]; uses[it['id']] = uses.get(it['id'], 0) + 1
             it['en'] = ('pop' if j == 0 and tpl == 'hero' else ENTS[(k * 2 + j) % len(ENTS)])
         if r.get('_up') and tpl in ('statement',) and its: tpl = 'hero' if len(its) < 3 else 'trio'
+        if tpl == 'statement' and its: tpl = 'hero' if len(its) < 3 else 'trio'   # the big statement text is off now, so a scene with pictures uses a picture layout
         if tpl == 'duo' and len(its) > 2: tpl = 'trio'
         if tpl == 'hero' and len(its) > 4: tpl = 'trio'
         text = (r.get('text') or '').strip(); number = (r.get('number') or '').strip()
@@ -144,7 +154,7 @@ def compile_scenes(ep, T, raw, lib, req):
             ws = [w['w'] for w in words][:7]; text = ' '.join(ws)
         if tpl == 'statement' and len(text.split()) > 12: text = ' '.join(text.split()[:12])
         if tpl == prev_tpl and tpl != 'stat':   # never two scenes with the same template in a row (the prompt asks for it; this enforces it)
-            alt = [x for x in ('hero', 'trio', 'duo', 'statement') if x != prev_tpl and ((x == 'hero' and its) or (x == 'trio' and len(its) >= 2) or (x == 'duo' and len(its) == 2) or (x == 'statement' and text))]
+            alt = [x for x in ('hero', 'trio', 'duo', 'statement') if x != prev_tpl and ((x == 'hero' and its) or (x == 'trio' and len(its) >= 2) or (x == 'duo' and len(its) == 2) or (x == 'statement' and text and not its))]
             if alt: tpl = alt[0]
         prev_tpl = tpl
         sc = {'t0': round(t0, 3), 't1': round(t1, 3), 'tpl': tpl, 'theme': THEME[k % 8], 'wipe': (k * 5) % 6, 'items': its, 'text': text, 'link': r.get('link') if r.get('link') in ('vs', 'plus', 'arrow') else 'vs'}
