@@ -976,6 +976,17 @@
     "laptop__2.webp"
    ]
   },
+  "leaf": {
+   "id": "leaf",
+   "en": "leaf",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "leaf__1.webp",
+    "leaf__2.webp"
+   ]
+  },
   "lightning-burst": {
    "id": "lightning-burst",
    "en": "lightning burst",
@@ -1606,6 +1617,17 @@
    ],
    "fa_tags_for": "ست سفارشی نقره‌ای"
   },
+  "snowflake": {
+   "id": "snowflake",
+   "en": "snowflake",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "snowflake__1.webp",
+    "snowflake__2.webp"
+   ]
+  },
   "social-media": {
    "id": "social-media",
    "en": "social media",
@@ -1992,6 +2014,17 @@
     "تنبیه"
    ],
    "fa_tags_for": "علامت هشدار"
+  },
+  "water-drop": {
+   "id": "water-drop",
+   "en": "water drop",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "water-drop__1.webp",
+    "water-drop__2.webp"
+   ]
   },
   "wine-glass": {
    "id": "wine-glass",
