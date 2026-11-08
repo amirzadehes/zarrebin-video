@@ -1392,6 +1392,17 @@
    ],
    "fa_tags_for": "علامت سوال"
   },
+  "rain-cloud": {
+   "id": "rain-cloud",
+   "en": "rain cloud",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "rain-cloud__1.webp",
+    "rain-cloud__2.webp"
+   ]
+  },
   "red-guidebook": {
    "id": "red-guidebook",
    "en": "red guidebook",
@@ -1890,6 +1901,17 @@
     "خواب"
    ],
    "fa_tags_for": "مغز خسته"
+  },
+  "tree": {
+   "id": "tree",
+   "en": "tree",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "tree__1.webp",
+    "tree__2.webp"
+   ]
   },
   "trophy": {
    "id": "trophy",
