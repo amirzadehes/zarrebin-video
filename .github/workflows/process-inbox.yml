@@ -6,12 +6,16 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
-concurrency:
-  group: process-inbox
-  cancel-in-progress: false
 jobs:
+  # Step 1 (fast): cut out the pictures and put them in the library. The app shows "saved" as soon as this job pushes.
   process:
     runs-on: ubuntu-latest
+    concurrency:
+      group: process-inbox
+      cancel-in-progress: false
+    outputs:
+      saved: ${{ steps.run.outputs.saved }}
+      newitem: ${{ steps.run.outputs.newitem }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -21,17 +25,65 @@ jobs:
           cache-dependency-path: tools/requirements.txt
       - run: pip install -r tools/requirements.txt
       - name: Process and commit (repeat until inbox is empty)
-        env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
+        id: run
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          saved=no; newitem=no; finished=no
           for round in 1 2 3 4 5 6 7 8; do
             git fetch -q origin main && git reset -q --hard origin/main
+            cp library/catalog.json "$RUNNER_TEMP/cat_before.json" 2>/dev/null || echo '{"items":{}}' > "$RUNNER_TEMP/cat_before.json"
             python tools/process_inbox.py
-            git diff --quiet library/catalog.json || { python tools/make_fa_tags.py || true; python tools/find_similar.py || true; }
             git add -A
-            if git diff --cached --quiet; then echo "nothing left to do"; exit 0; fi
+            if git diff --cached --quiet; then echo "nothing left to do"; finished=yes; break; fi
             git commit -qm "library: process inbox"
-            if git push -q origin main; then echo "round $round pushed"; else echo "push conflict, redo round"; sleep 4; fi
+            if git push -q origin main; then
+              echo "round $round pushed"; saved=yes
+              # a brand-new library item (not just one more picture of an existing item) needs the slower similar-image search
+              if python3 - "$RUNNER_TEMP/cat_before.json" <<'PY'
+          import json, sys
+          def ids(p):
+              try: return {i for i, v in json.load(open(p, encoding='utf8'))['items'].items() if v.get('variants')}
+              except Exception: return set()
+          sys.exit(0 if ids('library/catalog.json') - ids(sys.argv[1]) else 1)
+          PY
+              then newitem=yes; fi
+            else
+              echo "push conflict, redo round"; sleep 4
+            fi
           done
-          echo "gave up after 8 rounds"; exit 1
+          echo "saved=$saved" >> "$GITHUB_OUTPUT"
+          echo "newitem=$newitem" >> "$GITHUB_OUTPUT"
+          if [ "$finished" != yes ]; then echo "gave up after 8 rounds"; exit 1; fi
+
+  # Step 2 (slow, runs in parallel with the next upload): Persian names/tags and similar-image search via Groq.
+  enrich:
+    needs: process
+    if: needs.process.outputs.saved == 'yes'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: enrich
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: main }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Persian tags and similar images
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          NEW_ITEM: ${{ needs.process.outputs.newitem }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for round in 1 2 3 4 5 6; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            python tools/make_fa_tags.py || true
+            if [ "$NEW_ITEM" = yes ]; then python tools/find_similar.py || true; fi
+            git add -A
+            if git diff --cached --quiet; then echo "no change"; exit 0; fi
+            git commit -qm "library: Persian tags and similar images"
+            if git push -q origin main; then echo pushed; exit 0; fi
+            sleep 4
+          done
+          exit 1

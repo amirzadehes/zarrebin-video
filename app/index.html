@@ -72,6 +72,25 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 #toast{position:fixed;inset-inline:16px;bottom:calc(16px + env(safe-area-inset-bottom));background:var(--acc);color:var(--acc-tx);padding:12px 16px;border-radius:14px;text-align:center;transform:translateY(160%);transition:.25s;z-index:20}
 #toast.show{transform:none}
 
+/* ---------- upload tracker panel ---------- */
+#upl{position:fixed;inset-inline:12px;bottom:calc(78px + env(safe-area-inset-bottom));z-index:15;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px;box-shadow:0 8px 30px #000a;max-height:46vh;overflow:auto}
+#upl[hidden]{display:none}
+#upl .uh{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px}
+#upl .ub{display:flex;align-items:center;gap:6px}
+#upl .uh button{min-height:32px;padding:0 10px;font-size:12px}
+#upl .bar{height:8px;border-radius:99px;background:#2d241d;overflow:hidden;margin:8px 0}
+#upl .bar i{display:block;height:100%;width:0;background:var(--acc);border-radius:99px;transition:width .5s}
+#upl.min #uList,#upl.min .bar{display:none}
+#upl a{color:var(--acc)}
+.ur{display:grid;grid-template-columns:44px 1fr 28px;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.ur .uth{width:44px;height:44px;border-radius:8px;background:#2a221c;overflow:hidden}
+.ur .uth img{width:100%;height:100%;object-fit:contain}
+.ur .un{font-size:14px;font-weight:900}
+.ur .us{font-size:12px;color:var(--mut);line-height:1.6}
+.ur.s-done .us{color:var(--ok)}
+.ur.s-fail .us,.ur.s-lost .us{color:var(--bad)}
+.ur .ui{text-align:center;font-size:18px}
+
 /* ---------- mouse and keyboard (any device with a real pointer) ---------- */
 @media (hover:hover) and (pointer:fine){
   button:not(:disabled):hover,.btn:hover{filter:brightness(1.18)}
@@ -111,6 +130,7 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
   .rv .it{width:96px}
   .rv .pick{max-height:420px}
   #toast{inset-inline:0;margin-inline:auto;width:min(480px,calc(100vw - 32px))}
+  #upl{inset-inline:auto;left:24px;right:auto;bottom:24px;width:400px}
 }
 </style>
 </head>
@@ -161,6 +181,7 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
 
 <dialog id="dlg"><div id="dlgBody"></div><div class="row"><button onclick="dlg.close()">بستن</button></div></dialog>
 <div id="toast"></div>
+<div id="upl" hidden><div class="uh"><b id="uTitle"></b><span class="ub"><b id="uPct" style="color:var(--acc)"></b><button id="uMin" title="کوچک یا بزرگ کردن">▾</button><button id="uClr">پاک کردن</button></span></div><div class="bar" id="uBar"><i></i></div><div id="uList"></div></div>
 
 <div id="pvModal" hidden style="position:fixed;inset:0;background:#000e;z-index:60;display:grid;place-items:center;align-content:center;gap:8px;overflow:auto">
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvV" class="on">عمودی (اینستاگرام)</button><button id="pvH">افقی (یوتیوب)</button></div>
@@ -568,20 +589,32 @@ async function put(path, b64, msg){
     catch(e){ if(k===3 || ![409,422,502,503].includes(e.status)) throw e; await sleep(1500*(k+1)); }
   }
 }
+let putChain = Promise.resolve();   // every write to the repo goes through one queue: GitHub rejects parallel commits to the same branch
+function putSerial(path, b64, msg){ const p = putChain.then(() => put(path, b64, msg)); putChain = p.then(() => sleep(900), () => sleep(900)); return p }
 async function upload(id, files, st, input){
   if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; $('#settings').hidden=false; return; }
-  if(!files.length) return; let ok=0, bad=0;
-  for(let i=0;i<files.length;i++){
-    const f=files[i]; st.className='st'; st.textContent=`ارسال ${fa(i+1)} از ${fa(files.length)}…`;
-    if(f.size>25*1024*1024){ bad++; continue; }
+  if(!files.length) return;
+  input.value='';   // the File objects stay valid; this lets the same pictures be chosen again
+  const nm = (items().find(x=>x.id===id) || S.pool.find(x=>x.id===id) || S.catalog.items[id] || {}).fa || id;
+  const jobs = []; let big = 0;
+  files.forEach((f,i)=>{
+    if(f.size>25*1024*1024){ big++; return }
     const ext=(f.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
-    const name=`${id}__${Date.now().toString(36)}${i}.${ext}`;
-    try{ await put('inbox/'+name, await toB64(f), 'inbox: '+name); ok++; }
-    catch(e){ bad++; st.className='st bad'; st.textContent='خطا: '+e.message; if(e.status===401||e.status===403||e.status===404) break; }
-    if(i<files.length-1) await sleep(1300);   // stay under GitHub's content-creation rate limit
+    const name=`${id}__${Date.now().toString(36)}${i}${Math.random().toString(36).slice(2,4)}.${ext}`;
+    const u={ name, id, fa:nm, t:Date.now(), st:'send' }; U.unshift(u); thumbs[name]=URL.createObjectURL(f); jobs.push([u,f]);
+  });
+  if(big){ st.className='st bad'; st.textContent=`${fa(big)} فایل بزرگ‌تر از ۲۵ مگابایت بود و ارسال نشد`; }
+  if(!jobs.length) return;
+  if(!big){ st.className='st'; st.textContent=`${fa(jobs.length)} تصویر در صف ارسال است؛ پیشرفت در پنل پایین صفحه است.` }
+  renderU(); saveU(); toast('ارسال شروع شد؛ وضعیت هر تصویر در پنل پایین است');
+  let dead = null;
+  for(const [u,f] of jobs){
+    if(dead){ u.st='fail'; u.reason=dead; continue }
+    try{ await putSerial('inbox/'+u.name, await toB64(f), 'inbox: '+u.name); u.st='queue'; u.t=Date.now() }
+    catch(e){ u.st='fail'; u.reason='ارسال نشد: '+e.message; if([401,403,404].includes(e.status)) dead=u.reason }
+    renderU(); saveU();
   }
-  input.value='';
-  if(ok){ st.className='st ok'; st.textContent=`${fa(ok)} تصویر ارسال شد${bad?` (${fa(bad)} ناموفق)`:''}. پردازش حدود ۱ تا ۲ دقیقه طول می‌کشد.`; toast('ارسال شد؛ منتظر ذخیره در کتابخانه…'); S.pending+=ok; watchUpload(ok); }
+  pollUploads();
 }
 
 function renameItem(id, curFa, curEn){
@@ -597,16 +630,66 @@ function renameItem(id, curFa, curEn){
       st.className='st bad'; st.textContent='هنوز اعمال نشد؛ کمی بعد صفحه را تازه کن.';
     }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message } };
 }
-let watching=false;
-async function watchUpload(n){
-  if(watching) return; watching=true;
-  const count=()=>Object.values(S.catalog.items||{}).reduce((a,i)=>a+i.variants.length,0);
-  const before=count();
-  for(let k=0;k<40;k++){ await sleep(12000); await loadAll();
-    if(S.pending===0){ const got=count()-before;
-      toast(got>0?`✓ آپلود انجام شد: ${fa(got)} تصویر در کتابخانه ذخیره شد`:'پردازش تمام شد ولی تصویر جدیدی ذخیره نشد (تکراری یا نامعتبر بود)',5000); break; } }
-  watching=false;
+/* ---------- upload tracker: one row per picture, from "sending" to "saved in the library" ---------- */
+const FIN = new Set(['done','dup','fail','lost']);
+const esc = t => String(t==null?'':t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const UST = { send:'در حال ارسال به GitHub…', queue:'ارسال شد ✓ · منتظر شروع پردازش', proc:'در حال پردازش…', done:'✓ در کتابخانه ذخیره شد', dup:'تکراری بود؛ قبلاً ذخیره شده بود', fail:'ذخیره نشد', lost:'وضعیتش معلوم نشد' };
+const UICON = { send:'⏳', queue:'🕒', proc:'⚙️', done:'✅', dup:'♻️', fail:'❌', lost:'❔' };
+const UPSTEP = [[/Set up job|Checkout/i,'آماده‌سازی سرور'],[/Python|pip|Install/i,'نصب ابزارها'],[/Process/i,'بریدن زمینه و ذخیره در کتابخانه']];
+const thumbs = {};
+let U = []; try{ U = JSON.parse(ls.get('upl','[]')).filter(x => Date.now()-x.t < 6*3600e3) }catch(e){}
+U.forEach(u => { if(u.st==='send'){ u.st='lost'; u.reason='ارسال نیمه‌کاره ماند (صفحه بسته یا تازه شد)' } });
+const saveU = () => ls.set('upl', JSON.stringify(U.map(u => ({ name:u.name, id:u.id, fa:u.fa, t:u.t, st:u.st, saved:u.saved, reason:u.reason }))));
+const uPct = u => FIN.has(u.st) ? 100 : u.st==='proc' ? 25+70*(u.frac||0) : u.st==='queue' ? 25 : 8;
+function renderU(){
+  const box = $('#upl'); if(!box) return;
+  if(!U.length){ box.hidden = true; return } box.hidden = false;
+  const n = U.length, d = U.filter(u=>u.st==='done').length, f = U.filter(u=>['fail','lost','dup'].includes(u.st)).length, act = n-d-f;
+  const pct = Math.round(U.reduce((a,u)=>a+uPct(u),0)/n);
+  $('#uTitle').textContent = act ? `آپلود: ${fa(d+f)} از ${fa(n)} تمام شد` : f ? `${fa(d)} ذخیره شد و ${fa(f)} مشکل دارد` : `✓ هر ${fa(n)} تصویر در کتابخانه ذخیره شد`;
+  $('#uBar i').style.width = pct+'%'; $('#uPct').textContent = fa(pct)+'٪';
+  box.classList.toggle('min', ls.get('uMin','')==='1'); $('#uMin').textContent = ls.get('uMin','')==='1' ? '▴' : '▾';
+  $('#uList').innerHTML = U.slice(0,30).map(u=>{
+    const src = u.st==='done' && u.saved ? raw(u.saved) : (thumbs[u.name]||'');
+    const txt = (u.st==='fail'||u.st==='dup'||u.st==='lost') ? (u.reason||UST[u.st]) : (u.st==='proc' && u.label) ? u.label : UST[u.st];
+    const slow = !FIN.has(u.st) && u.st!=='send' && Date.now()-u.t > 8*60000;
+    return `<div class="ur s-${u.st}"><div class="uth">${src?`<img src="${src}">`:''}</div><div class="um"><div class="un">${esc(u.fa)}</div><div class="us">${esc(txt)}${slow?` · بیشتر از معمول طول کشید؛ <a href="https://github.com/${esc(S.repo)}/actions/workflows/process-inbox.yml" target="_blank" rel="noopener">وضعیت سرور</a>`:''}</div></div><div class="ui">${UICON[u.st]}</div></div>`;
+  }).join('');
 }
+async function refreshUploads(){
+  const act = U.filter(u => !FIN.has(u.st) && u.st!=='send'); if(!act.length) return;
+  let inbox, rep, run = null, frac = 0, label = 'در صف سرور…';
+  try{
+    inbox = new Set((await api('/contents/inbox')).filter(x=>x.type==='file').map(x=>x.name));
+    rep = await readJson('library/report.json', null);
+    run = (await api('/actions/runs?per_page=8')).workflow_runs.find(r => r.name==='Process inbox' && r.status!=='completed') || null;
+    if(run){ const js = (await api('/actions/runs/'+run.id+'/jobs?per_page=20')).jobs, j = js.find(x=>x.name==='process') || js[0], s = (j&&j.steps) || [];
+      if(s.length){ frac = s.filter(x=>x.status==='completed').length/s.length; const cur = s.find(x=>x.status==='in_progress'); label = cur ? (UPSTEP.find(m=>m[0].test(cur.name))||[0,'در حال پردازش…'])[1] : 'در حال پردازش…' } }
+  }catch(e){ return }   // network hiccup: try again next round
+  const ok = new Map(), bad = new Map();
+  ((rep&&rep.runs)||[]).forEach(r => { (r.ok||[]).forEach(o=>ok.set(o.file,o)); (r.failed||[]).forEach(o=>bad.set(o.file,o)) });
+  for(const u of act){
+    if(inbox.has(u.name)){
+      const mine = run && new Date(run.created_at).getTime() > u.t-20000;   // a run that started before this picture was sent can miss it
+      if(mine){ u.st='proc'; u.frac=frac; u.label=label } else { u.st='queue'; u.label='' }
+    }
+    else if(ok.has(u.name)){ u.st='done'; u.saved=ok.get(u.name).saved }
+    else if(bad.has(u.name)){ u.reason=bad.get(u.name).reason; u.st = /تکراری/.test(u.reason) ? 'dup' : 'fail' }
+    else if(Date.now()-u.t > 120000){ u.st='lost'; u.reason='از صف بیرون رفت ولی در گزارش نیست؛ کتابخانه را بررسی کن' }
+  }
+  renderU(); saveU();
+}
+let upWatching = false;
+async function pollUploads(){
+  if(upWatching) return; upWatching = true;
+  try{
+    for(let k=0; k<200 && U.some(u => !FIN.has(u.st)); k++){ await sleep(k<15 ? 4000 : 8000); await refreshUploads() }
+  } finally { upWatching = false }
+  if(U.some(u=>u.st==='done')) loadAll();   // once at the end: new thumbnails and counts
+}
+$('#uMin').onclick = () => { ls.set('uMin', ls.get('uMin','')==='1' ? '' : '1'); renderU() };
+$('#uClr').onclick = () => { U = U.filter(u => !FIN.has(u.st)); saveU(); renderU() };
+renderU(); if(U.some(u => !FIN.has(u.st))) pollUploads();
 /* ---------- settings / tabs ---------- */
 $('#btnSet').onclick=()=>{ $('#settings').hidden=!$('#settings').hidden; };
 $('#repo').value=S.repo; $('#token').value=S.token;
