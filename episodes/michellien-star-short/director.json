@@ -1,257 +1,38 @@
 [
  {
   "from": 0,
-  "to": 1,
-  "tpl": "hero",
-  "items": [
-   {
-    "id": "rubber-tire",
-    "at": "لاستیک"
-   },
-   {
-    "id": "chef-hat",
-    "at": "آشپزی"
-   }
-  ],
-  "text": "جایزه آشپزی از *لاستیک‌سازی*؟",
-  "number": "0",
-  "decor": [
-   "question-mark"
-  ],
-  "kw": [
-   "جایزه",
-   "آشپزی",
-   "لاستیک"
-  ]
- },
- {
-  "from": 2,
-  "to": 2,
-  "tpl": "statement",
-  "items": [
-   {
-    "id": "tire-company-logo",
-    "at": "میشلین"
-   }
-  ],
-  "text": "همون *میشلین*",
-  "number": "1",
-  "decor": [],
-  "kw": [
-   "میشلین"
-  ]
- },
- {
-  "from": 3,
-  "to": 3,
-  "tpl": "duo",
-  "items": [
-   {
-    "id": "rubber-tire",
-    "at": "لاستیک"
-   },
-   {
-    "id": "dinner-plate",
-    "at": "غذا"
-   }
-  ],
-  "text": "لاستیک و *غذا*؟",
-  "number": "2",
-  "decor": [
-   "question-mark"
-  ],
-  "kw": [
-   "لاستیک",
-   "غذا",
-   "بهترینه"
-  ]
- },
- {
-  "from": 4,
-  "to": 4,
-  "tpl": "statement",
-  "items": [
-   {
-    "id": "calendar",
-    "at": "سال"
-   }
-  ],
-  "text": "برگردیم به *۱۹۰۰*",
-  "number": "3",
-  "decor": [],
-  "kw": [
-   "سال",
-   "۱۹۰۰"
-  ]
- },
- {
-  "from": 5,
-  "to": 5,
-  "tpl": "stat",
-  "items": [
-   {
-    "id": "car",
-    "at": "ماشین"
-   }
-  ],
-  "text": "کمتر از *۳۰۰۰* ماشین",
-  "number": "4",
-  "decor": [
-   "road"
-  ],
-  "kw": [
-   "فرانسه",
-   "ماشین",
-   "کمتر"
-  ]
- },
- {
-  "from": 6,
-  "to": 6,
-  "tpl": "hero",
-  "items": [
-   {
-    "id": "two-brothers",
-    "at": "برادرهای"
-   },
-   {
-    "id": "rubber-tire",
-    "at": "لاستیک"
-   },
-   {
-    "id": "money-bag",
-    "at": "فروش"
-   }
-  ],
-  "text": "برادرهای *میشلین* و مشکل فروش",
-  "number": "5",
-  "decor": [],
-  "kw": [
-   "برادرهای",
-   "میشلین",
-   "فروش"
-  ]
- },
- {
-  "from": 7,
-  "to": 7,
-  "tpl": "statement",
-  "items": [
-   {
-    "id": "bulb",
-    "at": "فکر"
-   }
-  ],
-  "text": "یه *فکر* خفن",
-  "number": "6",
-  "decor": [],
-  "kw": [
-   "فکر",
-   "خفن"
-  ]
- },
- {
-  "from": 8,
-  "to": 8,
-  "tpl": "trio",
-  "items": [
-   {
-    "id": "red-guidebook",
-    "at": "راهنمای"
-   },
-   {
-    "id": "map-folded",
-    "at": "نقشه"
-   },
-   {
-    "id": "gas-pump",
-    "at": "پمپ"
-   },
-   {
-    "id": "hotel-building",
-    "at": "هتل"
-   }
-  ],
-  "text": "کتاب راهنمای *مجانی*",
-  "number": "7",
-  "decor": [
-   "restaurant"
-  ],
-  "kw": [
-   "راهنمای",
-   "مجانی",
-   "نقشه"
-  ]
- },
- {
-  "from": 9,
-  "to": 9,
-  "tpl": "duo",
-  "items": [
-   {
-    "id": "road",
-    "at": "سفر"
-   },
-   {
-    "id": "rubber-tire",
-    "at": "لاستیک"
-   }
-  ],
-  "text": "سفر بیشتر = *لاستیک* نو",
-  "number": "8",
-  "decor": [
-   "car"
-  ],
-  "kw": [
-   "سفر",
-   "لاستیک",
-   "بخرن"
-  ]
- },
- {
-  "from": 10,
-  "to": 10,
-  "tpl": "hero",
-  "items": [
-   {
-    "id": "star",
-    "at": "ستاره"
-   },
-   {
-    "id": "restaurant",
-    "at": "رستوران"
-   }
-  ],
-  "text": "ستاره برای *رستوران*",
-  "number": "9",
-  "decor": [],
-  "kw": [
-   "ستاره",
-   "رستوران"
-  ]
- },
- {
-  "from": 11,
   "to": 11,
-  "tpl": "statement",
-  "items": [
-   {
-    "id": "star-rating",
-    "at": "ستاره‌ها"
-   }
-  ],
-  "text": "معنی *ستاره‌ها*؟",
-  "number": "10",
-  "decor": [],
-  "kw": [
-   "ستاره‌ها",
-   "ببین"
-  ]
+  "tpl": "statement"
  },
  {
   "from": 12,
+  "to": 13,
+  "tpl": "hero"
+ },
+ {
+  "from": 14,
+  "to": 15,
+  "tpl": "hero"
+ },
+ {
+  "from": 16,
+  "to": 17,
+  "tpl": "hero"
+ },
+ {
+  "from": 18,
+  "to": 19,
+  "tpl": "hero"
+ },
+ {
+  "from": 20,
+  "to": 21,
+  "tpl": "hero"
+ },
+ {
+  "from": 22,
   "to": 23,
-  "tpl": "statement"
+  "tpl": "hero"
  },
  {
   "from": 24,
