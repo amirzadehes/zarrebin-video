@@ -71,6 +71,47 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 .hint{color:var(--mut);font-size:13px;line-height:1.7}
 #toast{position:fixed;inset-inline:16px;bottom:calc(16px + env(safe-area-inset-bottom));background:var(--acc);color:var(--acc-tx);padding:12px 16px;border-radius:14px;text-align:center;transform:translateY(160%);transition:.25s;z-index:20}
 #toast.show{transform:none}
+
+/* ---------- mouse and keyboard (any device with a real pointer) ---------- */
+@media (hover:hover) and (pointer:fine){
+  button:not(:disabled):hover,.btn:hover{filter:brightness(1.18)}
+  .tile{cursor:pointer}
+  .tile:hover{border-color:var(--acc)}
+  .rv details.sc>summary:hover{background:#1d1713}
+}
+button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+/* ---------- desktop (screen at least 1024px wide): wide layout, two columns ---------- */
+@media (min-width:1024px){
+  body{max-width:1320px;padding:0 40px 56px}
+  header{padding:26px 0 14px}
+  h1{font-size:26px}
+  .tabs{justify-content:flex-start;margin:10px 0 22px}
+  .tabs button{flex:0 0 190px}
+  #settings{max-width:760px}
+
+  /* episode tab: script on the right, build options on the left (RTL) */
+  #ep:not([hidden]){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:min-content min-content 1fr;column-gap:24px;align-items:start}
+  #ep>.card{grid-column:1}
+  #ep>#epBuild{grid-column:2;grid-row:1/4}
+  #epText{min-height:380px!important}
+  #epTextS{min-height:200px!important}
+
+  /* needed and generic lists: several cards per row */
+  #want:not([hidden]),#gen:not([hidden]){display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:14px;align-items:start}
+  #want>*,#gen>*{margin:0}
+  #want>:not(.item),#gen>:not(.item){grid-column:1/-1}
+  #want>.card:not(.item),#gen>.card:not(.item){max-width:620px}
+  .item{grid-template-columns:96px 1fr}
+  .item .thumb{width:96px;height:96px}
+
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+  .vars{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+  dialog{width:760px;max-width:80vw}
+  .rv .it{width:96px}
+  .rv .pick{max-height:420px}
+  #toast{inset-inline:0;margin-inline:auto;width:min(480px,calc(100vw - 32px))}
+}
 </style>
 </head>
 <body>
@@ -370,7 +411,8 @@ const clearOk=(s,f)=>{ if(f) setOk(s,f,false); else s.ok={v:false,h:false} };
 function syncOk(i){ const s=RV.data.scenes[i], d=document.querySelector(`details.sc[data-i="${i}"]`); if(d){ d.querySelector('summary').innerHTML=sceneHead(s,i); const a=d.querySelector('.okv'), b=d.querySelector('.okh'); if(a) a.checked=okOf(s,'v'); if(b) b.checked=okOf(s,'h') } updOk() }
 function updOk(){ const e=$('#rvOk'); if(!e||!RV) return; const sc=RV.data.scenes, n=sc.length; e.textContent=`تأیید عمودی: ${fa(sc.filter(s=>okOf(s,'v')).length)} از ${fa(n)} · تأیید افقی: ${fa(sc.filter(s=>okOf(s,'h')).length)} از ${fa(n)}` }
 let pvReady=false, pvQ=null, pvI=-1, pvFmt=ls.get('pvFmt','v'), pvMode='play';
-function pvLayout(){ const f=$('#pvFrame'); if(pvFmt==='v'){ f.style.width='min(94vw,calc(62vh*9/16))'; f.style.height='min(62vh,calc(94vw*16/9))' } else { f.style.width='min(96vw,calc(50vh*16/9))'; f.style.height='min(50vh,calc(96vw*9/16))' }
+function pvLayout(){ const f=$('#pvFrame'), D=matchMedia('(min-width:1024px)').matches, hv=D?66:62, hh=D?58:50;   // bigger preview on a desktop screen
+  if(pvFmt==='v'){ f.style.width=`min(94vw,calc(${hv}vh*9/16))`; f.style.height=`min(${hv}vh,calc(94vw*16/9))` } else { f.style.width=`min(96vw,calc(${hh}vh*16/9))`; f.style.height=`min(${hh}vh,calc(96vw*9/16))` }
   $('#pvV').classList.toggle('on',pvFmt==='v'); $('#pvH').classList.toggle('on',pvFmt==='h') }
 function pvSelBuild(cur){ const s=RV&&RV.data.scenes[pvI], box=$('#pvSel'); if(!s||pvMode!=='edit'){ box.hidden=true; return } box.hidden=false; box.innerHTML=(s.items||[]).map((it,k)=>`<button data-k="${k}" class="${k===cur?'on':''}" style="min-height:46px;padding:2px 6px"><img src="${thumbUrl(it.src)}" style="height:38px;width:38px;object-fit:contain;vertical-align:middle"> ${fa(k+1)}</button>`).join('');
   box.querySelectorAll('button').forEach(b=>b.onclick=()=>{ $('#pvFrame').contentWindow.postMessage({type:'sel',idx:+b.dataset.k},'*'); pvSelBuild(+b.dataset.k) }) }
@@ -383,6 +425,7 @@ addEventListener('message',e=>{ const m=e.data||{};
   if(m.type==='ready'){ pvReady=true; if(pvQ){ pvQ=false; pvSend() } }
   else if(m.type==='layout'&&RV){ const s=RV.data.scenes[m.scene], it=s&&s.items[m.idx]; if(!it) return; it.lay=it.lay||{}; it.lay[m.fmt]=m.lay; clearOk(s,m.fmt); syncOk(m.scene); pvOkLabel(); pvSelBuild(m.idx); rvSave() } });
 function openPreview(i,mode){ if(!RV) return; pvI=i; pvMode=mode||'play'; $('#pvModal').hidden=false; pvTools(); pvLayout(); pvOkLabel(); if(!$('#pvFrame').src.includes('fmt='+pvFmt)){ pvSetFmt(pvFmt) } else pvGo() }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('#pvModal').hidden) $('#pvClose').click() });   // Esc closes the preview (desktop)
 $('#pvClose').onclick=()=>{ $('#pvModal').hidden=true; try{ $('#pvFrame').contentWindow.postMessage({type:'stop'},'*') }catch(e){} };
 $('#pvV').onclick=()=>pvSetFmt('v'); $('#pvH').onclick=()=>pvSetFmt('h');
 $('#pvPlay').onclick=()=>{ pvMode='play'; pvTools(); pvGo() }; $('#pvEdit').onclick=()=>{ pvMode='edit'; pvTools(); pvGo() };
