@@ -1,145 +1,346 @@
 [
  {
   "from": 0,
-  "to": 3,
-  "tpl": "statement",
+  "to": 6.6,
+  "tpl": "hero",
   "items": [
    {
-    "id": "car",
-    "sent": 1
-   },
-   {
-    "id": "rubber-tire",
-    "sent": 1
+    "id": "factory",
+    "at": "کارخونهٔ"
    },
    {
     "id": "tire-company-logo",
-    "sent": 1
+    "at": "میشلن"
    }
   ],
-  "text": "*قاضی* غذا",
+  "text": "*معتبرترین* جایزه آشپزی",
   "number": "",
   "link": "",
   "decor": [],
   "kw": [
-   "قاضی",
-   "غذا"
+   "مستند",
+   "جایزه",
+   "آشپزی"
+  ]
+ },
+ {
+  "from": 7,
+  "to": 10.7,
+  "tpl": "statement",
+  "items": [
+   {
+    "id": "map-folded",
+    "sent": 10
+   },
+   {
+    "id": "gas-pump",
+    "sent": 10
+   },
+   {
+    "id": "hotel-building",
+    "sent": 10
+   },
+   {
+    "id": "red-guidebook",
+    "sent": 9
+   },
+   {
+    "id": "road",
+    "sent": 8
+   }
+  ],
+  "text": "*چگونه* می‌داند بهترین غذا",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "تشخیص",
+   "غذا",
+   "لاستیک"
   ],
   "_up": true
  },
  {
-  "from": 4,
-  "to": 11,
+  "from": 12,
+  "to": 13,
   "tpl": "duo",
   "items": [
    {
-    "id": "factory",
-    "at": "شرکت"
+    "id": "rubber-tire",
+    "at": "لاستیکشون"
    },
    {
-    "id": "book-open",
-    "at": "قاضی"
-   },
-   {
-    "id": "gas-pump",
-    "sent": 8
-   },
-   {
-    "id": "hotel-building",
-    "sent": 8
-   },
-   {
-    "id": "map-folded",
-    "sent": 8
+    "id": "price-tag",
+    "at": "نو"
    }
   ],
-  "text": "شرکت لاستیک vs قاضی غذا",
+  "text": "*لاستیک* نو بخرن",
+  "link": "arrow",
+  "kw": [
+   "لاستیک",
+   "سفر"
+  ],
+  "decor": []
+ },
+ {
+  "from": 14,
+  "to": 15,
+  "tpl": "trio",
+  "items": [
+   {
+    "id": "one-star",
+    "at": "یک"
+   },
+   {
+    "id": "two-stars",
+    "at": "دو"
+   },
+   {
+    "id": "three-stars",
+    "at": "سه"
+   }
+  ],
+  "text": "*ستاره‌ها* میشلن",
+  "kw": [
+   "ستاره‌ها",
+   "میشلن",
+   "رستوران"
+  ],
+  "decor": []
+ },
+ {
+  "from": 16,
+  "to": 17,
+  "tpl": "duo",
+  "items": [
+   {
+    "id": "one-star",
+    "at": "یک"
+   },
+   {
+    "id": "two-stars",
+    "at": "دو"
+   },
+   {
+    "id": "star",
+    "sent": 16
+   }
+  ],
+  "text": "*یک* vs *دو* ستاره",
+  "link": "vs",
+  "kw": [
+   "یک ستاره",
+   "دو ستاره"
+  ],
+  "decor": []
+ },
+ {
+  "from": 18,
+  "to": 20,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "three-stars",
+    "at": "سه"
+   },
+   {
+    "id": "rubber-tire",
+    "at": "لاستیک"
+   },
+   {
+    "id": "star-rating",
+    "sent": 18
+   }
+  ],
+  "text": "*سه ستاره* سفر",
+  "kw": [
+   "سه ستاره",
+   "سفر",
+   "لاستیک"
+  ],
+  "decor": []
+ },
+ {
+  "from": 21,
+  "to": 22,
+  "tpl": "statement",
+  "items": [
+   {
+    "id": "three-stars",
+    "at": "ستاره"
+   }
+  ],
+  "text": "*ستاره* نمی‌خره",
+  "kw": [
+   "ستاره",
+   "نمی‌خره"
+  ],
+  "decor": []
+ },
+ {
+  "from": 23,
+  "to": 23,
+  "tpl": "duo",
+  "items": [
+   {
+    "id": "secret-inspector",
+    "at": "بازرس"
+   },
+   {
+    "id": "chef-hat",
+    "at": "اسم"
+   }
+  ],
+  "text": "*اسم* جعلی رزرو",
+  "link": "plus",
+  "kw": [
+   "اسم جعلی",
+   "رزرو"
+  ],
+  "decor": []
+ },
+ {
+  "from": 24,
+  "to": 24,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "dinner-plate",
+    "at": "مشتری"
+   }
+  ],
+  "text": "*مشتری* غذا می‌خورد",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "مشتری",
+   "غذا"
+  ]
+ },
+ {
+  "from": 25,
+  "to": 26,
+  "tpl": "duo",
+  "items": [
+   {
+    "id": "secret-inspector",
+    "at": "بازرس"
+   },
+   {
+    "id": "chef-hat",
+    "at": "مشتری"
+   }
+  ],
+  "text": "بازرس vs مشتری",
   "number": "",
   "link": "vs",
   "decor": [],
   "kw": [
-   "شرکت",
-   "قاضی"
+   "بازرس",
+   "مشتری"
   ]
  },
  {
-  "from": 12,
-  "to": 23,
+  "from": 27,
+  "to": 27,
   "tpl": "statement",
-  "items": [
-   {
-    "id": "one-star",
-    "sent": 13
-   },
-   {
-    "id": "secret-inspector",
-    "sent": 12
-   },
-   {
-    "id": "social-media",
-    "sent": 22
-   },
-   {
-    "id": "star",
-    "sent": 13
-   },
-   {
-    "id": "star-rating",
-    "sent": 14
-   }
-  ],
-  "_up": true
+  "items": [],
+  "text": "*ستاره‌ها* کمیابند",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "ستاره‌ها",
+   "کمیاب"
+  ]
  },
  {
-  "from": 24,
-  "to": 35,
-  "tpl": "statement",
-  "items": [
-   {
-    "id": "banknotes",
-    "sent": 31
-   },
-   {
-    "id": "cash",
-    "sent": 31
-   },
-   {
-    "id": "chef-hat",
-    "sent": 27
-   },
-   {
-    "id": "money-bag",
-    "sent": 31
-   },
-   {
-    "id": "plastic-stool",
-    "sent": 27
-   }
-  ],
-  "_up": true
+  "from": 28,
+  "to": 28,
+  "tpl": "stat",
+  "items": [],
+  "text": "≈ ۱۵۰ رستوران سه ستاره",
+  "number": "150",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "رستوران",
+   "سه ستاره"
+  ]
  },
  {
-  "from": 36,
-  "to": 47,
+  "from": 29,
+  "to": 29,
   "tpl": "statement",
-  "items": [
-   {
-    "id": "cityscape-chicago",
-    "sent": 39
-   }
-  ],
-  "_up": true
+  "items": [],
+  "text": "یادمان بماند *ستاره‌دار*",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "ستاره‌دار"
+  ]
  },
  {
-  "from": 48,
-  "to": 56,
-  "tpl": "statement",
+  "from": 30,
+  "to": 30,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "tire-company-logo",
+    "at": "لاستیک"
+   },
+   {
+    "id": "car",
+    "at": "جایزه"
+   }
+  ],
+  "text": "*جایزه* آشپزی از لاستیک",
+  "number": "",
+  "link": "",
+  "decor": [
+   "factory"
+  ],
+  "kw": [
+   "جایزه",
+   "لاستیک"
+  ]
+ },
+ {
+  "from": 31,
+  "to": 32,
+  "tpl": "duo",
   "items": [
    {
     "id": "mobile-app",
-    "sent": 51
+    "at": "یوتیوب"
+   },
+   {
+    "id": "magnifying-glass",
+    "at": "ذره‌بین"
    }
   ],
-  "_up": true
+  "text": "ویدیو کامل در یوتیوب",
+  "number": "",
+  "link": "vs",
+  "decor": [],
+  "kw": [
+   "ویدیو",
+   "یوتیوب"
+  ]
+ },
+ {
+  "from": 33,
+  "to": 33,
+  "tpl": "statement",
+  "items": [],
+  "text": "بعدی کجا؟",
+  "number": "",
+  "link": "",
+  "decor": [],
+  "kw": [
+   "بعدی"
+  ]
  }
 ]

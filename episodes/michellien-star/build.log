@@ -1,15 +1,13 @@
-reusing the saved voice (same text, engine and voice) - no new TTS request
-library images offered to the director: 67 | priority (this episode): 33
+own text did not match the recording well (17%); using Whisper transcript instead
 model: openai/gpt-oss-120b
-model openai/gpt-oss-120b is rate limited for a long time (1142s): switching model
-model: qwen/qwen3.8-27b
-rate limited, waiting 40s
-rate limited, waiting 60s
-model qwen/qwen3.8-27b is rate limited for a long time (80s): switching model
-model: openai/gpt-oss-20b
-rate limited, waiting 18s
-rate limited, waiting 15s
-rate limited, waiting 15s
-rate limited, waiting 10s
-coverage pass: placed 18 of 31 unused priority images
-scenes 35 total 317.24 templates {'hero': 27, 'duo': 2, 'trio': 4, 'statement': 2, 'stat': 0}
+transcript cleaned, words matched 97%
+own voice: seconds 124.9 sentences 34 words 255
+library images offered to the director: 71 | priority (this episode): 33
+model: openai/gpt-oss-120b
+rate limited, waiting 7s
+rate limited, waiting 19s
+rate limited, waiting 7s
+rate limited, waiting 16s
+rate limited, waiting 2s
+coverage pass: placed 7 of 22 unused priority images
+scenes 21 total 126.09 templates {'hero': 7, 'duo': 4, 'trio': 3, 'statement': 6, 'stat': 1}
