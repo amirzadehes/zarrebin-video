@@ -84,6 +84,26 @@ def assign(words, heard, total):
         words[k]['t0'] = round(t0[k], 3); words[k]['t1'] = round(min(t1[k], total), 3)
     return words, got / max(n, 1)
 
+def reconcile(words, heard, total):
+    """own voice + pasted text: keep OUR spelling where the recording matches, but whatever the speaker really said differently
+    (or added) is taken from Whisper, and words of the text he did not read are dropped. Returns (words with times, matched_fraction, changed_flags_by_sentence)."""
+    idx = align([w['w'] for w in words], heard); n = len(words); got = sum(1 for k in idx if k is not None)
+    out, changed, prev_k, i = [], set(), -1, 0
+    while i < n:
+        if idx[i] is not None:
+            for k in range(prev_k + 1, idx[i]): out.append({'w': heard[k][0].strip(), 't0': heard[k][1], 't1': heard[k][2], 's': words[i]['s']}); changed.add(words[i]['s'])   # said but not in the text
+            h = heard[idx[i]]; out.append({'w': words[i]['w'], 't0': h[1], 't1': h[2], 's': words[i]['s']}); prev_k = idx[i]; i += 1; continue
+        j = i
+        while j < n and idx[j] is None: j += 1
+        nk = idx[j] if j < n else len(heard)
+        for k in range(prev_k + 1, nk): out.append({'w': heard[k][0].strip(), 't0': heard[k][1], 't1': heard[k][2], 's': words[i]['s']})
+        changed.add(words[i]['s']); prev_k = max(prev_k, nk - 1); i = j
+    out = [w for w in out if norm(w['w'])]
+    prev = 0.0
+    for w in out:
+        w['t0'] = round(max(float(w['t0']), prev), 3); w['t1'] = round(min(max(float(w['t1']), w['t0'] + .05), total), 3); prev = w['t0']
+    return out, got / max(n, 1), changed
+
 if __name__ == '__main__':   # offline self-test with a fake recognizer
     ours = 'می‌خوام یه چیزی بهتون بگم که اومد خونه'.split(); heard = [('میخواهم', 0, .5), ('یک', .5, .7), ('چیزی', .7, 1.1), ('بهتون', 1.1, 1.5), ('بگم', 1.5, 1.9), ('که', 1.9, 2.0), ('آمد', 2.0, 2.4), ('خانه', 2.4, 3.0)]
     print(align(ours, heard))

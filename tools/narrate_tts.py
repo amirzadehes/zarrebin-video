@@ -121,14 +121,15 @@ def own_voice(ep, req):
         txt = open(spoken, encoding='utf8').read().strip(); ss = split_sentences(txt); new = []
         for si, (st, par) in enumerate(ss):
             for tk in tokens(st): new.append({'w': tk, 't0': 0, 't1': 0, 's': si})
-        new, frac = align_whisper.assign(new, [(w['w'], w['t0'], w['t1']) for w in Wd], total)
+        new, frac, chg = align_whisper.reconcile(new, [(w['w'], w['t0'], w['t1']) for w in Wd], total)   # subtitles follow what was REALLY said; the pasted text only fixes spelling
         S2 = []
         for si, (st, par) in enumerate(ss):
             ws = [w for w in new if w['s'] == si]
-            if ws: S2.append({'i': si, 't0': round(max(ws[0]['t0'] - .12, 0), 3), 't1': round(ws[-1]['t1'], 3), 'text': st})
+            if ws: S2.append({'i': si, 't0': round(max(ws[0]['t0'] - .12, 0), 3), 't1': round(ws[-1]['t1'], 3), 'text': ' '.join(w['w'] for w in ws) if si in chg else st})
+        print('sentences where the recording differs from the pasted text:', len(chg), 'of', len(ss))
         if frac > .5 and S2:
             S, Wd = S2, new; print('own voice + own text: words matched %.0f%%' % (frac * 100))
-            open(f'{d}/narration.txt', 'w', encoding='utf8').write(txt)
+            open(f'{d}/narration.txt', 'w', encoding='utf8').write('\n'.join(x['text'] for x in S))
             json.dump({'sentences': S, 'words': Wd, 'voice_seconds': round(total, 2), 'lang': lang, 'voice': 'own', 'engine': 'own+text'}, open(f'{d}/timing.json', 'w', encoding='utf8'), ensure_ascii=False)
             return
         print('own text did not match the recording well (%.0f%%); using Whisper transcript instead' % (frac * 100))
