@@ -204,8 +204,10 @@ const TPL = {
   stat(t, sc) {
     const c = CONTENT(), cx = W / 2, cy = (c.y0 + c.y1) / 2, e0 = spr(t, sc.t0 + .15, .45, 12), num = String(sc.number || '');
     const sz = B * (V ? .34 : .3); const w = measure(`900 ${sz}px Vz`, num) + 120; its_corner(t, sc, c);
+    if (TITLES) {   // big number card + label are off: the caption is the only text on screen
     card(cx, cy - (V ? 40 : 10), w, sz * 1.45, '#ffe15a', -.04, 1, e0); ctx.save(); ctx.translate(cx, cy - (V ? 36 : 6)); ctx.rotate(-.04); ctx.scale(e0, e0); ctx.font = `900 ${sz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = D.meta.rtl ? 'rtl' : 'ltr'; ctx.fillStyle = INK; ctx.fillText(num, 0, 10); ctx.restore();
     if (sc.text) { const e1 = spr(t, sc.t0 + .55, .5, 12); const ty = cy + sz * .95; drawText(sc.text, cx, ty, B * .075, W * (V ? .82 : .6), { color: '#fff', stroke: true, reveal: () => e1 }) }
+    }
     sparks(t, sc.t0 + .2, cx, cy, 8, w * .6, sc.idx + 21)
   }
 };
@@ -270,7 +272,7 @@ function subs(t) {
 }
 function uiVox(t) {
   const y0 = V ? 1330 : H - 280, g = ctx.createLinearGradient(0, y0, 0, H); g.addColorStop(0, 'rgba(25,15,5,0)'); g.addColorStop(.45, 'rgba(25,15,5,.55)'); g.addColorStop(1, 'rgba(25,15,5,.9)'); ctx.fillStyle = g; ctx.fillRect(0, y0, W, H - y0);
-  const m = V ? 70 : 90, ty = V ? 98 : 70, bw = W - 2 * m; ctx.save(); ctx.fillStyle = '#2a1f14'; ctx.globalAlpha = .75; ctx.font = '700 30px Vz'; ctx.textAlign = 'left'; ctx.direction = 'ltr'; ctx.fillText(D.meta.topLabel || '', m, ty);
+  const m = V ? 70 : 90, ty = V ? 98 : 70, bw = W - 2 * m; ctx.save(); ctx.fillStyle = '#2a1f14'; ctx.globalAlpha = .75; ctx.font = '700 30px Vz'; ctx.textAlign = 'left'; ctx.direction = D.meta.rtl ? 'rtl' : 'ltr'; ctx.fillText(D.meta.topLabel || '', m, ty);
   ctx.font = '900 38px Vz'; ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.fillText('ذره‌بین', W - m, ty + 2);
   const by = ty + 54; ctx.globalAlpha = .18; ctx.fillRect(m, by, bw, 4); ctx.globalAlpha = .8; const pr = clamp(t / D.meta.total); ctx.fillRect(D.meta.rtl ? m + bw * (1 - pr) : m, by, bw * pr, 4); ctx.restore()
 }
@@ -278,7 +280,7 @@ function ui(t) {
   if (VOX) return uiVox(t);
   const y0 = V ? 1380 : H - 230, g = ctx.createLinearGradient(0, y0, 0, H); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.62)'); ctx.fillStyle = g; ctx.fillRect(0, y0, W, H - y0);
   const m = V ? 70 : 90, ty = V ? 98 : 70, bw = W - 2 * m;
-  ctx.save(); ctx.font = '700 30px Vz'; ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.textAlign = 'left'; ctx.direction = 'ltr'; ctx.fillText(D.meta.topLabel || '', m, ty);
+  ctx.save(); ctx.font = '700 30px Vz'; ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.textAlign = 'left'; ctx.direction = D.meta.rtl ? 'rtl' : 'ltr'; ctx.fillText(D.meta.topLabel || '', m, ty);
   ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(W - m - 220, ty - 34, 220, 64, 6); ctx.stroke(); ctx.font = '700 34px Vz'; ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.fillText('ذره‌بین', W - m - 110, ty + 1);
   const by = ty + 54; ctx.fillStyle = 'rgba(255,255,255,.28)'; ctx.fillRect(m, by, bw, 4); ctx.fillStyle = '#ffc21a'; const pr = clamp(t / D.meta.total); ctx.fillRect(D.meta.rtl ? m + bw * (1 - pr) : m, by, bw * pr, 4); ctx.restore()
 }

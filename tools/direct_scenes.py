@@ -87,6 +87,10 @@ def cover_missing(T, raw, lib, prio):
     print('coverage pass: placed', add, 'of', len(miss), 'unused priority images')
     return raw
 
+def title_of(ep):
+    try: return open(f'episodes/{ep}/title.txt', encoding='utf8').read().strip()
+    except OSError: return ''
+
 def compile_scenes(ep, T, raw, lib, req):
     S, Wd = T['sentences'], T['words']; n = len(S); total = round(T['voice_seconds'] + 1.2, 2)
     # 1) make contiguous coverage
@@ -151,6 +155,8 @@ def compile_scenes(ep, T, raw, lib, req):
         if tpl == 'duo' and len(its) > 2: tpl = 'trio'
         if tpl == 'hero' and len(its) > 4: tpl = 'trio'
         text = (r.get('text') or '').strip(); number = (r.get('number') or '').strip()
+        if tpl == 'stat': tpl = 'statement'   # the big number card is off (caption only); the scene becomes a picture scene
+        number = ''
         if tpl == 'stat' and not number: tpl = 'statement'
         if tpl in ('duo',) and len(its) < 2: tpl = 'hero' if its else 'statement'
         if tpl == 'trio' and len(its) < 2: tpl = 'hero' if its else 'statement'
@@ -175,7 +181,7 @@ def compile_scenes(ep, T, raw, lib, req):
             sc['text'] = fadig(sc['text']); sc['number'] = fadig(sc['number']) if sc.get('number') else None
             if sc['number'] is None: sc.pop('number')
     for w in Wd: w['kw'] = bool(norm(w['w'])) and any(len(q) > 1 and q in norm(w['w']) for q in kwall)
-    meta = {'total': total, 'rtl': T.get('lang', 'fa') == 'fa', 'topLabel': req.get('label') or ep.upper().replace('-', ' '), 'lang': T.get('lang', 'fa'), 'episode': ep, 'style': req.get('style', 'comic'), 'palette': req.get('palette', ''), 'subs': req.get('subs', True), 'base': req.get('base', '')}
+    meta = {'total': total, 'rtl': T.get('lang', 'fa') == 'fa', 'topLabel': req.get('label') or title_of(ep) or ep.upper().replace('-', ' '), 'lang': T.get('lang', 'fa'), 'episode': ep, 'style': req.get('style', 'comic'), 'palette': req.get('palette', ''), 'subs': req.get('subs', True), 'base': req.get('base', '')}
     json.dump({'meta': meta, 'words': Wd, 'scenes': scenes}, open(f'episodes/{ep}/scenes.json', 'w', encoding='utf8'), ensure_ascii=False)
     return meta, scenes
 
@@ -192,6 +198,7 @@ def main(ep):
         meta = load(f'{d}/scenes.json', {}).get('meta') or {}
         for k in ('style', 'palette', 'base', 'subs'):
             if k in req: meta[k] = req[k]
+        if not req.get('label') and title_of(ep): meta['topLabel'] = title_of(ep)   # the Persian episode name shown top-left
         D = load(f'{d}/scenes.json', {}); D['meta'] = meta; json.dump(D, open(f'{d}/scenes.json', 'w', encoding='utf8'), ensure_ascii=False)
         print('using the reviewed scenes.json:', len(D.get('scenes', [])), 'scenes'); emit_plan(meta, req); return
     if not T: sys.exit('timing.json missing; run narrate_tts.py first')
