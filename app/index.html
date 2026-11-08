@@ -380,9 +380,10 @@ setInterval(buildStatus,10000); setTimeout(buildStatus,1500);
 async function loadVids(){
   const box=$('#vids'); if(!box) return;
   try{ const rel=(await api('/releases?per_page=30')).filter(r=>!/^voices?-/.test(r.tag_name)&&!/sample/i.test(r.name||'')).slice(0,12);
+    await loadTitles([...new Set(rel.map(r=>r.name).filter(Boolean))]);
     box.innerHTML = rel.length ? '<label>ویدیوهای ساخته‌شده</label>'+rel.map(r=>{
       const d=new Date(r.created_at).toLocaleString('fa-IR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
-      return `<div class="vrow" data-id="${r.id}" data-tag="${r.tag_name}"><span class="vname" dir="ltr">${r.name||r.tag_name}<small>${d}</small></span>${r.assets.map(a=>`<a class="btn" href="${a.browser_download_url}" target="_blank" rel="noopener">${/vertical/.test(a.name)?'اینستاگرام':/horizontal/.test(a.name)?'یوتیوب':a.name.replace(/\.[a-z0-9]+$/,'')}</a>`).join('')}<button class="vdel" title="پاک کردن">🗑</button></div>`}).join('') : '';
+      return `<div class="vrow" data-id="${r.id}" data-tag="${r.tag_name}"><span class="vname" dir="auto">${epTitle(r.name||r.tag_name)}<small>${d}</small></span>${r.assets.map(a=>`<a class="btn" href="${a.browser_download_url}" target="_blank" rel="noopener">${/vertical/.test(a.name)?'اینستاگرام':/horizontal/.test(a.name)?'یوتیوب':a.name.replace(/\.[a-z0-9]+$/,'')}</a>`).join('')}<button class="vdel" title="پاک کردن">🗑</button></div>`}).join('') : '';
     box.querySelectorAll('.vdel').forEach(b=>b.onclick=()=>delVid(b.closest('.vrow')));
   }catch(e){}
 }
@@ -482,7 +483,7 @@ const narr=s=>(RV.data.words||[]).filter(w=>w.t0>=s.t0-.02&&w.t0<s.t1-.02).map(w
 function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySelector('.body'), n=(s.items||[]).length;
   box.innerHTML=`<div class="row" style="margin-bottom:6px"><button class="pri bPv">▶ پیش‌نمایش</button><button class="bLay">✋ چیدمان</button></div><div class="row" style="margin-bottom:6px"><label style="display:flex;align-items:center;gap:6px;margin:0"><input type="checkbox" class="okv" ${okOf(s,'v')?'checked':''}> عمودی خوب است</label><label style="display:flex;align-items:center;gap:6px;margin:0"><input type="checkbox" class="okh" ${okOf(s,'h')?'checked':''}> افقی خوب است</label></div>
     <label>متنی که راوی در این صحنه می‌گوید</label><div class="narr" style="padding:8px 10px;border:1px dashed var(--line);border-radius:10px;color:var(--mut);font-size:14px;line-height:1.9">${narr(s)||'—'}</div>
-    <label>نوشته‌ای که روی صفحه می‌آید (قابل ویرایش؛ کلمه‌ی مهم را بین ستاره بگذار: *بنزین*)</label><textarea class="txt" rows="2" style="width:100%;direction:rtl;text-align:right;font-size:15px">${(s.text||'').replace(/</g,'&lt;')}</textarea>
+    ${['statement','stat'].includes(s.tpl)?`<label>نوشته‌ای که روی صفحه می‌آید (قابل ویرایش؛ کلمه‌ی مهم را بین ستاره بگذار: *بنزین*)</label><textarea class="txt" rows="2" style="width:100%;direction:rtl;text-align:right;font-size:15px">${(s.text||'').replace(/</g,'&lt;')}</textarea>`:''}
     ${s.number!==undefined?`<label>عدد</label><input type="text" class="num" value="${s.number}">`:''}
     <label>تصویرها (به همین ترتیب نمایش داده می‌شوند)</label>
     <div class="its">${(s.items||[]).map((it,k)=>`<div class="it"><div class="thumb"><img loading="lazy" src="${thumbUrl(it.src)}"></div><b style="position:absolute;bottom:34px;right:4px;background:#000a;border-radius:8px;padding:0 6px;font-size:12px">${fa(k+1)}</b><button class="x" data-k="${k}">✕</button><button class="ws" data-k="${k}" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏱ ${wordAt(s,it)}</button><div style="display:flex;gap:4px;margin-top:4px"><button class="mv" data-k="${k}" data-d="-1" style="min-height:30px;flex:1;padding:0" ${k===0?'disabled':''}>›</button><button class="mv" data-k="${k}" data-d="1" style="min-height:30px;flex:1;padding:0" ${k===n-1?'disabled':''}>‹</button></div></div>`).join('')||'<span class="hint">بدون تصویر</span>'}</div>
@@ -496,7 +497,7 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
   box.querySelector('.nfile').onchange=e=>{ const f=e.target.files[0]; e.target.value=''; if(f) newForScene(i,d,box.querySelector('.nfa').value.trim(),f,box.querySelector('.nst')) };
   box.querySelector('.bPv').onclick=()=>openPreview(i,'play'); box.querySelector('.bLay').onclick=()=>openPreview(i,'edit');
   box.querySelector('.okv').onchange=e=>{ setOk(s,'v',e.target.checked); syncOk(i); rvSave() }; box.querySelector('.okh').onchange=e=>{ setOk(s,'h',e.target.checked); syncOk(i); rvSave() };
-  const tx=box.querySelector('.txt'); tx.oninput=()=>{ s.text=tx.value; clearOk(s); box.querySelector('.okv').checked=false; box.querySelector('.okh').checked=false; updOk(); d.querySelector('summary').innerHTML=sceneHead(s,i); rvSave() };
+  const tx=box.querySelector('.txt'); if(tx) tx.oninput=()=>{ s.text=tx.value; clearOk(s); box.querySelector('.okv').checked=false; box.querySelector('.okh').checked=false; updOk(); d.querySelector('summary').innerHTML=sceneHead(s,i); rvSave() };
   const nm=box.querySelector('.num'); if(nm) nm.oninput=()=>{ s.number=nm.value; rvSave() };
   box.querySelectorAll('.ws').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, wp=box.querySelector('.wpanel'); wp.hidden=false; wp.querySelector('.wph').textContent='تصویر '+fa(k+1)+' با کدام کلمه‌ی راوی ظاهر شود؟ روی کلمه بزن.';
     wp.querySelector('.chips').innerHTML=sceneWords(s).map(w=>`<button class="chip" data-t="${w.t0}" style="min-height:34px;padding:0 10px">${w.w}</button>`).join('');
