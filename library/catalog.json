@@ -808,6 +808,18 @@
    ],
    "fa_tags_for": "کارخانه"
   },
+  "fire": {
+   "id": "fire",
+   "en": "fire",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "fire__1.webp",
+    "fire__2.webp",
+    "fire__3.webp"
+   ]
+  },
   "football-referee": {
    "id": "football-referee",
    "en": "football referee",

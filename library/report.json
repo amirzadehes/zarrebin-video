@@ -1,36 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-27 08:24:50 UTC",
-   "ok": [
-    {
-     "file": "apple__mvqf62mc0.jpg",
-     "id": "apple",
-     "saved": "apple__1.webp",
-     "kb": 134
-    },
-    {
-     "file": "chef-hat__mvqf6b2h0.jpg",
-     "id": "chef-hat",
-     "saved": "chef-hat__1.webp",
-     "kb": 140
-    },
-    {
-     "file": "chef-hat__mvqf6dde1.jpg",
-     "id": "chef-hat",
-     "saved": "chef-hat__2.webp",
-     "kb": 159
-    },
-    {
-     "file": "spice-jar__mvqf67f10.jpg",
-     "id": "spice-jar",
-     "saved": "spice-jar__1.webp",
-     "kb": 111
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-10-27 08:25:46 UTC",
    "ok": [
     {
@@ -744,6 +714,30 @@
      "id": "shield",
      "saved": "shield__2.webp",
      "kb": 195
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-08 21:22:59 UTC",
+   "ok": [
+    {
+     "file": "fire__mw8c92f602k.jpg",
+     "id": "fire",
+     "saved": "fire__1.webp",
+     "kb": 140
+    },
+    {
+     "file": "fire__mw8c92fv1rx.jpg",
+     "id": "fire",
+     "saved": "fire__2.webp",
+     "kb": 155
+    },
+    {
+     "file": "fire__mw8c92g12e1.jpg",
+     "id": "fire",
+     "saved": "fire__3.webp",
+     "kb": 130
     }
    ],
    "failed": []
