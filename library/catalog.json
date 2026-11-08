@@ -337,6 +337,16 @@
    ],
    "fa_tags_for": "۲۰ دلاری"
   },
+  "chart-up": {
+   "id": "chart-up",
+   "en": "chart up",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "chart-up__1.webp"
+   ]
+  },
   "chef-hat": {
    "id": "chef-hat",
    "en": "chef hat",
@@ -1188,6 +1198,16 @@
     "دستورالعمل"
    ],
    "fa_tags_for": "راهنمای قرمز"
+  },
+  "reservation-card": {
+   "id": "reservation-card",
+   "en": "restaurant reservation card",
+   "fa": "کارت رزرو رستوران",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "reservation-card__1.webp"
+   ]
   },
   "restaurant": {
    "id": "restaurant",
