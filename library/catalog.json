@@ -768,6 +768,27 @@
    ],
    "fa_tags_for": "ساعت شنی"
   },
+  "item": {
+   "id": "item",
+   "en": "یوتیوب",
+   "fa": "یوتیوب",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "item__1.webp"
+   ],
+   "fa_tags": [
+    "ویدیو",
+    "پلتفرم",
+    "اشتراک‌گذاری",
+    "فیلم",
+    "موسیقی",
+    "شبکه‌اجتماعی"
+   ],
+   "fa_tags_for": "یوتیوب"
+  },
   "lightning-burst": {
    "id": "lightning-burst",
    "en": "lightning burst",
@@ -1085,6 +1106,27 @@
     "نقطه‌سؤال"
    ],
    "fa_tags_for": "علامت سؤال"
+  },
+  "question-mark-2": {
+   "id": "question-mark-2",
+   "en": "question mark",
+   "fa": "علامت سوال",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "question-mark-2__1.webp"
+   ],
+   "fa_tags": [
+    "پرسش",
+    "علامت",
+    "نشانه",
+    "نوشتار",
+    "نماد",
+    "سوال"
+   ],
+   "fa_tags_for": "علامت سوال"
   },
   "red-guidebook": {
    "id": "red-guidebook",

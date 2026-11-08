@@ -22,21 +22,34 @@
  ],
  "money-bag": [
   "cash",
+  "banknotes",
   "euro-sign"
  ],
  "thief-mask": [
   "secret-inspector"
  ],
+ "video-play": [
+  "item"
+ ],
  "magnifier-search": [
   "magnifying-glass"
+ ],
+ "clock-wall": [
+  "alarm-clock"
+ ],
+ "question-mark": [
+  "question-mark-2"
+ ],
+ "exclamation-mark": [
+  "warning-sign"
+ ],
+ "credit-card": [
+  "banknotes"
  ],
  "light-bulb-idea": [
   "bulb"
  ],
  "brain-colorful": [
   "brain-pink"
- ],
- "star-rating": [
-  "star"
  ]
 }

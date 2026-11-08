@@ -1,30 +1,18 @@
 {
+ "star": [
+  "star-rating"
+ ],
  "star-rating": [
-  "one-star",
-  "two-stars",
-  "three-stars",
-  "star"
- ],
- "one-star": [
-  "star-rating",
-  "two-stars",
-  "three-stars",
-  "star"
- ],
- "two-stars": [
-  "star-rating",
-  "one-star",
-  "three-stars",
-  "star"
- ],
- "three-stars": [
-  "star-rating",
-  "one-star",
-  "two-stars",
   "star"
  ],
  "clock-wall": [
   "alarm-clock"
+ ],
+ "cash": [
+  "banknotes"
+ ],
+ "banknotes": [
+  "cash"
  ],
  "tire-company-logo": [
   "rubber-tire"
