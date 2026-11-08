@@ -198,7 +198,7 @@ const TPL = {
     const gap = Math.min(.2, Math.max(sc.t1 - sc.t0 - 1.2, .6) / Math.max(words, 1)); const reveal = i => spr(t, tw[i] !== undefined ? tw[i] : sc.t0 + .3 + i * gap, .5, 14);
     const e0 = spr(t, sc.t0 + .1, .5, 12); const L = wrapTokens(sc.text || '', `900 ${size}px Vz`, maxW), hh = L.lines.length * size * 1.32 + 90, ww = Math.max(...L.lines.map(l => l.w), 200) + 110;
     its_corner(t, sc, c);
-    card(cx, cy, ww, hh, sc.card || '#fff', -.025, 1, e0); ctx.save(); ctx.translate(cx, cy); ctx.rotate(-.025); ctx.scale(e0, e0); drawText(sc.text || '', 0, 0, size, maxW, { reveal }); ctx.restore();
+    if (TITLES) { card(cx, cy, ww, hh, sc.card || '#fff', -.025, 1, e0); ctx.save(); ctx.translate(cx, cy); ctx.rotate(-.025); ctx.scale(e0, e0); drawText(sc.text || '', 0, 0, size, maxW, { reveal }); ctx.restore() }
     sparks(t, sc.t0 + .2, cx, cy, 8, ww * .6, sc.idx + 11)
   },
   stat(t, sc) {
