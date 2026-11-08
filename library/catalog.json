@@ -995,6 +995,17 @@
    ],
    "fa_tags_for": "رعد و برق"
   },
+  "lock-closed": {
+   "id": "lock-closed",
+   "en": "lock closed",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "lock-closed__1.webp",
+    "lock-closed__2.webp"
+   ]
+  },
   "magnifying-glass": {
    "id": "magnifying-glass",
    "en": "magnifying glass",
