@@ -46,13 +46,22 @@
   "arrow-down": {
    "id": "arrow-down",
    "en": "arrow down",
-   "fa": "",
+   "fa": "پیکان پایین",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "arrow-down__1.webp",
     "arrow-down__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "پیکان",
+    "پایین",
+    "جهت",
+    "نشانگر",
+    "حرکت",
+    "سمت"
+   ],
+   "fa_tags_for": "پیکان پایین"
   },
   "arrow-right": {
    "id": "arrow-right",
@@ -76,13 +85,22 @@
   "arrow-up": {
    "id": "arrow-up",
    "en": "arrow up",
-   "fa": "",
+   "fa": "پیکان بالا",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "arrow-up__1.webp",
     "arrow-up__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "پیکان",
+    "بالا",
+    "جهت",
+    "نشانگر",
+    "حرکت",
+    "سمت"
+   ],
+   "fa_tags_for": "پیکان بالا"
   },
   "banknotes": {
    "id": "banknotes",
@@ -632,12 +650,22 @@
   "curved-arrow": {
    "id": "curved-arrow",
    "en": "curved arrow",
-   "fa": "",
+   "fa": "پیکان منحنی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "curved-arrow__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "پیکان",
+    "منحنی",
+    "جهت",
+    "نشانگر",
+    "حرکت",
+    "انحنا",
+    "مسیر"
+   ],
+   "fa_tags_for": "پیکان منحنی"
   },
   "dinner-plate": {
    "id": "dinner-plate",

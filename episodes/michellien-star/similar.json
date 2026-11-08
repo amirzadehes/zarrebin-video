@@ -1,1 +1,43 @@
-{}
+{
+ "star": [
+  "star-rating",
+  "three-stars",
+  "two-stars",
+  "one-star"
+ ],
+ "rubber-tire": [
+  "tire-company-logo"
+ ],
+ "book-open": [
+  "book"
+ ],
+ "star-rating": [
+  "one-star",
+  "two-stars",
+  "three-stars",
+  "star"
+ ],
+ "one-star": [
+  "star",
+  "two-stars",
+  "three-stars",
+  "star-rating"
+ ],
+ "two-stars": [
+  "one-star",
+  "three-stars",
+  "star",
+  "star-rating"
+ ],
+ "three-stars": [
+  "one-star",
+  "two-stars",
+  "star",
+  "star-rating"
+ ],
+ "money-bag": [
+  "banknotes",
+  "cash",
+  "money-coins"
+ ]
+}
