@@ -562,6 +562,17 @@
    ],
    "fa_tags_for": "بشقاب غذا"
   },
+  "dna-helix": {
+   "id": "dna-helix",
+   "en": "dna helix",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "dna-helix__1.webp",
+    "dna-helix__2.webp"
+   ]
+  },
   "earth-globe": {
    "id": "earth-globe",
    "en": "earth globe",
