@@ -1221,6 +1221,17 @@
     "roadside-restaurant__1.webp"
    ]
   },
+  "rocket": {
+   "id": "rocket",
+   "en": "rocket",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "rocket__1.webp",
+    "rocket__2.webp"
+   ]
+  },
   "rubber-tire": {
    "id": "rubber-tire",
    "en": "rubber tire",
