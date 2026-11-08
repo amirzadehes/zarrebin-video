@@ -354,7 +354,7 @@ async function renderEp(){
   el.querySelectorAll('#epList button').forEach(b=>b.onclick=()=>setEpisode(b.dataset.e));
   $('#epSend').onclick = sendEp;
   $('#epFaSave').onclick = async()=>{ const f=$('#epFaSt'), en=slug($('#epName').value), t=$('#epFa').value.trim(); if(!S.token){ f.className='st bad'; f.textContent='اول در تنظیمات توکن را وارد کن'; return } if(!en){ f.className='st bad'; f.textContent='اول نام انگلیسی قسمت را بنویس یا یک قسمت را انتخاب کن'; return } if(!t){ f.className='st bad'; f.textContent='نام فارسی را بنویس'; return }
-    try{ await saveTitle(en,t); const sh=en.replace(/-short$/,'')+'-short'; if((S.eps||[]).includes(sh)&&!/-short$/.test(en)) await saveTitle(sh,t+' (کوتاه)'); f.className='st ok'; f.textContent='✓ ذخیره شد'; renderEpLabels() }catch(e){ f.className='st bad'; f.textContent='خطا: '+e.message } };
+    try{ await saveTitle(en,t); const sh=en.replace(/-short$/,'')+'-short'; if((S.eps||[]).includes(sh)&&!/-short$/.test(en)) await saveTitle(sh,t); f.className='st ok'; f.textContent='✓ ذخیره شد'; renderEpLabels() }catch(e){ f.className='st bad'; f.textContent='خطا: '+e.message } };
   if(cur){ readText(cur) } renderWant();
 }
 async function readText(ep){ try{ const j=await api('/contents/episodes/'+ep+'/script.txt'); $('#epText').value=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))); }catch(e){} }
@@ -400,7 +400,7 @@ async function buildVideo(mode){
   if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس (همان که متن را با آن فرستادی)'; return; }
   const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
   try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده'; return; }
-  try{ const t=($('#epFa')?$('#epFa').value:'').trim(); if(t){ await saveTitle(ep, /-short$/.test(ep)&&!/\(کوتاه\)$/.test(t)?t+' (کوتاه)':t); renderEpLabels() } }catch(_){}
+  try{ const t=($('#epFa')?$('#epFa').value:'').trim(); if(t){ await saveTitle(ep, t); renderEpLabels() } }catch(_){}
   const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.subs=$('#bSubs').checked; body.music=$('#bMusic').value; body.style=S.style; body.review=(mode==='review'); if(/-short$/.test(ep)) body.short=true; body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
   st.className='st'; st.textContent='در حال شروع…';
   try{
@@ -479,6 +479,7 @@ function pvShowDetails(i){ const bx=$('#rvBox'); if(bx) bx.open=true; document.q
 $('#pvOk').onclick=()=>{ if(pvI<0) return; setOk(RV.data.scenes[pvI],pvFmt,true); syncOk(pvI); rvSave(); $('#pvOk').textContent='✓ تأیید شد'; if(pvI+1<RV.data.scenes.length){ pvI++; pvShowDetails(pvI); setTimeout(()=>{ pvTools(); pvOkLabel(); pvGo() },400) } else $('#pvClose').click() };
 const sceneHead=(s,i)=>{ const n=(s.items||[]).length, warn=!n&&s.tpl!=='stat'; return `${okOf(s,'v')&&okOf(s,'h')?'✅ ':(okOf(s,'v')||okOf(s,'h'))?'🔸 ':''}${warn?'⚠️ ':''}<b>${fa(i+1)}</b> · ${(s.text||s.number||'').replace(/\*/g,'')||'—'} <span style="color:var(--mut)">(${fa(n)} تصویر)</span>` };
 const sceneWords=s=>(RV.data.words||[]).filter(w=>w.t0>=s.t0-.02&&w.t0<s.t1-.02);
+const wordAtT=(s,t)=>{ let b=null; sceneWords(s).forEach(w=>{ if(w.t0<=t+.08) b=w }); return b?b.w:'—' };
 const wordAt=(s,it)=>{ let b=null; sceneWords(s).forEach(w=>{ if(w.t0<=it.t+.08) b=w }); return b?b.w:'—' };
 const narr=s=>(RV.data.words||[]).filter(w=>w.t0>=s.t0-.02&&w.t0<s.t1-.02).map(w=>w.w).join(' ');
 function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySelector('.body'), n=(s.items||[]).length;
@@ -486,7 +487,7 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
     <label>متنی که راوی در این صحنه می‌گوید</label><div class="narr" style="padding:8px 10px;border:1px dashed var(--line);border-radius:10px;color:var(--mut);font-size:14px;line-height:1.9">${narr(s)||'—'}</div>
     ${s.number!==undefined?`<label>عدد</label><input type="text" class="num" value="${s.number}">`:''}
     <label>تصویرها (به همین ترتیب نمایش داده می‌شوند)</label>
-    <div class="its">${(s.items||[]).map((it,k)=>`<div class="it"><div class="thumb"><img loading="lazy" src="${thumbUrl(it.src)}"></div><b style="position:absolute;bottom:34px;right:4px;background:#000a;border-radius:8px;padding:0 6px;font-size:12px">${fa(k+1)}</b><button class="x" data-k="${k}">✕</button><button class="ws" data-k="${k}" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏱ ${wordAt(s,it)}</button><div style="display:flex;gap:4px;margin-top:4px"><button class="mv" data-k="${k}" data-d="-1" style="min-height:30px;flex:1;padding:0" ${k===0?'disabled':''}>›</button><button class="mv" data-k="${k}" data-d="1" style="min-height:30px;flex:1;padding:0" ${k===n-1?'disabled':''}>‹</button></div></div>`).join('')||'<span class="hint">بدون تصویر</span>'}</div>
+    <div class="its">${(s.items||[]).map((it,k)=>`<div class="it"><div class="thumb"><img loading="lazy" src="${thumbUrl(it.src)}"></div><b style="position:absolute;bottom:34px;right:4px;background:#000a;border-radius:8px;padding:0 6px;font-size:12px">${fa(k+1)}</b><button class="x" data-k="${k}">✕</button><button class="ws" data-k="${k}" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏱ ${wordAt(s,it)}</button><button class="xs" data-k="${k}" title="چه زمانی این تصویر بیرون برود" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏏ ${it.out!=null?wordAtT(s,it.out):'تا آخر صحنه'}</button><div style="display:flex;gap:4px;margin-top:4px"><button class="mv" data-k="${k}" data-d="-1" style="min-height:30px;flex:1;padding:0" ${k===0?'disabled':''}>›</button><button class="mv" data-k="${k}" data-d="1" style="min-height:30px;flex:1;padding:0" ${k===n-1?'disabled':''}>‹</button></div></div>`).join('')||'<span class="hint">بدون تصویر</span>'}</div>
     <div class="wpanel" hidden style="margin:6px 0;padding:8px;border:1px dashed var(--line);border-radius:10px"><div class="hint wph"></div><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"></div></div>
     <div class="row"><button class="bAdd">+ افزودن از کتابخانه (آخر صحنه اضافه می‌شود)</button></div><div class="pick" hidden></div>
     <div class="row" style="margin-top:6px"><button class="bNew">+ تصویر تازه: آپلود در کتابخانه و استفاده در این صحنه</button></div>
@@ -499,6 +500,9 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
   box.querySelector('.okv').onchange=e=>{ setOk(s,'v',e.target.checked); syncOk(i); rvSave() }; box.querySelector('.okh').onchange=e=>{ setOk(s,'h',e.target.checked); syncOk(i); rvSave() };
   const tx=box.querySelector('.txt'); if(tx) tx.oninput=()=>{ s.text=tx.value; clearOk(s); box.querySelector('.okv').checked=false; box.querySelector('.okh').checked=false; updOk(); d.querySelector('summary').innerHTML=sceneHead(s,i); rvSave() };
   const nm=box.querySelector('.num'); if(nm) nm.oninput=()=>{ s.number=nm.value; rvSave() };
+  box.querySelectorAll('.xs').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, wp=box.querySelector('.wpanel'); wp.hidden=false; wp.querySelector('.wph').textContent='تصویر '+fa(k+1)+' با کدام کلمه‌ی راوی از صفحه بیرون برود؟ روی کلمه بزن.';
+    wp.querySelector('.chips').innerHTML='<button class="chip" data-clr="1" style="min-height:34px;padding:0 10px">تا آخر صحنه</button>'+sceneWords(s).filter(w=>w.t0>s.items[k].t+.4).map(w=>`<button class="chip" data-t="${w.t0}" style="min-height:34px;padding:0 10px">${w.w}</button>`).join('');
+    wp.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{ const it=s.items[k]; if(c.dataset.clr) delete it.out; else it.out=+Math.min(+c.dataset.t,s.t1-.2).toFixed(3); rvChanged(i,d,true) }) });
   box.querySelectorAll('.ws').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, wp=box.querySelector('.wpanel'); wp.hidden=false; wp.querySelector('.wph').textContent='تصویر '+fa(k+1)+' با کدام کلمه‌ی راوی ظاهر شود؟ روی کلمه بزن.';
     wp.querySelector('.chips').innerHTML=sceneWords(s).map(w=>`<button class="chip" data-t="${w.t0}" style="min-height:34px;padding:0 10px">${w.w}</button>`).join('');
     wp.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{ const it=s.items[k]; it.t=+Math.max(s.t0+.15,Math.min(+c.dataset.t,s.t1-.5)).toFixed(3); it.fix=true; rvChanged(i,d,true) }) });
@@ -591,7 +595,7 @@ async function sendEp(){
   try{
     const old={}; for(const [e,t] of targets){ let sha; try{ sha=(await api('/contents/episodes/'+e+'/script.txt')).sha }catch(_){}
       try{ old[e]=(await api('/contents/episodes/'+e+'/needs.json')).sha }catch(_){}
-      await api('/contents/episodes/'+e+'/script.txt',{method:'PUT',body:JSON.stringify({message:'episode script: '+e,content:enc(t),branch:'main',sha})}); S.eps=[...new Set([...(S.eps||[]),e])]; if(faT) await saveTitle(e, /-short$/.test(e)?faT+' (کوتاه)':faT) }
+      await api('/contents/episodes/'+e+'/script.txt',{method:'PUT',body:JSON.stringify({message:'episode script: '+e,content:enc(t),branch:'main',sha})}); S.eps=[...new Set([...(S.eps||[]),e])]; if(faT) await saveTitle(e, faT) }
     const first=targets[0][0]; ls.set('curEp',first); st.className='st ok'; st.textContent='ارسال شد ('+targets.map(x=>x[0]).join(' و ')+')؛ تحلیل حدود یک تا دو دقیقه طول می‌کشد…';
     for(let k=0;k<30;k++){ await sleep(8000); let n; try{ n=(await api('/contents/episodes/'+first+'/needs.json')).sha }catch(_){}
       if(n && n!==old[first]){ await loadAll(true); setEpisode(first); await showNeeds(first); st.textContent='فهرست آماده شد؛ تب «مورد نیاز» را ببین'+(targets.length>1?'. تحلیل نسخه‌ی دیگر هم در راه است؛ از فهرست قسمت‌ها انتخابش کن.':''); toast('✓ تحلیل تمام شد؛ تصویرهای لازم را ببین',5000); return } }

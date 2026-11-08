@@ -134,7 +134,9 @@ window.setEdit = v => { EDIT = v }; window.getRec = () => REC;
 function drawItem(it, t, tx, ty, size, k) {
   const L = it.lay && it.lay[FMT], idx = CUR ? CUR.items.indexOf(it) : -1;   // owner's manual placement for this format (fractions of the canvas)
   let rot0 = 0; if (L) { tx += (L.dx || 0) * W; ty += (L.dy || 0) * H; size *= (L.sz || 1); rot0 = L.rot || 0 }
-  const e = ent(it.en, t, it.t, tx, ty); if (!e) return; const fl = EDIT ? 0 : Math.sin(t * 2 + k * 1.7), fr = EDIT ? 0 : Math.sin(t * 1.6 + k) * .03;
+  const e = ent(it.en, t, it.t, tx, ty); if (!e) return;
+  if (!EDIT && it.out != null && it.out > it.t + .3 && t >= it.out) { const q = ramp(t, it.out, it.out + .4); if (q >= 1) return; const g = eoq(q); e.a *= 1 - g; e.s *= 1 - .3 * g; e.y -= size * .12 * g }   // owner-set exit time: the picture shrinks and fades away
+  const fl = EDIT ? 0 : Math.sin(t * 2 + k * 1.7), fr = EDIT ? 0 : Math.sin(t * 1.6 + k) * .03;
   if (idx >= 0) REC[idx] = { x: tx, y: ty, size };
   const sq = EDIT ? 0 : bump(t, it.t, .11);   // squash & stretch when the object lands
   drawImg(it.src, e.x, e.y + fl * size * .02, size * e.s, e.r + fr + rot0, e.a, e.bl ? `blur(${e.bl}px)` : 'none', 1 + sq, 1 - sq);
