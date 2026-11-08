@@ -51,8 +51,13 @@ def direct(ep, T, lib, prio=None):
         chunk = S[b:b + B]
         user = 'قالب آخرین صحنه‌ی قبلی: %s\n\nفهرست اشیای موجود (شناسه: نام):\n%s\n%s\nجمله‌ها:\n%s' % (
             prev or '-', ids, ('انتخاب صاحب ویدیو (هرجا متن به نیاز اول اشاره می‌کند از همین تصویرها استفاده کن):\n' + '\n'.join(PICK_NOTE) + '\n') if PICK_NOTE else '', '\n'.join(f"{s['i']} | {s['t0']:.1f}-{s['t1']:.1f}s | {s['text']}" for s in chunk))
-        raw = groqlib.chat(SYSTEM.replace('۳ تا ۸ ثانیه', '۲ تا ۴ ثانیه').replace('حداکثر ۸ ثانیه', 'حداکثر ۴ ثانیه') if SHORT else SYSTEM, user, max_tokens=3500, json_mode=True, temperature=.4)
-        got = [o for o in groqlib.objects(raw, 'from') if isinstance(o.get('from'), int)]
+        try:
+            raw = groqlib.chat(SYSTEM.replace('۳ تا ۸ ثانیه', '۲ تا ۴ ثانیه').replace('حداکثر ۸ ثانیه', 'حداکثر ۴ ثانیه') if SHORT else SYSTEM, user, max_tokens=2200, json_mode=True, temperature=.4)
+            got = [o for o in groqlib.objects(raw, 'from') if isinstance(o.get('from'), int)]
+        except (Exception, SystemExit) as e:
+            # Groq is rate limited / down: do not fail the whole build; cut this chunk into two-sentence scenes, compile_scenes then picks library images by keyword
+            print('director fallback for sentences %d-%d (no AI):' % (b, min(b + B, len(S)) - 1), str(e)[:160])
+            got = [{'from': i, 'to': min(i + 1, b + B - 1, len(S) - 1), 'tpl': 'hero'} for i in range(b, min(b + B, len(S)), 2)]
         got = [o for o in got if b <= o['from'] < b + B] or [{'from': b, 'to': min(b + B, len(S)) - 1, 'tpl': 'statement'}]
         scenes += got; prev = got[-1].get('tpl', '')
     return scenes

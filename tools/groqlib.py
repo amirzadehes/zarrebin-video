@@ -2,7 +2,7 @@
 import json, os, re, sys, time, urllib.request, urllib.error
 
 PREF = ['gpt-oss-120b', 'llama-4-maverick', 'llama-3.3-70b', 'qwen', 'gpt-oss-20b', 'llama-4-scout', 'llama-3.1-70b', 'llama']
-BAD = ('whisper', 'guard', 'tts', 'orpheus', 'embed', 'compound', 'safeguard', 'distil')
+BAD = ('whisper', 'guard', 'tts', 'orpheus', 'embed', 'compound', 'safeguard', 'distil', 'allam', 'saba')
 API = 'https://api.groq.com/openai/v1'
 _model = None
 _bad = set()   # models whose daily/long rate limit is used up; each Groq model has its own quota
