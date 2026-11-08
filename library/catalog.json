@@ -1579,6 +1579,17 @@
    ],
    "fa_tags_for": "فنجان چای"
   },
+  "telescope": {
+   "id": "telescope",
+   "en": "telescope",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "telescope__1.webp",
+    "telescope__2.webp"
+   ]
+  },
   "thief-mask": {
    "id": "thief-mask",
    "en": "black thief eye mask",

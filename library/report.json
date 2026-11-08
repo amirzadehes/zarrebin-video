@@ -1,36 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-27 07:51:09 UTC",
-   "ok": [
-    {
-     "file": "factory__mvqdz30l0.jpg",
-     "id": "factory",
-     "saved": "factory__1.webp",
-     "kb": 236
-    },
-    {
-     "file": "road__mvqdylls0.jpg",
-     "id": "road",
-     "saved": "road__1.webp",
-     "kb": 330
-    },
-    {
-     "file": "road__mvqdyocj1.jpg",
-     "id": "road",
-     "saved": "road__2.webp",
-     "kb": 330
-    },
-    {
-     "file": "two-brothers__mvqdyog70.jpg",
-     "id": "two-brothers",
-     "saved": "two-brothers__1.webp",
-     "kb": 217
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-10-27 07:51:56 UTC",
    "ok": [
     {
@@ -690,6 +660,24 @@
      "id": "microscope",
      "saved": "microscope__1.webp",
      "kb": 195
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-08 17:50:56 UTC",
+   "ok": [
+    {
+     "file": "telescope__mw84o7x401u.jpg",
+     "id": "telescope",
+     "saved": "telescope__1.webp",
+     "kb": 160
+    },
+    {
+     "file": "telescope__mw84o7x61pj.jpg",
+     "id": "telescope",
+     "saved": "telescope__2.webp",
+     "kb": 156
     }
    ],
    "failed": []
