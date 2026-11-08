@@ -1005,6 +1005,18 @@
    ],
    "fa_tags_for": "قفل"
   },
+  "planet-earth": {
+   "id": "planet-earth",
+   "en": "planet earth",
+   "fa": "کره زمین",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "planet-earth__1.webp"
+   ]
+  },
   "plastic-stool": {
    "id": "plastic-stool",
    "en": "plastic stool",
