@@ -17,3 +17,5 @@ Run: GitHub → Actions → "Render episode" → Run workflow.
 - Light animated film grain + soft vignette on both styles.
 - Sound effects: pools of different sounds per event, picked with a seed derived from the episode name (same episode = same mix), at most one event per `sfx_gap` seconds (default 0.3, set in `request.json`).
 - Final encode: crf 24, max 3.5 Mbit/s (was crf 28 / 1.8 Mbit/s).
+- Scene title cards (hero/duo/trio) are off; the caption sits on the paper (vox) / white card (comic). `"titles": true` in meta brings the old cards back.
+- Experimental, **off by default**: `"bgvar": true` (varied backgrounds: vox ruled / graph / spotlight / colour band, comic stripes / rings / diamonds; per scene override with `"bg": n`) and `"lab": true` (taped polaroid frames for trio, spotlight + contact shadow for hero). Preview with `?bgvar=1&bg=2&lab=1`.
