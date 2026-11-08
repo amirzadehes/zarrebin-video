@@ -347,6 +347,17 @@
     "chart-up__1.webp"
    ]
   },
+  "checkmark": {
+   "id": "checkmark",
+   "en": "checkmark",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "checkmark__1.webp",
+    "checkmark__2.webp"
+   ]
+  },
   "chef-hat": {
    "id": "chef-hat",
    "en": "chef hat",
