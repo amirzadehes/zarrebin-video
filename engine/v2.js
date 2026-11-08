@@ -25,9 +25,8 @@ const THEMES = [
 let VOX = false;
 /* decorative symbols (arrow / plus / VS badge / burst ring / sparkle stars) are OFF by default; enable with ?symbols=1 or meta.symbols=true */
 let SYM = false;
-/* scene title cards (hero/duo/trio) are OFF: the caption itself sits on the paper. ?titles=1 / meta.titles brings them back.
-   BGV = varied backgrounds, LAB = experimental layouts (both off until approved; ?bgvar=1&bg=<n> / ?lab=1 for samples) */
-let TITLES = false, BGV = false, LAB = false;
+/* scene title cards (hero/duo/trio) are OFF: the caption itself sits on the paper. ?titles=1 / meta.titles brings them back. */
+let TITLES = false;
 const VTHEMES = [
   { base: '#e0cfa9', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#bba67c' }, { base: '#d8c59c', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#b29c70' },
   { base: '#e6d7b4', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#c4b185' }, { base: '#d4bf95', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#ae986c' },
@@ -43,20 +42,10 @@ function mkPaper() { const c = document.createElement('canvas'); c.width = c.hei
 function torn(x, y, w, h, seed, jag = 9) { const r = rng(seed), pts = [], st = 22; const edge = (x0, y0, x1, y1) => { const n = Math.max(2, Math.round(Math.hypot(x1 - x0, y1 - y0) / st)); for (let i = 0; i < n; i++) { const p = i / n; pts.push([lerp(x0, x1, p) + (r() - .5) * jag * 2, lerp(y0, y1, p) + (r() - .5) * jag * 2]) } };
   edge(x - w / 2, y - h / 2, x + w / 2, y - h / 2); edge(x + w / 2, y - h / 2, x + w / 2, y + h / 2); edge(x + w / 2, y + h / 2, x - w / 2, y + h / 2); edge(x - w / 2, y + h / 2, x - w / 2, y - h / 2);
   ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath() }
-/* background variants (only with BGV): 1 ruled paper, 2 graph paper, 3 warm spotlight disc, 4 colour band with torn edge; 0 = the classic torn layers */
-function vbgVariant(t, th, sc, v) {
-  const ink = 'rgba(70,45,20,', dr = Math.sin(t * .15) * 6;
-  if (v === 1) { ctx.save(); ctx.strokeStyle = ink + '.32)'; ctx.lineWidth = 2.5; for (let y = 170 + dr; y < H; y += 68) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke() } ctx.strokeStyle = 'rgba(160,50,40,.3)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(W * .1, 0); ctx.lineTo(W * .1, H); ctx.stroke(); ctx.restore() }
-  else if (v === 2) { ctx.save(); ctx.strokeStyle = ink + '.26)'; ctx.lineWidth = 2.5; for (let x = dr; x < W; x += 80) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke() } for (let y = dr; y < H; y += 80) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke() } ctx.restore() }
-  else if (v === 3) { const g = ctx.createRadialGradient(W / 2, H * .42, 80, W / 2, H * .42, H * .62); g.addColorStop(0, 'rgba(255,248,225,.6)'); g.addColorStop(1, 'rgba(255,248,225,0)'); ctx.fillStyle = g; ctx.fillRect(-300, -300, W + 600, H + 600);
-    ctx.save(); ctx.globalAlpha = .16; ctx.fillStyle = '#7a2e1d'; ctx.beginPath(); ctx.arc(W / 2 + Math.sin(t * .2) * 12, H * .42, B * .46, 0, TAU); ctx.fill(); ctx.restore() }
-  else if (v === 4) { ctx.save(); ctx.fillStyle = th.sh; ctx.globalAlpha = .95; ctx.shadowColor = 'rgba(40,25,10,.35)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = -6; torn(W / 2, H * .9 + dr, W * 1.2, H * .5, sc.idx * 13 + 2, 12); ctx.fill(); ctx.restore() }
-}
 function vbg(t, th, sc) {
   ctx.fillStyle = th.base; ctx.fillRect(-300, -300, W + 600, H + 600);
   const r = rng(sc.idx * 31 + 7); ctx.save(); ctx.translate(W / 2, H / 2); ctx.scale(V ? 1 : 1.8, V ? 1 : 1.8); ctx.rotate((sc.idx % 4) * Math.PI / 2 * (V ? 0 : 0)); ctx.drawImage(TEX, -W / 2 / (V ? 1 : 1.8) * (V ? 1 : 1), -H / 2 / (V ? 1 : 1.8), W / (V ? 1 : 1.8), H / (V ? 1 : 1.8)); ctx.restore();
-  const bv = BGV ? (Q.has('bg') ? +Q.get('bg') % 5 : (sc.bg != null ? sc.bg : sc.idx % 5)) : 0; vbgVariant(t, th, sc, bv);
-  ctx.save(); ctx.globalAlpha = .55; for (let i = 0; i < (bv === 0 ? 3 : bv === 3 ? 0 : 1); i++) { const cx = W * (.2 + r() * .6), cy = H * (.2 + r() * .6), ww = B * (.5 + r() * .4), hh = B * (.35 + r() * .35); ctx.save(); ctx.translate(Math.sin(t * .1 + i) * 14, Math.cos(t * .08 + i) * 10); ctx.rotate((r() - .5) * .5); ctx.shadowColor = 'rgba(40,25,10,.35)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6; ctx.fillStyle = i % 2 ? '#e4d5b2' : '#c2ac80'; torn(cx, cy, ww, hh, sc.idx * 17 + i, 10); ctx.fill(); ctx.restore() } ctx.restore();
+  ctx.save(); ctx.globalAlpha = .55; for (let i = 0; i < 3; i++) { const cx = W * (.2 + r() * .6), cy = H * (.2 + r() * .6), ww = B * (.5 + r() * .4), hh = B * (.35 + r() * .35); ctx.save(); ctx.translate(Math.sin(t * .1 + i) * 14, Math.cos(t * .08 + i) * 10); ctx.rotate((r() - .5) * .5); ctx.shadowColor = 'rgba(40,25,10,.35)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6; ctx.fillStyle = i % 2 ? '#e4d5b2' : '#c2ac80'; torn(cx, cy, ww, hh, sc.idx * 17 + i, 10); ctx.fill(); ctx.restore() } ctx.restore();
   if (PAPER) { ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .22; ctx.fillStyle = PAPER; ctx.fillRect(-300, -300, W + 600, H + 600); ctx.restore() }
 }
 let CUR = null; const VT = sc => VTHEMES[((sc || CUR).theme || 0) % VTHEMES.length];
@@ -96,12 +85,8 @@ function vsBadge(x, y, r, a = 1, sc = 1) { ctx.save(); ctx.translate(x, y); ctx.
 function bg(t, th, cx, cy, spin, W_ = W, H_ = H) {
   if (VOX) return;
   ctx.fillStyle = th.base; ctx.fillRect(-300, -300, W_ + 600, H_ + 600);
-  const bv = BGV ? (Q.has('bg') ? +Q.get('bg') % 4 : (CUR && CUR.bg != null ? CUR.bg % 4 : (CUR ? CUR.idx : 0) % 4)) : 0;   // 0 rays, 1 diagonal stripes, 2 rings, 3 diamonds
-  if (bv === 0) { ctx.save(); ctx.translate(cx, cy); ctx.rotate(t * spin); ctx.fillStyle = th.ray; const N = 22; ctx.globalAlpha = th.ra;
-  for (let i = 0; i < N; i += 2) { ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, 3200, i * TAU / N, (i + 1) * TAU / N); ctx.closePath(); ctx.fill() } ctx.restore() }
-  else if (bv === 1) { ctx.save(); ctx.translate(W_ / 2, H_ / 2); ctx.rotate(-.5); ctx.fillStyle = th.ray; ctx.globalAlpha = Math.min(1, th.ra * 1.25); const sw = 130, off = (t * 34) % (sw * 2); for (let x = -2600; x < 2600; x += sw * 2) ctx.fillRect(x + off, -2600, sw, 5200); ctx.restore() }
-  else if (bv === 2) { ctx.save(); ctx.translate(cx, cy); ctx.strokeStyle = th.ray; ctx.lineWidth = 70; for (let i = 0; i < 16; i++) { const r = ((i * 110 + t * 55) % 1760) + 10; ctx.globalAlpha = Math.min(1, th.ra * 1.3) * (1 - r / 2400); ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); ctx.stroke() } ctx.restore() }
-  else { ctx.save(); ctx.fillStyle = th.ray; ctx.globalAlpha = Math.min(1, th.ra * 1.2); const sz = 170, off = (t * 22) % sz; for (let y = -sz; y < H_ + sz; y += sz) for (let x = -sz; x < W_ + sz; x += sz) { if (((x / sz) + (y / sz)) % 2 !== 0) continue; const o = off + ((y / sz) % 2 ? sz / 2 : 0); ctx.beginPath(); ctx.moveTo(x + o, y); ctx.lineTo(x + o + sz / 2, y + sz / 2); ctx.lineTo(x + o, y + sz); ctx.lineTo(x + o - sz / 2, y + sz / 2); ctx.closePath(); ctx.fill() } ctx.restore() }
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(t * spin); ctx.fillStyle = th.ray; const N = 22; ctx.globalAlpha = th.ra;
+  for (let i = 0; i < N; i += 2) { ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, 3200, i * TAU / N, (i + 1) * TAU / N); ctx.closePath(); ctx.fill() } ctx.restore();
   ctx.save(); ctx.fillStyle = th.dot; const sp = 46, md = Math.hypot(W_, H_) * .8;
   for (let y = -40; y < H_ + 60; y += sp) for (let x = -40; x < W_ + 60; x += sp) { const xo = x + ((y / sp) % 2 ? sp / 2 : 0), d = Math.hypot(xo - cx, y - cy) / md, r = clamp(d * d * 15, 0, 17); if (r < 1) continue; ctx.beginPath(); ctx.arc(xo, y, r, 0, TAU); ctx.fill() } ctx.restore()
 }
@@ -171,20 +156,6 @@ function decor(t, sc, th) {
 }
 function sparks(t, t0, cx, cy, n, R, seed) { const r = rng(seed); for (let i = 0; i < n; i++) { const a = r() * TAU, d = R * (.6 + r() * .7), s = spr(t, t0 + r() * .6, .5, 12); if (s > 0) sparkle(cx + Math.cos(a) * d, cy + Math.sin(a) * d * .8, (20 + r() * 26) * s, t * 1.4 + i) } }
 
-/* LAB layouts: taped polaroid frame (trio) and soft spotlight + contact shadow (hero) */
-function polaroid(t, t0, x, y, s, rot) {
-  const e = spr(t, t0, .5, 13); if (e <= 0) return; const w = s, h = s * 1.2;
-  ctx.save(); ctx.translate(x, y + s * .06); ctx.rotate(rot); ctx.scale(e, e); ctx.globalAlpha = clamp(e * 2);
-  ctx.shadowColor = 'rgba(40,25,10,.4)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 12; ctx.fillStyle = '#fbf7ec'; ctx.beginPath(); ctx.roundRect(-w / 2, -h / 2, w, h, 8); ctx.fill(); ctx.shadowColor = 'transparent';
-  ctx.fillStyle = 'rgba(120,90,50,.10)'; ctx.fillRect(-w / 2 + 18, -h / 2 + 18, w - 36, w - 36);
-  ctx.save(); ctx.translate(0, -h / 2); ctx.rotate(-rot * 2.4); ctx.fillStyle = 'rgba(236,214,140,.8)'; ctx.fillRect(-70, -20, 140, 40); ctx.restore(); ctx.restore()
-}
-function spotlight(t, t0, cx, cy, hs) {
-  const e = spr(t, t0 - .1, .6, 10); if (e <= 0) return; ctx.save(); ctx.globalAlpha = clamp(e);
-  const g = ctx.createRadialGradient(cx, cy, hs * .1, cx, cy, hs * .85); g.addColorStop(0, VOX ? 'rgba(255,250,232,.75)' : 'rgba(255,255,255,.28)'); g.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = g; ctx.fillRect(cx - hs, cy - hs, hs * 2, hs * 2);
-  ctx.fillStyle = 'rgba(40,25,10,.22)'; ctx.beginPath(); ctx.ellipse(cx, cy + hs * .5, hs * .36 * Math.min(e, 1), hs * .05, 0, 0, TAU); ctx.fill(); ctx.restore()
-}
-
 /* short radial impact lines when an object lands (0.42 s) — pure function of t */
 function impact(t, t0, x, y, R, seed) {
   const d = t - t0; if (d < 0 || d > .42) return; const p = d / .42, r = rng(seed * 7 + 3), n = 12;
@@ -201,7 +172,6 @@ const CONTENT = () => V ? { x0: 0, y0: 200, x1: W, y1: 1370 } : { x0: 0, y0: 150
 const TPL = {
   hero(t, sc) {
     const c = CONTENT(), cx = (c.x0 + c.x1) / 2, cy = (c.y0 + c.y1) / 2 + (V ? 10 : 0), th = THEMES[sc.theme], its = sc.items, hs = B * (V ? .8 : .72);
-    if (LAB) spotlight(t, its[0] ? its[0].t : sc.t0, cx, cy, hs);
     if (its[0]) { const e = ent(its[0].en, t, its[0].t, cx, cy); if (e && t < its[0].t + .9) ring(cx, cy, 80 + (t - its[0].t) * 900, clamp(1 - (t - its[0].t) / .6) * .9, '#fff'); drawItem(its[0], t, cx, cy, hs * (1 + .015 * Math.sin(t * 3)), 0); sparks(t, its[0].t + .1, cx, cy, 6, hs * .62, sc.idx + 3) }
     const n = its.length - 1; its.slice(1).forEach((it, i) => { const a = -Math.PI / 2 + (i + .5) * TAU / Math.max(n, 1) + (n === 1 ? 2.2 : 0) + t * .06, rx = V ? W * .36 : W * .3, ry = V ? H * .2 : H * .27;
       drawItem(it, t, cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, B * .34, i + 1) });
@@ -219,7 +189,7 @@ const TPL = {
   trio(t, sc) {
     const c = CONTENT(), its = sc.items, n = Math.max(its.length, 1), sz = B * (n > 3 ? (V ? .46 : .36) : V ? .44 : .46);
     its.forEach((it, i) => { let x, y; if (V && n > 3) { const rows = Math.ceil(n / 2); y = c.y0 + 150 + (c.y1 - c.y0 - 190) * (Math.floor(i / 2) + .5) / rows; x = (n % 2 && i === n - 1) ? W * .5 : W * (i % 2 ? .72 : .28) } else if (V) { const rows = n; y = c.y0 + 110 + (c.y1 - c.y0 - 130) * (i + .5) / rows; x = W * (i % 2 ? .66 : .34) } else { x = W * (i + .5) / n; y = H * .46 + (i % 2 ? 40 : -30) }
-      if (LAB && !EDIT) { const rr = (i % 2 ? 1 : -1) * .05; polaroid(t, it.t, x, y, sz, rr); ctx.save(); ctx.translate(x, y + sz * .06); ctx.rotate(rr); ctx.translate(-x, -(y + sz * .06)); drawItem(it, t, x, y - sz * .04, sz * .82, i); ctx.restore() } else drawItem(it, t, x, y, sz, i) });
+      drawItem(it, t, x, y, sz, i) });
     if (sc.text && TITLES) { const e = spr(t, sc.t0 + .3, .5, 12); if (e > 0) { const y = V ? c.y0 + 50 : c.y0 - 10; card(W / 2, y, W * (V ? .82 : .5), B * .12, '#ffe15a', -.02, 1, e); ctx.save(); ctx.translate(W / 2, y + 4); ctx.scale(e, e); drawText(sc.text, 0, 0, B * .06, W * (V ? .78 : .46), {}); ctx.restore() } }
   },
   statement(t, sc) {
@@ -326,7 +296,7 @@ function draw(t) {
 window.frame = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0); if (MB) { draw(t + .6 / 30); octx.globalAlpha = .5; octx.drawImage(cv, 0, 0); octx.globalAlpha = 1 } };
 window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
 window.loadData = async (DD, only) => {   // shared by the renderer and the in-app preview (only = scene indices whose images are needed)
-  D = DD; VOX = (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; TITLES = Q.get('titles') === '1' || D.meta.titles === true; BGV = Q.get('bgvar') === '1' || D.meta.bgvar === true; LAB = Q.get('lab') === '1' || D.meta.lab === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
+  D = DD; VOX = (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
   D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => srcs.add(i.src)); (s.decor || []).forEach(d => srcs.add(d)) });
   await Promise.all([...[...srcs].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
   mkGrain(); mkPaper(); CH.length = 0; buildCaptions(); seek(0); return true

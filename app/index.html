@@ -471,7 +471,10 @@ $('#pvClose').onclick=()=>{ $('#pvModal').hidden=true; document.body.classList.r
 $('#pvV').onclick=()=>pvSetFmt('v'); $('#pvH').onclick=()=>pvSetFmt('h');
 $('#pvPlay').onclick=()=>{ pvMode='play'; pvTools(); pvGo() }; $('#pvEdit').onclick=()=>{ pvMode='edit'; pvTools(); pvGo() };
 document.querySelectorAll('#pvTools button').forEach(b=>b.onclick=()=>$('#pvFrame').contentWindow.postMessage({type:'adj',op:b.dataset.op},'*'));
-$('#pvOk').onclick=()=>{ if(pvI<0) return; setOk(RV.data.scenes[pvI],pvFmt,true); syncOk(pvI); rvSave(); $('#pvOk').textContent='✓ تأیید شد'; if(pvI+1<RV.data.scenes.length){ pvI++; setTimeout(()=>{ pvOkLabel(); pvGo() },400) } else $('#pvClose').click() };
+/* after approving a scene, the next one opens in the preview and its details open in the list on the other side of the dock */
+function pvShowDetails(i){ const bx=$('#rvBox'); if(bx) bx.open=true; document.querySelectorAll('details.sc[open]').forEach(d=>{ if(+d.dataset.i!==i) d.open=false });
+  const d=document.querySelector(`details.sc[data-i="${i}"]`); if(!d) return; d.open=true; if(!d.querySelector('.body').children.length) fillScene(d); d.scrollIntoView({block:'start',behavior:'smooth'}) }
+$('#pvOk').onclick=()=>{ if(pvI<0) return; setOk(RV.data.scenes[pvI],pvFmt,true); syncOk(pvI); rvSave(); $('#pvOk').textContent='✓ تأیید شد'; if(pvI+1<RV.data.scenes.length){ pvI++; pvShowDetails(pvI); setTimeout(()=>{ pvTools(); pvOkLabel(); pvGo() },400) } else $('#pvClose').click() };
 const sceneHead=(s,i)=>{ const n=(s.items||[]).length, warn=!n&&s.tpl!=='stat'; return `${okOf(s,'v')&&okOf(s,'h')?'✅ ':(okOf(s,'v')||okOf(s,'h'))?'🔸 ':''}${warn?'⚠️ ':''}<b>${fa(i+1)}</b> · ${(s.text||s.number||'').replace(/\*/g,'')||'—'} <span style="color:var(--mut)">(${fa(n)} تصویر)</span>` };
 const sceneWords=s=>(RV.data.words||[]).filter(w=>w.t0>=s.t0-.02&&w.t0<s.t1-.02);
 const wordAt=(s,it)=>{ let b=null; sceneWords(s).forEach(w=>{ if(w.t0<=it.t+.08) b=w }); return b?b.w:'—' };
