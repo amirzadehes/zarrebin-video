@@ -43,6 +43,17 @@
    ],
    "fa_tags_for": "سیب قرمز"
   },
+  "arrow-down": {
+   "id": "arrow-down",
+   "en": "arrow down",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "arrow-down__1.webp",
+    "arrow-down__2.webp"
+   ]
+  },
   "arrow-right": {
    "id": "arrow-right",
    "en": "arrow right",
@@ -61,6 +72,17 @@
     "نشانگر"
    ],
    "fa_tags_for": "پیکان به سمت راست"
+  },
+  "arrow-up": {
+   "id": "arrow-up",
+   "en": "arrow up",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "arrow-up__1.webp",
+    "arrow-up__2.webp"
+   ]
   },
   "banknotes": {
    "id": "banknotes",
@@ -606,6 +628,16 @@
     "نقش"
    ],
    "fa_tags_for": "علامت تیک‌کلیک"
+  },
+  "curved-arrow": {
+   "id": "curved-arrow",
+   "en": "curved arrow",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "curved-arrow__1.webp"
+   ]
   },
   "dinner-plate": {
    "id": "dinner-plate",

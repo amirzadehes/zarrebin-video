@@ -1,30 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-27 08:25:46 UTC",
-   "ok": [
-    {
-     "file": "clock-wall__mvqf79mc0.jpg",
-     "id": "clock-wall",
-     "saved": "clock-wall__1.webp",
-     "kb": 130
-    },
-    {
-     "file": "clock-wall__mvqf7cd61.jpg",
-     "id": "clock-wall",
-     "saved": "clock-wall__2.webp",
-     "kb": 145
-    },
-    {
-     "file": "clock-wall__mvqf7f8u2.jpg",
-     "id": "clock-wall",
-     "saved": "clock-wall__3.webp",
-     "kb": 123
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-10-27 08:26:20 UTC",
    "ok": [
     {
@@ -738,6 +714,42 @@
      "id": "fire",
      "saved": "fire__3.webp",
      "kb": 130
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-08 21:32:20 UTC",
+   "ok": [
+    {
+     "file": "arrow-down__mw8ckubd0kl.jpg",
+     "id": "arrow-down",
+     "saved": "arrow-down__1.webp",
+     "kb": 81
+    },
+    {
+     "file": "arrow-down__mw8ckubp18s.jpg",
+     "id": "arrow-down",
+     "saved": "arrow-down__2.webp",
+     "kb": 120
+    },
+    {
+     "file": "arrow-up__mw8cl1dx0yt.jpg",
+     "id": "arrow-up",
+     "saved": "arrow-up__1.webp",
+     "kb": 124
+    },
+    {
+     "file": "arrow-up__mw8cl1e010n.jpg",
+     "id": "arrow-up",
+     "saved": "arrow-up__2.webp",
+     "kb": 100
+    },
+    {
+     "file": "curved-arrow__mw8cko4i09g.jpg",
+     "id": "curved-arrow",
+     "saved": "curved-arrow__1.webp",
+     "kb": 91
     }
    ],
    "failed": []
