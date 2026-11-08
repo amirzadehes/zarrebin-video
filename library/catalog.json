@@ -954,6 +954,17 @@
    ],
    "fa_tags_for": "یوتیوب"
   },
+  "key": {
+   "id": "key",
+   "en": "key",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "key__1.webp",
+    "key__2.webp"
+   ]
+  },
   "laptop": {
    "id": "laptop",
    "en": "laptop",
