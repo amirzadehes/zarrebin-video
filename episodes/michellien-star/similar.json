@@ -1,43 +1,42 @@
 {
+ "silverware-set": [
+  "dinner-plate"
+ ],
  "star": [
-  "star-rating",
-  "three-stars",
+  "one-star",
   "two-stars",
-  "one-star"
+  "three-stars",
+  "star-rating"
  ],
  "rubber-tire": [
   "tire-company-logo"
  ],
+ "map-folded": [
+  "compass"
+ ],
+ "road": [
+  "roadside-restaurant"
+ ],
+ "red-guidebook": [
+  "book",
+  "book-open"
+ ],
  "book-open": [
-  "book"
+  "book",
+  "red-guidebook"
  ],
  "star-rating": [
-  "one-star",
+  "star",
   "two-stars",
-  "three-stars",
-  "star"
+  "three-stars"
  ],
  "one-star": [
-  "star",
-  "two-stars",
-  "three-stars",
-  "star-rating"
+  "star"
  ],
  "two-stars": [
-  "one-star",
-  "three-stars",
-  "star",
-  "star-rating"
+  "star"
  ],
  "three-stars": [
-  "one-star",
-  "two-stars",
-  "star",
-  "star-rating"
- ],
- "money-bag": [
-  "banknotes",
-  "cash",
-  "money-coins"
+  "star"
  ]
 }
