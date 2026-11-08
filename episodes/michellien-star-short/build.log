@@ -1,6 +1,8 @@
-using the reviewed scenes.json: 21 scenes
+own voice + own text: words matched 86%
+library images offered to the director: 96 | priority (this episode): 32
 model: openai/gpt-oss-120b
-model openai/gpt-oss-120b is rate limited for a long time (62s): switching model
-model: qwen/qwen3.8-27b
-sfx events 113 from library 0 peak 0.64 seconds 114.2
-music off
+rate limited, waiting 17s
+rate limited, waiting 3s
+rate limited, waiting 10s
+coverage pass: placed 5 of 30 unused priority images
+scenes 20 total 126.09 templates {'hero': 12, 'duo': 0, 'trio': 1, 'statement': 7, 'stat': 0}

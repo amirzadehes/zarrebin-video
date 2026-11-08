@@ -1,7 +1,7 @@
 [
  {
   "from": 0,
-  "to": 4,
+  "to": 4.7,
   "tpl": "hero",
   "items": [
    {
@@ -17,80 +17,20 @@
     "sent": 3
    },
    {
-    "id": "eiffel-tower",
-    "sent": 2
-   },
-   {
-    "id": "star-rating",
-    "sent": 0
+    "id": "rubber-tire",
+    "sent": 1
    }
   ],
   "text": "*ستاره* میشلین",
+  "number": "",
+  "link": "",
+  "decor": [
+   "eiffel-tower"
+  ],
   "kw": [
    "ستاره",
-   "میشلین",
-   "آشپزی"
-  ],
-  "decor": []
- },
- {
-  "from": 4,
-  "to": 8,
-  "tpl": "duo",
-  "items": [
-   {
-    "id": "rubber-tire",
-    "at": "لاستیک"
-   },
-   {
-    "id": "chef-hat",
-    "at": "غذا"
-   },
-   {
-    "id": "gas-pump",
-    "sent": 6
-   },
-   {
-    "id": "hotel-building",
-    "sent": 6
-   },
-   {
-    "id": "map-folded",
-    "sent": 6
-   }
-  ],
-  "link": "vs",
-  "text": "کدوم غذا بهترینه؟",
-  "kw": [
-   "لاستیک",
-   "غذا"
-  ],
-  "decor": []
- },
- {
-  "from": 8,
-  "to": 12,
-  "tpl": "statement",
-  "items": [
-   {
-    "id": "one-star",
-    "sent": 10
-   },
-   {
-    "id": "three-stars",
-    "sent": 12
-   },
-   {
-    "id": "two-stars",
-    "sent": 11
-   }
-  ],
-  "text": "*برگردیم* به سال ۱۹۰۰",
-  "kw": [
-   "سال ۱۹۰۰"
-  ],
-  "decor": [],
-  "_up": true
+   "میشلین"
+  ]
  },
  {
   "from": 12,
@@ -98,12 +38,16 @@
   "tpl": "statement",
   "items": [
    {
-    "id": "dinner-plate",
-    "sent": 21
-   },
-   {
     "id": "road",
     "sent": 15
+   },
+   {
+    "id": "three-stars",
+    "sent": 12
+   },
+   {
+    "id": "reservation-card",
+    "sent": 19
    }
   ],
   "_up": true
