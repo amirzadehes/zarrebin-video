@@ -1,7 +1,14 @@
 {
  "star-rating": [
-  "star",
-  "two-stars",
-  "three-stars"
+  "star"
+ ],
+ "one-star": [
+  "star"
+ ],
+ "two-stars": [
+  "star"
+ ],
+ "three-stars": [
+  "star"
  ]
 }

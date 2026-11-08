@@ -1,4 +1,13 @@
 {
+ "light-bulb-idea": [
+  "bulb"
+ ],
+ "brain-hacker": [
+  "brain-colorful"
+ ],
+ "person-sleeping": [
+  "eye-sleepy"
+ ],
  "key-fake": [
   "old-key"
  ],
@@ -12,6 +21,6 @@
   "pointing-hand"
  ],
  "anxiety": [
-  "warning-sign"
+  "question-mark"
  ]
 }
