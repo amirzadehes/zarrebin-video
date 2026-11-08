@@ -1,4 +1,6 @@
 using the reviewed scenes.json: 21 scenes
 model: openai/gpt-oss-120b
-sfx events 128 from library 0 peak 0.66 seconds 114.2
+model openai/gpt-oss-120b is rate limited for a long time (62s): switching model
+model: qwen/qwen3.8-27b
+sfx events 113 from library 0 peak 0.64 seconds 114.2
 music off
