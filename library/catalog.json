@@ -1557,6 +1557,17 @@
    ],
    "fa_tags_for": "خورشید"
   },
+  "syringe": {
+   "id": "syringe",
+   "en": "syringe",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "syringe__1.webp",
+    "syringe__2.webp"
+   ]
+  },
   "tea-cup": {
    "id": "tea-cup",
    "en": "tea cup with a tea bag",
