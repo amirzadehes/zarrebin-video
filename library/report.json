@@ -1,24 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-26 21:31:43 UTC",
-   "ok": [
-    {
-     "file": "moka-pot__mvpruc6h0.jpg",
-     "id": "moka-pot",
-     "saved": "moka-pot__1.webp",
-     "kb": 129
-    },
-    {
-     "file": "moka-pot__mvpruezm1.jpg",
-     "id": "moka-pot",
-     "saved": "moka-pot__2.webp",
-     "kb": 70
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-10-26 21:33:32 UTC",
    "ok": [
     {
@@ -810,6 +792,18 @@
      "id": "roadside-restaurant",
      "saved": "roadside-restaurant__1.webp",
      "kb": 132
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-08 16:53:57 UTC",
+   "ok": [
+    {
+     "file": "money-coins__mw82n6b90wq.jpg",
+     "id": "money-coins",
+     "saved": "money-coins__1.webp",
+     "kb": 174
     }
    ],
    "failed": []

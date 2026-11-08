@@ -914,6 +914,16 @@
    ],
    "fa_tags_for": "کیسه پول"
   },
+  "money-coins": {
+   "id": "money-coins",
+   "en": "money coins",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "money-coins__1.webp"
+   ]
+  },
   "neuron": {
    "id": "neuron",
    "en": "neuron nerve cell",
