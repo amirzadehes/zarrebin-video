@@ -509,6 +509,16 @@
    ],
    "fa_tags_for": "ماه و ستاره"
   },
+  "cross-mark": {
+   "id": "cross-mark",
+   "en": "cross mark",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "cross-mark__1.webp"
+   ]
+  },
   "dinner-plate": {
    "id": "dinner-plate",
    "en": "dinner plate",
@@ -752,6 +762,16 @@
     "فکر"
    ],
    "fa_tags_for": "سر انسان (نیم‌رخ)"
+  },
+  "heart": {
+   "id": "heart",
+   "en": "heart",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "heart__1.webp"
+   ]
   },
   "hotel-building": {
    "id": "hotel-building",
