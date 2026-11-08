@@ -288,6 +288,16 @@
    ],
    "fa_tags_for": "مولکول کافئین"
   },
+  "calendar": {
+   "id": "calendar",
+   "en": "calendar",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "calendar__1.webp"
+   ]
+  },
   "car": {
    "id": "car",
    "en": "car",
