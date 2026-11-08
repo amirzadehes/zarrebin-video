@@ -500,6 +500,25 @@
    ],
    "fa_tags_for": "بشقاب غذا"
   },
+  "earth-globe": {
+   "id": "earth-globe",
+   "en": "earth globe",
+   "fa": "زمین",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "earth-globe__1.webp"
+   ],
+   "fa_tags": [
+    "زمین",
+    "کره",
+    "گلوب",
+    "سیاره",
+    "جغرافیا",
+    "فضا"
+   ],
+   "fa_tags_for": "زمین"
+  },
   "eiffel-tower": {
    "id": "eiffel-tower",
    "en": "eiffel tower",
@@ -1048,6 +1067,25 @@
    ],
    "fa_tags_for": "مولکول بنفش"
   },
+  "question-mark": {
+   "id": "question-mark",
+   "en": "question mark",
+   "fa": "علامت سؤال",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "question-mark__1.webp"
+   ],
+   "fa_tags": [
+    "سؤال",
+    "علامت",
+    "پرسش",
+    "سوال",
+    "نقطه سؤال",
+    "نقطه‌سؤال"
+   ],
+   "fa_tags_for": "علامت سؤال"
+  },
   "red-guidebook": {
    "id": "red-guidebook",
    "en": "red guidebook",
@@ -1066,6 +1104,27 @@
     "دستورالعمل"
    ],
    "fa_tags_for": "راهنمای قرمز"
+  },
+  "restaurant": {
+   "id": "restaurant",
+   "en": "restaurant",
+   "fa": "رستوران",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "restaurant__1.webp"
+   ],
+   "fa_tags": [
+    "غذا",
+    "خوراک",
+    "فست‌فود",
+    "پذیرایی",
+    "رستوران",
+    "منو"
+   ],
+   "fa_tags_for": "رستوران"
   },
   "road": {
    "id": "road",

@@ -1,21 +1,4 @@
 {
- "coffee-cup": [
-  "espresso-cup"
- ],
- "battery-empty": [
-  "battery-power"
- ],
- "battery-full": [
-  "battery-power"
- ],
- "light-bulb-idea": [
-  "bulb"
- ],
- "brain-hacker": [
-  "brain-colorful",
-  "brain-pink",
-  "tired-brain"
- ],
  "key-fake": [
   "old-key"
  ],
@@ -30,17 +13,18 @@
   "pointing-hand"
  ],
  "espresso-cup": [
-  "coffee-cup"
+  "coffee-cup",
+  "tea-cup"
  ],
  "clock-wall": [
   "alarm-clock"
  ],
  "sleep-deep": [
-  "eye-sleepy"
+  "eye-sleepy",
+  "bed"
  ],
  "brain-adaptation": [
   "brain-colorful",
-  "brain-pink",
-  "tired-brain"
+  "brain-pink"
  ]
 }

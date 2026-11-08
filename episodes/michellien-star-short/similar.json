@@ -1,7 +1,6 @@
 {
  "star": [
   "star-rating",
-  "one-star",
   "two-stars",
   "three-stars"
  ],
@@ -10,30 +9,26 @@
  ],
  "one-star": [
   "star",
-  "star-rating",
-  "two-stars",
-  "three-stars"
+  "star-rating"
  ],
  "two-stars": [
   "star",
-  "star-rating",
-  "one-star",
-  "three-stars"
+  "star-rating"
  ],
  "three-stars": [
   "star",
-  "star-rating",
-  "one-star",
-  "two-stars"
- ],
- "money-bag": [
-  "cash",
-  "banknotes"
+  "star-rating"
  ],
  "magnifier-search": [
   "magnifying-glass"
  ],
+ "clock-wall": [
+  "alarm-clock"
+ ],
  "light-bulb-idea": [
   "bulb"
+ ],
+ "brain-colorful": [
+  "brain-pink"
  ]
 }
