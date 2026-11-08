@@ -1,24 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-27 08:26:20 UTC",
-   "ok": [
-    {
-     "file": "street-food-stall__mvqf82pg0.jpg",
-     "id": "street-food-stall",
-     "saved": "street-food-stall__1.webp",
-     "kb": 152
-    },
-    {
-     "file": "street-food-stall__mvqf85kn1.jpg",
-     "id": "street-food-stall",
-     "saved": "street-food-stall__2.webp",
-     "kb": 184
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-10-27 08:28:08 UTC",
    "ok": [
     {
@@ -750,6 +732,18 @@
      "id": "curved-arrow",
      "saved": "curved-arrow__1.webp",
      "kb": 91
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-08 23:03:29 UTC",
+   "ok": [
+    {
+     "file": "adult-male-human__mw8fugnh.jpg",
+     "id": "adult-male-human",
+     "saved": "adult-male-human__1.webp",
+     "kb": 146
     }
    ],
    "failed": []

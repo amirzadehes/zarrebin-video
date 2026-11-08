@@ -1,5 +1,17 @@
 {
  "items": {
+  "adult-male-human": {
+   "id": "adult-male-human",
+   "en": "adult male human",
+   "fa": "مرد",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "adult-male-human__1.webp"
+   ]
+  },
   "alarm-clock": {
    "id": "alarm-clock",
    "en": "alarm clock with two bells",
