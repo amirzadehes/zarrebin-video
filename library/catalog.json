@@ -454,6 +454,16 @@
    ],
    "fa_tags_for": "شاخه‌ی قهوه"
   },
+  "compass": {
+   "id": "compass",
+   "en": "compass",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "compass__1.webp"
+   ]
+  },
   "crescent-moon": {
    "id": "crescent-moon",
    "en": "crescent moon with a few small stars",

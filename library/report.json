@@ -1,30 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-26 21:36:11 UTC",
-   "ok": [
-    {
-     "file": "battery-empty__mvps018b0.jpg",
-     "id": "battery-empty",
-     "saved": "battery-empty__1.webp",
-     "kb": 21
-    },
-    {
-     "file": "battery-empty__mvps03kt1.jpg",
-     "id": "battery-empty",
-     "saved": "battery-empty__2.webp",
-     "kb": 20
-    },
-    {
-     "file": "battery-empty__mvps06602.jpg",
-     "id": "battery-empty",
-     "saved": "battery-empty__3.webp",
-     "kb": 19
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-10-26 21:37:25 UTC",
    "ok": [
     {
@@ -792,6 +768,18 @@
      "id": "trophy",
      "saved": "trophy__3.webp",
      "kb": 127
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-08 16:59:27 UTC",
+   "ok": [
+    {
+     "file": "compass__mw82u4ny0nd.jpg",
+     "id": "compass",
+     "saved": "compass__1.webp",
+     "kb": 218
     }
    ],
    "failed": []
