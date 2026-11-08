@@ -945,6 +945,16 @@
    ],
    "fa_tags_for": "نقشه تا شده"
   },
+  "microscope": {
+   "id": "microscope",
+   "en": "microscope",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "microscope__1.webp"
+   ]
+  },
   "mobile-app": {
    "id": "mobile-app",
    "en": "iphone smartphone",
