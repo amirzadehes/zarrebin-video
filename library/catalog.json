@@ -626,6 +626,16 @@
    ],
    "fa_tags_for": "نماد یورو"
   },
+  "exclamation-mark": {
+   "id": "exclamation-mark",
+   "en": "exclamation mark",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "exclamation-mark__1.webp"
+   ]
+  },
   "eye-open": {
    "id": "eye-open",
    "en": "human eye wide open",
