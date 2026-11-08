@@ -1484,6 +1484,16 @@
    ],
    "fa_tags_for": "امتیاز ستاره‌ای"
   },
+  "stethoscope": {
+   "id": "stethoscope",
+   "en": "stethoscope",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "stethoscope__1.webp"
+   ]
+  },
   "stopwatch": {
    "id": "stopwatch",
    "en": "stopwatch",

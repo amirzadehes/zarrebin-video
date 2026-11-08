@@ -1,41 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-27 07:48:48 UTC",
-   "ok": [
-    {
-     "file": "car__mvqdvu9r0.jpg",
-     "id": "car",
-     "saved": "car__1.webp",
-     "kb": 107
-    },
-    {
-     "file": "car__mvqdvwsc1.jpg",
-     "id": "car",
-     "saved": "car__2.webp",
-     "kb": 110
-    },
-    {
-     "file": "gas-pump__mvqdvyyl0.jpg",
-     "id": "gas-pump",
-     "saved": "gas-pump__1.webp",
-     "kb": 108
-    },
-    {
-     "file": "gas-pump__mvqdw1s91.jpg",
-     "id": "gas-pump",
-     "saved": "gas-pump__2.webp",
-     "kb": 125
-    }
-   ],
-   "failed": [
-    {
-     "file": "rubber-tire__mvqdv4t82.jpg",
-     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: rubber-tire__3.webp)"
-    }
-   ]
-  },
-  {
    "time": "2026-10-27 07:49:47 UTC",
    "ok": [
     {
@@ -719,6 +684,18 @@
      "id": "dna-helix",
      "saved": "dna-helix__2.webp",
      "kb": 93
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-08 17:48:58 UTC",
+   "ok": [
+    {
+     "file": "stethoscope__mw84m7bh0z6.jpg",
+     "id": "stethoscope",
+     "saved": "stethoscope__1.webp",
+     "kb": 75
     }
    ],
    "failed": []
