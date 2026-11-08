@@ -1,4 +1,9 @@
 {
+ "star": [
+  "star-rating",
+  "two-stars",
+  "three-stars"
+ ],
  "magnifier-search": [
   "magnifying-glass"
  ],
