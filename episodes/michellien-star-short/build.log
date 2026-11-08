@@ -1,19 +1,13 @@
 own voice + own text: words matched 86%
 library images offered to the director: 112 | priority (this episode): 34
 model: openai/gpt-oss-120b
-model openai/gpt-oss-120b is rate limited for a long time (542s): switching model
+model openai/gpt-oss-120b is rate limited for a long time (122s): switching model
 model: qwen/qwen3.8-27b
-model qwen/qwen3.8-27b is rate limited for a long time (782s): switching model
+model qwen/qwen3.8-27b is rate limited for a long time (302s): switching model
 model: openai/gpt-oss-20b
-model openai/gpt-oss-20b is rate limited for a long time (1082s): switching model
-rate limited, waiting 16s
-rate limited, waiting 48s
-rate limited, waiting 26s
-rate limited, waiting 31s
-rate limited, waiting 33s
-rate limited, waiting 35s
+model openai/gpt-oss-20b is rate limited for a long time (542s): switching model
 rate limited, waiting 9s
-rate limited, waiting 37s
-rate limited, waiting 33s
-rate limited, waiting 12s
-Groq failed: HTTP 429 {"error":{"message":"Rate limit reached for model `allam-2-7b` in organization `org_01m5scj6x8ece9anstaaqkk73y` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 2244, Requested 4721. Please try again in 9.65s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.c
+rate limited, waiting 42s
+rate limited, waiting 41s
+rate limited, waiting 40s
+Groq failed: HTTP 429 {"error":{"message":"Rate limit reached for model `allam-2-7b` in organization `org_01m5scj6x8ece9anstaaqkk73y` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4972, Requested 4863. Please try again in 38.35s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.
