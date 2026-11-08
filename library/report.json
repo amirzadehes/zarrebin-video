@@ -1,30 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-26 21:30:56 UTC",
-   "ok": [
-    {
-     "file": "coffee-plant__mvprt9ne0.jpg",
-     "id": "coffee-plant",
-     "saved": "coffee-plant__1.webp",
-     "kb": 133
-    },
-    {
-     "file": "coffee-plant__mvprtcdg1.jpg",
-     "id": "coffee-plant",
-     "saved": "coffee-plant__2.webp",
-     "kb": 147
-    },
-    {
-     "file": "coffee-plant__mvprtf3y2.jpg",
-     "id": "coffee-plant",
-     "saved": "coffee-plant__3.webp",
-     "kb": 131
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-10-26 21:31:43 UTC",
    "ok": [
     {
@@ -822,6 +798,18 @@
      "id": "planet-earth",
      "saved": "planet-earth__1.webp",
      "kb": 159
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-08 16:53:01 UTC",
+   "ok": [
+    {
+     "file": "roadside-restaurant__mw82m1k50ua.jpg",
+     "id": "roadside-restaurant",
+     "saved": "roadside-restaurant__1.webp",
+     "kb": 132
     }
    ],
    "failed": []

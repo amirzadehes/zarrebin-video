@@ -1199,6 +1199,18 @@
    ],
    "fa_tags_for": "جاده"
   },
+  "roadside-restaurant": {
+   "id": "roadside-restaurant",
+   "en": "roadside restaurant",
+   "fa": "رستوران بین‌راهی",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "roadside-restaurant__1.webp"
+   ]
+  },
   "rubber-tire": {
    "id": "rubber-tire",
    "en": "rubber tire",
