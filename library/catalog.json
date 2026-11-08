@@ -954,6 +954,17 @@
    ],
    "fa_tags_for": "یوتیوب"
   },
+  "laptop": {
+   "id": "laptop",
+   "en": "laptop",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "laptop__1.webp",
+    "laptop__2.webp"
+   ]
+  },
   "lightning-burst": {
    "id": "lightning-burst",
    "en": "lightning burst",
@@ -1205,6 +1216,16 @@
     "قفل‌در"
    ],
    "fa_tags_for": "قفل"
+  },
+  "phone-smartphone": {
+   "id": "phone-smartphone",
+   "en": "phone smartphone",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "phone-smartphone__1.webp"
+   ]
   },
   "planet-earth": {
    "id": "planet-earth",
@@ -1522,6 +1543,16 @@
     "نظارت"
    ],
    "fa_tags_for": "بازرس با بارونی مشکی"
+  },
+  "shield-check": {
+   "id": "shield-check",
+   "en": "shield check",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "shield-check__1.webp"
+   ]
   },
   "silverware-set": {
    "id": "silverware-set",

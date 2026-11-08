@@ -1,24 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-27 07:58:01 UTC",
-   "ok": [
-    {
-     "file": "hotel-building__mvqe7pe90.jpg",
-     "id": "hotel-building",
-     "saved": "hotel-building__1.webp",
-     "kb": 200
-    },
-    {
-     "file": "hotel-building__mvqe7u7u1.jpg",
-     "id": "hotel-building",
-     "saved": "hotel-building__2.webp",
-     "kb": 155
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-10-27 07:58:31 UTC",
    "ok": [
     {
@@ -678,6 +660,36 @@
      "id": "syringe",
      "saved": "syringe__2.webp",
      "kb": 73
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-08 21:14:25 UTC",
+   "ok": [
+    {
+     "file": "laptop__mw8by5gu0qv.jpg",
+     "id": "laptop",
+     "saved": "laptop__1.webp",
+     "kb": 146
+    },
+    {
+     "file": "laptop__mw8by5h21w0.jpg",
+     "id": "laptop",
+     "saved": "laptop__2.webp",
+     "kb": 109
+    },
+    {
+     "file": "phone-smartphone__mw8bxx3z0pw.jpg",
+     "id": "phone-smartphone",
+     "saved": "phone-smartphone__1.webp",
+     "kb": 178
+    },
+    {
+     "file": "shield-check__mw8bycwl06d.jpg",
+     "id": "shield-check",
+     "saved": "shield-check__1.webp",
+     "kb": 120
     }
    ],
    "failed": []
