@@ -1,55 +1,24 @@
 {
  "star": [
   "star-rating",
-  "one-star",
   "two-stars",
-  "three-stars"
+  "three-stars",
+  "one-star"
  ],
  "rubber-tire": [
   "tire-company-logo"
  ],
- "one-star": [
-  "star",
-  "star-rating"
- ],
- "two-stars": [
-  "star",
-  "star-rating"
- ],
- "three-stars": [
-  "star",
-  "star-rating"
- ],
- "money-bag": [
-  "cash",
-  "banknotes",
-  "euro-sign"
- ],
- "thief-mask": [
-  "secret-inspector"
- ],
- "video-play": [
-  "item"
+ "restaurant": [
+  "roadside-restaurant",
+  "reservation-card"
  ],
  "magnifier-search": [
   "magnifying-glass"
  ],
- "clock-wall": [
-  "alarm-clock"
- ],
  "question-mark": [
   "question-mark-2"
  ],
- "exclamation-mark": [
-  "warning-sign"
- ],
- "credit-card": [
-  "banknotes"
- ],
  "light-bulb-idea": [
   "bulb"
- ],
- "brain-colorful": [
-  "brain-pink"
  ]
 }

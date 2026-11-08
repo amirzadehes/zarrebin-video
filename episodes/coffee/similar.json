@@ -1,27 +1,17 @@
 {
- "coffee-cup": [
-  "espresso-cup"
- ],
- "light-bulb-idea": [
-  "bulb"
- ],
- "fatigue-brain": [
-  "tired-brain"
- ],
  "key-fake": [
   "old-key"
  ],
  "lock-closed": [
   "padlock"
  ],
+ "adrenaline": [
+  "caffeine-molecule"
+ ],
  "hand-tremble": [
   "pointing-hand"
  ],
- "sleep-deep": [
-  "eye-sleepy"
- ],
- "brain-adaptation": [
-  "brain-colorful",
-  "brain-pink"
+ "anxiety": [
+  "warning-sign"
  ]
 }

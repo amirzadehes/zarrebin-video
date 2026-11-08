@@ -46,13 +46,21 @@
   "arrow-right": {
    "id": "arrow-right",
    "en": "arrow right",
-   "fa": "",
+   "fa": "پیکان به سمت راست",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "arrow-right__1.webp",
     "arrow-right__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "پیکان",
+    "جهت",
+    "حرکت",
+    "دستگاه",
+    "نشانگر"
+   ],
+   "fa_tags_for": "پیکان به سمت راست"
   },
   "banknotes": {
    "id": "banknotes",
@@ -302,12 +310,20 @@
   "calendar": {
    "id": "calendar",
    "en": "calendar",
-   "fa": "",
+   "fa": "تقویم",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "calendar__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "تقویم",
+    "زمان",
+    "تاریخ",
+    "برنامه",
+    "روز"
+   ],
+   "fa_tags_for": "تقویم"
   },
   "car": {
    "id": "car",
@@ -351,23 +367,39 @@
   "chart-up": {
    "id": "chart-up",
    "en": "chart up",
-   "fa": "",
+   "fa": "نمودار صعودی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "chart-up__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "نمودار",
+    "صعود",
+    "آمار",
+    "رشد",
+    "تحلیل"
+   ],
+   "fa_tags_for": "نمودار صعودی"
   },
   "checkmark": {
    "id": "checkmark",
    "en": "checkmark",
-   "fa": "",
+   "fa": "علامت تیک",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "checkmark__1.webp",
     "checkmark__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "تیک",
+    "تایید",
+    "بررسی",
+    "کامل",
+    "درست"
+   ],
+   "fa_tags_for": "علامت تیک"
   },
   "chef-hat": {
    "id": "chef-hat",
@@ -499,12 +531,20 @@
   "compass": {
    "id": "compass",
    "en": "compass",
-   "fa": "",
+   "fa": "نقشه‌بردار",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "compass__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "نقشه",
+    "جهت‌نما",
+    "مسیر",
+    "کارت",
+    "گردش"
+   ],
+   "fa_tags_for": "نقشه‌بردار"
   },
   "crescent-moon": {
    "id": "crescent-moon",
@@ -534,12 +574,20 @@
   "cross-mark": {
    "id": "cross-mark",
    "en": "cross mark",
-   "fa": "",
+   "fa": "علامت تیک‌کلیک",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "cross-mark__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کراس",
+    "خط‌کشی",
+    "نقاشی",
+    "خطا",
+    "نقش"
+   ],
+   "fa_tags_for": "علامت تیک‌کلیک"
   },
   "dinner-plate": {
    "id": "dinner-plate",
@@ -565,13 +613,21 @@
   "dna-helix": {
    "id": "dna-helix",
    "en": "dna helix",
-   "fa": "",
+   "fa": "دانه‌دانه هلیکس",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "dna-helix__1.webp",
     "dna-helix__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "DNA",
+    "ژنتیک",
+    "سلسله‌مرور",
+    "سازماندهی",
+    "سازمان"
+   ],
+   "fa_tags_for": "دانه‌دانه هلیکس"
   },
   "earth-globe": {
    "id": "earth-globe",
@@ -662,12 +718,20 @@
   "exclamation-mark": {
    "id": "exclamation-mark",
    "en": "exclamation mark",
-   "fa": "",
+   "fa": "علامت تعجب",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "exclamation-mark__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "تعجب",
+    "علامت",
+    "تشدید",
+    "توجه",
+    "نشان"
+   ],
+   "fa_tags_for": "علامت تعجب"
   },
   "eye-open": {
    "id": "eye-open",
@@ -808,13 +872,21 @@
   },
   "heart": {
    "id": "heart",
-   "en": "heart",
-   "fa": "",
+   "en": "real heart",
+   "fa": "قلب واقعی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "heart__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "قلب",
+    "عشق",
+    "عاطفه",
+    "سینه",
+    "خاطر"
+   ],
+   "fa_tags_for": "قلب واقعی"
   },
   "hotel-building": {
    "id": "hotel-building",
@@ -948,12 +1020,20 @@
   "microscope": {
    "id": "microscope",
    "en": "microscope",
-   "fa": "",
+   "fa": "میکروسکوپ",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "microscope__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "میکروسکوپ",
+    "میکرو",
+    "زیست‌شناسی",
+    "تحقیق",
+    "دوربین"
+   ],
+   "fa_tags_for": "میکروسکوپ"
   },
   "mobile-app": {
    "id": "mobile-app",
@@ -1020,12 +1100,20 @@
   "money-coins": {
    "id": "money-coins",
    "en": "money coins",
-   "fa": "",
+   "fa": "سکه‌های پول",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "money-coins__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "سکه",
+    "پول",
+    "مالی",
+    "اقتصاد",
+    "ارزش"
+   ],
+   "fa_tags_for": "سکه‌های پول"
   },
   "neuron": {
    "id": "neuron",
@@ -1128,7 +1216,15 @@
    "has_text_in_image": false,
    "variants": [
     "planet-earth__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کره زمین",
+    "جهان",
+    "سیاره",
+    "زمین",
+    "محیط زیست"
+   ],
+   "fa_tags_for": "کره زمین"
   },
   "plastic-stool": {
    "id": "plastic-stool",
@@ -1280,7 +1376,15 @@
    "has_text_in_image": false,
    "variants": [
     "reservation-card__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "رزرو",
+    "رستوران",
+    "کارت",
+    "بزرگ‌نمایی",
+    "خدمات"
+   ],
+   "fa_tags_for": "کارت رزرو رستوران"
   },
   "restaurant": {
    "id": "restaurant",
@@ -1332,18 +1436,34 @@
    "has_text_in_image": false,
    "variants": [
     "roadside-restaurant__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "رستوران",
+    "بین‌راهی",
+    "مأکول",
+    "سفر",
+    "خدمات"
+   ],
+   "fa_tags_for": "رستوران بین‌راهی"
   },
   "rocket": {
    "id": "rocket",
    "en": "rocket",
-   "fa": "",
+   "fa": "روکت",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "rocket__1.webp",
     "rocket__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "روکت",
+    "فضا",
+    "انفجار",
+    "پشتوانه",
+    "پیشرفت"
+   ],
+   "fa_tags_for": "روکت"
   },
   "rubber-tire": {
    "id": "rubber-tire",
@@ -1497,23 +1617,39 @@
   "stethoscope": {
    "id": "stethoscope",
    "en": "stethoscope",
-   "fa": "",
+   "fa": "ستتوسکوپ",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "stethoscope__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "ستتوسکوپ",
+    "پزشکی",
+    "صدا",
+    "سنجش",
+    "سلامت"
+   ],
+   "fa_tags_for": "ستتوسکوپ"
   },
   "stopwatch": {
    "id": "stopwatch",
    "en": "stopwatch",
-   "fa": "",
+   "fa": "تایمر",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "stopwatch__1.webp",
     "stopwatch__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "تایمر",
+    "زمان",
+    "توقف",
+    "شمارش",
+    "ساعت"
+   ],
+   "fa_tags_for": "تایمر"
   },
   "street-food-stall": {
    "id": "street-food-stall",
@@ -1560,13 +1696,21 @@
   "syringe": {
    "id": "syringe",
    "en": "syringe",
-   "fa": "",
+   "fa": "سیرنگ",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "syringe__1.webp",
     "syringe__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "سیرنگ",
+    "درمان",
+    "وضعیت",
+    "پزشکی",
+    "تزریق"
+   ],
+   "fa_tags_for": "سیرنگ"
   },
   "tea-cup": {
    "id": "tea-cup",
@@ -1593,13 +1737,21 @@
   "telescope": {
    "id": "telescope",
    "en": "telescope",
-   "fa": "",
+   "fa": "تلسکوپ",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "telescope__1.webp",
     "telescope__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "تلسکوپ",
+    "نظاره‌گر",
+    "فضا",
+    "نظارت",
+    "بینایی"
+   ],
+   "fa_tags_for": "تلسکوپ"
   },
   "thief-mask": {
    "id": "thief-mask",
@@ -1689,14 +1841,22 @@
   "trophy": {
    "id": "trophy",
    "en": "trophy",
-   "fa": "",
+   "fa": "تجلیه",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "trophy__1.webp",
     "trophy__2.webp",
     "trophy__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "تجلیه",
+    "جایزه",
+    "دست‌یابی",
+    "کسب",
+    "افتخار"
+   ],
+   "fa_tags_for": "تجلیه"
   },
   "two-brothers": {
    "id": "two-brothers",
