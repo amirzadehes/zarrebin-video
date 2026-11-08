@@ -153,7 +153,7 @@ jobs:
             ls parts | grep "^${f}_" | sort -V | sed "s|^|file parts/|" > list_$f.txt
             [ -s list_$f.txt ] || continue
             ffmpeg -loglevel error -y -f concat -safe 0 -i list_$f.txt $inputs -filter_complex "$fc" -map 0:v -map "[a]" -t $total \
-              -c:v libx264 -preset slow -crf 28 -tune animation -maxrate 1.8M -bufsize 4M -pix_fmt yuv420p -c:a aac -b:a 96k -ar 44100 -ac 2 -movflags +faststart final_$f.mp4
+              -c:v libx264 -preset slow -crf 24 -tune animation -maxrate 3.5M -bufsize 7M -pix_fmt yuv420p -c:a aac -b:a 96k -ar 44100 -ac 2 -movflags +faststart final_$f.mp4
           done
           ls -la final_*.mp4
       - name: Publish release

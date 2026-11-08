@@ -8,3 +8,12 @@ Automatic pipeline for animated explainer videos (comic style, vertical 9:16).
 - `.github/workflows/render.yml` – renders in parallel chunks, joins, adds voice, publishes a Release
 
 Run: GitHub → Actions → "Render episode" → Run workflow.
+
+## Visual / sound options (engine v2)
+- Decorative symbols (arrow, plus, VS badge, burst ring, sparkle stars) are **off by default**. Turn them back on per episode with `"symbols": true` in `scenes.json` meta, or `?symbols=1` in the preview URL.
+- Every scene gets its own camera move (push in / pull out + slow pan); objects squash & stretch and throw a short impact burst when they land.
+- Scene wipes: 6 styles (`wipe` 0-5: circle, slant, rise, blinds, split, diamond); the director gives neighbouring scenes different ones and never repeats a template twice in a row.
+- Word-by-word captions sit in a soft pill inside the platforms' safe zone; the spoken word pops in colour.
+- Light animated film grain + soft vignette on both styles.
+- Sound effects: pools of different sounds per event, picked with a seed derived from the episode name (same episode = same mix), at most one event per `sfx_gap` seconds (default 0.3, set in `request.json`).
+- Final encode: crf 24, max 3.5 Mbit/s (was crf 28 / 1.8 Mbit/s).
