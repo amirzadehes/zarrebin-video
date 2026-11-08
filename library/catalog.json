@@ -254,12 +254,20 @@
   "broken-heart": {
    "id": "broken-heart",
    "en": "broken heart",
-   "fa": "",
+   "fa": "قلب شکسته",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "broken-heart__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "عشق",
+    "درد",
+    "احساس",
+    "قلب",
+    "شکست"
+   ],
+   "fa_tags_for": "قلب شکسته"
   },
   "bulb": {
    "id": "bulb",
@@ -811,14 +819,22 @@
   "fire": {
    "id": "fire",
    "en": "fire",
-   "fa": "",
+   "fa": "آتش",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "fire__1.webp",
     "fire__2.webp",
     "fire__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "دما",
+    "سوختن",
+    "گرما",
+    "جوش",
+    "شعله"
+   ],
+   "fa_tags_for": "آتش"
   },
   "football-referee": {
    "id": "football-referee",
@@ -979,35 +995,59 @@
   "key": {
    "id": "key",
    "en": "key",
-   "fa": "",
+   "fa": "کلید",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "key__1.webp",
     "key__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "قفل",
+    "باز کردن",
+    "دستگاه",
+    "رمز",
+    "قفل‌دار"
+   ],
+   "fa_tags_for": "کلید"
   },
   "laptop": {
    "id": "laptop",
    "en": "laptop",
-   "fa": "",
+   "fa": "لپ‌تاپ",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "laptop__1.webp",
     "laptop__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کامپیوتر",
+    "پرتاب",
+    "نرم‌افزار",
+    "موبایل",
+    "دستگاه"
+   ],
+   "fa_tags_for": "لپ‌تاپ"
   },
   "leaf": {
    "id": "leaf",
    "en": "leaf",
-   "fa": "",
+   "fa": "برگ",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "leaf__1.webp",
     "leaf__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "گیاه",
+    "درخت",
+    "طبیعت",
+    "سبز",
+    "فصل"
+   ],
+   "fa_tags_for": "برگ"
   },
   "lightning-burst": {
    "id": "lightning-burst",
@@ -1031,13 +1071,21 @@
   "lock-closed": {
    "id": "lock-closed",
    "en": "lock closed",
-   "fa": "",
+   "fa": "قفل بسته",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "lock-closed__1.webp",
     "lock-closed__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "قفل",
+    "امنیت",
+    "بسته",
+    "قفل‌دار",
+    "محافظت"
+   ],
+   "fa_tags_for": "قفل بسته"
   },
   "magnifying-glass": {
    "id": "magnifying-glass",
@@ -1275,12 +1323,20 @@
   "phone-smartphone": {
    "id": "phone-smartphone",
    "en": "phone smartphone",
-   "fa": "",
+   "fa": "تلفن هوشمند",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "phone-smartphone__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "موبایل",
+    "ارتباط",
+    "اپلیکیشن",
+    "دستگاه",
+    "هوشمند"
+   ],
+   "fa_tags_for": "تلفن هوشمند"
   },
   "planet-earth": {
    "id": "planet-earth",
@@ -1428,13 +1484,21 @@
   "rain-cloud": {
    "id": "rain-cloud",
    "en": "rain cloud",
-   "fa": "",
+   "fa": "ابر باران",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "rain-cloud__1.webp",
     "rain-cloud__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "آب",
+    "آسمان",
+    "باران",
+    "طبیعت",
+    "ابری"
+   ],
+   "fa_tags_for": "ابر باران"
   },
   "red-guidebook": {
    "id": "red-guidebook",
@@ -1613,23 +1677,39 @@
   "shield": {
    "id": "shield",
    "en": "shield",
-   "fa": "",
+   "fa": "سپر",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "shield__1.webp",
     "shield__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "حفاظت",
+    "دفاع",
+    "سلاح",
+    "امنیت",
+    "محافظ"
+   ],
+   "fa_tags_for": "سپر"
   },
   "shield-check": {
    "id": "shield-check",
    "en": "shield check",
-   "fa": "",
+   "fa": "سپر بررسی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "shield-check__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "تایید",
+    "امنیت",
+    "دفاع",
+    "سپر",
+    "بررسی"
+   ],
+   "fa_tags_for": "سپر بررسی"
   },
   "silverware-set": {
    "id": "silverware-set",
@@ -1653,13 +1733,21 @@
   "snowflake": {
    "id": "snowflake",
    "en": "snowflake",
-   "fa": "",
+   "fa": "دانه برف",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "snowflake__1.webp",
     "snowflake__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "سرما",
+    "زمستان",
+    "یخ",
+    "طبیعت",
+    "برف"
+   ],
+   "fa_tags_for": "دانه برف"
   },
   "social-media": {
    "id": "social-media",
@@ -1960,13 +2048,21 @@
   "tree": {
    "id": "tree",
    "en": "tree",
-   "fa": "",
+   "fa": "درخت",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "tree__1.webp",
     "tree__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "گیاه",
+    "سبز",
+    "طبیعت",
+    "چوب",
+    "جنگل"
+   ],
+   "fa_tags_for": "درخت"
   },
   "trophy": {
    "id": "trophy",
@@ -2051,13 +2147,21 @@
   "water-drop": {
    "id": "water-drop",
    "en": "water drop",
-   "fa": "",
+   "fa": "قطره آب",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "water-drop__1.webp",
     "water-drop__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "آب",
+    "مایع",
+    "طبیعت",
+    "نقطه",
+    "رطوبت"
+   ],
+   "fa_tags_for": "قطره آب"
   },
   "wine-glass": {
    "id": "wine-glass",

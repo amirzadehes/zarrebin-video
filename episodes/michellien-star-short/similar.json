@@ -1,14 +1,6 @@
 {
- "star": [
-  "star-rating",
-  "two-stars",
-  "three-stars"
- ],
  "magnifier-search": [
   "magnifying-glass"
- ],
- "question-mark": [
-  "question-mark-2"
  ],
  "light-bulb-idea": [
   "bulb"

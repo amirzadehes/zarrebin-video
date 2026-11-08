@@ -1,1 +1,19 @@
-{}
+{
+ "star": [
+  "one-star",
+  "two-stars",
+  "three-stars",
+  "star-rating"
+ ],
+ "rubber-tire": [
+  "tire-company-logo"
+ ],
+ "red-guidebook": [
+  "book",
+  "book-open"
+ ],
+ "book-open": [
+  "book",
+  "red-guidebook"
+ ]
+}
