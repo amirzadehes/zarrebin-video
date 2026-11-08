@@ -1,14 +1,12 @@
-own voice + own text: words matched 86%
+sentences where the recording differs from the pasted text: 18 of 28
+own voice + own text: words matched 94%
 library images offered to the director: 112 | priority (this episode): 34
 model: openai/gpt-oss-120b
-model openai/gpt-oss-120b is rate limited for a long time (722s): switching model
+model openai/gpt-oss-120b is rate limited for a long time (182s): switching model
 model: qwen/qwen3.8-27b
-rate limited, waiting 40s
-model qwen/qwen3.8-27b is rate limited for a long time (362s): switching model
+model qwen/qwen3.8-27b is rate limited for a long time (1022s): switching model
 model: openai/gpt-oss-20b
-model openai/gpt-oss-20b is rate limited for a long time (182s): switching model
-director fallback for sentences 0-11 (no AI): Groq: every model has hit its rate limit; try again later
-director fallback for sentences 12-23 (no AI): Groq: every model has hit its rate limit; try again later
-director fallback for sentences 24-26 (no AI): Groq: every model has hit its rate limit; try again later
+model openai/gpt-oss-20b is rate limited for a long time (902s): switching model
+director fallback for sentences 24-27 (no AI): Groq: every model has hit its rate limit; try again later
 coverage pass skipped: Groq: every model has hit its rate limit; try again later
-scenes 22 total 126.09 templates {'hero': 21, 'duo': 0, 'trio': 0, 'statement': 1, 'stat': 0}
+scenes 24 total 126.09 templates {'hero': 19, 'duo': 2, 'trio': 2, 'statement': 0, 'stat': 1}
