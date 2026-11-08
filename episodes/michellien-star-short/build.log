@@ -1,13 +1,5 @@
-sentences where the recording differs from the pasted text: 19 of 28
-own voice + own text: words matched 94%
-library images offered to the director: 112 | priority (this episode): 34
+using the reviewed scenes.json: 20 scenes
 model: openai/gpt-oss-120b
-model openai/gpt-oss-120b is rate limited for a long time (1022s): switching model
-model: qwen/qwen3.8-27b
-model qwen/qwen3.8-27b is rate limited for a long time (122s): switching model
-model: openai/gpt-oss-20b
-model openai/gpt-oss-20b is rate limited for a long time (62s): switching model
-director fallback for sentences 12-23 (no AI): Groq: every model has hit its rate limit; try again later
-director fallback for sentences 24-27 (no AI): Groq: every model has hit its rate limit; try again later
-coverage pass skipped: Groq: every model has hit its rate limit; try again later
-scenes 20 total 126.09 templates {'hero': 20, 'duo': 0, 'trio': 0, 'statement': 0, 'stat': 0}
+sfx events 68 dropped (too dense) 23 from library 0 peak 0.52 seconds 127.1
+model: openai/gpt-oss-120b
+no music uploaded yet (app > settings > music) - video will have no background music
