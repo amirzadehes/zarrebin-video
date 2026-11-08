@@ -43,6 +43,17 @@
    ],
    "fa_tags_for": "سیب قرمز"
   },
+  "arrow-right": {
+   "id": "arrow-right",
+   "en": "arrow right",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "arrow-right__1.webp",
+    "arrow-right__2.webp"
+   ]
+  },
   "banknotes": {
    "id": "banknotes",
    "en": "banknotes",
