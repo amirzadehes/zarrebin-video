@@ -1,5 +1,5 @@
 using the reviewed scenes.json: 20 scenes
 model: openai/gpt-oss-120b
-sfx events 68 dropped (too dense) 23 from library 0 peak 0.52 seconds 127.1
+sfx events 69 dropped (too dense) 23 from library 0 peak 0.51 seconds 127.1
 model: openai/gpt-oss-120b
 no music uploaded yet (app > settings > music) - video will have no background music
