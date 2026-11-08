@@ -1,18 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-27 08:08:49 UTC",
-   "ok": [
-    {
-     "file": "cityscape-chicago__mvqelke50.jpg",
-     "id": "cityscape-chicago",
-     "saved": "cityscape-chicago__1.webp",
-     "kb": 140
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-10-27 08:24:50 UTC",
    "ok": [
     {
@@ -732,6 +720,30 @@
      "id": "water-drop",
      "saved": "water-drop__2.webp",
      "kb": 99
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-08 21:22:04 UTC",
+   "ok": [
+    {
+     "file": "broken-heart__mw8c7zzv0tj.jpg",
+     "id": "broken-heart",
+     "saved": "broken-heart__1.webp",
+     "kb": 155
+    },
+    {
+     "file": "shield__mw8c7uyi0dc.jpg",
+     "id": "shield",
+     "saved": "shield__1.webp",
+     "kb": 185
+    },
+    {
+     "file": "shield__mw8c7uys1l2.jpg",
+     "id": "shield",
+     "saved": "shield__2.webp",
+     "kb": 195
     }
    ],
    "failed": []

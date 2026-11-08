@@ -251,6 +251,16 @@
    ],
    "fa_tags_for": "مغز"
   },
+  "broken-heart": {
+   "id": "broken-heart",
+   "en": "broken heart",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "broken-heart__1.webp"
+   ]
+  },
   "bulb": {
    "id": "bulb",
    "en": "lightbulb",
@@ -1587,6 +1597,17 @@
     "نظارت"
    ],
    "fa_tags_for": "بازرس با بارونی مشکی"
+  },
+  "shield": {
+   "id": "shield",
+   "en": "shield",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "shield__1.webp",
+    "shield__2.webp"
+   ]
   },
   "shield-check": {
    "id": "shield-check",
