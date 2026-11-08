@@ -1530,6 +1530,18 @@
    ],
    "fa_tags_for": "مغز خسته"
   },
+  "trophy": {
+   "id": "trophy",
+   "en": "trophy",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "trophy__1.webp",
+    "trophy__2.webp",
+    "trophy__3.webp"
+   ]
+  },
   "two-brothers": {
    "id": "two-brothers",
    "en": "two brothers",
