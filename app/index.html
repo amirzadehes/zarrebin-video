@@ -53,6 +53,7 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 .vrow .vname small{display:block;color:var(--mut);font-size:11px;direction:rtl;text-align:right}
 .vrow .btn,.vrow button{min-height:40px;padding:0 12px;flex:0 0 auto}
 .vrow .vdel{padding:0 10px}
+#pvModal{position:fixed;inset:0;background:#000e;z-index:60;display:grid;place-items:center;align-content:center;gap:8px;overflow:auto}
 #pvModal[hidden]{display:none!important}
 .rv details.sc{border:1px solid var(--line);border-radius:12px;margin:8px 0;background:#17120f}
 .rv details.sc>summary{padding:10px 12px;cursor:pointer;list-style:none;font-size:14px;line-height:1.7}
@@ -102,6 +103,11 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
 
 /* ---------- desktop (screen at least 1024px wide): wide layout, two columns ---------- */
 @media (min-width:1024px){
+  /* scene preview docked in the free space on the right instead of a full-screen popup */
+  #pvModal:not([hidden]){inset:0 0 0 auto;width:min(480px,36vw);background:var(--card);border-left:1px solid var(--line);z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;padding:14px 12px;box-shadow:-8px 0 30px #0008}
+  body.pvdock{max-width:none;margin:0 auto 0 0;width:calc(100% - min(480px,36vw))}
+  #pvFrame{flex:0 0 auto}
+  @media (max-width:1700px){ body.pvdock #ep:not([hidden]){grid-template-columns:minmax(0,1fr)} body.pvdock #ep>#epBuild{grid-column:1;grid-row:auto} }
   body{max-width:1320px;padding:0 40px 56px}
   header{padding:26px 0 14px}
   h1{font-size:26px}
@@ -183,7 +189,7 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
 <div id="toast"></div>
 <div id="upl" hidden><div class="uh"><b id="uTitle"></b><span class="ub"><b id="uPct" style="color:var(--acc)"></b><button id="uMin" title="کوچک یا بزرگ کردن">▾</button><button id="uClr">پاک کردن</button></span></div><div class="bar" id="uBar"><i></i></div><div id="uList"></div></div>
 
-<div id="pvModal" hidden style="position:fixed;inset:0;background:#000e;z-index:60;display:grid;place-items:center;align-content:center;gap:8px;overflow:auto">
+<div id="pvModal" hidden>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvV" class="on">عمودی (اینستاگرام)</button><button id="pvH">افقی (یوتیوب)</button></div>
   <iframe id="pvFrame" src="../engine/preview.html?inline=1&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(62vh*9/16));height:min(62vh,calc(94vw*16/9))"></iframe>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvPlay">▶ پخش</button><button id="pvEdit">✋ ویرایش چیدمان</button></div>
@@ -210,6 +216,12 @@ async function api(path, opt={}){
 }
 async function readJson(p, dflt){ try{ const j=await api('/contents/'+p); const b=atob(j.content.replace(/\n/g,'')); return JSON.parse(new TextDecoder().decode(Uint8Array.from(b,c=>c.charCodeAt(0)))); }catch(e){ return dflt } }
 const raw = f => 'https://raw.githubusercontent.com/'+S.repo+'/main/library/'+f;
+const decB64 = j => new TextDecoder().decode(Uint8Array.from(atob(String(j.content||'').replace(/\n/g,'')),c=>c.charCodeAt(0)));
+S.titles = S.titles || {};
+const epTitle = e => (S.titles&&S.titles[e]) || e;
+async function loadTitles(eps){ await Promise.all((eps||[]).map(async e=>{ if(S.titles[e]!==undefined) return; try{ S.titles[e]=decB64(await api('/contents/episodes/'+e+'/title.txt')).trim() }catch(_){ S.titles[e]='' } })) }
+async function saveTitle(ep, t){ t=String(t||'').trim(); if(!t||S.titles[ep]===t) return; let sha; try{ sha=(await api('/contents/episodes/'+ep+'/title.txt')).sha }catch(_){}
+  await api('/contents/episodes/'+ep+'/title.txt',{method:'PUT',body:JSON.stringify({message:'episode title: '+ep,content:enc(t),branch:'main',sha})}); S.titles[ep]=t }
 const slug = s => s.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 function prompt(subject){ return (S.style==='vox'?VOX_TPL:DEFAULT_TPL).replace('{subject}', subject); }
 async function copy(text){ try{ await navigator.clipboard.writeText(text); return true }catch(e){ const t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); let ok=false; try{ ok=document.execCommand('copy') }catch(e){} t.remove(); return ok } }
@@ -294,10 +306,11 @@ function renderGen(){
 const enc = t => btoa(String.fromCharCode(...new TextEncoder().encode(t)));
 async function renderEp(){
   const el = $('#ep'); let eps=[];
-  try{ eps = (await api('/contents/episodes')).filter(x=>x.type==='dir').map(x=>x.name) }catch(e){} S.eps=eps;
+  try{ eps = (await api('/contents/episodes')).filter(x=>x.type==='dir').map(x=>x.name) }catch(e){} S.eps=eps; await loadTitles(eps);
   const cur = ls.get('curEp','');
   el.innerHTML = `<div class="card"><div class="name">قسمت جدید</div>
     <label>نام قسمت به انگلیسی (مثلاً sleep-debt)</label><input type="text" class="ltr" id="epName" value="${cur}">
+    <label>نام فارسی قسمت (در اپ به‌جای نام انگلیسی نمایش داده می‌شود)</label><div class="row"><input type="text" id="epFa" value="${(S.titles[cur]||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" placeholder="مثلاً: ستاره میشلین" style="flex:1;direction:rtl;text-align:right"><button id="epFaSave" style="flex:0 0 auto">ذخیره‌ی نام</button></div><div class="st" id="epFaSt"></div>
     <label>کدام نسخه الان ساخته شود؟</label>
     <label><input type="checkbox" id="chL" checked> نسخه‌ی بلند (یوتیوب)</label>
     <label><input type="checkbox" id="chS"> نسخه‌ی کوتاه (اینستاگرام و تیک‌تاک)</label>
@@ -305,7 +318,7 @@ async function renderEp(){
     <div id="boxS" hidden><label>متن نسخه‌ی کوتاه (اینستاگرام و تیک‌تاک، حدود ۶۰ ثانیه)</label><textarea id="epTextS" rows="5" style="width:100%;min-height:130px;direction:rtl;text-align:right;font-size:15px"></textarea>
     <p class="hint">نسخه‌ی کوتاه یک قسمت جدا به نام <b>نام‌قسمت-short</b> ساخته می‌شود. تصویرها و کتابخانه بین هر دو مشترک است. نسخه‌ی کوتاه فقط عمودی و با برش‌های سریع‌تر ساخته می‌شود. صدای هر کدام را جدا در «ساخت ویدیو» همان قسمت آپلود کن.</p></div>
     <div class="row"><button class="pri" id="epSend">ارسال و تحلیل</button></div><div class="st" id="epSt"></div></div>
-    ${eps.length?`<div class="card"><label>قسمت‌های قبلی</label><div class="row" id="epList">${eps.map(e=>`<button data-e="${e}">${e}</button>`).join('')}</div></div>`:''}
+    ${eps.length?`<div class="card"><label>قسمت‌های قبلی</label><div class="row" id="epList">${eps.map(e=>`<button data-e="${e}">${epTitle(e)}</button>`).join('')}</div></div>`:''}
     <div class="card" id="epBuild"><div class="name">ساخت ویدیو</div>
       <div id="bProg" class="prog" hidden></div>
       <label>طول تقریبی ویدیو (اگر صدای خودت را بدهی، طول ویدیو دقیقاً به اندازه‌ی صدای توست و این گزینه نادیده گرفته می‌شود)</label>
@@ -339,6 +352,8 @@ async function renderEp(){
   $('#bGo').onclick = ()=>buildVideo('review'); $('#bGoDirect').onclick = ()=>buildVideo('direct'); loadVids(); if(cur) loadReview(cur,true);
   el.querySelectorAll('#epList button').forEach(b=>b.onclick=()=>setEpisode(b.dataset.e));
   $('#epSend').onclick = sendEp;
+  $('#epFaSave').onclick = async()=>{ const f=$('#epFaSt'), en=slug($('#epName').value), t=$('#epFa').value.trim(); if(!S.token){ f.className='st bad'; f.textContent='اول در تنظیمات توکن را وارد کن'; return } if(!en){ f.className='st bad'; f.textContent='اول نام انگلیسی قسمت را بنویس یا یک قسمت را انتخاب کن'; return } if(!t){ f.className='st bad'; f.textContent='نام فارسی را بنویس'; return }
+    try{ await saveTitle(en,t); const sh=en.replace(/-short$/,'')+'-short'; if((S.eps||[]).includes(sh)&&!/-short$/.test(en)) await saveTitle(sh,t+' (کوتاه)'); f.className='st ok'; f.textContent='✓ ذخیره شد'; renderEpLabels() }catch(e){ f.className='st bad'; f.textContent='خطا: '+e.message } };
   if(cur){ readText(cur) } renderWant();
 }
 async function readText(ep){ try{ const j=await api('/contents/episodes/'+ep+'/script.txt'); $('#epText').value=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))); }catch(e){} }
@@ -383,6 +398,7 @@ async function buildVideo(mode){
   if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس (همان که متن را با آن فرستادی)'; return; }
   const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
   try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده'; return; }
+  try{ const t=($('#epFa')?$('#epFa').value:'').trim(); if(t){ await saveTitle(ep, /-short$/.test(ep)&&!/\(کوتاه\)$/.test(t)?t+' (کوتاه)':t); renderEpLabels() } }catch(_){}
   const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.subs=$('#bSubs').checked; body.music=$('#bMusic').value; body.style=S.style; body.review=(mode==='review'); if(/-short$/.test(ep)) body.short=true; body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
   st.className='st'; st.textContent='در حال شروع…';
   try{
@@ -418,7 +434,7 @@ async function loadReview(ep, quiet){ const body=$('#rvBody'); if(!body) return;
     RV={ep, sha:j.sha, data:JSON.parse(txt)}; renderReview() }catch(e){ if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
 function thumbUrl(src){ return raw(src.replace(/^library\//,'')) }
 function renderReview(){ const body=$('#rvBody'); if(!RV||!body) return; const sc=RV.data.scenes; const empty=sc.filter(s=>!(s.items||[]).length&&s.tpl!=='stat').length;
-  body.innerHTML=`<p class="hint"><b>${RV.ep}</b>: ${fa(sc.length)} صحنه${empty?` · <span style="color:#e0733f">${fa(empty)} صحنه بدون تصویر (علامت ⚠️)</span>`:''}. هر صحنه را باز کن؛ با ✕ تصویر را حذف کن یا از کتابخانه اضافه کن. تغییرها خودکار ذخیره می‌شوند. <b id="rvOk"></b></p>`+
+  body.innerHTML=`<p class="hint"><b>${epTitle(RV.ep)}</b>: ${fa(sc.length)} صحنه${empty?` · <span style="color:#e0733f">${fa(empty)} صحنه بدون تصویر (علامت ⚠️)</span>`:''}. هر صحنه را باز کن؛ با ✕ تصویر را حذف کن یا از کتابخانه اضافه کن. تغییرها خودکار ذخیره می‌شوند. <b id="rvOk"></b></p>`+
   sc.map((s,i)=>{ const n=(s.items||[]).length; const warn=!n&&s.tpl!=='stat';
     return `<details class="sc ${warn?'warn':''}" data-i="${i}"><summary>${sceneHead(s,i)}</summary><div class="body"></div></details>`}).join('')+
   `<div class="row" style="margin-top:12px"><button class="pri" id="rvGo">۲. ادامه: ساخت ویدیو با همین صحنه‌ها</button></div><div class="st" id="rvSt"></div>`;
@@ -433,6 +449,9 @@ function syncOk(i){ const s=RV.data.scenes[i], d=document.querySelector(`details
 function updOk(){ const e=$('#rvOk'); if(!e||!RV) return; const sc=RV.data.scenes, n=sc.length; e.textContent=`تأیید عمودی: ${fa(sc.filter(s=>okOf(s,'v')).length)} از ${fa(n)} · تأیید افقی: ${fa(sc.filter(s=>okOf(s,'h')).length)} از ${fa(n)}` }
 let pvReady=false, pvQ=null, pvI=-1, pvFmt=ls.get('pvFmt','v'), pvMode='play';
 function pvLayout(){ const f=$('#pvFrame'), D=matchMedia('(min-width:1024px)').matches, hv=D?66:62, hh=D?58:50;   // bigger preview on a desktop screen
+  if(D){ const m=$('#pvModal'), W=Math.max(200,(m.clientWidth||440)-24), H=Math.max(240,innerHeight-300); let w,h;
+    if(pvFmt==='v'){ h=Math.min(H,W*16/9); w=h*9/16 } else { w=Math.min(W,H*16/9); h=w*9/16 }
+    f.style.width=Math.round(w)+'px'; f.style.height=Math.round(h)+'px'; $('#pvV').classList.toggle('on',pvFmt==='v'); $('#pvH').classList.toggle('on',pvFmt==='h'); return }
   if(pvFmt==='v'){ f.style.width=`min(94vw,calc(${hv}vh*9/16))`; f.style.height=`min(${hv}vh,calc(94vw*16/9))` } else { f.style.width=`min(96vw,calc(${hh}vh*16/9))`; f.style.height=`min(${hh}vh,calc(96vw*9/16))` }
   $('#pvV').classList.toggle('on',pvFmt==='v'); $('#pvH').classList.toggle('on',pvFmt==='h') }
 function pvSelBuild(cur){ const s=RV&&RV.data.scenes[pvI], box=$('#pvSel'); if(!s||pvMode!=='edit'){ box.hidden=true; return } box.hidden=false; box.innerHTML=(s.items||[]).map((it,k)=>`<button data-k="${k}" class="${k===cur?'on':''}" style="min-height:46px;padding:2px 6px"><img src="${thumbUrl(it.src)}" style="height:38px;width:38px;object-fit:contain;vertical-align:middle"> ${fa(k+1)}</button>`).join('');
@@ -442,12 +461,13 @@ function pvOkLabel(){ const s=RV&&RV.data.scenes[pvI]; $('#pvOk').textContent=s&
 function pvSend(){ if(!RV||pvI<0) return; const f=$('#pvFrame').contentWindow; if(pvMode==='edit') f.postMessage({type:'edit',data:RV.data,ep:RV.ep,scene:pvI,sel:0},'*'); else f.postMessage({type:'load',data:RV.data,ep:RV.ep,scene:pvI},'*') }
 function pvGo(){ if(pvReady) pvSend(); else pvQ=true }
 function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&fmt='+f; pvLayout(); pvOkLabel() }
+addEventListener('resize',()=>{ if(!$('#pvModal').hidden) pvLayout() });
 addEventListener('message',e=>{ const m=e.data||{};
   if(m.type==='ready'){ pvReady=true; if(pvQ){ pvQ=false; pvSend() } }
   else if(m.type==='layout'&&RV){ const s=RV.data.scenes[m.scene], it=s&&s.items[m.idx]; if(!it) return; it.lay=it.lay||{}; it.lay[m.fmt]=m.lay; clearOk(s,m.fmt); syncOk(m.scene); pvOkLabel(); pvSelBuild(m.idx); rvSave() } });
-function openPreview(i,mode){ if(!RV) return; pvI=i; pvMode=mode||'play'; $('#pvModal').hidden=false; pvTools(); pvLayout(); pvOkLabel(); if(!$('#pvFrame').src.includes('fmt='+pvFmt)){ pvSetFmt(pvFmt) } else pvGo() }
+function openPreview(i,mode){ if(!RV) return; pvI=i; pvMode=mode||'play'; $('#pvModal').hidden=false; document.body.classList.add('pvdock'); pvTools(); pvLayout(); pvOkLabel(); if(!$('#pvFrame').src.includes('fmt='+pvFmt)){ pvSetFmt(pvFmt) } else pvGo() }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('#pvModal').hidden) $('#pvClose').click() });   // Esc closes the preview (desktop)
-$('#pvClose').onclick=()=>{ $('#pvModal').hidden=true; try{ $('#pvFrame').contentWindow.postMessage({type:'stop'},'*') }catch(e){} };
+$('#pvClose').onclick=()=>{ $('#pvModal').hidden=true; document.body.classList.remove('pvdock'); try{ $('#pvFrame').contentWindow.postMessage({type:'stop'},'*') }catch(e){} };
 $('#pvV').onclick=()=>pvSetFmt('v'); $('#pvH').onclick=()=>pvSetFmt('h');
 $('#pvPlay').onclick=()=>{ pvMode='play'; pvTools(); pvGo() }; $('#pvEdit').onclick=()=>{ pvMode='edit'; pvTools(); pvGo() };
 document.querySelectorAll('#pvTools button').forEach(b=>b.onclick=()=>$('#pvFrame').contentWindow.postMessage({type:'adj',op:b.dataset.op},'*'));
@@ -532,10 +552,12 @@ async function rvContinue(){ const st=$('#rvSt'); const rq=await readJson('episo
     st.className='st ok'; st.textContent='ساخت ویدیو شروع شد؛ حدود ۱۰ تا ۳۰ دقیقه. می‌توانی اپ را ببندی.'; setTimeout(buildStatus,6000); setTimeout(buildStatus,20000);
     for(let k=0;k<90;k++){ await sleep(30000); const before=$('#vids')?.textContent.length||0; await loadVids(); if(($('#vids')?.textContent.length||0)!==before){ st.textContent='ویدیو آماده شد!'; return } }
   }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message } }
-function epHead(ep){ const eps=S.eps||[]; return `<div class="card"><label>قسمت</label><select id="needEp" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px">${(eps.includes(ep)||!ep?'':`<option>${ep}</option>`)+eps.map(e=>`<option ${e===ep?'selected':''}>${e}</option>`).join('')}${!ep?'<option value="">— یک قسمت انتخاب کن —</option>':''}</select></div>` }
+function epHead(ep){ const eps=S.eps||[]; return `<div class="card"><label>قسمت</label><select id="needEp" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px">${epSelOptions(ep)}</select></div>` }
+function epSelOptions(ep){ const eps=S.eps||[]; return (eps.includes(ep)||!ep?'':`<option value="${ep}" selected>${epTitle(ep)}</option>`)+eps.map(e=>`<option value="${e}" ${e===ep?'selected':''}>${epTitle(e)}</option>`).join('')+(!ep?'<option value="">— یک قسمت انتخاب کن —</option>':'') }
 function bindEpHead(){ const s=$('#needEp'); if(s) s.onchange=()=>{ if(s.value) setEpisode(s.value) } }
 function shortDefaults(){ const n=$('#epName'); if(!n||!$('#bH')) return; const sh=/-short$/.test(slug(n.value)); if(sh){ $('#bV').checked=true; $('#bH').checked=false } $('#bH').disabled=sh; $('#bShortNote').hidden=!sh }
-function setEpisode(e){ ls.set('curEp',e); const n=$('#epName'); if(n) n.value=e; readText(e); showNeeds(e); shortDefaults() }
+function renderEpLabels(){ document.querySelectorAll('#epList button').forEach(b=>b.textContent=epTitle(b.dataset.e)); const rb=document.querySelector('#rvBody p.hint b'); if(rb&&RV) rb.textContent=epTitle(RV.ep); const ne=$('#needEp'); if(ne){ const cur=ne.value; ne.innerHTML=epSelOptions(cur) } }
+function setEpisode(e){ ls.set('curEp',e); const n=$('#epName'); if(n) n.value=e; const fa_=$('#epFa'); if(fa_) fa_.value=S.titles[e]||''; readText(e); showNeeds(e); shortDefaults() }
 async function showNeeds(ep){
   const box = $('#want'); const head = epHead(ep);
   if(!ep){ box.innerHTML=head+'<p class="hint">اول در تب «ساخت ویدیو» متن یک قسمت را بفرست تا تحلیل شود؛ فهرست تصویرهای لازم همین‌جا می‌آید. یا از بالا قسمت قبلی را انتخاب کن.</p>'; bindEpHead(); return false }
@@ -546,7 +568,7 @@ async function showNeeds(ep){
   const sim = await readJson('episodes/'+ep+'/similar.json', {}); S.picks = await readJson('episodes/'+ep+'/picks.json', {});
   const L = j.items.map(w=>({...w, n:(S.catalog.items[w.id]?.variants||[]).length, sim:(sim[w.id]||[]).filter(i=>S.catalog.items[i])})).sort((a,b)=>((a.n>0||(S.picks[a.id]||[]).length>0)-(b.n>0||(S.picks[b.id]||[]).length>0)));
   const miss = L.filter(x=>x.n===0&&!(S.picks[x.id]||[]).length).length;
-  const tmp = document.createElement('div'); cards(tmp, L, true, `<p class="hint"><b>${ep}</b>: ${fa(L.length)} تصویر لازم است؛ ${fa(miss)} مورد را هنوز نداریم (بالای فهرست). هر مورد را همین‌جا آپلود کن؛ آنچه در کتابخانه هست دوباره ساخته نمی‌شود.${S.pending?` · ${fa(S.pending)} تصویر در صف پردازش`:''}</p>`);
+  const tmp = document.createElement('div'); cards(tmp, L, true, `<p class="hint"><b>${epTitle(ep)}</b>: ${fa(L.length)} تصویر لازم است؛ ${fa(miss)} مورد را هنوز نداریم (بالای فهرست). هر مورد را همین‌جا آپلود کن؛ آنچه در کتابخانه هست دوباره ساخته نمی‌شود.${S.pending?` · ${fa(S.pending)} تصویر در صف پردازش`:''}</p>`);
   const have=L.length-miss; const bs=$('#bCover'); if(bs) bs.textContent=`تصاویر این قسمت: ${fa(have)} از ${fa(L.length)} آماده است. هرچه بیشتر باشد، ویدیو بهتر و مرتبط‌تر می‌شود.`;
   box.innerHTML=head; while(tmp.firstChild) box.appendChild(tmp.firstChild); bindEpHead();
   return true;
@@ -560,12 +582,12 @@ async function sendEp(){
   if(!wL&&!wS){ st.className='st bad'; st.textContent='حداقل یک نسخه را تیک بزن'; return; }
   if(wL&&tL.length<50){ st.className='st bad'; st.textContent='متن نسخه‌ی بلند را وارد کن'; return; }
   if(wS&&tS.length<20){ st.className='st bad'; st.textContent='متن نسخه‌ی کوتاه را وارد کن'; return; }
-  const targets=[...(wL?[[base,tL]]:[]),...(wS?[[base+'-short',tS]]:[])];
+  const targets=[...(wL?[[base,tL]]:[]),...(wS?[[base+'-short',tS]]:[])]; const faT=($('#epFa')?$('#epFa').value:'').trim();
   st.className='st'; st.textContent='در حال ارسال…';
   try{
     const old={}; for(const [e,t] of targets){ let sha; try{ sha=(await api('/contents/episodes/'+e+'/script.txt')).sha }catch(_){}
       try{ old[e]=(await api('/contents/episodes/'+e+'/needs.json')).sha }catch(_){}
-      await api('/contents/episodes/'+e+'/script.txt',{method:'PUT',body:JSON.stringify({message:'episode script: '+e,content:enc(t),branch:'main',sha})}); S.eps=[...new Set([...(S.eps||[]),e])] }
+      await api('/contents/episodes/'+e+'/script.txt',{method:'PUT',body:JSON.stringify({message:'episode script: '+e,content:enc(t),branch:'main',sha})}); S.eps=[...new Set([...(S.eps||[]),e])]; if(faT) await saveTitle(e, /-short$/.test(e)?faT+' (کوتاه)':faT) }
     const first=targets[0][0]; ls.set('curEp',first); st.className='st ok'; st.textContent='ارسال شد ('+targets.map(x=>x[0]).join(' و ')+')؛ تحلیل حدود یک تا دو دقیقه طول می‌کشد…';
     for(let k=0;k<30;k++){ await sleep(8000); let n; try{ n=(await api('/contents/episodes/'+first+'/needs.json')).sha }catch(_){}
       if(n && n!==old[first]){ await loadAll(true); setEpisode(first); await showNeeds(first); st.textContent='فهرست آماده شد؛ تب «مورد نیاز» را ببین'+(targets.length>1?'. تحلیل نسخه‌ی دیگر هم در راه است؛ از فهرست قسمت‌ها انتخابش کن.':''); toast('✓ تحلیل تمام شد؛ تصویرهای لازم را ببین',5000); return } }
