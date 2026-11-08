@@ -1,27 +1,52 @@
 {
+ "coffee-cup": [
+  "espresso-cup",
+  "coffee-beans",
+  "coffee-plant"
+ ],
+ "battery-empty": [
+  "battery-full",
+  "battery-power"
+ ],
+ "battery-full": [
+  "battery-empty",
+  "battery-power"
+ ],
+ "light-bulb-idea": [
+  "bulb"
+ ],
+ "caffeine-molecule": [
+  "purple-molecule"
+ ],
+ "brain-hacker": [
+  "brain-pink",
+  "brain-colorful",
+  "tired-brain"
+ ],
+ "person-sleeping": [
+  "eye-sleepy",
+  "eye-open"
+ ],
+ "brain-colorful": [
+  "brain-pink",
+  "tired-brain"
+ ],
+ "fatigue-brain": [
+  "brain-colorful",
+  "brain-pink",
+  "tired-brain"
+ ],
  "key-fake": [
   "old-key"
  ],
  "lock-closed": [
   "padlock"
  ],
- "adrenaline": [
-  "caffeine-molecule",
-  "purple-molecule"
- ],
  "hand-tremble": [
   "pointing-hand"
  ],
- "espresso-cup": [
-  "coffee-cup",
-  "tea-cup"
- ],
- "clock-wall": [
-  "alarm-clock"
- ],
  "sleep-deep": [
-  "eye-sleepy",
-  "bed"
+  "eye-sleepy"
  ],
  "brain-adaptation": [
   "brain-colorful",

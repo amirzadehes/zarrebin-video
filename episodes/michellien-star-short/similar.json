@@ -1,6 +1,7 @@
 {
  "star": [
   "star-rating",
+  "one-star",
   "two-stars",
   "three-stars"
  ],
@@ -19,16 +20,23 @@
   "star",
   "star-rating"
  ],
+ "money-bag": [
+  "cash",
+  "euro-sign"
+ ],
+ "thief-mask": [
+  "secret-inspector"
+ ],
  "magnifier-search": [
   "magnifying-glass"
- ],
- "clock-wall": [
-  "alarm-clock"
  ],
  "light-bulb-idea": [
   "bulb"
  ],
  "brain-colorful": [
   "brain-pink"
+ ],
+ "star-rating": [
+  "star"
  ]
 }
