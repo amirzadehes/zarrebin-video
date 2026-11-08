@@ -1,8 +1,12 @@
 own voice + own text: words matched 86%
-library images offered to the director: 96 | priority (this episode): 32
+library images offered to the director: 112 | priority (this episode): 34
 model: openai/gpt-oss-120b
-rate limited, waiting 17s
-rate limited, waiting 3s
-rate limited, waiting 10s
-coverage pass: placed 5 of 30 unused priority images
-scenes 20 total 126.09 templates {'hero': 12, 'duo': 0, 'trio': 1, 'statement': 7, 'stat': 0}
+model openai/gpt-oss-120b is rate limited for a long time (362s): switching model
+model: qwen/qwen3.8-27b
+model qwen/qwen3.8-27b is rate limited for a long time (722s): switching model
+model: openai/gpt-oss-20b
+model openai/gpt-oss-20b is rate limited for a long time (722s): switching model
+rate limited, waiting 4s
+rate limited, waiting 41s
+rate limited, waiting 50s
+Groq failed: HTTP 429 {"error":{"message":"Rate limit reached for model `allam-2-7b` in organization `org_01m5scj6x8ece9anstaaqkk73y` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5840, Requested 4939. Please try again in 47.79s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.
