@@ -26,12 +26,6 @@
  "clock-wall": [
   "alarm-clock"
  ],
- "cash": [
-  "banknotes"
- ],
- "banknotes": [
-  "cash"
- ],
  "tire-company-logo": [
   "rubber-tire"
  ]

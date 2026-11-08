@@ -9,27 +9,31 @@
   "tire-company-logo"
  ],
  "one-star": [
+  "star",
+  "star-rating",
   "two-stars",
   "three-stars"
  ],
  "two-stars": [
+  "star",
+  "star-rating",
   "one-star",
   "three-stars"
  ],
  "three-stars": [
+  "star",
+  "star-rating",
   "one-star",
   "two-stars"
+ ],
+ "money-bag": [
+  "cash",
+  "banknotes"
  ],
  "magnifier-search": [
   "magnifying-glass"
  ],
- "clock-wall": [
-  "alarm-clock"
- ],
  "light-bulb-idea": [
   "bulb"
- ],
- "brain-colorful": [
-  "brain-pink"
  ]
 }

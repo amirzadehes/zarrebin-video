@@ -1,35 +1,20 @@
 {
  "coffee-cup": [
-  "espresso-cup",
-  "coffee-beans",
-  "coffee-plant"
+  "espresso-cup"
  ],
  "battery-empty": [
-  "battery-full",
+  "battery-power"
+ ],
+ "battery-full": [
   "battery-power"
  ],
  "light-bulb-idea": [
   "bulb"
  ],
- "caffeine-molecule": [
-  "purple-molecule"
- ],
  "brain-hacker": [
   "brain-colorful",
   "brain-pink",
-  "tired-brain",
-  "neuron"
- ],
- "brain-colorful": [
-  "brain-pink",
-  "tired-brain",
-  "neuron"
- ],
- "fatigue-brain": [
-  "brain-colorful",
-  "brain-pink",
-  "tired-brain",
-  "neuron"
+  "tired-brain"
  ],
  "key-fake": [
   "old-key"
@@ -37,13 +22,25 @@
  "lock-closed": [
   "padlock"
  ],
+ "adrenaline": [
+  "caffeine-molecule",
+  "purple-molecule"
+ ],
  "hand-tremble": [
   "pointing-hand"
  ],
  "espresso-cup": [
   "coffee-cup"
  ],
+ "clock-wall": [
+  "alarm-clock"
+ ],
  "sleep-deep": [
   "eye-sleepy"
+ ],
+ "brain-adaptation": [
+  "brain-colorful",
+  "brain-pink",
+  "tired-brain"
  ]
 }
