@@ -1,7 +1,4 @@
-own voice + own text: words matched 98%
-library images offered to the director: 70 | priority (this episode): 21
+using the reviewed scenes.json: 21 scenes
 model: openai/gpt-oss-120b
-rate limited, waiting 2s
-rate limited, waiting 15s
-coverage pass: placed 11 of 18 unused priority images
-scenes 21 total 113.19 templates {'hero': 14, 'duo': 0, 'trio': 2, 'statement': 5, 'stat': 0}
+sfx events 128 from library 0 peak 0.66 seconds 114.2
+music off
