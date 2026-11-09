@@ -1,22 +1,12 @@
 {
- "silverware-set": [
-  "dinner-plate"
- ],
  "star": [
-  "one-star",
-  "two-stars",
+  "star-rating",
   "three-stars",
-  "star-rating"
+  "two-stars",
+  "one-star"
  ],
  "rubber-tire": [
   "tire-company-logo"
- ],
- "red-guidebook": [
-  "book",
-  "book-open"
- ],
- "book-open": [
-  "book"
  ],
  "star-rating": [
   "one-star",
@@ -25,9 +15,9 @@
   "star"
  ],
  "one-star": [
+  "star",
   "two-stars",
   "three-stars",
-  "star",
   "star-rating"
  ],
  "two-stars": [
@@ -74,9 +64,10 @@
  "restaurant-sign": [
   "restaurant",
   "roadside-restaurant",
-  "street-food-stall"
+  "reservation-card"
  ],
  "cityscape-chicago": [
+  "eiffel-tower",
   "hotel-building",
   "factory"
  ],

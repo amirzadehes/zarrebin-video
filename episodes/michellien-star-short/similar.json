@@ -38,7 +38,9 @@
   "map-folded"
  ],
  "chart-up": [
-  "arrow-up"
+  "arrow-up",
+  "arrow-right",
+  "curved-arrow"
  ],
  "money-bag": [
   "banknotes",
@@ -54,12 +56,13 @@
  ],
  "chef-hat": [
   "restaurant",
-  "roadside-restaurant"
+  "roadside-restaurant",
+  "street-food-stall"
  ],
  "dinner-plate": [
   "food",
   "silverware-set",
-  "street-food-stall"
+  "spice-jar"
  ],
  "trophy": [
   "star",
@@ -84,7 +87,10 @@
   "chart-up"
  ],
  "credit-card": [
-  "reservation-card"
+  "banknotes",
+  "cash",
+  "money-bag",
+  "money-coins"
  ],
  "newspaper": [
   "book",

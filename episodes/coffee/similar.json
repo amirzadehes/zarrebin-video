@@ -53,9 +53,9 @@
   "neuron"
  ],
  "fatigue-brain": [
+  "tired-brain",
   "brain-colorful",
   "brain-pink",
-  "tired-brain",
   "neuron"
  ],
  "key-fake": [
@@ -76,11 +76,14 @@
   "pointing-hand"
  ],
  "anxiety": [
-  "tired-brain"
+  "tired-brain",
+  "brain-colorful",
+  "brain-pink"
  ],
  "espresso-cup": [
   "coffee-cup",
-  "tea-cup"
+  "tea-cup",
+  "wine-glass"
  ],
  "hourglass": [
   "stopwatch",
@@ -88,8 +91,7 @@
  ],
  "clock-wall": [
   "alarm-clock",
-  "stopwatch",
-  "hourglass"
+  "stopwatch"
  ],
  "sleep-deep": [
   "eye-sleepy",
