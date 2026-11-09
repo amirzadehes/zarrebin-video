@@ -2204,6 +2204,17 @@
    ],
    "fa_tags_for": "تلسکوپ"
   },
+  "thermometer": {
+   "id": "thermometer",
+   "en": "thermometer",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "thermometer__1.webp",
+    "thermometer__2.webp"
+   ]
+  },
   "thief-mask": {
    "id": "thief-mask",
    "en": "black thief eye mask",
