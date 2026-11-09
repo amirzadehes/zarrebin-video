@@ -42,7 +42,8 @@ label{display:block;font-size:13px;color:var(--mut);margin:12px 0 6px}
 .tile .thumb{width:100%;height:auto;aspect-ratio:1;border-radius:10px}
 .tile small{display:block;margin:6px 0 2px;font-size:12px}
 dialog{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:18px;max-width:92vw;width:560px;padding:16px}
-dialog::backdrop{background:rgba(0,0,0,.7)}
+dialog{margin:calc(var(--tabsB,0px) + 10px) auto auto;max-height:calc(100dvh - var(--tabsB,0px) - 20px);overflow:auto;box-shadow:0 12px 40px #000c}
+dialog::backdrop{background:transparent}
 .vars{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
 .run{border-top:1px solid var(--line);padding-top:10px;margin-top:10px;font-size:13px}
 .run b{color:var(--acc)}
@@ -53,7 +54,7 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 .vrow .vname small{display:block;color:var(--mut);font-size:11px;direction:rtl;text-align:right}
 .vrow .btn,.vrow button{min-height:40px;padding:0 12px;flex:0 0 auto}
 .vrow .vdel{padding:0 10px}
-#pvModal{position:fixed;inset:0;background:#000e;z-index:60;display:grid;place-items:center;align-content:center;gap:8px;overflow:auto}
+#pvModal{position:fixed;inset:var(--tabsB,0px) 0 0 0;background:#000e;z-index:60;display:grid;place-items:center;align-content:center;gap:8px;overflow:auto}
 #pvModal[hidden]{display:none!important}
 .rv details.sc{border:1px solid var(--line);border-radius:12px;margin:8px 0;background:#17120f}
 .rv details.sc>summary{padding:10px 12px;cursor:pointer;list-style:none;font-size:14px;line-height:1.7}
@@ -119,7 +120,7 @@ select.sel{width:100%;min-height:44px;font:inherit;background:#17120f;color:var(
 /* ---------- review panel: three buttons in one row, background popup, compact control grids ---------- */
 .row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
 .row3>button{min-height:46px;height:auto;padding:6px 4px;font-size:13px;line-height:1.35;text-align:center}
-#bgDlg{max-height:90vh;overflow:auto}
+#bgDlg{max-height:calc(100dvh - var(--tabsB,0px) - 20px);overflow:auto}
 #bgDlg .dh{display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:-16px;z-index:3;margin:-16px -16px 8px;padding:12px 16px;background:var(--card);border-bottom:1px solid var(--line);border-radius:18px 18px 0 0}
 #bgDlg .fxs{border-top:0;margin-top:0;padding-top:0}
 #bgDlg .pick{max-height:300px;overflow:auto;margin-top:8px}
@@ -146,7 +147,7 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
 /* ---------- desktop (screen at least 1024px wide): wide layout, two columns ---------- */
 @media (min-width:1024px){
   /* scene preview docked in the free space on the right instead of a full-screen popup */
-  #pvModal:not([hidden]){inset:0 0 0 auto;width:min(480px,36vw);background:var(--card);border-left:1px solid var(--line);z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;padding:14px 12px;box-shadow:-8px 0 30px #0008}
+  #pvModal:not([hidden]){inset:var(--tabsB,0px) 0 0 auto;width:min(480px,36vw);background:var(--card);border-left:1px solid var(--line);z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;padding:14px 12px;box-shadow:-8px 0 30px #0008}
   body.pvdock{max-width:none;margin:0 auto 0 0;width:calc(100% - min(480px,36vw))}
   #pvFrame{flex:0 0 auto}
   @media (max-width:1700px){ body.pvdock #ep:not([hidden]){grid-template-columns:minmax(0,1fr)} body.pvdock #ep>#epBuild{grid-column:1;grid-row:auto} }
@@ -457,11 +458,15 @@ async function buildVideo(mode){
       /* the engine takes the first voice_user.* it finds, so an old file with another extension (mp3 vs m4a) would win over the new one: remove every other one */
       try{ const L=await api('/contents/episodes/'+ep); for(const f of L.filter(x=>x.type==='file'&&/^voice_user\./.test(x.name)&&x.name!=='voice_user.'+ext)){ await delFile('episodes/'+ep+'/'+f.name,f.sha,'remove old voice: '+f.name) } }
       catch(e){ st.className='st bad'; st.textContent='ویس قبلی پاک نشد، ساخت متوقف شد: '+e.message; return } }
+    else { /* no new voice chosen: an own voice uploaded earlier must not stay around (the list of voices for this episode is emptied) */
+      try{ const L=await api('/contents/episodes/'+ep); for(const f of L.filter(x=>x.type==='file'&&(/^voice_user\./.test(x.name)||x.name==='spoken.txt'))){ await delFile('episodes/'+ep+'/'+f.name,f.sha,'remove old voice: '+f.name) } }
+      catch(e){ if(!/404/.test(e.message)){ st.className='st bad'; st.textContent='ویس قبلی پاک نشد، ساخت متوقف شد: '+e.message; return } } }
     if(ownF){ let txt=($('#bSpoken')?$('#bSpoken').value:'').trim(); if(txt.length<20) txt=$('#epText').value.trim(); if(txt.length<20){ try{ const j=await api('/contents/episodes/'+ep+'/script.txt'); txt=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))).trim() }catch(e){} }
       txt=cleanScript(txt); if(txt.length>20){ let ssha; try{ ssha=(await api('/contents/episodes/'+ep+'/spoken.txt')).sha }catch(e){}
         await api('/contents/episodes/'+ep+'/spoken.txt',{method:'PUT',body:JSON.stringify({message:'spoken text: '+ep,content:enc(txt),branch:'main',sha:ssha})}); } }
     let sha; try{ sha=(await api('/contents/episodes/'+ep+'/request.json')).sha }catch(e){}
     await api('/contents/episodes/'+ep+'/request.json',{method:'PUT',body:JSON.stringify({message:'build video: '+ep,content:enc(JSON.stringify(body)),branch:'main',sha})});
+    if(ownF){ try{ $('#bOwn').value=''; if($('#bSpoken')) $('#bSpoken').value='' }catch(_){} }
     setTimeout(buildStatus,6000); setTimeout(buildStatus,20000);
     if(mode==='review'){ st.className='st ok'; st.textContent='صحنه‌ها در حال آماده شدن‌اند (۲ تا ۵ دقیقه)…'; let old=''; try{ old=(await api('/contents/episodes/'+ep+'/scenes.json')).sha }catch(e){}
       for(let k=0;k<60;k++){ await sleep(15000); let nw=''; try{ nw=(await api('/contents/episodes/'+ep+'/scenes.json')).sha }catch(e){}
@@ -963,6 +968,13 @@ $('#btnLib').onclick=()=>{ const l=$('#lib'); l.hidden=!l.hidden; };
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); ['want','ep','gen'].forEach(t=>$('#'+t).hidden=t!==b.dataset.t); });
 if(!S.token) $('#settings').hidden=false;
 loadAll();
+</script>
+<script>
+/* keep --tabsB = bottom edge of the sticky tab bar, so popups and docked panels always open below it */
+(function(){ const nav=document.querySelector('nav.tabs'); if(!nav) return;
+  const set=()=>{ const r=nav.getBoundingClientRect(), b=r.bottom>innerHeight*.5?0:Math.max(0,Math.round(r.bottom)); document.documentElement.style.setProperty('--tabsB',b+'px') };
+  ['scroll','resize'].forEach(e=>addEventListener(e,set,{passive:true})); new ResizeObserver(set).observe(nav);
+  document.addEventListener('click',()=>setTimeout(set,0),true); set(); })();
 </script>
 </body>
 </html>
