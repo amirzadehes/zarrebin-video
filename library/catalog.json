@@ -1389,7 +1389,17 @@
    "has_text_in_image": false,
    "variants": [
     "ok-button__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "دکمه",
+    "تأیید",
+    "تایید",
+    "پذیرش",
+    "کلیک",
+    "ادامه",
+    "تاییدیه"
+   ],
+   "fa_tags_for": "اوکی"
   },
   "old-key": {
    "id": "old-key",
