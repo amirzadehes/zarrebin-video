@@ -1,18 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 17:42:26 UTC",
-   "ok": [
-    {
-     "file": "exclamation-mark__mw84dk1w0bi.jpg",
-     "id": "exclamation-mark",
-     "saved": "exclamation-mark__1.webp",
-     "kb": 75
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-08 17:43:06 UTC",
    "ok": [
     {
@@ -804,6 +792,75 @@
     {
      "file": "person-worried__mw9vrozg2xw.jpg",
      "reason": "شیء از لبه‌ی کادر بیرون زده یا بریده شده"
+    }
+   ]
+  },
+  {
+   "time": "2026-11-09 23:27:22 UTC",
+   "ok": [
+    {
+     "file": "brain-gears__mw9w46wr0jw.jpg",
+     "id": "brain-gears",
+     "saved": "brain-gears__1.webp",
+     "kb": 292
+    },
+    {
+     "file": "person-happy__mw9w3u2k0i2.jpg",
+     "id": "person-happy",
+     "saved": "person-happy__1.webp",
+     "kb": 191
+    },
+    {
+     "file": "person-happy__mw9w3u2m1jb.jpg",
+     "id": "person-happy",
+     "saved": "person-happy__2.webp",
+     "kb": 185
+    },
+    {
+     "file": "person-happy__mw9w3u2w2b7.jpg",
+     "id": "person-happy",
+     "saved": "person-happy__3.webp",
+     "kb": 208
+    },
+    {
+     "file": "person-happy__mw9w3u2x38g.jpg",
+     "id": "person-happy",
+     "saved": "person-happy__4.webp",
+     "kb": 209
+    },
+    {
+     "file": "person-thinking__mw9w42it2h1.jpg",
+     "id": "person-thinking",
+     "saved": "person-thinking__1.webp",
+     "kb": 287
+    },
+    {
+     "file": "person-thinking__mw9w42j53bc.jpg",
+     "id": "person-thinking",
+     "saved": "person-thinking__2.webp",
+     "kb": 306
+    },
+    {
+     "file": "spine__mw9w4bzq0h4.jpg",
+     "id": "spine",
+     "saved": "spine__1.webp",
+     "kb": 111
+    },
+    {
+     "file": "spine__mw9w4c0412i.jpg",
+     "id": "spine",
+     "saved": "spine__2.webp",
+     "kb": 106
+    }
+   ],
+   "failed": [
+    {
+     "file": "person-thinking__mw9w42ia0yh.jpg",
+     "reason": "زمینه یک‌دست نیست (سایه یا گرادیان دارد)"
+    },
+    {
+     "file": "person-thinking__mw9w42ii1y7.jpg",
+     "reason": "زمینه یک‌دست نیست (سایه یا گرادیان دارد)"
     }
    ]
   }

@@ -330,6 +330,16 @@
    ],
    "fa_tags_for": "مغز رنگی"
   },
+  "brain-gears": {
+   "id": "brain-gears",
+   "en": "brain gears",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "brain-gears__1.webp"
+   ]
+  },
   "brain-pink": {
    "id": "brain-pink",
    "en": "brain",
@@ -1796,6 +1806,30 @@
    ],
    "fa_tags_for": "مردم تو صف"
   },
+  "person-happy": {
+   "id": "person-happy",
+   "en": "person happy",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "person-happy__1.webp",
+    "person-happy__2.webp",
+    "person-happy__3.webp",
+    "person-happy__4.webp"
+   ]
+  },
+  "person-thinking": {
+   "id": "person-thinking",
+   "en": "person thinking",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "person-thinking__1.webp",
+    "person-thinking__2.webp"
+   ]
+  },
   "person-worried": {
    "id": "person-worried",
    "en": "person worried",
@@ -2322,6 +2356,17 @@
     "طبیعت"
    ],
    "fa_tags_for": "شیشه ادویه"
+  },
+  "spine": {
+   "id": "spine",
+   "en": "spine",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "spine__1.webp",
+    "spine__2.webp"
+   ]
   },
   "star": {
    "id": "star",
