@@ -1,24 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 17:41:45 UTC",
-   "ok": [
-    {
-     "file": "cross-mark__mw84cmnt083.jpg",
-     "id": "cross-mark",
-     "saved": "cross-mark__1.webp",
-     "kb": 124
-    },
-    {
-     "file": "heart__mw84ch5p0uo.jpg",
-     "id": "heart",
-     "saved": "heart__1.webp",
-     "kb": 134
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-08 17:42:26 UTC",
    "ok": [
     {
@@ -793,6 +775,35 @@
     {
      "file": "foot-footprint__mw9vcxkb2mg.jpg",
      "reason": "زمینه یک‌دست نیست (سایه یا گرادیان دارد)"
+    }
+   ]
+  },
+  {
+   "time": "2026-11-09 23:17:10 UTC",
+   "ok": [
+    {
+     "file": "person-worried__mw9vroys03v.jpg",
+     "id": "person-worried",
+     "saved": "person-worried__1.webp",
+     "kb": 283
+    },
+    {
+     "file": "person-worried__mw9vrozb144.jpg",
+     "id": "person-worried",
+     "saved": "person-worried__2.webp",
+     "kb": 282
+    },
+    {
+     "file": "person-worried__mw9vrozh3va.jpg",
+     "id": "person-worried",
+     "saved": "person-worried__3.webp",
+     "kb": 295
+    }
+   ],
+   "failed": [
+    {
+     "file": "person-worried__mw9vrozg2xw.jpg",
+     "reason": "شیء از لبه‌ی کادر بیرون زده یا بریده شده"
     }
    ]
   }

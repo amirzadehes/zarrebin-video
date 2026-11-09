@@ -1796,6 +1796,18 @@
    ],
    "fa_tags_for": "مردم تو صف"
   },
+  "person-worried": {
+   "id": "person-worried",
+   "en": "person worried",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "person-worried__1.webp",
+    "person-worried__2.webp",
+    "person-worried__3.webp"
+   ]
+  },
   "phone-smartphone": {
    "id": "phone-smartphone",
    "en": "phone smartphone",
