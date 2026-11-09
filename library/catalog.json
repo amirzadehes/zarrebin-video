@@ -1144,13 +1144,24 @@
   "hand-stop": {
    "id": "hand-stop",
    "en": "hand stop",
-   "fa": "",
+   "fa": "دست‌توقف",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "hand-stop__1.webp",
     "hand-stop__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "دست",
+    "توقف",
+    "ایست",
+    "نشانه",
+    "دست‌نشان",
+    "ایستگاه",
+    "حالت دست",
+    "نشانه توقف"
+   ],
+   "fa_tags_for": "دست‌توقف"
   },
   "head-profile": {
    "id": "head-profile",
