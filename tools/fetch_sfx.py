@@ -75,10 +75,12 @@ def search(q):
 def download(url, dest):
     tmp = dest + '.part'
     req = urllib.request.Request(url, headers={'User-Agent': 'zarrebin-video'})
-    with urllib.request.urlopen(req, timeout=60) as r, open(tmp, 'wb') as f: f.write(r.read())
-    # normalise to mono mp3 and check the result is decodable
-    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', tmp, '-ac', '1', '-ar', '44100', '-b:a', '128k', '-f', 'mp3', dest], check=True)
-    os.remove(tmp)
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r, open(tmp, 'wb') as f: f.write(r.read())
+        # normalise to mono mp3 (also proves the file is decodable)
+        subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', tmp, '-ac', '1', '-ar', '44100', '-b:a', '128k', '-f', 'mp3', dest], check=True)
+    finally:
+        if os.path.exists(tmp): os.remove(tmp)
 
 
 def main():
