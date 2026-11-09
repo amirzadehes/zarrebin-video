@@ -1379,6 +1379,18 @@
    ],
    "fa_tags_for": "سلول عصبی"
   },
+  "ok-button": {
+   "id": "ok-button",
+   "en": "ok button",
+   "fa": "اوکی",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "ok-button__1.webp"
+   ]
+  },
   "old-key": {
    "id": "old-key",
    "en": "old-fashioned key",
