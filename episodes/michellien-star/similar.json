@@ -1,39 +1,97 @@
 {
+ "silverware-set": [
+  "dinner-plate"
+ ],
  "star": [
-  "star-rating",
-  "three-stars",
+  "one-star",
   "two-stars",
-  "one-star"
+  "three-stars",
+  "star-rating"
  ],
  "rubber-tire": [
   "tire-company-logo"
+ ],
+ "two-brothers": [
+  "adult-male-human"
+ ],
+ "red-guidebook": [
+  "book",
+  "book-open"
  ],
  "book-open": [
   "book"
  ],
  "star-rating": [
-  "star",
   "one-star",
   "two-stars",
-  "three-stars"
+  "three-stars",
+  "star"
  ],
  "one-star": [
-  "star-rating",
   "star",
   "two-stars",
-  "three-stars"
+  "three-stars",
+  "star-rating"
  ],
  "two-stars": [
-  "star-rating",
-  "star",
   "one-star",
-  "three-stars"
+  "three-stars",
+  "star",
+  "star-rating"
  ],
  "three-stars": [
-  "star-rating",
-  "star",
   "one-star",
-  "two-stars"
+  "two-stars",
+  "star",
+  "star-rating"
+ ],
+ "money-bag": [
+  "banknotes",
+  "cash",
+  "money-coins"
+ ],
+ "clock-wall": [
+  "alarm-clock",
+  "hourglass",
+  "stopwatch"
+ ],
+ "street-food-stall": [
+  "restaurant",
+  "roadside-restaurant",
+  "food"
+ ],
+ "reservation-card": [
+  "restaurant",
+  "roadside-restaurant"
+ ],
+ "cash": [
+  "banknotes",
+  "money-bag",
+  "money-coins"
+ ],
+ "banknotes": [
+  "cash",
+  "money-bag",
+  "money-coins"
+ ],
+ "restaurant-sign": [
+  "restaurant",
+  "roadside-restaurant",
+  "street-food-stall"
+ ],
+ "cityscape-chicago": [
+  "eiffel-tower",
+  "hotel-building",
+  "factory"
+ ],
+ "wine-glass": [
+  "coffee-cup",
+  "espresso-cup",
+  "tea-cup"
+ ],
+ "mobile-app": [
+  "phone-smartphone",
+  "laptop"
  ],
  "tire-company-logo": [
   "rubber-tire"

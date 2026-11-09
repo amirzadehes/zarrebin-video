@@ -1,26 +1,80 @@
 {
+ "star": [
+  "one-star",
+  "two-stars",
+  "three-stars",
+  "star-rating"
+ ],
+ "rubber-tire": [
+  "tire-company-logo"
+ ],
+ "map-folded": [
+  "red-guidebook"
+ ],
+ "restaurant": [
+  "roadside-restaurant",
+  "street-food-stall",
+  "reservation-card"
+ ],
  "one-star": [
   "star",
-  "star-rating"
+  "star-rating",
+  "two-stars",
+  "three-stars"
  ],
  "two-stars": [
   "star",
   "star-rating",
+  "one-star",
   "three-stars"
  ],
  "three-stars": [
   "star",
   "star-rating",
+  "one-star",
   "two-stars"
  ],
+ "compass": [
+  "map-folded"
+ ],
+ "chart-up": [
+  "arrow-up",
+  "arrow-right",
+  "curved-arrow"
+ ],
  "money-bag": [
-  "money-coins",
   "banknotes",
   "cash",
-  "euro-sign"
+  "money-coins"
+ ],
+ "thief-mask": [
+  "secret-inspector"
+ ],
+ "reservation-card": [
+  "restaurant",
+  "roadside-restaurant"
+ ],
+ "chef-hat": [
+  "restaurant",
+  "roadside-restaurant"
+ ],
+ "dinner-plate": [
+  "food",
+  "silverware-set",
+  "street-food-stall"
+ ],
+ "trophy": [
+  "star",
+  "star-rating",
+  "one-star",
+  "two-stars",
+  "three-stars"
  ],
  "earth-globe": [
   "planet-earth"
+ ],
+ "video-play": [
+  "item"
  ],
  "magnifier-search": [
   "magnifying-glass"
@@ -28,16 +82,37 @@
  "question-mark": [
   "question-mark-2"
  ],
+ "chart-down": [
+  "chart-up"
+ ],
+ "credit-card": [
+  "banknotes",
+  "cash",
+  "money-bag",
+  "money-coins"
+ ],
+ "newspaper": [
+  "book",
+  "book-open"
+ ],
  "light-bulb-idea": [
   "bulb"
+ ],
+ "brain-colorful": [
+  "brain-pink",
+  "tired-brain"
  ],
  "medal": [
   "trophy"
  ],
  "star-rating": [
-  "star",
-  "three-stars",
+  "one-star",
   "two-stars",
-  "one-star"
+  "three-stars",
+  "star"
+ ],
+ "map-pin": [
+  "map-folded",
+  "compass"
  ]
 }
