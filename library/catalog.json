@@ -235,6 +235,16 @@
    ],
    "fa_tags_for": "تخت‌خواب"
   },
+  "bell": {
+   "id": "bell",
+   "en": "bell",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "bell__1.webp"
+   ]
+  },
   "book": {
    "id": "book",
    "en": "book",
@@ -2418,6 +2428,17 @@
     "پوشش"
    ],
    "fa_tags_for": "نقاب دزد"
+  },
+  "thought-bubble": {
+   "id": "thought-bubble",
+   "en": "thought bubble",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "thought-bubble__1.webp",
+    "thought-bubble__2.webp"
+   ]
   },
   "three-stars": {
    "id": "three-stars",
