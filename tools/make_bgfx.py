@@ -10,6 +10,7 @@ Events (times mirror engine/fx.js):
   item.fx[] / pin.fx[] at (picture time + fx.start), fx.vol = 0-100:
                    steam / smoke (soft hiss), page-turn (paper rustle + flap), tea-ring (soft cup "tok"), aged (slow airy swell), burn (crackling fire),
                    sparkle (glints), shine (swish), crack (glass crack). glow / wiggle / pulse are silent.
+                   sound = a file from sfx/ chosen in the app: fx.file, fx.start / fx.end (seconds after the picture appears, end 0 = whole clip), fx.vol.
 No bg / pins / fx in scenes.json -> no file is written (the merge step skips a missing bgfx.wav)."""
 import json, sys, wave, os, zlib
 import numpy as np
@@ -97,9 +98,21 @@ def main(ep):
         buf[a:b] += snd[:b - a] * g; n_ev += 1
     DEF = {'steam': (.3, 35, 2.5), 'smoke': (.3, 35, 2.5), 'page-turn': (0, 60, 1.1), 'tea-ring': (.2, 50, 0), 'aged': (0, 25, 1.2), 'burn': (.3, 55, 2.2),
            'sparkle': (.2, 40, 0), 'shine': (.3, 40, .9), 'crack': (.3, 60, 0)}
+    def lib_sound(f, t_pic):   # a sound chosen in the app from sfx/: start / end are seconds after the picture appears, vol 0-100
+        name = os.path.basename(str(f.get('file') or ''))
+        path = os.path.join('sfx', name)
+        if not name or not os.path.isfile(path): print('bgfx: sound file not found, skipped:', name or '(none)'); return
+        x = M._load(path)
+        if x is None: return
+        st = clamp(fnum(f.get('start'), 0), 0, 600); en = fnum(f.get('end'), 0)
+        if en > st:   # stop earlier than the end of the file, with a short fade so it does not click
+            x = x[:int((en - st) * SR)]; x = M.fade(x, .003, min(.06, len(x) / SR / 2))
+        put(x, t_pic + st, clamp(fnum(f.get('vol'), 70), 0, 100) / 100)
     def fx_sounds(fxs, t_pic):
         for f in fxs or []:
-            typ = f.get('type'); dflt = DEF.get(typ)
+            typ = f.get('type')
+            if typ == 'sound': lib_sound(f, t_pic); continue
+            dflt = DEF.get(typ)
             if not dflt: continue
             st, v, d = dflt; vol = clamp(fnum(f.get('vol'), v), 0, 100) / 100; t = t_pic + fnum(f.get('start'), st); dur = fnum(f.get('dur'), d) or d
             if typ in ('steam', 'smoke'): put(steam_hiss(dur or 2.5), t, vol)
