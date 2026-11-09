@@ -5,18 +5,15 @@
   "tpl": "hero",
   "items": [
    {
-    "id": "rubber-tire",
-    "at": "لاستیک"
-   },
-   {
-    "id": "trophy",
-    "sent": 0
+    "id": "question-mark",
+    "at": "معتبرترین"
    }
   ],
-  "text": "*مستحق* جایزه؟",
+  "text": "*معتبرترین* جایزه آشپزی؟",
   "number": "",
   "decor": [],
   "kw": [
+   "معتبرترین",
    "جایزه",
    "آشپزی"
   ]
@@ -27,28 +24,48 @@
   "tpl": "duo",
   "items": [
    {
-    "id": "two-brothers",
-    "at": "برادران"
+    "id": "trophy",
+    "at": "میشلین"
    },
    {
-    "id": "micheline",
+    "id": "chef-hat",
     "at": "میشلین"
    }
   ],
-  "text": "میشلین، برند مشهور",
+  "text": "*همون* میشلین",
   "number": "",
   "decor": [],
   "kw": [
-   "میشلین",
-   "لاستیک"
+   "میشلین"
   ]
  },
  {
   "from": 4,
   "to": 7,
-  "tpl": "statement",
-  "items": [],
-  "text": "*آدمک* سفید و چاق",
+  "tpl": "trio",
+  "items": [
+   {
+    "id": "rubber-tire",
+    "at": "آدمک"
+   },
+   {
+    "id": "tire-company-logo",
+    "at": "آدمک"
+   },
+   {
+    "id": "chef-hat",
+    "at": "آدمک"
+   },
+   {
+    "id": "car",
+    "sent": 6
+   },
+   {
+    "id": "two-brothers",
+    "sent": 7
+   }
+  ],
+  "text": "*آدمک* سفید و چاقی از لاستیک",
   "number": "",
   "decor": [],
   "kw": [
@@ -59,30 +76,15 @@
  {
   "from": 7,
   "to": 10,
-  "tpl": "trio",
-  "items": [
-   {
-    "id": "tire-company-logo",
-    "at": "شرکت"
-   },
-   {
-    "id": "road",
-    "at": "جاده"
-   },
-   {
-    "id": "rocket",
-    "at": "راکت"
-   },
-   {
-    "id": "car",
-    "sent": 9
-   }
-  ],
-  "text": "شرکت چطور غذاها را می‌سازد؟",
+  "tpl": "statement",
+  "items": [],
+  "text": "*شرکت* لاستیک چطور غذاها را می‌سنجد؟",
   "number": "",
-  "decor": [],
+  "decor": [
+   "factory"
+  ],
   "kw": [
-   "شرکت",
+   "شرکت لاستیک",
    "غذا"
   ]
  },
@@ -96,7 +98,11 @@
     "at": "سال"
    },
    {
-    "id": "compass",
+    "id": "road",
+    "sent": 11
+   },
+   {
+    "id": "hotel-building",
     "sent": 13
    },
    {
@@ -104,20 +110,15 @@
     "sent": 13
    },
    {
-    "id": "hotel-building",
-    "sent": 13
-   },
-   {
     "id": "map-folded",
     "sent": 13
    }
   ],
-  "text": "برگردیم به *سال* 1900",
+  "text": "*برگردیم* به سال 1900",
   "number": "",
   "decor": [],
   "kw": [
-   "1900",
-   "فرانسه"
+   "سال 1900"
   ]
  },
  {
@@ -126,8 +127,8 @@
   "tpl": "statement",
   "items": [
    {
-    "id": "star",
-    "sent": 23
+    "id": "compass",
+    "sent": 15
    }
   ],
   "_up": true
@@ -138,24 +139,20 @@
   "tpl": "statement",
   "items": [
    {
+    "id": "star",
+    "sent": 24
+   },
+   {
     "id": "one-star",
     "sent": 26
    },
    {
-    "id": "restaurant",
-    "sent": 24
-   },
-   {
-    "id": "star-rating",
-    "sent": 33
+    "id": "two-stars",
+    "sent": 27
    },
    {
     "id": "three-stars",
     "sent": 28
-   },
-   {
-    "id": "two-stars",
-    "sent": 27
    }
   ],
   "_up": true
@@ -166,7 +163,7 @@
   "tpl": "statement",
   "items": [
    {
-    "id": "chef-hat",
+    "id": "restaurant",
     "sent": 42
    },
    {
@@ -179,30 +176,12 @@
  {
   "from": 48,
   "to": 59,
-  "tpl": "statement",
-  "items": [
-   {
-    "id": "eiffel-tower",
-    "sent": 54
-   }
-  ],
-  "_up": true
+  "tpl": "statement"
  },
  {
   "from": 60,
   "to": 71,
-  "tpl": "statement",
-  "items": [
-   {
-    "id": "earth-globe",
-    "sent": 65
-   },
-   {
-    "id": "money-bag",
-    "sent": 65
-   }
-  ],
-  "_up": true
+  "tpl": "statement"
  },
  {
   "from": 72,
