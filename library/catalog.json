@@ -1458,6 +1458,16 @@
    ],
    "fa_tags_for": "نقشه تا شده"
   },
+  "megaphone": {
+   "id": "megaphone",
+   "en": "megaphone",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "megaphone__1.webp"
+   ]
+  },
   "microscope": {
    "id": "microscope",
    "en": "microscope",
