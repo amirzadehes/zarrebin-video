@@ -274,6 +274,17 @@
    ],
    "fa_tags_for": "کتاب باز"
   },
+  "books-stack": {
+   "id": "books-stack",
+   "en": "books stack",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "books-stack__1.webp",
+    "books-stack__2.webp"
+   ]
+  },
   "brain-colorful": {
    "id": "brain-colorful",
    "en": "colorful brain",
@@ -1023,6 +1034,16 @@
    ],
    "fa_tags_for": "پمپ بنزین"
   },
+  "gavel": {
+   "id": "gavel",
+   "en": "gavel",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "gavel__1.webp"
+   ]
+  },
   "gears": {
    "id": "gears",
    "en": "gears",
@@ -1044,6 +1065,18 @@
     "ابزار"
    ],
    "fa_tags_for": "دنده‌ها"
+  },
+  "hammer": {
+   "id": "hammer",
+   "en": "hammer",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "hammer__1.webp",
+    "hammer__2.webp",
+    "hammer__3.webp"
+   ]
   },
   "head-profile": {
    "id": "head-profile",
