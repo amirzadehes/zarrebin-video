@@ -1141,6 +1141,17 @@
    ],
    "fa_tags_for": "چکش"
   },
+  "hand-stop": {
+   "id": "hand-stop",
+   "en": "hand stop",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "hand-stop__1.webp",
+    "hand-stop__2.webp"
+   ]
+  },
   "head-profile": {
    "id": "head-profile",
    "en": "human head in side profile",

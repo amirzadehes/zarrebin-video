@@ -1,30 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 16:56:09 UTC",
-   "ok": [
-    {
-     "file": "trophy__mw82pu540vn.jpg",
-     "id": "trophy",
-     "saved": "trophy__1.webp",
-     "kb": 100
-    },
-    {
-     "file": "trophy__mw82pu5a158.jpg",
-     "id": "trophy",
-     "saved": "trophy__2.webp",
-     "kb": 73
-    },
-    {
-     "file": "trophy__mw82pu5a2pl.jpg",
-     "id": "trophy",
-     "saved": "trophy__3.webp",
-     "kb": 127
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-08 16:59:27 UTC",
    "ok": [
     {
@@ -756,6 +732,24 @@
      "id": "megaphone",
      "saved": "megaphone__1.webp",
      "kb": 154
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-09 22:56:19 UTC",
+   "ok": [
+    {
+     "file": "hand-stop__mw9v10xg0tj.jpg",
+     "id": "hand-stop",
+     "saved": "hand-stop__1.webp",
+     "kb": 176
+    },
+    {
+     "file": "hand-stop__mw9v10xi1c6.jpg",
+     "id": "hand-stop",
+     "saved": "hand-stop__2.webp",
+     "kb": 170
     }
    ],
    "failed": []
