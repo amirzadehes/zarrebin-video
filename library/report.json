@@ -1,18 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-27 15:18:01 UTC",
-   "ok": [
-    {
-     "file": "football-referee__mvqtxhp4.jpg",
-     "id": "football-referee",
-     "saved": "football-referee__1.webp",
-     "kb": 150
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-10-27 15:19:09 UTC",
    "ok": [],
    "failed": [
@@ -696,6 +684,16 @@
     }
    ],
    "failed": []
+  },
+  {
+   "time": "2026-11-09 21:07:51 UTC",
+   "ok": [],
+   "failed": [
+    {
+     "file": "critic__mw9r5la9.jpg",
+     "reason": "شیء از لبه‌ی کادر بیرون زده یا بریده شده"
+    }
+   ]
   }
  ]
 }
