@@ -1085,13 +1085,23 @@
   "graduation-cap": {
    "id": "graduation-cap",
    "en": "graduation cap",
-   "fa": "",
+   "fa": "قبقاب فارغ‌التحصیلی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "graduation-cap__1.webp",
     "graduation-cap__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "قبقاب",
+    "فارغ‌التحصیلی",
+    "مدرسه",
+    "دانشگاه",
+    "کلاس",
+    "تحصیل",
+    "مدرک"
+   ],
+   "fa_tags_for": "قبقاب فارغ‌التحصیلی"
   },
   "hammer": {
    "id": "hammer",
@@ -1644,13 +1654,23 @@
   "pencil": {
    "id": "pencil",
    "en": "pencil",
-   "fa": "",
+   "fa": "مداد",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "pencil__1.webp",
     "pencil__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "مداد",
+    "کاغذ",
+    "نویس",
+    "دست‌نویس",
+    "رسم",
+    "کلاس",
+    "مدرسه"
+   ],
+   "fa_tags_for": "مداد"
   },
   "people-standing-in-line": {
    "id": "people-standing-in-line",
@@ -2032,13 +2052,23 @@
   "scales-justice": {
    "id": "scales-justice",
    "en": "scales justice",
-   "fa": "",
+   "fa": "تراز عدالت",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "scales-justice__1.webp",
     "scales-justice__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "تراز",
+    "عدالت",
+    "قانون",
+    "محاکمه",
+    "حقوق",
+    "توازن",
+    "نقش"
+   ],
+   "fa_tags_for": "تراز عدالت"
   },
   "secret-inspector": {
    "id": "secret-inspector",
