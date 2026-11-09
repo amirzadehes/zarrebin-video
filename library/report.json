@@ -1,39 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-27 08:48:56 UTC",
-   "ok": [
-    {
-     "file": "cash__mvqg0saj0.jpg",
-     "id": "cash",
-     "saved": "cash__1.webp",
-     "kb": 209
-    },
-    {
-     "file": "safety-glasses__mvqfzzld0.jpg",
-     "id": "safety-glasses",
-     "saved": "safety-glasses__1.webp",
-     "kb": 67
-    },
-    {
-     "file": "safety-glasses__mvqg01vh1.jpg",
-     "id": "safety-glasses",
-     "saved": "safety-glasses__2.webp",
-     "kb": 64
-    }
-   ],
-   "failed": [
-    {
-     "file": "safety-glasses__mvqg0o7w0.jpg",
-     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: safety-glasses__2.webp)"
-    },
-    {
-     "file": "safety-glasses__mvqg0qtl1.jpg",
-     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: safety-glasses__1.webp)"
-    }
-   ]
-  },
-  {
    "time": "2026-10-27 15:18:01 UTC",
    "ok": [
     {
@@ -714,6 +681,18 @@
      "id": "item-4",
      "saved": "item-4__1.webp",
      "kb": 202
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-09 21:01:45 UTC",
+   "ok": [
+    {
+     "file": "city__mw9qxgrw.jpg",
+     "id": "city",
+     "saved": "city__1.webp",
+     "kb": 406
     }
    ],
    "failed": []

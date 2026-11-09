@@ -500,6 +500,18 @@
    ],
    "fa_tags_for": "کلاه سرآشپز"
   },
+  "city": {
+   "id": "city",
+   "en": "city",
+   "fa": "شهر",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "city__1.webp"
+   ]
+  },
   "cityscape-chicago": {
    "id": "cityscape-chicago",
    "en": "cityscape chicago",
