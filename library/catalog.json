@@ -277,13 +277,21 @@
   "books-stack": {
    "id": "books-stack",
    "en": "books stack",
-   "fa": "",
+   "fa": "پشته کتاب",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "books-stack__1.webp",
     "books-stack__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کتاب",
+    "پشته",
+    "کتابخانه",
+    "مطالعه",
+    "سازماندهی"
+   ],
+   "fa_tags_for": "پشته کتاب"
   },
   "brain-colorful": {
    "id": "brain-colorful",
@@ -1037,12 +1045,20 @@
   "gavel": {
    "id": "gavel",
    "en": "gavel",
-   "fa": "",
+   "fa": "چکش قاضی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "gavel__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "چکش",
+    "قاضی",
+    "دادگاه",
+    "حکم",
+    "عدالت"
+   ],
+   "fa_tags_for": "چکش قاضی"
   },
   "gears": {
    "id": "gears",
@@ -1069,14 +1085,22 @@
   "hammer": {
    "id": "hammer",
    "en": "hammer",
-   "fa": "",
+   "fa": "چکش",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "hammer__1.webp",
     "hammer__2.webp",
     "hammer__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "چکش",
+    "ابزار",
+    "ساخت‌وساز",
+    "کار",
+    "آهنگری"
+   ],
+   "fa_tags_for": "چکش"
   },
   "head-profile": {
    "id": "head-profile",
