@@ -238,12 +238,20 @@
   "bell": {
    "id": "bell",
    "en": "bell",
-   "fa": "",
+   "fa": "زنگ",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "bell__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "زنگ",
+    "صدا",
+    "آواز",
+    "سینت",
+    "کلیک"
+   ],
+   "fa_tags_for": "زنگ"
   },
   "book": {
    "id": "book",
@@ -2432,13 +2440,21 @@
   "thought-bubble": {
    "id": "thought-bubble",
    "en": "thought bubble",
-   "fa": "",
+   "fa": "نقاب فکر",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "thought-bubble__1.webp",
     "thought-bubble__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "نقاب فکر",
+    "فکر",
+    "بابل",
+    "پیامک",
+    "گفتگو"
+   ],
+   "fa_tags_for": "نقاب فکر"
   },
   "three-stars": {
    "id": "three-stars",
