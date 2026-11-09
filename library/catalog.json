@@ -1117,6 +1117,18 @@
    ],
    "fa_tags_for": "سنگاپور"
   },
+  "item-4": {
+   "id": "item-4",
+   "en": "فلوریدا",
+   "fa": "فلوریدا",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "item-4__1.webp"
+   ]
+  },
   "key": {
    "id": "key",
    "en": "key",
