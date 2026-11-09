@@ -1601,14 +1601,24 @@
   "muscle-arm": {
    "id": "muscle-arm",
    "en": "muscle arm",
-   "fa": "",
+   "fa": "عضله بازو",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "muscle-arm__1.webp",
     "muscle-arm__2.webp",
     "muscle-arm__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "عضله",
+    "بازو",
+    "بدن",
+    "تمرین",
+    "ورزش",
+    "فیتنس",
+    "قدرت"
+   ],
+   "fa_tags_for": "عضله بازو"
   },
   "neuron": {
    "id": "neuron",
@@ -2531,24 +2541,42 @@
   "thumbs-down": {
    "id": "thumbs-down",
    "en": "thumbs down",
-   "fa": "",
+   "fa": "انگشت پایین",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "thumbs-down__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "رد",
+    "امتیاز منفی",
+    "علامت رد",
+    "نظرسنجی",
+    "واکنش منفی",
+    "نماد رد"
+   ],
+   "fa_tags_for": "انگشت پایین"
   },
   "thumbs-up": {
    "id": "thumbs-up",
    "en": "thumbs up",
-   "fa": "",
+   "fa": "انگشت بالا",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "thumbs-up__1.webp",
     "thumbs-up__2.webp",
     "thumbs-up__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "تایید",
+    "پسند",
+    "امتیاز مثبت",
+    "نظرسنجی",
+    "واکنش مثبت",
+    "نماد پسند"
+   ],
+   "fa_tags_for": "انگشت بالا"
   },
   "tire-company-logo": {
    "id": "tire-company-logo",
