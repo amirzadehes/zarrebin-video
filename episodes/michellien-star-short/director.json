@@ -1,47 +1,212 @@
 [
  {
   "from": 0,
-  "to": 11,
-  "tpl": "statement"
+  "to": 2,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "rubber-tire",
+    "at": "لاستیک"
+   },
+   {
+    "id": "trophy",
+    "sent": 0
+   }
+  ],
+  "text": "*مستحق* جایزه؟",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "جایزه",
+   "آشپزی"
+  ]
+ },
+ {
+  "from": 2,
+  "to": 4,
+  "tpl": "duo",
+  "items": [
+   {
+    "id": "two-brothers",
+    "at": "برادران"
+   },
+   {
+    "id": "micheline",
+    "at": "میشلین"
+   }
+  ],
+  "text": "میشلین، برند مشهور",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "میشلین",
+   "لاستیک"
+  ]
+ },
+ {
+  "from": 4,
+  "to": 7,
+  "tpl": "statement",
+  "items": [],
+  "text": "*آدمک* سفید و چاق",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "آدمک",
+   "لاستیک"
+  ]
+ },
+ {
+  "from": 7,
+  "to": 10,
+  "tpl": "trio",
+  "items": [
+   {
+    "id": "tire-company-logo",
+    "at": "شرکت"
+   },
+   {
+    "id": "road",
+    "at": "جاده"
+   },
+   {
+    "id": "rocket",
+    "at": "راکت"
+   },
+   {
+    "id": "car",
+    "sent": 9
+   }
+  ],
+  "text": "شرکت چطور غذاها را می‌سازد؟",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "شرکت",
+   "غذا"
+  ]
+ },
+ {
+  "from": 10,
+  "to": 13,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "calendar",
+    "at": "سال"
+   },
+   {
+    "id": "compass",
+    "sent": 13
+   },
+   {
+    "id": "gas-pump",
+    "sent": 13
+   },
+   {
+    "id": "hotel-building",
+    "sent": 13
+   },
+   {
+    "id": "map-folded",
+    "sent": 13
+   }
+  ],
+  "text": "برگردیم به *سال* 1900",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "1900",
+   "فرانسه"
+  ]
  },
  {
   "from": 12,
-  "to": 13,
-  "tpl": "hero"
- },
- {
-  "from": 14,
-  "to": 15,
-  "tpl": "hero"
- },
- {
-  "from": 16,
-  "to": 17,
-  "tpl": "hero"
- },
- {
-  "from": 18,
-  "to": 19,
-  "tpl": "hero"
- },
- {
-  "from": 20,
-  "to": 21,
-  "tpl": "hero"
- },
- {
-  "from": 22,
   "to": 23,
-  "tpl": "hero"
+  "tpl": "statement",
+  "items": [
+   {
+    "id": "star",
+    "sent": 23
+   }
+  ],
+  "_up": true
  },
  {
   "from": 24,
-  "to": 25,
-  "tpl": "hero"
+  "to": 35,
+  "tpl": "statement",
+  "items": [
+   {
+    "id": "one-star",
+    "sent": 26
+   },
+   {
+    "id": "restaurant",
+    "sent": 24
+   },
+   {
+    "id": "star-rating",
+    "sent": 33
+   },
+   {
+    "id": "three-stars",
+    "sent": 28
+   },
+   {
+    "id": "two-stars",
+    "sent": 27
+   }
+  ],
+  "_up": true
  },
  {
-  "from": 26,
-  "to": 27,
-  "tpl": "hero"
+  "from": 36,
+  "to": 47,
+  "tpl": "statement",
+  "items": [
+   {
+    "id": "chef-hat",
+    "sent": 42
+   },
+   {
+    "id": "dinner-plate",
+    "sent": 42
+   }
+  ],
+  "_up": true
+ },
+ {
+  "from": 48,
+  "to": 59,
+  "tpl": "statement",
+  "items": [
+   {
+    "id": "eiffel-tower",
+    "sent": 54
+   }
+  ],
+  "_up": true
+ },
+ {
+  "from": 60,
+  "to": 71,
+  "tpl": "statement",
+  "items": [
+   {
+    "id": "earth-globe",
+    "sent": 65
+   },
+   {
+    "id": "money-bag",
+    "sent": 65
+   }
+  ],
+  "_up": true
+ },
+ {
+  "from": 72,
+  "to": 73,
+  "tpl": "statement"
  }
 ]

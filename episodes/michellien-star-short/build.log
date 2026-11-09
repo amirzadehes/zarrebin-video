@@ -1,5 +1,15 @@
-using the reviewed scenes.json: 20 scenes
+sentences where the recording differs from the pasted text: 45 of 74
+own voice + own text: words matched 95%
+library images offered to the director: 113 | priority (this episode): 34
 model: openai/gpt-oss-120b
-sfx events 69 dropped (too dense) 23 from library 0 peak 0.51 seconds 127.1
-model: openai/gpt-oss-120b
-no music uploaded yet (app > settings > music) - video will have no background music
+rate limited, waiting 7s
+rate limited, waiting 3s
+rate limited, waiting 31s
+rate limited, waiting 3s
+rate limited, waiting 21s
+rate limited, waiting 24s
+rate limited, waiting 10s
+rate limited, waiting 23s
+rate limited, waiting 19s
+coverage pass: placed 17 of 29 unused priority images
+scenes 57 total 312.0 templates {'hero': 37, 'duo': 0, 'trio': 20, 'statement': 0, 'stat': 0}
