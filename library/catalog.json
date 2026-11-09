@@ -1799,14 +1799,23 @@
   "person-worried": {
    "id": "person-worried",
    "en": "person worried",
-   "fa": "",
+   "fa": "شخص نگران",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "person-worried__1.webp",
     "person-worried__2.webp",
     "person-worried__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "انسان",
+    "فرد",
+    "نگران",
+    "اضطراب",
+    "احساس",
+    "حالت"
+   ],
+   "fa_tags_for": "شخص نگران"
   },
   "phone-smartphone": {
    "id": "phone-smartphone",

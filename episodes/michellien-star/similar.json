@@ -1,1 +1,25 @@
-{}
+{
+ "star": [
+  "one-star",
+  "star-rating",
+  "three-stars",
+  "two-stars"
+ ],
+ "rubber-tire": [
+  "tire-company-logo"
+ ],
+ "red-guidebook": [
+  "book",
+  "book-open",
+  "books-stack"
+ ],
+ "hotel-building": [
+  "city",
+  "cityscape-chicago"
+ ],
+ "book-open": [
+  "book",
+  "books-stack",
+  "red-guidebook"
+ ]
+}
