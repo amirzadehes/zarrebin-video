@@ -14,9 +14,19 @@ canvas{display:block;position:absolute;left:50%;top:50%;transform:translate(-50%
 const msg=document.getElementById('msg'), cvs=document.getElementById('out'), au=new Audio(); au.preload='auto';
 let sc=null, si=0, raf=0, playing=false, mode='play', ptrs=new Map(), pinch0=null;
 function fit(){ const k=Math.min(innerWidth/W, innerHeight/H); cvs.style.width=(W*k)+'px'; cvs.style.height=(H*k)+'px' } addEventListener('resize',fit); fit();
-function stop(){ playing=false; cancelAnimationFrame(raf); au.pause() }
-function tick(){ if(!playing) return; const t=au.currentTime; if(t>=sc.t1-.02||au.ended){ seek(Math.max(sc.t1-.03,sc.t0)); playing=false; au.pause(); msg.hidden=false; msg.textContent='▶ دوباره پخش'; return } seek(t); raf=requestAnimationFrame(tick) }
-async function play(){ stop(); setEdit(null); mode='play'; au.currentTime=sc.t0; seek(sc.t0); try{ await au.play() }catch(e){ msg.hidden=false; msg.textContent='▶ برای پخش لمس کن'; return } msg.hidden=true; playing=true; tick() }
+/* sound effects chosen in the app (fx of type 'sound', files in ../sfx/): played together with the voice while the scene preview runs.
+   Same times as tools/make_bgfx.py: picture time (it.t) or scene start + pin.start, plus fx.start; fx.end stops it early. Level ~ the final mix (clip peak .8 x weight .8) */
+let sfxEv=[], sfxLast=0, sfxAct=new Set();
+function sfxBuild(){ sfxEv=[]; const add=(t0,f)=>{ if(!f||f.type!=='sound'||!f.file) return; const st=clampv(+f.start||0,0,600), en=+f.end||0; sfxEv.push({t:t0+st,file:String(f.file).split('/').pop(),dur:en>st?en-st:0,vol:clampv(f.vol==null?70:+f.vol,0,100)/100}) };
+  (sc.items||[]).forEach(it=>(it.fx||[]).forEach(f=>add(it.t,f))); (sc.pins||[]).forEach(q=>(q.fx||[]).forEach(f=>add(sc.t0+clampv(+q.start||0,0,30),f))) }
+function sfxStop(){ sfxAct.forEach(a=>{ try{ a.pause() }catch(e){} }); sfxAct.clear() }
+function sfxFire(from,to){ sfxEv.forEach(e=>{ if(e.t<from||e.t>=to) return; const a=new Audio('../sfx/'+encodeURIComponent(e.file)); a.volume=Math.min(1,e.vol*.64); sfxAct.add(a); a.onended=()=>sfxAct.delete(a); a.play().catch(()=>sfxAct.delete(a));
+  if(e.dur>0) setTimeout(()=>{ try{ a.pause() }catch(x){} sfxAct.delete(a) },e.dur*1000) }) }
+let sfxTm=0;   // own 25 ms timer: a slow frame (big scene, weak phone) must not delay a sound
+function sfxPoll(){ const t=au.currentTime; if(t>=sfxLast){ sfxFire(sfxLast,t+.001); sfxLast=t+.001 } else sfxLast=t }
+function stop(){ playing=false; cancelAnimationFrame(raf); au.pause(); clearInterval(sfxTm); sfxStop() }
+function tick(){ if(!playing) return; const t=au.currentTime; sfxPoll(); if(t>=sc.t1-.02||au.ended){ seek(Math.max(sc.t1-.03,sc.t0)); playing=false; au.pause(); msg.hidden=false; msg.textContent='▶ دوباره پخش'; return } seek(t); raf=requestAnimationFrame(tick) }
+async function play(){ stop(); setEdit(null); mode='play'; sfxBuild(); sfxLast=sc.t0-.001; au.currentTime=sc.t0; seek(sc.t0); try{ await au.play() }catch(e){ msg.hidden=false; msg.textContent='▶ برای پخش لمس کن'; return } msg.hidden=true; playing=true; sfxTm=setInterval(sfxPoll,25); tick() }
 const editT=()=>Math.min(sc.t1-.2, D.meta.total-.6);
 function edit(sel){ window.__sel=sel; stop(); mode='edit'; msg.hidden=true; setEdit({sel}); seek(editT()) }
 cvs.addEventListener('pointerdown',e=>{ if(mode!=='edit'){ if(!playing&&sc) play(); return }
