@@ -369,5 +369,13 @@
   "tags": [
    "mine"
   ]
+ },
+ {
+  "id": "city",
+  "en": "city",
+  "fa": "شهر",
+  "tags": [
+   "mine"
+  ]
  }
 ]
