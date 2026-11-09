@@ -1,116 +1,72 @@
 [
  {
   "from": 0,
-  "to": 2,
-  "tpl": "hero",
-  "items": [
-   {
-    "id": "question-mark",
-    "at": "میتونی"
-   },
-   {
-    "id": "chef-hat",
-    "sent": 0
-   }
-  ],
-  "text": "*معتبرترین* جایزه آشپزی؟",
-  "number": "",
-  "decor": [],
-  "kw": [
-   "جایزه",
-   "آشپزی"
-  ]
+  "to": 1,
+  "tpl": "hero"
  },
  {
   "from": 2,
-  "to": 5.5,
-  "tpl": "duo",
-  "items": [
-   {
-    "id": "tire-company-logo",
-    "at": "میشلین"
-   },
-   {
-    "id": "star",
-    "at": "میشلین"
-   }
-  ],
-  "text": "میشلین",
-  "number": "",
-  "decor": [],
-  "kw": [
-   "میشلین"
-  ]
+  "to": 3,
+  "tpl": "hero"
+ },
+ {
+  "from": 4,
+  "to": 5,
+  "tpl": "hero"
+ },
+ {
+  "from": 6,
+  "to": 7,
+  "tpl": "hero"
+ },
+ {
+  "from": 8,
+  "to": 9,
+  "tpl": "hero"
+ },
+ {
+  "from": 10,
+  "to": 11,
+  "tpl": "hero"
  },
  {
   "from": 12,
+  "to": 13,
+  "tpl": "hero"
+ },
+ {
+  "from": 14,
+  "to": 15,
+  "tpl": "hero"
+ },
+ {
+  "from": 16,
+  "to": 17,
+  "tpl": "hero"
+ },
+ {
+  "from": 18,
+  "to": 19,
+  "tpl": "hero"
+ },
+ {
+  "from": 20,
+  "to": 21,
+  "tpl": "hero"
+ },
+ {
+  "from": 22,
   "to": 23,
-  "tpl": "statement",
-  "items": [
-   {
-    "id": "map-folded",
-    "sent": 13
-   },
-   {
-    "id": "hotel-building",
-    "sent": 13
-   },
-   {
-    "id": "restaurant",
-    "sent": 13
-   }
-  ],
-  "_up": true
+  "tpl": "hero"
  },
  {
   "from": 24,
-  "to": 35,
-  "tpl": "statement",
-  "items": [
-   {
-    "id": "star-rating",
-    "sent": 24
-   },
-   {
-    "id": "one-star",
-    "sent": 26
-   },
-   {
-    "id": "two-stars",
-    "sent": 27
-   },
-   {
-    "id": "three-stars",
-    "sent": 28
-   }
-  ],
-  "_up": true
+  "to": 25,
+  "tpl": "hero"
  },
  {
-  "from": 36,
-  "to": 47,
-  "tpl": "statement"
- },
- {
-  "from": 48,
-  "to": 59,
-  "tpl": "statement"
- },
- {
-  "from": 60,
-  "to": 71,
-  "tpl": "statement",
-  "items": [
-   {
-    "id": "trophy",
-    "sent": 70
-   }
-  ],
-  "_up": true
- },
- {
-  "from": 72,
-  "to": 73,
-  "tpl": "statement"
+  "from": 26,
+  "to": 27,
+  "tpl": "hero"
  }
 ]

@@ -1,5 +1,14 @@
-using the reviewed scenes.json: 57 scenes
+sentences where the recording differs from the pasted text: 14 of 28
+own voice + own text: words matched 97%
+library images offered to the director: 127 | priority (this episode): 34
 model: openai/gpt-oss-120b
-sfx events 160 dropped (too dense) 111 from library 0 peak 0.54 seconds 313.0
-bgfx events 131 peak 0.43 seconds 315.0
-music off
+model openai/gpt-oss-120b is rate limited for a long time (542s): switching model
+model: qwen/qwen3.8-27b
+model qwen/qwen3.8-27b is rate limited for a long time (842s): switching model
+model: openai/gpt-oss-20b
+model openai/gpt-oss-20b is rate limited for a long time (482s): switching model
+director fallback for sentences 0-11 (no AI): Groq: every model has hit its rate limit; try again later
+director fallback for sentences 12-23 (no AI): Groq: every model has hit its rate limit; try again later
+director fallback for sentences 24-27 (no AI): Groq: every model has hit its rate limit; try again later
+coverage pass skipped: Groq: every model has hit its rate limit; try again later
+scenes 23 total 126.09 templates {'hero': 23, 'duo': 0, 'trio': 0, 'statement': 0, 'stat': 0}
