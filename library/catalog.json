@@ -1026,7 +1026,7 @@
   "gears": {
    "id": "gears",
    "en": "gears",
-   "fa": "",
+   "fa": "دنده‌ها",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -1034,7 +1034,16 @@
     "gears__2.webp",
     "gears__3.webp",
     "gears__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "دنده",
+    "چرخ‌دنده",
+    "مکانیک",
+    "ماشین",
+    "انتقال‌قدرت",
+    "ابزار"
+   ],
+   "fa_tags_for": "دنده‌ها"
   },
   "head-profile": {
    "id": "head-profile",
