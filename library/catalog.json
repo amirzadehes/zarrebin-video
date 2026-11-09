@@ -1461,12 +1461,22 @@
   "megaphone": {
    "id": "megaphone",
    "en": "megaphone",
-   "fa": "",
+   "fa": "مگافون",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "megaphone__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "صدا",
+    "بلندگو",
+    "اعلان",
+    "تقویت صدا",
+    "ابزار صوتی",
+    "ارتباط",
+    "رویداد"
+   ],
+   "fa_tags_for": "مگافون"
   },
   "microscope": {
    "id": "microscope",
