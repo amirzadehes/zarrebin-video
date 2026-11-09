@@ -1,18 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 16:53:01 UTC",
-   "ok": [
-    {
-     "file": "roadside-restaurant__mw82m1k50ua.jpg",
-     "id": "roadside-restaurant",
-     "saved": "roadside-restaurant__1.webp",
-     "kb": 132
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-08 16:53:57 UTC",
    "ok": [
     {
@@ -744,6 +732,24 @@
      "id": "pencil",
      "saved": "pencil__2.webp",
      "kb": 71
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-09 22:49:50 UTC",
+   "ok": [
+    {
+     "file": "scales-justice__mw9usp7o0w5.jpg",
+     "id": "scales-justice",
+     "saved": "scales-justice__1.webp",
+     "kb": 98
+    },
+    {
+     "file": "scales-justice__mw9usp7y1co.jpg",
+     "id": "scales-justice",
+     "saved": "scales-justice__2.webp",
+     "kb": 112
     }
    ],
    "failed": []

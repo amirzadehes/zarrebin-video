@@ -2029,6 +2029,17 @@
    ],
    "fa_tags_for": "عینک ایمنی"
   },
+  "scales-justice": {
+   "id": "scales-justice",
+   "en": "scales justice",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "scales-justice__1.webp",
+    "scales-justice__2.webp"
+   ]
+  },
   "secret-inspector": {
    "id": "secret-inspector",
    "en": "inspector wearing black raincoat",
