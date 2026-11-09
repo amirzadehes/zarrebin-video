@@ -1085,6 +1085,18 @@
    ],
    "fa_tags_for": "یوتیوب"
   },
+  "item-2": {
+   "id": "item-2",
+   "en": "سنگاپور",
+   "fa": "سنگاپور",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "item-2__1.webp"
+   ]
+  },
   "key": {
    "id": "key",
    "en": "key",
