@@ -917,6 +917,18 @@
    ],
    "fa_tags_for": "آتش"
   },
+  "food": {
+   "id": "food",
+   "en": "food",
+   "fa": "غذا",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "food__1.webp"
+   ]
+  },
   "football-referee": {
    "id": "football-referee",
    "en": "football referee",
