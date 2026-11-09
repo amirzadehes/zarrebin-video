@@ -1455,7 +1455,17 @@
    "has_text_in_image": false,
    "variants": [
     "people-standing-in-line__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "صف",
+    "انتظار",
+    "مردم",
+    "ایستادن",
+    "جمعیت",
+    "صف‌کشی",
+    "صف‌برداری"
+   ],
+   "fa_tags_for": "مردم تو صف"
   },
   "phone-smartphone": {
    "id": "phone-smartphone",

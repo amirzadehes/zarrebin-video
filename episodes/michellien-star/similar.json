@@ -1,86 +1,25 @@
 {
+ "silverware-set": [
+  "dinner-plate"
+ ],
  "star": [
-  "star-rating",
-  "three-stars",
+  "one-star",
   "two-stars",
-  "one-star"
+  "three-stars",
+  "star-rating"
  ],
  "rubber-tire": [
   "tire-company-logo"
  ],
- "star-rating": [
-  "one-star",
-  "two-stars",
-  "three-stars",
-  "star"
+ "two-brothers": [
+  "adult-male-human",
+  "people-standing-in-line"
  ],
- "one-star": [
-  "star",
-  "two-stars",
-  "three-stars",
-  "star-rating"
+ "red-guidebook": [
+  "book",
+  "book-open"
  ],
- "two-stars": [
-  "one-star",
-  "three-stars",
-  "star",
-  "star-rating"
- ],
- "three-stars": [
-  "one-star",
-  "two-stars",
-  "star",
-  "star-rating"
- ],
- "money-bag": [
-  "banknotes",
-  "cash",
-  "money-coins"
- ],
- "clock-wall": [
-  "alarm-clock",
-  "hourglass",
-  "stopwatch"
- ],
- "street-food-stall": [
-  "restaurant",
-  "roadside-restaurant",
-  "food"
- ],
- "reservation-card": [
-  "restaurant",
-  "roadside-restaurant"
- ],
- "cash": [
-  "banknotes",
-  "money-bag",
-  "money-coins"
- ],
- "banknotes": [
-  "cash",
-  "money-bag",
-  "money-coins"
- ],
- "restaurant-sign": [
-  "restaurant",
-  "roadside-restaurant",
-  "reservation-card"
- ],
- "cityscape-chicago": [
-  "eiffel-tower",
-  "hotel-building",
-  "factory"
- ],
- "wine-glass": [
-  "coffee-cup",
-  "espresso-cup",
-  "tea-cup"
- ],
- "mobile-app": [
-  "phone-smartphone",
-  "laptop"
- ],
- "tire-company-logo": [
-  "rubber-tire"
+ "book-open": [
+  "book"
  ]
 }
