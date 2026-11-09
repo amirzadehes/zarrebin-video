@@ -1082,6 +1082,17 @@
    ],
    "fa_tags_for": "دنده‌ها"
   },
+  "graduation-cap": {
+   "id": "graduation-cap",
+   "en": "graduation cap",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "graduation-cap__1.webp",
+    "graduation-cap__2.webp"
+   ]
+  },
   "hammer": {
    "id": "hammer",
    "en": "hammer",
@@ -1629,6 +1640,17 @@
     "قفل‌در"
    ],
    "fa_tags_for": "قفل"
+  },
+  "pencil": {
+   "id": "pencil",
+   "en": "pencil",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "pencil__1.webp",
+    "pencil__2.webp"
+   ]
   },
   "people-standing-in-line": {
    "id": "people-standing-in-line",
