@@ -1,16 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-10-27 15:19:09 UTC",
-   "ok": [],
-   "failed": [
-    {
-     "file": "football-referee__mvqtxhp4.jpg",
-     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: football-referee__1.webp)"
-    }
-   ]
-  },
-  {
    "time": "2026-10-27 15:21:34 UTC",
    "ok": [
     {
@@ -694,6 +684,18 @@
      "reason": "شیء از لبه‌ی کادر بیرون زده یا بریده شده"
     }
    ]
+  },
+  {
+   "time": "2026-11-09 21:13:40 UTC",
+   "ok": [
+    {
+     "file": "chef__mw9rcynw.jpg",
+     "id": "chef",
+     "saved": "chef__1.webp",
+     "kb": 269
+    }
+   ],
+   "failed": []
   }
  ]
 }

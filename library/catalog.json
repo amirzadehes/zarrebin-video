@@ -480,6 +480,18 @@
    ],
    "fa_tags_for": "علامت تیک"
   },
+  "chef": {
+   "id": "chef",
+   "en": "chef",
+   "fa": "آشپز",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "chef__1.webp"
+   ]
+  },
   "chef-hat": {
    "id": "chef-hat",
    "en": "chef hat",
