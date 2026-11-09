@@ -92,6 +92,21 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 .ur.s-fail .us,.ur.s-lost .us{color:var(--bad)}
 .ur .ui{text-align:center;font-size:18px}
 
+/* ---------- scene background layer + image effects (review panel) ---------- */
+.fxs{margin-top:14px;padding-top:6px;border-top:1px dashed var(--line)}
+.fxs>label:first-child{color:var(--tx);font-weight:900;font-size:14px;margin-top:8px}
+.fxs [hidden]{display:none!important}
+.bgrow{display:flex;gap:10px;align-items:center;margin:8px 0}
+.bgrow .thumb{flex:0 0 auto}
+select.sel{width:100%;min-height:44px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px}
+.sl{display:grid;grid-template-columns:104px 1fr 48px;gap:8px;align-items:center;margin:6px 0}
+.sl label{margin:0;font-size:12px;line-height:1.5}
+.sl input[type=range]{width:100%;accent-color:var(--acc);min-height:32px;margin:0}
+.sl .sv{font-size:12px;text-align:left;direction:ltr;color:var(--acc)}
+.fxit{border:1px solid var(--line);border-radius:12px;padding:8px;margin:8px 0;background:#17120f}
+.fxit .bgrow{margin:0}
+.chk{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px;color:var(--tx)}
+
 /* ---------- mouse and keyboard (any device with a real pointer) ---------- */
 @media (hover:hover) and (pointer:fine){
   button:not(:disabled):hover,.btn:hover{filter:brightness(1.18)}
@@ -477,7 +492,7 @@ document.querySelectorAll('#pvTools button').forEach(b=>b.onclick=()=>$('#pvFram
 function pvShowDetails(i){ const bx=$('#rvBox'); if(bx) bx.open=true; document.querySelectorAll('details.sc[open]').forEach(d=>{ if(+d.dataset.i!==i) d.open=false });
   const d=document.querySelector(`details.sc[data-i="${i}"]`); if(!d) return; d.open=true; if(!d.querySelector('.body').children.length) fillScene(d); d.scrollIntoView({block:'start',behavior:'smooth'}) }
 $('#pvOk').onclick=()=>{ if(pvI<0) return; setOk(RV.data.scenes[pvI],pvFmt,true); syncOk(pvI); rvSave(); $('#pvOk').textContent='✓ تأیید شد'; if(pvI+1<RV.data.scenes.length){ pvI++; pvShowDetails(pvI); setTimeout(()=>{ pvTools(); pvOkLabel(); pvGo() },400) } else $('#pvClose').click() };
-const sceneHead=(s,i)=>{ const n=(s.items||[]).length, warn=!n&&s.tpl!=='stat'; return `${okOf(s,'v')&&okOf(s,'h')?'✅ ':(okOf(s,'v')||okOf(s,'h'))?'🔸 ':''}${warn?'⚠️ ':''}<b>${fa(i+1)}</b> · ${(s.text||s.number||'').replace(/\*/g,'')||'—'} <span style="color:var(--mut)">(${fa(n)} تصویر)</span>` };
+const sceneHead=(s,i)=>{ const n=(s.items||[]).length, warn=!n&&s.tpl!=='stat'; return `${okOf(s,'v')&&okOf(s,'h')?'✅ ':(okOf(s,'v')||okOf(s,'h'))?'🔸 ':''}${warn?'⚠️ ':''}${s.bg&&s.bg.src?'🖼 ':''}<b>${fa(i+1)}</b> · ${(s.text||s.number||'').replace(/\*/g,'')||'—'} <span style="color:var(--mut)">(${fa(n)} تصویر)</span>` };
 const sceneWords=s=>(RV.data.words||[]).filter(w=>w.t0>=s.t0-.02&&w.t0<s.t1-.02);
 const wordAtT=(s,t)=>{ let b=null; sceneWords(s).forEach(w=>{ if(w.t0<=t+.08) b=w }); return b?b.w:'—' };
 const wordAt=(s,it)=>{ let b=null; sceneWords(s).forEach(w=>{ if(w.t0<=it.t+.08) b=w }); return b?b.w:'—' };
@@ -514,7 +529,8 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
     pk.querySelector('input').oninput=e=>{ const qs=nz(e.target.value).split(' ').filter(Boolean); pk.querySelectorAll('.tile').forEach(t=>t.hidden=qs.length&&!qs.every(q=>t.dataset.q.includes(q))) };
     pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const it=S.catalog.items[t.dataset.id]; if((s.items||[]).length>=6) return toast('حداکثر ۶ تصویر در هر صحنه');
       s.items=s.items||[]; const last=s.items.length?s.items[s.items.length-1].t:s.t0; const end=Math.max(s.t1-.5,s.t0+.3); const tt=s.items.length?last+Math.max(.35,(end-last)/2):s.t0+.45;
-      s.items.push({t:+tt.toFixed(3), src:'library/'+it.variants[0], en:'pop'}); toast('اضافه شد'); rvChanged(i,d) }) } }
+      s.items.push({t:+tt.toFixed(3), src:'library/'+it.variants[0], en:'pop'}); toast('اضافه شد'); rvChanged(i,d) }) }
+  bgFxUI(box,s,i,d) }
 
 async function newForScene(i,d,faName,f,st){
   if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return }
@@ -537,6 +553,64 @@ async function newForScene(i,d,faName,f,st){
     s.items=s.items||[]; const last=s.items.length?s.items[s.items.length-1].t:s.t0, end=Math.max(s.t1-.5,s.t0+.3), tt=s.items.length?last+Math.max(.35,(end-last)/2):s.t0+.45;
     s.items.push({t:+tt.toFixed(3), src:'library/'+S.catalog.items[id].variants[0], en:'pop'}); toast('✓ تصویر به کتابخانه و این صحنه اضافه شد'); rvChanged(i,d);
   }catch(e){ say('خطا: '+e.message,'bad') } }
+/* ---------- scene background layer (scene.bg) and image effects (item.fx): fields are optional, old scenes keep working ---------- */
+const BG_MOTIONS=[['down','از بالا به پایین'],['up','از پایین به بالا'],['right','از چپ به راست'],['left','از راست به چپ'],['zoom','از عمق صحنه بیاید جلو'],['pop','با جهش ظاهر شود'],['fill','کل صفحه پر باشد، کم‌کم خالی شود'],['fillin','صفحه خالی باشد، کم‌کم پر شود'],['scroll','الگوی بی‌پایان (اسکرول)']];
+const BG_SOUNDS=[['whoosh','ویژ'],['swipe','سوییپ'],['airy','نفس هوا'],['low','ویژ بم'],['riser','بالارونده'],['pop','پاپ'],['thud','تپ سنگین'],['none','بدون صدا']];
+const BG_DIRS=[['down','به پایین'],['up','به بالا'],['right','به راست'],['left','به چپ'],['dr','مورب: پایین راست'],['dl','مورب: پایین چپ'],['ur','مورب: بالا راست'],['ul','مورب: بالا چپ']];
+const FX_TYPES=[['','بدون افکت'],['steam','بلند شدن بخار'],['page-turn','ورق خوردن کاغذ'],['clock-rewind','برگشت ساعت']];
+const BG_DEF={motion:'down',hold:false,speed:1,size:1,count:3,opacity:.9,blur:0,start:0,dir:'down',sound:'whoosh',vol:60};
+const FX_DEF={steam:{start:.3,intensity:1,height:.34,speed:1,vol:35},'page-turn':{start:0,dur:1.1,mode:'in',hinge:'center',vol:60},'clock-rewind':{start:.3,dur:2.6,turns:3,radius:.42,tint:true,hands:false,vol:55}};
+let pvRT=null; function pvRefresh(i){ if($('#pvModal').hidden||pvI!==i) return; clearTimeout(pvRT); pvRT=setTimeout(pvGo,700) }
+const optsHtml=(arr,cur)=>arr.map(([v,l])=>`<option value="${v}" ${v===cur?'selected':''}>${l}</option>`).join('');
+const slRow=(key,label,min,max,step,val,o)=>{ o=o||{}; return `<div class="sl"><label>${label}</label><input type="range" data-k="${key}" ${o.sc?`data-sc="${o.sc}"`:''} data-u="${o.u||''}" min="${min}" max="${max}" step="${step}" value="${val}"><b class="sv">${fa(+(+val).toFixed(2))}${o.u||''}</b></div>` };
+function wireSliders(root,get,after){ root.querySelectorAll('input[type=range][data-k]').forEach(r=>r.oninput=()=>{ const k=r.dataset.k, v=+r.value/(+r.dataset.sc||1), o=get(); r.nextElementSibling.textContent=fa(+(+r.value).toFixed(2))+(r.dataset.u||'');
+  if(k==='ax'||k==='ay'){ o.anchor=o.anchor||[.5,.5]; o.anchor[k==='ax'?0:1]=v } else if(k==='dur'&&v===0) delete o.dur; else o[k]=v; after() }) }
+function fxBodyHtml(f){ const t=f.type, a=f.anchor, D0=FX_DEF[t];
+  let h=slRow('start','شروع (ثانیه بعد از ظاهر شدن تصویر)',0,6,.1,f.start==null?D0.start:f.start,{u:' ث'});
+  if(t==='steam') h+=slRow('intensity','شدت',.2,2.5,.1,f.intensity==null?1:f.intensity)+slRow('height','ارتفاع',.12,1,.02,f.height==null?.34:f.height)+slRow('speed','سرعت',.3,3,.1,f.speed==null?1:f.speed)+slRow('dur','مدت (۰ = تا آخر)',0,10,.5,f.dur||0,{u:' ث'});
+  if(t==='page-turn') h+=`<label>حالت</label><select class="sel" data-k="mode">${optsHtml([['in','ورق می‌خورد و تصویر ظاهر می‌شود'],['out','ورق می‌خورد و تصویر می‌رود']],f.mode||'in')}</select><label>نحوه‌ی چرخش</label><select class="sel" data-k="hinge">${optsHtml([['center','دور محور وسط (مثل برگرداندن کارت)'],['left','ورق از سمت چپ'],['right','ورق از سمت راست']],f.hinge||'center')}</select>`+slRow('dur','مدت ورق خوردن',.3,4,.1,f.dur==null?1.1:f.dur,{u:' ث'});
+  if(t==='clock-rewind') h+=slRow('dur','مدت',.8,8,.1,f.dur==null?2.6:f.dur,{u:' ث'})+slRow('turns','تعداد دور',1,10,1,f.turns==null?3:f.turns)+slRow('radius','اندازه‌ی حلقه',15,90,5,Math.round((f.radius==null?.42:f.radius)*100),{sc:100,u:'٪'})+`<label class="chk"><input type="checkbox" data-k="tint" ${f.tint!==false?'checked':''}> رنگ کهربایی زمان</label><label class="chk"><input type="checkbox" data-k="hands" ${f.hands?'checked':''}> عقربه‌های تازه هم کشیده شود</label>`;
+  h+=`<label class="chk"><input type="checkbox" class="anAuto" ${a?'':'checked'}> نقطه‌ی افکت خودکار (از روی شکل تصویر)</label>`;
+  if(a) h+=slRow('ax','نقطه‌ی افقی',0,100,1,Math.round(a[0]*100),{u:'٪'})+slRow('ay','نقطه‌ی عمودی',0,100,1,Math.round(a[1]*100),{u:'٪'});
+  return h+slRow('vol','بلندی صدا',0,100,5,f.vol==null?D0.vol:f.vol,{u:'٪'}) }
+function bgFxUI(box,s,i,d){
+  const done=()=>{ clearOk(s); syncOk(i); rvSave(); pvRefresh(i) };
+  const b=s.bg&&s.bg.src?s.bg:null, v=Object.assign({},BG_DEF,b||{}), libIt=b?Object.values(S.catalog.items).find(x=>(x.variants||[]).some(f=>'library/'+f===b.src)):null;
+  const sec=document.createElement('div'); sec.className='fxs';
+  sec.innerHTML=`<label>🖼 پس‌زمینه‌ی صحنه: یک تصویر از کتابخانه که پشت تصویرهای اصلی حرکت می‌کند</label>
+    <div class="bgrow"><div class="thumb">${b?`<img src="${thumbUrl(b.src)}">`:'—'}</div><div style="flex:1;min-width:0"><div class="hint" style="margin:0">${b?(libIt?(libIt.fa||libIt.en):'تصویر انتخاب‌شده'):'پس‌زمینه‌ای انتخاب نشده'}</div><div class="row" style="margin-top:6px"><button class="bgPick">${b?'تغییر تصویر':'انتخاب از کتابخانه'}</button>${b?'<button class="bgDel">حذف</button>':''}</div></div></div>
+    <div class="pick bgPk" hidden></div>
+    ${b?`<div class="bgOpts"><label>حرکت</label><select class="sel" data-k="motion">${optsHtml(BG_MOTIONS,v.motion)}</select>
+      <label class="chk holdRow"><input type="checkbox" data-k="hold" ${v.hold?'checked':''}> بعد از ورود در صفحه بماند (به‌جای عبور ادامه‌دار)</label>
+      <div class="dirRow"><label>جهت حرکت الگو</label><select class="sel" data-k="dir">${optsHtml(BG_DIRS,v.dir)}</select></div>
+      ${slRow('speed','سرعت',.2,3,.1,v.speed,{u:'×'})}${slRow('size','اندازه',.2,3,.1,v.size,{u:'×'})}${slRow('count','تعداد',1,20,1,v.count)}
+      ${slRow('opacity','شفافیت',10,100,5,Math.round(v.opacity*100),{sc:100,u:'٪'})}${slRow('blur','بلور',0,20,1,v.blur,{u:' px'})}${slRow('start','شروع (ثانیه بعد از شروع صحنه)',0,6,.1,v.start,{u:' ث'})}
+      <label>صدای حرکت</label><select class="sel" data-k="sound">${optsHtml(BG_SOUNDS,v.sound)}</select>${slRow('vol','بلندی صدا',0,100,5,v.vol,{u:'٪'})}
+      <div class="row"><button class="pri bgPv">▶ پیش‌نمایش صحنه</button></div></div>`:''}`;
+  box.appendChild(sec);
+  const pk=sec.querySelector('.bgPk');
+  sec.querySelector('.bgPick').onclick=()=>{ pk.hidden=!pk.hidden; if(pk.hidden||pk.dataset.f) return; pk.dataset.f=1;
+    const its=Object.values(S.catalog.items).filter(x=>x.variants&&x.variants.length).sort((a,c)=>(a.fa||a.en).localeCompare(c.fa||c.en));
+    pk.innerHTML='<input type="text" placeholder="جست‌وجو به فارسی… (مثلاً ستاره، برگ، پول)" style="width:100%;margin-bottom:8px"><div class="grid">'+its.map(x=>`<div class="tile" data-id="${x.id}" data-q="${nz([x.fa,x.en,...(x.fa_tags||[]),...(x.tags||[])].join(' '))}"><div class="thumb"><img loading="lazy" src="${raw(x.variants[0])}"></div><small>${x.fa||x.en}</small></div>`).join('')+'</div>';
+    pk.querySelector('input').oninput=e=>{ const qs=nz(e.target.value).split(' ').filter(Boolean); pk.querySelectorAll('.tile').forEach(t=>t.hidden=qs.length&&!qs.every(q=>t.dataset.q.includes(q))) };
+    pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const it=S.catalog.items[t.dataset.id]; s.bg=Object.assign({},BG_DEF,s.bg||{},{src:'library/'+it.variants[0]}); toast('پس‌زمینه انتخاب شد'); clearOk(s); rvSave(); fillScene(d); pvRefresh(i) }) };
+  const del=sec.querySelector('.bgDel'); if(del) del.onclick=()=>{ delete s.bg; clearOk(s); rvSave(); fillScene(d); pvRefresh(i) };
+  if(b){ const vis=()=>{ const m=b.motion||'down', rg=sec.querySelector('input[data-k=count]'), lb=rg.previousElementSibling, mx=(m==='fill'||m==='fillin')?40:(m==='scroll'?12:20);
+      sec.querySelector('.holdRow').hidden=!['down','up','left','right','zoom'].includes(m); sec.querySelector('.dirRow').hidden=m!=='scroll';
+      lb.textContent=m==='scroll'?'تعداد در هر ردیف':(m==='fill'||m==='fillin')?'تعداد خانه‌ها':'تعداد'; rg.max=mx; if(+rg.value>mx){ rg.value=mx; b.count=mx; rg.nextElementSibling.textContent=fa(mx) } }; vis();
+    wireSliders(sec.querySelector('.bgOpts'),()=>b,done);
+    sec.querySelectorAll('.bgOpts select[data-k],.bgOpts input[type=checkbox][data-k]').forEach(el=>el.onchange=()=>{ b[el.dataset.k]=el.type==='checkbox'?el.checked:el.value; vis(); done() });
+    sec.querySelector('.bgPv').onclick=()=>openPreview(i,'play') }
+  /* ----- effects bound to each picture ----- */
+  const items=s.items||[]; if(!items.length) return;
+  const fx=document.createElement('div'); fx.className='fxs';
+  fx.innerHTML=`<label>✨ افکت روی تصویرها: به خود تصویر وصل می‌شود و با حرکتش می‌رود</label>`+items.map((it,k)=>`<div class="fxit" data-k="${k}"><div class="bgrow"><div class="thumb" style="width:56px;height:56px"><img loading="lazy" src="${thumbUrl(it.src)}"></div><div style="flex:1;min-width:0"><b style="font-size:13px">تصویر ${fa(k+1)}</b><select class="sel fxType" style="margin-top:4px">${optsHtml(FX_TYPES,(it.fx&&it.fx[0]&&it.fx[0].type)||'')}</select></div></div><div class="fxBody"></div></div>`).join('')+`<div class="row"><button class="pri fxPv">▶ پیش‌نمایش صحنه</button></div>`;
+  box.appendChild(fx); fx.querySelector('.fxPv').onclick=()=>openPreview(i,'play');
+  fx.querySelectorAll('.fxit').forEach(card=>{ const it=items[+card.dataset.k], body=card.querySelector('.fxBody'), sel=card.querySelector('.fxType');
+    const draw=()=>{ const f=it.fx&&it.fx[0]; body.innerHTML=f?fxBodyHtml(f):''; if(!f) return; wireSliders(body,()=>f,done);
+      body.querySelectorAll('select[data-k],input[type=checkbox][data-k]').forEach(el=>el.onchange=()=>{ f[el.dataset.k]=el.type==='checkbox'?el.checked:el.value; done() });
+      const auto=body.querySelector('.anAuto'); if(auto) auto.onchange=()=>{ if(auto.checked) delete f.anchor; else f.anchor=[.5,.2]; draw(); done() } };
+    sel.onchange=()=>{ if(!sel.value) delete it.fx; else it.fx=[Object.assign({type:sel.value},FX_DEF[sel.value])]; draw(); done() }; draw() }) }
 function rvChanged(i,d,byTime){ const s=RV.data.scenes[i]; clearOk(s); updOk();
   if(byTime) s.items.sort((a,b)=>a.t-b.t);   // the owner picked a word: the order follows the time
   else { const ts=s.items.map(it=>it.t).sort((a,b)=>a-b); s.items.forEach((it,j)=>{ it.t=ts[j] }) }   // otherwise the order is the owner's: hand the time slots out in that order

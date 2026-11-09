@@ -8,7 +8,7 @@ html,body{margin:0;background:#000;height:100%;overflow:hidden}
 canvas{display:block;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);touch-action:none}
 #msg{position:fixed;inset:0;display:grid;place-items:center;color:#fff;font:700 18px Vz,sans-serif;background:#000a;text-align:center;direction:rtl}
 </style></head><body><canvas id="out"></canvas><div id="msg">در حال آماده‌سازی…</div>
-<script src="v2.js"></script>
+<script src="fx.js"></script><script src="v2.js"></script>
 <script>
 /* in-app scene preview + layout editor. ?inline=1&fmt=v|h. parent -> {type:'load'|'edit'|'adj'|'stop'}, iframe -> {type:'ready'|'layout'} */
 const msg=document.getElementById('msg'), cvs=document.getElementById('out'), au=new Audio(); au.preload='auto';

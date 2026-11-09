@@ -61,6 +61,10 @@ jobs:
         if: steps.mode.outputs.review != 'true'
         env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
         run: python tools/make_sfx.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
+      - name: Background-layer and image-effect sounds
+        if: steps.mode.outputs.review != 'true'
+        continue-on-error: true
+        run: python tools/make_bgfx.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
       - name: Background music
         if: steps.mode.outputs.review != 'true'
         env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
@@ -89,6 +93,7 @@ jobs:
             episodes/${{ steps.ep.outputs.ep }}/voice.mp3
             episodes/${{ steps.ep.outputs.ep }}/scenes.json
             episodes/${{ steps.ep.outputs.ep }}/sfx.wav
+            episodes/${{ steps.ep.outputs.ep }}/bgfx.wav
             episodes/${{ steps.ep.outputs.ep }}/music.wav
           retention-days: 2
   render:
@@ -145,6 +150,8 @@ jobs:
           mus=$(find episode-data -name music.wav | head -1)
           inputs="-i $v"; n=1; mix="[vo]"; w="1"
           [ -n "$sfx" ] && { inputs="$inputs -i $sfx"; n=$((n+1)); mix="$mix[$n:a]"; w="$w 0.4"; }
+          bgfx=$(find episode-data -name bgfx.wav | head -1)   # background-layer / image-effect sounds (volume is set per event in scenes.json)
+          [ -n "$bgfx" ] && { inputs="$inputs -i $bgfx"; n=$((n+1)); mix="$mix[$n:a]"; w="$w 0.8"; }
           if [ -n "$mus" ]; then inputs="$inputs -i $mus"; mi=$((n+1)); n=$((n+1)); mix="$mix[mduck]"; w="$w 1"
             fc="[1:a]asplit=2[vo][key];[$mi:a][key]sidechaincompress=threshold=0.04:ratio=3:attack=30:release=600:makeup=1[mduck];"
           else fc="[1:a]anull[vo];"; fi
