@@ -510,7 +510,16 @@
    "has_text_in_image": false,
    "variants": [
     "city__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "شهر",
+    "آبادی",
+    "محله",
+    "نقشه",
+    "مترو",
+    "پایتخت"
+   ],
+   "fa_tags_for": "شهر"
   },
   "cityscape-chicago": {
    "id": "cityscape-chicago",
