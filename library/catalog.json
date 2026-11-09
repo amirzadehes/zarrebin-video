@@ -1445,6 +1445,18 @@
    ],
    "fa_tags_for": "قفل"
   },
+  "people-standing-in-line": {
+   "id": "people-standing-in-line",
+   "en": "people standing in line",
+   "fa": "مردم تو صف",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "people-standing-in-line__1.webp"
+   ]
+  },
   "phone-smartphone": {
    "id": "phone-smartphone",
    "en": "phone smartphone",
