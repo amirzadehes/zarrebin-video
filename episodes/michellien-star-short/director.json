@@ -6,119 +6,40 @@
   "items": [
    {
     "id": "question-mark",
-    "at": "معتبرترین"
+    "at": "میتونی"
+   },
+   {
+    "id": "chef-hat",
+    "sent": 0
    }
   ],
   "text": "*معتبرترین* جایزه آشپزی؟",
   "number": "",
   "decor": [],
   "kw": [
-   "معتبرترین",
    "جایزه",
    "آشپزی"
   ]
  },
  {
   "from": 2,
-  "to": 4,
+  "to": 5.5,
   "tpl": "duo",
   "items": [
    {
-    "id": "trophy",
+    "id": "tire-company-logo",
     "at": "میشلین"
    },
    {
-    "id": "chef-hat",
+    "id": "star",
     "at": "میشلین"
    }
   ],
-  "text": "*همون* میشلین",
+  "text": "میشلین",
   "number": "",
   "decor": [],
   "kw": [
    "میشلین"
-  ]
- },
- {
-  "from": 4,
-  "to": 7,
-  "tpl": "trio",
-  "items": [
-   {
-    "id": "rubber-tire",
-    "at": "آدمک"
-   },
-   {
-    "id": "tire-company-logo",
-    "at": "آدمک"
-   },
-   {
-    "id": "chef-hat",
-    "at": "آدمک"
-   },
-   {
-    "id": "car",
-    "sent": 6
-   },
-   {
-    "id": "two-brothers",
-    "sent": 7
-   }
-  ],
-  "text": "*آدمک* سفید و چاقی از لاستیک",
-  "number": "",
-  "decor": [],
-  "kw": [
-   "آدمک",
-   "لاستیک"
-  ]
- },
- {
-  "from": 7,
-  "to": 10,
-  "tpl": "statement",
-  "items": [],
-  "text": "*شرکت* لاستیک چطور غذاها را می‌سنجد؟",
-  "number": "",
-  "decor": [
-   "factory"
-  ],
-  "kw": [
-   "شرکت لاستیک",
-   "غذا"
-  ]
- },
- {
-  "from": 10,
-  "to": 13,
-  "tpl": "hero",
-  "items": [
-   {
-    "id": "calendar",
-    "at": "سال"
-   },
-   {
-    "id": "road",
-    "sent": 11
-   },
-   {
-    "id": "hotel-building",
-    "sent": 13
-   },
-   {
-    "id": "gas-pump",
-    "sent": 13
-   },
-   {
-    "id": "map-folded",
-    "sent": 13
-   }
-  ],
-  "text": "*برگردیم* به سال 1900",
-  "number": "",
-  "decor": [],
-  "kw": [
-   "سال 1900"
   ]
  },
  {
@@ -127,8 +48,16 @@
   "tpl": "statement",
   "items": [
    {
-    "id": "compass",
-    "sent": 15
+    "id": "map-folded",
+    "sent": 13
+   },
+   {
+    "id": "hotel-building",
+    "sent": 13
+   },
+   {
+    "id": "restaurant",
+    "sent": 13
    }
   ],
   "_up": true
@@ -139,7 +68,7 @@
   "tpl": "statement",
   "items": [
    {
-    "id": "star",
+    "id": "star-rating",
     "sent": 24
    },
    {
@@ -160,18 +89,7 @@
  {
   "from": 36,
   "to": 47,
-  "tpl": "statement",
-  "items": [
-   {
-    "id": "restaurant",
-    "sent": 42
-   },
-   {
-    "id": "dinner-plate",
-    "sent": 42
-   }
-  ],
-  "_up": true
+  "tpl": "statement"
  },
  {
   "from": 48,
@@ -181,7 +99,14 @@
  {
   "from": 60,
   "to": 71,
-  "tpl": "statement"
+  "tpl": "statement",
+  "items": [
+   {
+    "id": "trophy",
+    "sent": 70
+   }
+  ],
+  "_up": true
  },
  {
   "from": 72,
