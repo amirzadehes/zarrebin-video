@@ -333,12 +333,23 @@
   "brain-gears": {
    "id": "brain-gears",
    "en": "brain gears",
-   "fa": "",
+   "fa": "دنده مغز",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "brain-gears__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "مغز",
+    "ذهن",
+    "تفکر",
+    "ایده",
+    "نوآوری",
+    "دنده",
+    "یادگیری",
+    "هوش"
+   ],
+   "fa_tags_for": "دنده مغز"
   },
   "brain-pink": {
    "id": "brain-pink",
@@ -1809,7 +1820,7 @@
   "person-happy": {
    "id": "person-happy",
    "en": "person happy",
-   "fa": "",
+   "fa": "شخص خوشحال",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -1817,18 +1828,40 @@
     "person-happy__2.webp",
     "person-happy__3.webp",
     "person-happy__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "خوشحالی",
+    "شادی",
+    "لبخند",
+    "احساس",
+    "انسان",
+    "سرخوش",
+    "مثبت",
+    "روحیه"
+   ],
+   "fa_tags_for": "شخص خوشحال"
   },
   "person-thinking": {
    "id": "person-thinking",
    "en": "person thinking",
-   "fa": "",
+   "fa": "شخص متفکر",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "person-thinking__1.webp",
     "person-thinking__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "تفکر",
+    "فکر",
+    "اندیشه",
+    "ذهن",
+    "انسان",
+    "مطالعه",
+    "تحلیل",
+    "کنجکاوی"
+   ],
+   "fa_tags_for": "شخص متفکر"
   },
   "person-worried": {
    "id": "person-worried",
@@ -2360,13 +2393,24 @@
   "spine": {
    "id": "spine",
    "en": "spine",
-   "fa": "",
+   "fa": "ستون فقرات",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "spine__1.webp",
     "spine__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "مهره",
+    "پشت",
+    "اسکلت",
+    "بدن",
+    "سلامت",
+    "استخوان",
+    "حمایت",
+    "فیزیک"
+   ],
+   "fa_tags_for": "ستون فقرات"
   },
   "star": {
    "id": "star",
