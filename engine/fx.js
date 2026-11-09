@@ -9,8 +9,10 @@
                   lay:{ v:{ "<i>":{dx,dy,sz,rot} }, h:{...} } (owner's hand placement of copy i, fractions of the canvas, edited in the app preview) }
               Placement is random (seeded, evenly spread); `cover` fills the whole screen with random-angle pictures that arrive slowly, speed up, and
               slow down again until nothing of the scene is visible underneath (opacity / blur / count are ignored there; size and speed apply).
-   scene.pins = [ { src, frame:'none|polaroid|tape|pin|torn|burnt|wood|gold', photo:'cream|sky|mint|rose|sand|night|kraft|white|#hex', x,y (0-1, canvas fractions),
-                    sz:1, rot (rad), start (s after scene start), seed, vol:40 (sound of the stick), fx:[...], lay:{ v:{dx,dy,sz,rot}, h:{...} } } ]
+   scene.pins = [ { src, frame:'none|polaroid|plain|stamp|film|torn|burnt|wood|gold', attach:'none|pin-red|pin-blue|pin-brass|tape-corners|tape-top|tape-4|washi|clip|nail|magnet|putty|string',
+                    card:'white|cream|kraft|black|rose', photo:'cream|sky|mint|rose|sand|night|kraft|white|#hex', curl:false (lifted corner), shadow:.6 (0-1), x,y (0-1, canvas fractions),
+                    sz:1, rot (rad), start (0 = there from the first frame, no entrance), seed, fx:[...], lay:{ v:{dx,dy,sz,rot}, h:{...} } } ]
+              A pin is part of the wall: no entrance animation, no float, no squash. (old frame values 'tape' / 'pin' still work: plain card + that fastener.)
    item.fx / pin.fx = [ { type, start:s after the picture appears, dur, anchor:[x,y] (fractions of the picture), vol:0-100, + per type:
         steam|smoke : intensity, height, speed            page-turn : mode:'in|out', hinge:'center|left|right'
         tea-ring    : size, tone:'tea|coffee|wine', amount, seed   aged : dur, amount           burn : dur, amount, ember:false
@@ -24,7 +26,7 @@ window.FXL = (() => {
   const num = (v, d, a, b) => { v = parseFloat(v); if (!isFinite(v)) v = d; return Math.max(a, Math.min(b, v)) };
   const hsh = (a, b = 0, c = 0) => { let x = Math.imul(a | 0, 0x9E3779B1) ^ Math.imul((b | 0) + 0x7F4A7C15, 0x85EBCA6B) ^ Math.imul((c | 0) + 0x165667B1, 0xC2B2AE35); x ^= x >>> 15; x = Math.imul(x, 0x2C1B3C6D); x ^= x >>> 12; x = Math.imul(x, 0x297A2D39); x ^= x >>> 15; return (x >>> 0) / 4294967296 };   // stateless seeded random in [0,1)
   const cnv = (w, h) => { const c = document.createElement('canvas'); c.width = Math.max(2, Math.round(w)); c.height = Math.max(2, Math.round(h)); return c };
-  const TYPES = ['steam', 'smoke', 'page-turn', 'tea-ring', 'aged', 'burn', 'sparkle', 'shine', 'glow', 'wiggle', 'pulse', 'crack'];
+  const TYPES = ['steam', 'smoke', 'page-turn', 'tea-ring', 'aged', 'burn', 'sparkle', 'shine', 'glow', 'wiggle', 'pulse', 'crack', 'fold'];
 
   /* ---------- picture info: bounding box + top-centre + average colour + a coarse inside mask (fractions of the image) ---------- */
   function measure(im) {
@@ -265,6 +267,18 @@ window.FXL = (() => {
     clipTo(s, IM[it.src]); local(st, inf, () => putLayer(s.c, inf, dur ? 1 - ramp(tau, dur, dur + .3) : 1))
   }
 
+  /* ---------- fold: crease lines (one across, a cross, or a diagonal too) with a light and a dark edge, clipped to the picture ---------- */
+  function fold(it, t, st, f, inf) {
+    const tau = t - T0(it, f, 0); if (tau < 0) return; const n = Math.round(num(f.folds, 2, 1, 3)), im = IM[it.src];
+    const lay = stat(['fold', it.src, n].join('|'), inf, g => {
+      const [x0, y0, x1, y1] = inf.bb, X0 = x0 * inf.w, Y0 = y0 * inf.h, bw = (x1 - x0) * inf.w, bh = (y1 - y0) * inf.h, wd = Math.min(bw, bh) * .035, ls = [[X0, Y0 + bh / 2, X0 + bw, Y0 + bh / 2]]; if (n >= 2) ls.push([X0 + bw / 2, Y0, X0 + bw / 2, Y0 + bh]); if (n >= 3) ls.push([X0, Y0, X0 + bw, Y0 + bh]);
+      ls.forEach(([a, b, c, d]) => { const nx = -(d - b), ny = c - a, L = Math.hypot(nx, ny), ux = nx / L * wd, uy = ny / L * wd, mx = (a + c) / 2, my = (b + d) / 2, gr = g.createLinearGradient(mx - ux, my - uy, mx + ux, my + uy);
+        gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(.42, 'rgba(0,0,0,.2)'); gr.addColorStop(.5, 'rgba(255,255,255,.5)'); gr.addColorStop(.58, 'rgba(0,0,0,.14)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.strokeStyle = gr; g.lineWidth = wd * 2; g.beginPath(); g.moveTo(a, b); g.lineTo(c, d); g.stroke() });
+      g.globalCompositeOperation = 'destination-in'; g.drawImage(im, 0, 0, inf.w, inf.h)
+    });
+    local(st, inf, () => putLayer(lay, inf, num(f.amount, .7, .1, 1)))
+  }
+
   /* called by drawItem / pins: base(o) draws the picture the normal way (o = {k, dr}: scale / rotation added by wiggle or pulse);
      page-turn and burn replace it while they run, the rest is drawn over it */
   function item(it, t, st0, base) {
@@ -284,6 +298,7 @@ window.FXL = (() => {
         case 'tea-ring': if (flat) ring(it, t, st, f, inf); break;
         case 'sparkle': if (flat) sparkleFx(it, t, st, f, inf); break;
         case 'shine': if (flat) shine(it, t, st, f, inf); break;
+        case 'fold': if (flat) fold(it, t, st, f, inf); break;
         case 'crack': if (flat) crack(it, t, st, f, inf); break
       }
     })
@@ -291,6 +306,9 @@ window.FXL = (() => {
 
   /* ---------- pinned pictures: a library picture stuck on the scene's backdrop inside a frame ---------- */
   const PHOTO = { cream: '#efe3c6', sky: '#bfe0f0', mint: '#cfe9d3', rose: '#f4cfd6', sand: '#e8c999', night: '#243049', kraft: '#c9a26b', white: '#fbfaf5' };
+  const CARD = { white: ['#fffdf6', '#efe9d6'], cream: ['#f6ecd2', '#e6d8b4'], kraft: ['#d8b880', '#bd9a5f'], black: ['#2a2a2e', '#141416'], rose: ['#fbe3e8', '#efc7d0'] };
+  const PINCOL = { 'pin-red': ['#ff8a80', '#e0262f', '#8a0f18'], 'pin-blue': ['#a9d0ff', '#2b6fe0', '#123c8a'], 'pin-brass': ['#fff3bd', '#d1a73a', '#7a5a10'] };
+  const WASHI = [['#f7b7c8', '#ffffff'], ['#9fd8d0', '#ffffff'], ['#ffd66b', '#ffffff']];
   const speckle = (g, x, y, w, h, seed, n, al) => { for (let i = 0; i < n; i++) { g.fillStyle = hsh(seed, i, 1) < .5 ? `rgba(90,60,20,${al * hsh(seed, i, 2)})` : `rgba(255,255,255,${al * hsh(seed, i, 2)})`; g.fillRect(x + hsh(seed, i, 3) * w, y + hsh(seed, i, 4) * h, 1 + hsh(seed, i, 5) * 2.2, 1 + hsh(seed, i, 6) * 2.2) } };
   function jagged(g, x, y, w, h, seed, jag, step) {
     const pts = [], edge = (x0, y0, x1, y1, nx, ny) => { const n = Math.max(2, Math.round(Math.hypot(x1 - x0, y1 - y0) / step)); for (let i = 0; i < n; i++) { const q = i / n, j = (hsh(seed, pts.length, 3) - .5) * 2 * jag; pts.push([x0 + (x1 - x0) * q + nx * j, y0 + (y1 - y0) * q + ny * j]) } };
@@ -299,56 +317,97 @@ window.FXL = (() => {
   function metalFrame(g, x, y, w, h, th, cols, grain) {   // wood / gold: bevelled rectangular frame of thickness th
     const gr = g.createLinearGradient(x, y, x + w, y + h); cols.forEach((c, i) => gr.addColorStop(i / (cols.length - 1), c)); g.fillStyle = gr; g.fillRect(x, y, w, h);
     g.strokeStyle = 'rgba(255,240,200,.45)'; g.lineWidth = 2; g.strokeRect(x + 1, y + 1, w - 2, h - 2); g.strokeStyle = 'rgba(0,0,0,.4)'; g.strokeRect(x + th, y + th, w - 2 * th, h - 2 * th);
-    g.save(); g.globalAlpha = grain; g.strokeStyle = '#2a1608'; g.lineWidth = 1; for (let i = 0; i < 36; i++) { const yy = y + hsh(w | 0, i, 8) * h; g.beginPath(); g.moveTo(x, yy); g.bezierCurveTo(x + w * .3, yy + 6, x + w * .6, yy - 6, x + w, yy + 2); g.stroke() } g.restore()
+    g.save(); g.globalAlpha = grain; g.strokeStyle = '#2a1608'; g.lineWidth = 1; for (let i = 0; i < 36; i++) { const yy = y + hsh(w | 0, i, 8) * h; g.beginPath(); g.moveTo(x, yy); g.bezierCurveTo(x + w * .3, yy + 6, x + w * .6, yy - 6, x + w, yy + 2); g.stroke() } g.restore();
     g.fillStyle = 'rgba(255,255,255,.18)'; g.beginPath(); g.moveTo(x, y); g.lineTo(x + w, y); g.lineTo(x + w - th, y + th); g.lineTo(x + th, y + th); g.lineTo(x + th, y + h - th); g.lineTo(x, y + h); g.fill();
     g.fillStyle = 'rgba(0,0,0,.2)'; g.beginPath(); g.moveTo(x + w, y + h); g.lineTo(x, y + h); g.lineTo(x + th, y + h - th); g.lineTo(x + w - th, y + h - th); g.lineTo(x + w - th, y + th); g.lineTo(x + w, y); g.fill()
   }
+  /* ----- the things that hold a picture on the wall ----- */
+  function tapePiece(g, x, y, rot, w, h, washi, seed) {
+    g.save(); g.translate(x, y); g.rotate(rot); g.beginPath(); for (let i = 0; i <= 8; i++) g.lineTo(-w / 2 + (i % 2 ? 4 : 0), -h / 2 + i * h / 8); for (let i = 8; i >= 0; i--) g.lineTo(w / 2 - (i % 2 ? 4 : 0), -h / 2 + i * h / 8); g.closePath();
+    g.shadowColor = 'rgba(0,0,0,.25)'; g.shadowBlur = 5; g.shadowOffsetY = 2;
+    if (washi) { const c = WASHI[seed % WASHI.length]; g.fillStyle = c[0]; g.fill(); g.shadowColor = 'transparent'; g.save(); g.clip(); g.fillStyle = c[1]; g.globalAlpha = .55; for (let sx = -w; sx < w * 2; sx += h * .7) { g.beginPath(); g.moveTo(sx - h, h); g.lineTo(sx - h + h * .28, h); g.lineTo(sx + h * .28, -h); g.lineTo(sx, -h); g.closePath(); g.fill() } g.restore() }
+    else { g.fillStyle = 'rgba(238,224,168,.84)'; g.fill(); g.shadowColor = 'transparent'; g.fillStyle = 'rgba(255,255,255,.3)'; g.fillRect(-w / 2 + 6, -h / 2 + h * .12, w - 12, h * .18) }
+    g.strokeStyle = 'rgba(120,100,40,.25)'; g.lineWidth = 1.5; g.stroke(); g.restore()
+  }
+  function pushpin(g, px, py, r, cols) {
+    g.fillStyle = 'rgba(0,0,0,.28)'; g.beginPath(); g.ellipse(px + r * .5, py + r * .8, r, r * .7, 0, 0, TAU); g.fill();
+    const rg = g.createRadialGradient(px - r * .35, py - r * .35, r * .1, px, py, r); rg.addColorStop(0, cols[0]); rg.addColorStop(.45, cols[1]); rg.addColorStop(1, cols[2]); g.fillStyle = rg; g.beginPath(); g.arc(px, py, r, 0, TAU); g.fill();
+    g.fillStyle = 'rgba(255,255,255,.7)'; g.beginPath(); g.ellipse(px - r * .35, py - r * .38, r * .28, r * .16, -.6, 0, TAU); g.fill()
+  }
+  function attachDraw(g, kind, ox, oy, cw, ch, mx, seed) {   // (ox,oy,cw,ch) = the card rectangle
+    const cx = ox + cw / 2;
+    if (PINCOL[kind]) pushpin(g, cx, oy + .045 * mx, .042 * mx, PINCOL[kind]);
+    else if (kind === 'tape-corners' || kind === 'washi') for (const s of [-1, 1]) tapePiece(g, s < 0 ? ox + cw * .08 : ox + cw * .92, oy + ch * .02, s * .62 + (hsh(seed, s + 2, 1) - .5) * .2, .3 * mx, .1 * mx, kind === 'washi', seed + (s > 0 ? 1 : 0));
+    else if (kind === 'tape-top') tapePiece(g, cx, oy + .01 * mx, (hsh(seed, 3, 1) - .5) * .12, .34 * mx, .1 * mx, false, seed);
+    else if (kind === 'tape-4') [[ox + cw * .05, oy + ch * .03, .7], [ox + cw * .95, oy + ch * .03, -.7], [ox + cw * .05, oy + ch * .97, -.7], [ox + cw * .95, oy + ch * .97, .7]].forEach(([x, y, r], i) => tapePiece(g, x, y, r, .26 * mx, .085 * mx, false, seed + i));
+    else if (kind === 'clip') {
+      const x = cx + .1 * cw * (hsh(seed, 1, 1) - .5), y = oy - .04 * mx, w = .1 * mx, h = .3 * mx, lw = .013 * mx; g.save(); g.shadowColor = 'rgba(0,0,0,.35)'; g.shadowBlur = 5; g.shadowOffsetY = 3; g.lineWidth = lw; g.lineCap = 'round'; g.strokeStyle = '#aeb4bf';
+      g.beginPath(); g.moveTo(x - w * .4, y + h * .72); g.lineTo(x - w * .4, y + h * .12); g.arc(x, y + h * .12, w * .4, Math.PI, 0); g.lineTo(x + w * .4, y + h * .78); g.arc(x, y + h * .78, w * .4, 0, Math.PI); g.lineTo(x - w * .4, y + h * .72); g.moveTo(x - w * .4, y + h * .72); g.stroke();
+      g.shadowColor = 'transparent'; g.strokeStyle = '#8a909c'; g.beginPath(); g.moveTo(x, y + h * .3); g.lineTo(x, y + h * .72); g.arc(x + w * .2, y + h * .72, w * .2, Math.PI, 0); g.lineTo(x + w * .4, y + h * .16); g.stroke(); g.strokeStyle = 'rgba(255,255,255,.6)'; g.lineWidth = lw * .35; g.beginPath(); g.moveTo(x - w * .4 + 2, y + h * .2); g.lineTo(x - w * .4 + 2, y + h * .6); g.stroke(); g.restore()
+    } else if (kind === 'nail') { const x = cx, y = oy + .04 * mx, r = .024 * mx; g.fillStyle = 'rgba(0,0,0,.3)'; g.beginPath(); g.ellipse(x + r, y + r * 1.6, r * 1.5, r * .8, .5, 0, TAU); g.fill(); const rg = g.createRadialGradient(x - r * .3, y - r * .3, r * .1, x, y, r); rg.addColorStop(0, '#e8e8ee'); rg.addColorStop(.5, '#7b7f8a'); rg.addColorStop(1, '#30323a'); g.fillStyle = rg; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill() }
+    else if (kind === 'magnet') { const x = cx, y = oy + .05 * mx, r = .05 * mx; g.fillStyle = 'rgba(0,0,0,.3)'; g.beginPath(); g.ellipse(x + r * .3, y + r * .8, r, r * .6, 0, 0, TAU); g.fill(); g.fillStyle = '#30343d'; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); g.strokeStyle = '#d23b3b'; g.lineWidth = r * .28; g.beginPath(); g.arc(x, y, r * .72, 0, TAU); g.stroke(); g.fillStyle = 'rgba(255,255,255,.45)'; g.beginPath(); g.ellipse(x - r * .35, y - r * .4, r * .3, r * .15, -.6, 0, TAU); g.fill() }
+    else if (kind === 'putty') for (const [x, y] of [[ox + .03 * mx, oy + .03 * mx], [ox + cw - .03 * mx, oy + .03 * mx], [ox + .03 * mx, oy + ch - .03 * mx], [ox + cw - .03 * mx, oy + ch - .03 * mx]]) { const r = .034 * mx; g.fillStyle = 'rgba(0,0,0,.2)'; g.beginPath(); g.ellipse(x + 2, y + 3, r, r * .85, 0, 0, TAU); g.fill(); g.fillStyle = '#5b97e6'; g.beginPath(); for (let a = 0; a < 14; a++) { const an = a * TAU / 14, rr = r * (.85 + .3 * hsh(seed, a, 61)); g.lineTo(x + Math.cos(an) * rr, y + Math.sin(an) * rr) } g.closePath(); g.fill(); g.fillStyle = 'rgba(255,255,255,.45)'; g.beginPath(); g.ellipse(x - r * .3, y - r * .35, r * .35, r * .2, -.6, 0, TAU); g.fill() }
+    else if (kind === 'string') {
+      const top = oy - .3 * mx; g.strokeStyle = '#6b4a2a'; g.lineWidth = Math.max(2, .008 * mx); g.lineCap = 'round'; g.beginPath(); g.moveTo(ox + cw * .1, oy + .02 * mx); g.lineTo(cx, top); g.lineTo(ox + cw * .9, oy + .02 * mx); g.stroke();
+      g.strokeStyle = 'rgba(255,230,180,.35)'; g.lineWidth = Math.max(1, .003 * mx); g.beginPath(); g.moveTo(ox + cw * .1, oy + .02 * mx); g.lineTo(cx, top); g.lineTo(ox + cw * .9, oy + .02 * mx); g.stroke();
+      pushpin(g, ox + cw * .1, oy + .03 * mx, .028 * mx, PINCOL['pin-brass']); pushpin(g, ox + cw * .9, oy + .03 * mx, .028 * mx, PINCOL['pin-brass']); attachDraw(g, 'nail', cx - cw / 2 + cw / 2, top - .04 * mx + 0 * ch, 0, 0, mx, seed)
+    }
+  }
+  const normPin = p => { let fr = p.frame || 'polaroid', at = p.attach; if (fr === 'tape') { fr = 'plain'; if (at == null) at = 'tape-corners' } else if (fr === 'pin') { fr = 'plain'; if (at == null) at = 'pin-red' } return { frame: fr, attach: at || 'none', card: p.card || 'white', curl: !!p.curl } };
   function frameCanvas(p) {
-    const im = IM[p.src], inf = INFO[p.src], style = p.frame || 'polaroid'; if (!im || !inf || style === 'none') return null;
+    const im = IM[p.src], inf = INFO[p.src], n = normPin(p), style = n.frame, att = n.attach; if (!im || !inf || (style === 'none' && att === 'none' && !n.curl)) return null;
     const [bx0, by0, bx1, by1] = inf.bb, bw = (bx1 - bx0) * inf.w, bh = (by1 - by0) * inf.h, k = Math.min(1.25, 560 / Math.max(bw, bh)), cw = bw * k, ch = bh * k, mx = Math.max(cw, ch), seed = (p.seed | 0) + (inf.w | 0);
-    const photo = PHOTO[p.photo] || (/^#[0-9a-f]{3,8}$/i.test(p.photo || '') ? p.photo : PHOTO.cream);
-    const G = { polaroid: [.09, .27, .03], tape: [.075, .075, .11], pin: [.075, .075, .1], torn: [.11, .11, .04], burnt: [.14, .14, .08], wood: [.2, .2, .02], gold: [.21, .21, .02] }[style] || [.08, .08, .03];
-    const padX = G[0] * mx, padT = G[0] * mx, padB = G[1] * mx, ext = G[2] * mx, iw = cw + .12 * mx, ih = ch + .12 * mx, cardW = iw + 2 * padX, cardH = ih + padT + padB, c = cnv(cardW + 2 * ext, cardH + 2 * ext), g = c.getContext('2d'), ox = ext, oy = ext, ax = ox + padX, ay = oy + padT;
+    const photo = PHOTO[p.photo] || (/^#[0-9a-f]{3,8}$/i.test(p.photo || '') ? p.photo : PHOTO.cream), cc = CARD[n.card] || CARD.white;
+    const G = { polaroid: [.09, .27, .03], plain: [.075, .075, .03], stamp: [.1, .1, .03], film: [.17, .17, .03], torn: [.11, .11, .04], burnt: [.14, .14, .08], wood: [.2, .2, .02], gold: [.21, .21, .02], none: [0, 0, 0] }[style] || [.08, .08, .03];
+    const flat = style === 'none', padX = G[0] * mx, padT = style === 'film' ? .06 * mx : G[0] * mx, padB = style === 'film' ? .06 * mx : G[1] * mx, ext = Math.max(G[2] * mx, att === 'none' && !n.curl ? 0 : .11 * mx), extT = att === 'string' ? .42 * mx : ext;
+    const iw = flat ? cw : cw + .12 * mx, ih = flat ? ch : ch + .12 * mx, cardW = iw + 2 * padX, cardH = ih + padT + padB, c = cnv(cardW + 2 * ext, cardH + extT + ext), g = c.getContext('2d'), ox = ext, oy = extT, ax = ox + padX, ay = oy + padT;
     const paper = (col, col2) => { const gr = g.createLinearGradient(ox, oy, ox + cardW, oy + cardH); gr.addColorStop(0, col); gr.addColorStop(1, col2); g.fillStyle = gr };
-    const photoArea = fill => { if (fill) { g.fillStyle = photo; g.fillRect(ax, ay, iw, ih); const rg = g.createRadialGradient(ax + iw / 2, ay + ih / 2, mx * .1, ax + iw / 2, ay + ih / 2, mx * .75); rg.addColorStop(0, 'rgba(255,255,255,.22)'); rg.addColorStop(1, 'rgba(0,0,0,.14)'); g.fillStyle = rg; g.fillRect(ax, ay, iw, ih); speckle(g, ax, ay, iw, ih, seed, 260, .16) } };
+    const photoArea = () => { g.fillStyle = photo; g.fillRect(ax, ay, iw, ih); const rg = g.createRadialGradient(ax + iw / 2, ay + ih / 2, mx * .1, ax + iw / 2, ay + ih / 2, mx * .75); rg.addColorStop(0, 'rgba(255,255,255,.22)'); rg.addColorStop(1, 'rgba(0,0,0,.14)'); g.fillStyle = rg; g.fillRect(ax, ay, iw, ih); speckle(g, ax, ay, iw, ih, seed, 260, .16) };
     const picture = () => g.drawImage(im, bx0 * inf.w, by0 * inf.h, bw, bh, ax + (iw - cw) / 2, ay + (ih - ch) / 2, cw, ch);
-    if (style === 'polaroid' || style === 'tape' || style === 'pin') {
-      paper('#fffdf6', '#efe9d6'); g.fillRect(ox, oy, cardW, cardH); g.strokeStyle = 'rgba(120,100,60,.25)'; g.lineWidth = 2; g.strokeRect(ox + 1, oy + 1, cardW - 2, cardH - 2); photoArea(true); g.strokeStyle = 'rgba(0,0,0,.22)'; g.lineWidth = 3; g.strokeRect(ax, ay, iw, ih); picture();
-      if (style === 'tape') for (const s of [-1, 1]) {
-        g.save(); g.translate(s < 0 ? ox + cardW * .08 : ox + cardW * .92, oy + cardH * .02); g.rotate(s * .62 + (hsh(seed, s + 2, 1) - .5) * .2); const tw = .3 * mx, th = .1 * mx;
-        g.beginPath(); for (let i = 0; i <= 8; i++) g.lineTo(-tw / 2 + (i % 2 ? 4 : 0), -th / 2 + i * th / 8 * 1); for (let i = 8; i >= 0; i--) g.lineTo(tw / 2 - (i % 2 ? 4 : 0), -th / 2 + i * th / 8); g.closePath();
-        g.fillStyle = 'rgba(238,224,168,.82)'; g.fill(); g.fillStyle = 'rgba(255,255,255,.3)'; g.fillRect(-tw / 2 + 6, -th / 2 + th * .12, tw - 12, th * .18); g.strokeStyle = 'rgba(120,100,40,.25)'; g.lineWidth = 1.5; g.stroke(); g.restore()
-      }
-      if (style === 'pin') { const px = ox + cardW / 2, py = oy + .045 * mx, r = .042 * mx; g.fillStyle = 'rgba(0,0,0,.28)'; g.beginPath(); g.ellipse(px + r * .5, py + r * .8, r, r * .7, 0, 0, TAU); g.fill(); const rg = g.createRadialGradient(px - r * .35, py - r * .35, r * .1, px, py, r); rg.addColorStop(0, '#ff8a80'); rg.addColorStop(.45, '#e0262f'); rg.addColorStop(1, '#8a0f18'); g.fillStyle = rg; g.beginPath(); g.arc(px, py, r, 0, TAU); g.fill(); g.fillStyle = 'rgba(255,255,255,.7)'; g.beginPath(); g.ellipse(px - r * .35, py - r * .38, r * .28, r * .16, -.6, 0, TAU); g.fill() }
+    if (style === 'polaroid' || style === 'plain' || style === 'stamp' || style === 'film') {
+      if (style === 'film') { paper('#2a2a2e', '#121214') } else paper(cc[0], cc[1]); g.fillRect(ox, oy, cardW, cardH); g.strokeStyle = 'rgba(120,100,60,.25)'; g.lineWidth = 2; g.strokeRect(ox + 1, oy + 1, cardW - 2, cardH - 2);
+      if (style === 'stamp') { g.save(); g.globalCompositeOperation = 'destination-out'; const r = .022 * mx, st = .062 * mx; for (let x = ox + st / 2; x < ox + cardW; x += st) { g.beginPath(); g.arc(x, oy, r, 0, TAU); g.arc(x, oy + cardH, r, 0, TAU); g.fill() } for (let y = oy + st / 2; y < oy + cardH; y += st) { g.beginPath(); g.arc(ox, y, r, 0, TAU); g.arc(ox + cardW, y, r, 0, TAU); g.fill() } g.restore() }
+      if (style === 'film') { g.fillStyle = '#efe6cf'; const hh = .05 * mx, st = .09 * mx; for (let y = oy + st * .6; y < oy + cardH - hh; y += st) for (const x of [ox + padX * .3, ox + cardW - padX * .3 - hh * .7]) { g.beginPath(); g.roundRect(x, y, hh * .7, hh, 3); g.fill() } }
+      photoArea(); g.strokeStyle = 'rgba(0,0,0,.22)'; g.lineWidth = 3; g.strokeRect(ax, ay, iw, ih); picture()
     } else if (style === 'torn' || style === 'burnt') {
-      jagged(g, ox, oy, cardW, cardH, seed, style === 'torn' ? .02 * mx : .008 * mx, style === 'torn' ? 13 : 20); paper(style === 'burnt' ? '#ecd9a6' : '#f2e9d2', style === 'burnt' ? '#d8bf86' : '#e1d4b4'); g.fill(); g.save(); g.clip(); speckle(g, ox, oy, cardW, cardH, seed + 3, 420, .2); g.restore(); g.lineWidth = 2; g.strokeStyle = 'rgba(90,70,30,.35)'; g.stroke();
-      g.save(); g.shadowColor = 'rgba(0,0,0,.25)'; g.shadowBlur = 8; g.shadowOffsetY = 3; g.drawImage(im, bx0 * inf.w, by0 * inf.h, bw, bh, ax + (iw - cw) / 2, ay + (ih - ch) / 2, cw, ch); g.restore()
+      jagged(g, ox, oy, cardW, cardH, seed, style === 'torn' ? .02 * mx : .008 * mx, style === 'torn' ? 13 : 20); paper(style === 'burnt' ? '#ecd9a6' : cc[0], style === 'burnt' ? '#d8bf86' : cc[1]); g.fill(); g.save(); g.clip(); speckle(g, ox, oy, cardW, cardH, seed + 3, 420, .2); g.restore(); g.lineWidth = 2; g.strokeStyle = 'rgba(90,70,30,.35)'; g.stroke();
+      g.save(); g.shadowColor = 'rgba(0,0,0,.25)'; g.shadowBlur = 8; g.shadowOffsetY = 3; picture(); g.restore()
       if (style === 'burnt') renderBurn(fieldOf('f|' + [p.src, style, seed, c.width].join('|'), c), g, null, 1, .2, .8, 1)
     } else if (style === 'wood' || style === 'gold') {
       const th = padX * .62; metalFrame(g, ox, oy, cardW, cardH, th, style === 'wood' ? ['#9a6330', '#6a3f1a', '#8a5a2b', '#4d2c12'] : ['#fbe9a0', '#c99a33', '#f4d77a', '#8e6414'], style === 'wood' ? .16 : .0);
-      g.fillStyle = '#f3ecd8'; g.fillRect(ox + th, oy + th, cardW - 2 * th, cardH - 2 * th); g.strokeStyle = 'rgba(0,0,0,.25)'; g.lineWidth = 2; g.strokeRect(ox + th, oy + th, cardW - 2 * th, cardH - 2 * th); photoArea(true); g.strokeStyle = 'rgba(0,0,0,.35)'; g.lineWidth = 3; g.strokeRect(ax, ay, iw, ih); picture();
+      g.fillStyle = '#f3ecd8'; g.fillRect(ox + th, oy + th, cardW - 2 * th, cardH - 2 * th); g.strokeStyle = 'rgba(0,0,0,.25)'; g.lineWidth = 2; g.strokeRect(ox + th, oy + th, cardW - 2 * th, cardH - 2 * th); photoArea(); g.strokeStyle = 'rgba(0,0,0,.35)'; g.lineWidth = 3; g.strokeRect(ax, ay, iw, ih); picture();
       g.save(); g.beginPath(); g.rect(ax, ay, iw, ih); g.clip(); g.fillStyle = 'rgba(255,255,255,.13)'; g.beginPath(); g.moveTo(ax, ay); g.lineTo(ax + iw * .55, ay); g.lineTo(ax, ay + ih * .55); g.closePath(); g.fill(); g.restore();
       if (style === 'gold') { g.fillStyle = '#b98a22'; for (const [x, y] of [[ox, oy], [ox + cardW, oy], [ox, oy + cardH], [ox + cardW, oy + cardH], [ox + cardW / 2, oy], [ox + cardW / 2, oy + cardH], [ox, oy + cardH / 2], [ox + cardW, oy + cardH / 2]]) { g.beginPath(); g.arc(x, y, th * .42, 0, TAU); g.fill(); g.fillStyle = '#fbe9a0'; g.beginPath(); g.arc(x - 2, y - 2, th * .2, 0, TAU); g.fill(); g.fillStyle = '#b98a22' } }
+    } else picture();   // 'none': just the picture (the fasteners below can still hold it)
+    if (n.curl) {   // the bottom-right corner is lifted: the corner is cut away and a folded flap with a little shadow lies on the picture
+      const cs = .17 * mx, X = ox + cardW, Y = oy + cardH; g.save(); g.globalCompositeOperation = 'destination-out'; g.beginPath(); g.moveTo(X - cs, Y); g.lineTo(X, Y); g.lineTo(X, Y - cs); g.closePath(); g.fill(); g.restore();
+      const sg = g.createLinearGradient(X - cs, Y - cs, X - cs * .2, Y - cs * .2); sg.addColorStop(0, 'rgba(0,0,0,0)'); sg.addColorStop(1, 'rgba(0,0,0,.28)'); g.fillStyle = sg; g.beginPath(); g.moveTo(X - cs * 1.1, Y - cs * .1); g.lineTo(X - cs * .1, Y - cs * 1.1); g.lineTo(X - cs * .1, Y - cs * .1); g.closePath(); g.fill();
+      const fg = g.createLinearGradient(X - cs, Y - cs, X - cs * .3, Y - cs * .3); fg.addColorStop(0, '#fffaf0'); fg.addColorStop(1, '#d9cfb6'); g.save(); g.shadowColor = 'rgba(0,0,0,.35)'; g.shadowBlur = 8; g.shadowOffsetX = 2; g.shadowOffsetY = 3; g.fillStyle = fg; g.beginPath(); g.moveTo(X - cs, Y); g.lineTo(X, Y - cs); g.lineTo(X - cs, Y - cs); g.closePath(); g.fill(); g.restore()
     }
+    if (att !== 'none') attachDraw(g, att, ox, oy, cardW, cardH, mx, seed);
     return c
   }
-  const pinKey = (sc, i, p) => p.frame && p.frame !== 'none' ? ['pin', sc.idx, i, p.src, p.frame, p.photo || '', p.seed | 0].join('|') : p.src;
+  const pinKey = (sc, i, p) => { const n = normPin(p); return n.frame === 'none' && n.attach === 'none' && !n.curl ? p.src : ['pin', sc.idx, i, p.src, n.frame, n.attach, n.card, n.curl ? 1 : 0, p.photo || '', p.seed | 0].join('|') };
   function buildPins() {
     if (typeof D === 'undefined' || !D) return;
     D.scenes.forEach(sc => (sc.pins || []).forEach((p, i) => { if (!p || !p.src || !IM[p.src]) return; if (!INFO[p.src]) INFO[p.src] = measure(IM[p.src]); const key = pinKey(sc, i, p); if (key === p.src || IM[key]) return; const c = frameCanvas(p); if (c) { IM[key] = c; INFO[key] = measure(c) } }))
   }
   function selBox(x, y, im, S, rot) { const m = Math.max(im.width, im.height), w = im.width / m * S, h = im.height / m * S; ctx.save(); ctx.translate(x, y); ctx.rotate(rot || 0); ctx.setLineDash([22, 14]); ctx.lineWidth = 7; ctx.strokeStyle = '#00e5ff'; ctx.strokeRect(-w / 2 - 8, -h / 2 - 8, w + 16, h + 16); ctx.restore() }
+  function drawPinImg(key, x, y, size, rot, a, sh, o) {   // a picture stuck on the wall: no entrance, no float, no squash; only a soft contact shadow
+    const im = IM[key]; if (!im) return; const s = size * (o ? o.k : 1) / Math.max(im.width, im.height);
+    ctx.save(); ctx.translate(x, y); ctx.rotate(rot + (o ? o.dr : 0)); if (sh > 0) { ctx.shadowColor = `rgba(25,12,0,${.5 * sh})`; ctx.shadowBlur = 6 + 22 * sh; ctx.shadowOffsetX = 5 * sh + 1; ctx.shadowOffsetY = 12 * sh + 2 }
+    ctx.scale(s, s); ctx.globalAlpha = a; if (VOX) ctx.filter = 'sepia(.1) saturate(1.05) contrast(1.05)'; ctx.drawImage(im, -im.width / 2, -im.height / 2); ctx.restore()
+  }
   function pins(t, sc) {
     const arr = sc.pins; if (!arr || !arr.length) return;
     arr.forEach((p, i) => {
       if (!p || !p.src) return; const key = pinKey(sc, i, p), kk = IM[key] ? key : p.src, im = IM[kk]; if (!im) return;
-      const lay = (p.lay && p.lay[FMT]) || {}, S = B * .38 * num(p.sz, 1, .15, 5) * (lay.sz || 1);
+      const lay = (p.lay && p.lay[FMT]) || {}, S = B * .38 * num(p.sz, 1, .15, 5) * (lay.sz || 1), sh = num(p.shadow, .6, 0, 1);
       const px = (p.x == null ? .2 + .6 * hsh(sc.idx, i, 41) : +p.x) * W + (lay.dx || 0) * W, py = (p.y == null ? .2 + .5 * hsh(sc.idx, i, 42) : +p.y) * H + (lay.dy || 0) * H, rot0 = (p.rot == null ? (hsh(sc.idx, i, 43) - .5) * .3 : +p.rot) + (lay.rot || 0);
-      const ts = sc.t0 - .1 + num(p.start, i * .12, 0, 30), age = EDIT ? 99 : t - ts; if (age < 0) return;
-      const q = spr(age, 0, .5, 14), k0 = EDIT ? 1 : 1.45 - .45 * Math.min(q, 1.1), a = EDIT ? 1 : ramp(age, 0, .08), dr = EDIT ? 0 : (1 - Math.min(q, 1)) * .14 * (i % 2 ? 1 : -1), sq = EDIT ? 0 : bump(t, ts, .07);
+      const st0 = num(p.start, 0, 0, 30), t1 = sc.t0 + st0, a = EDIT || st0 <= 0 ? 1 : ramp(t, t1, t1 + .15); if (a <= 0) return;   // present from the first frame of the scene (start = 0)
       REC[2000 + i] = { x: px, y: py, size: S, src: kk, kind: 'pin' };
-      const base = o => drawImg(kk, px, py, S * k0 * (o ? o.k : 1), rot0 + dr + (o ? o.dr : 0), a, 'none', 1 + sq, 1 - sq, true);
-      if (!EDIT && p.fx && p.fx.length) item({ src: kk, t: ts, fx: p.fx }, t, { x: px, y: py, size: S * k0, rot: rot0 + dr, a, sx: 1 + sq, sy: 1 - sq }, base); else base();
+      const base = o => drawPinImg(kk, px, py, S, rot0, a, sh, o);
+      if (!EDIT && p.fx && p.fx.length) item({ src: kk, t: Math.min(sc.t0, t1), fx: p.fx }, t, { x: px, y: py, size: S, rot: rot0, a, sx: 1, sy: 1 }, base); else base();
       if (EDIT && EDIT.sel === 2000 + i) selBox(px, py, im, S, rot0)
     })
   }

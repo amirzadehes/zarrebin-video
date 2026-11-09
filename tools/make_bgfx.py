@@ -6,7 +6,7 @@ Events (times mirror engine/fx.js):
   scene.bg      -> one sound when the motion starts (t0 + bg.start); directional / zoom / pop motions get a softer sound for each of the
                    first copies that enters (max 4). `cover` gets a run of pops that follows the slow-fast-slow arrival curve.
                    bg.sound = whoosh | swipe | airy | low | riser | pop | thud | none, bg.vol = 0-100.
-  scene.pins[]  -> a paper "slap" when the picture is stuck on (t0 - .1 + pin.start), pin.vol = 0-100 (default 40).
+  scene.pins[]  -> pictures stuck on the wall are static: no sound by default; only an explicit pin.vol > 0 plays a paper "slap" at (t0 + pin.start).
   item.fx[] / pin.fx[] at (picture time + fx.start), fx.vol = 0-100:
                    steam / smoke (soft hiss), page-turn (paper rustle + flap), tea-ring (soft cup "tok"), aged (slow airy swell), burn (crackling fire),
                    sparkle (glints), shine (swish), crack (glass crack). glow / wiggle / pulse are silent.
@@ -124,8 +124,9 @@ def main(ep):
                 for k, dt in enumerate(entries(bg)): put(snd, t0 + dt, vol * (1, .7, .5, .35)[k])
         for i, p in enumerate(sc.get('pins') or []):
             if not p or not p.get('src'): continue
-            ts = sc['t0'] - .1 + clamp(fnum(p.get('start'), i * .12), 0, 30)
-            put(M.cap(M.slap(), .6), ts + .05, clamp(fnum(p.get('vol'), 40), 0, 100) / 100)
+            ts = sc['t0'] + clamp(fnum(p.get('start'), 0), 0, 30)
+            pv = clamp(fnum(p.get('vol'), 0), 0, 100) / 100
+            if pv > 0: put(M.cap(M.slap(), .6), ts, pv)
             fx_sounds(p.get('fx'), ts)
         for it in sc.get('items', []): fx_sounds(it.get('fx'), it['t'])
     if not n_ev: print('bgfx: no background, pin or effect sounds in this episode'); return

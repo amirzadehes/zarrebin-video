@@ -566,7 +566,11 @@ async function newForScene(i,d,faName,f,st){
 const BG_MOTIONS=[['down','از بالا به پایین'],['up','از پایین به بالا'],['right','از چپ به راست'],['left','از راست به چپ'],['zoom','از عمق صحنه بیاید جلو'],['pop','با جهش ظاهر شود'],['fill','کل صفحه پر باشد، کم‌کم خالی شود'],['fillin','صفحه خالی باشد، کم‌کم پر شود'],['scroll','الگوی بی‌پایان (اسکرول)'],['cover','پوشاندن کامل: آهسته شروع، تند، دوباره آهسته (تصادفی)']];
 const BG_SOUNDS=[['whoosh','ویژ'],['swipe','سوییپ'],['airy','نفس هوا'],['low','ویژ بم'],['riser','بالارونده'],['pop','پاپ'],['thud','تپ سنگین'],['none','بدون صدا']];
 const BG_DIRS=[['down','به پایین'],['up','به بالا'],['right','به راست'],['left','به چپ'],['dr','مورب: پایین راست'],['dl','مورب: پایین چپ'],['ur','مورب: بالا راست'],['ul','مورب: بالا چپ']];
-const FRAMES=[['polaroid','پولارویید (قاب سفید)'],['tape','چسب نواری (چسبیده به دیوار)'],['pin','پونز قرمز'],['torn','کاغذ پاره'],['burnt','قدیمی با حاشیه‌ی سوخته'],['wood','قاب چوبی'],['gold','قاب طلایی'],['none','بدون قاب (فقط خود تصویر)']];
+const FRAMES=[['polaroid','پولارویید (قاب سفید)'],['plain','کارت ساده‌ی کاغذی'],['stamp','لبه‌ی تمبری'],['film','نوار فیلم'],['torn','کاغذ پاره'],['burnt','قدیمی با حاشیه‌ی سوخته'],['wood','قاب چوبی'],['gold','قاب طلایی'],['none','بدون قاب (فقط خود تصویر)']];
+const ATTACH=[['pin-red','پونز قرمز'],['pin-blue','پونز آبی'],['pin-brass','پونز برنجی'],['tape-corners','چسب نواری دو گوشه'],['tape-top','چسب نواری وسط بالا'],['tape-4','چسب نواری چهار گوشه'],['washi','چسب کاغذی رنگی'],['clip','گیره‌ی کاغذ'],['nail','میخ'],['magnet','آهنربا'],['putty','خمیر چسب'],['string','دو پونز با نخ آویز'],['none','بدون چسب']];
+const CARDS=[['white','سفید'],['cream','کرم'],['kraft','کرافت'],['black','مشکی'],['rose','صورتی کمرنگ']];
+let ATT_LAST='pin-red';
+const pinNorm=p=>{ if(p.frame==='tape'){ p.frame='plain'; if(p.attach==null) p.attach='tape-corners' } else if(p.frame==='pin'){ p.frame='plain'; if(p.attach==null) p.attach='pin-red' } if(p.attach==null) p.attach='none'; return p };
 const PHOTOS=[['cream','کرم'],['sky','آبی روشن'],['mint','سبز نعنایی'],['rose','صورتی'],['sand','شنی'],['kraft','کاغذ کرافت'],['night','شب'],['white','سفید']];
 let PIN_LAST='polaroid';
 const BG_DEF={motion:'down',hold:false,speed:1,size:1,count:3,opacity:.9,blur:0,start:0,dir:'down',sound:'whoosh',vol:60};
@@ -584,6 +588,7 @@ const FXS={
  glow:{l:'هاله‌ی نورانی',vol:0,start:0,color:'#ffd24a',p:[['radius','اندازه‌ی هاله',10,140,5,46],['rate','سرعت تپش',.1,4,.1,.8],['dur','مدت (۰ = تا آخر)',0,10,.5,0,' ث']]},
  wiggle:{l:'لرزش و تکان خوردن',vol:0,start:0,p:[['amp','شدت',1,50,1,7,'٪',100],['freq','تندی',.5,10,.5,3.2],['dur','مدت (۰ = تا آخر)',0,10,.5,0,' ث']]},
  pulse:{l:'ضربان (بزرگ و کوچک شدن)',vol:0,start:0,p:[['amp','شدت',1,50,1,7,'٪',100],['rate','تندی',.3,4,.1,1.2]]},
+ fold:{l:'تا و چروک کاغذ',vol:0,start:0,p:[['folds','تعداد تا',1,3,1,2],['amount','شدت',10,100,5,70,'٪',100]]},
  crack:{l:'ترک خوردن مثل شیشه',vol:60,start:.3,anchor:1,p:[['size','اندازه',20,120,5,55,'٪',100],['rays','تعداد ترک‌ها',4,14,1,8]]}
 };
 const FX_LIST=Object.keys(FXS).map(k=>[k,FXS[k].l]);
@@ -656,26 +661,30 @@ function bgFxUI(box,s,i,d){
     sec.querySelector('.bgLay').onclick=()=>openPreview(i,'edit',1000);
     sec.querySelector('.bgPv').onclick=()=>openPreview(i,'play') }
   /* ----- 2) pictures pinned to the backdrop, inside a frame ----- */
-  const ps=document.createElement('div'); ps.className='fxs'; s.pins=s.pins||[];
+  const ps=document.createElement('div'); ps.className='fxs'; s.pins=(s.pins||[]).map(pinNorm);
   ps.innerHTML=`<label>📌 آیتم‌های چسبیده به زمینه‌ی صحنه: مثل عکس روی دیوار، با قاب و افکت (از اول صحنه ثابت‌اند و پشت تصویرهای اصلی قرار می‌گیرند)</label>`+s.pins.map((p,k)=>`<div class="fxit" data-k="${k}"><div class="bgrow"><div class="thumb" style="width:56px;height:56px"><img loading="lazy" src="${thumbUrl(p.src)}"></div><div style="flex:1;min-width:0"><b style="font-size:13px">عکس چسبیده ${fa(k+1)}</b><div class="row" style="margin-top:4px"><button class="pnShuf">🎲 جای تازه</button><button class="pnDel">✕ حذف</button></div></div></div>
-    <label>نوع اتصال / قاب</label><select class="sel" data-k="frame">${optsHtml(FRAMES,p.frame||'polaroid')}</select>
+    <label>قاب و حاشیه</label><select class="sel" data-k="frame">${optsHtml(FRAMES,p.frame||'polaroid')}</select>
+    <label>چیزی که عکس را به دیوار می‌چسباند</label><select class="sel" data-k="attach">${optsHtml(ATTACH,p.attach||'none')}</select>
+    <label>رنگ کارت</label><select class="sel" data-k="card">${optsHtml(CARDS,p.card||'white')}</select>
+    <label class="chk"><input type="checkbox" data-k="curl" ${p.curl?'checked':''}> گوشه‌ی برگشته (کنده شدن گوشه)</label>
     <div class="phRow"><label>رنگ زمینه‌ی عکس</label><select class="sel" data-k="photo">${optsHtml(PHOTOS,p.photo||'cream')}</select></div>
-    ${slRow('sz','اندازه',.3,3,.05,p.sz==null?1:p.sz,{u:'×'})}${slRow('rot','چرخش',-60,60,1,Math.round((p.rot==null?0:p.rot)*57.2958),{sc:57.2958,u:'°'})}${slRow('start','ظاهر شدن (ثانیه بعد از شروع صحنه)',0,10,.1,p.start==null?+(k*.12).toFixed(2):p.start,{u:' ث'})}${slRow('vol','بلندی صدای چسبیدن',0,100,5,p.vol==null?40:p.vol,{u:'٪'})}
-    <div class="pnFx"></div></div>`).join('')+`<label>نوع اتصال / قاب برای عکس‌های تازه</label><select class="sel pnFrameNew">${optsHtml(FRAMES,PIN_LAST)}</select><div class="row"><button class="pnAdd">+ انتخاب یک یا چند عکس از کتابخانه و چسباندن</button>${s.pins.length?'<button class="pnLay">✋ جابه‌جایی در پیش‌نمایش</button>':''}</div><div class="pick pnPk" hidden></div>`;
+    ${slRow('sz','اندازه',.3,3,.05,p.sz==null?1:p.sz,{u:'×'})}${slRow('rot','چرخش',-60,60,1,Math.round((p.rot==null?0:p.rot)*57.2958),{sc:57.2958,u:'°'})}${slRow('shadow','سایه‌ی زیر عکس',0,100,5,Math.round((p.shadow==null?.6:p.shadow)*100),{sc:100,u:'٪'})}${slRow('start','ظاهر شدن (۰ = از اول صحنه، ثابت و بدون افکت)',0,10,.1,p.start==null?0:p.start,{u:' ث'})}
+    <div class="pnFx"></div></div>`).join('')+`<label>قاب برای عکس‌های تازه</label><select class="sel pnFrameNew">${optsHtml(FRAMES,PIN_LAST)}</select><label>چسب برای عکس‌های تازه</label><select class="sel pnAttNew">${optsHtml(ATTACH,ATT_LAST)}</select><div class="row"><button class="pnAdd">+ انتخاب یک یا چند عکس از کتابخانه و چسباندن</button>${s.pins.length?'<button class="pnLay">✋ جابه‌جایی در پیش‌نمایش</button>':''}</div><div class="pick pnPk" hidden></div>`;
   box.appendChild(ps);
   ps.querySelectorAll('.fxit').forEach(card=>{ const k=+card.dataset.k, p=s.pins[k];
     const vis=()=>{ card.querySelector('.phRow').hidden=['torn','burnt','none'].includes(p.frame||'polaroid') }; vis();
+    card.querySelectorAll('input[type=checkbox][data-k]').forEach(el=>el.onchange=()=>{ if(el.checked) p[el.dataset.k]=true; else delete p[el.dataset.k]; done() });
     wireSliders(card,()=>p,done);
     card.querySelectorAll('select[data-k]').forEach(el=>el.onchange=()=>{ p[el.dataset.k]=el.value; vis(); done() });
     card.querySelector('.pnDel').onclick=()=>{ s.pins.splice(k,1); if(!s.pins.length) delete s.pins; again() };
     card.querySelector('.pnShuf').onclick=()=>{ p.x=+(.2+.6*Math.random()).toFixed(3); p.y=+(.18+.5*Math.random()).toFixed(3); p.rot=+((Math.random()-.5)*.3).toFixed(3); p.seed=1+Math.floor(Math.random()*9999); delete p.lay; again() };
     fxListUI(card.querySelector('.pnFx'),p,done) });
   ps.querySelector('.pnAdd').onclick=()=>libPicker(ps.querySelector('.pnPk'),its=>{
-    s.pins=s.pins||[]; const first=s.pins.length, fr=ps.querySelector('.pnFrameNew').value;
+    s.pins=s.pins||[]; const first=s.pins.length, fr=ps.querySelector('.pnFrameNew').value, at=ps.querySelector('.pnAttNew').value;
     its.forEach(it=>{ let best=null,bd=-1; for(let c=0;c<10;c++){ const q={x:.2+.6*Math.random(),y:.18+.5*Math.random()}; let dm=9; s.pins.forEach(o=>{ dm=Math.min(dm,Math.hypot((o.x-q.x)*1,(o.y-q.y)*1.78)) }); if(dm>bd){ bd=dm; best=q } }
-      s.pins.push({src:'library/'+it.variants[0],frame:fr,photo:'cream',x:+best.x.toFixed(3),y:+best.y.toFixed(3),rot:+((Math.random()-.5)*.3).toFixed(3),sz:1,start:+(s.pins.length*.12).toFixed(2),seed:1+Math.floor(Math.random()*9999),vol:40}) });
+      s.pins.push({src:'library/'+it.variants[0],frame:fr,attach:at,card:'white',photo:'cream',x:+best.x.toFixed(3),y:+best.y.toFixed(3),rot:+((Math.random()-.5)*.3).toFixed(3),sz:1,start:0,seed:1+Math.floor(Math.random()*9999)}) });
     toast(fa(its.length)+' عکس چسبیده اضافه شد؛ جایشان را در پیش‌نمایش مشخص کن'); clearOk(s); rvSave(); fillScene(d); openPreview(i,'edit',2000+first) },true);
-  ps.querySelector('.pnFrameNew').onchange=e=>{ PIN_LAST=e.target.value };
+  ps.querySelector('.pnFrameNew').onchange=e=>{ PIN_LAST=e.target.value }; ps.querySelector('.pnAttNew').onchange=e=>{ ATT_LAST=e.target.value };
   const pl=ps.querySelector('.pnLay'); if(pl) pl.onclick=()=>openPreview(i,'edit',2000);
   if(!s.pins.length) delete s.pins;
   /* ----- 3) effects bound to each picture of the scene ----- */
