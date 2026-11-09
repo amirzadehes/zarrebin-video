@@ -1169,7 +1169,16 @@
    "has_text_in_image": false,
    "variants": [
     "item-3__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "بازگشت",
+    "مسیر",
+    "سفر",
+    "جابجایی",
+    "مکان",
+    "بازگشتن"
+   ],
+   "fa_tags_for": "برگشت"
   },
   "item-4": {
    "id": "item-4",
@@ -2207,13 +2216,22 @@
   "thermometer": {
    "id": "thermometer",
    "en": "thermometer",
-   "fa": "",
+   "fa": "دما‌سنج",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "thermometer__1.webp",
     "thermometer__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "دما",
+    "سنج",
+    "ابزار",
+    "هواشناسی",
+    "اندازه‌گیری",
+    "دما‌سنجی"
+   ],
+   "fa_tags_for": "دما‌سنج"
   },
   "thief-mask": {
    "id": "thief-mask",
