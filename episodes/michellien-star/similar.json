@@ -1,1 +1,29 @@
-{}
+{
+ "star-rating": [
+  "one-star",
+  "two-stars",
+  "three-stars",
+  "star"
+ ],
+ "one-star": [
+  "star-rating",
+  "two-stars",
+  "three-stars",
+  "star"
+ ],
+ "two-stars": [
+  "star-rating",
+  "one-star",
+  "three-stars",
+  "star"
+ ],
+ "three-stars": [
+  "star-rating",
+  "one-star",
+  "two-stars",
+  "star"
+ ],
+ "tire-company-logo": [
+  "rubber-tire"
+ ]
+}
