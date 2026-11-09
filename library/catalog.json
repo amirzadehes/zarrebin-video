@@ -1598,6 +1598,18 @@
    ],
    "fa_tags_for": "سکه‌های پول"
   },
+  "muscle-arm": {
+   "id": "muscle-arm",
+   "en": "muscle arm",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "muscle-arm__1.webp",
+    "muscle-arm__2.webp",
+    "muscle-arm__3.webp"
+   ]
+  },
   "neuron": {
    "id": "neuron",
    "en": "neuron nerve cell",
@@ -2515,6 +2527,16 @@
     "خوش‌نویسی"
    ],
    "fa_tags_for": "سه ستاره"
+  },
+  "thumbs-down": {
+   "id": "thumbs-down",
+   "en": "thumbs down",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "thumbs-down__1.webp"
+   ]
   },
   "thumbs-up": {
    "id": "thumbs-up",
