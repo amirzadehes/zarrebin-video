@@ -19,13 +19,18 @@ Run: GitHub → Actions → "Render episode" → Run workflow.
 - Final encode: crf 24, max 3.5 Mbit/s (was crf 28 / 1.8 Mbit/s).
 - Scene title cards (hero/duo/trio) are off; the caption sits on the paper (vox) / white card (comic). `"titles": true` in meta brings the old cards back.
 
-## Background layer and image effects (all optional, set in the app's review panel)
-Both live in `scenes.json`; scenes without them render exactly as before. Written by hand or by the app (`episodes/<ep>/scenes.json`).
-- `scene.bg` – a library image behind the scene: `{src, motion, hold, speed .2-3, size .2-3, count 1-20, opacity, blur, start, dir, sound, vol}`.
-  Motions: `down`, `up`, `left`, `right`, `zoom` (from depth), `pop`, `fill` (full screen, then empties), `fillin`, `scroll` (seamless pattern, `dir` = down/up/left/right/dr/dl/ur/ul). `hold` keeps the last copy on screen. `sound` = whoosh/swipe/airy/low/riser/pop/thud/none, `vol` 0-100.
-- `item.fx[]` – effects that follow the (moving) image: `{type, start, dur, anchor, vol}`.
-  `steam` (rising from food; `intensity`, `height`, `speed`), `page-turn` (`mode` in/out, `hinge` center/left/right), `clock-rewind` (`turns`, `radius`, `tint`).
+## Background layer, pinned framed pictures and image effects (all optional, set in the app's review panel)
+All live in `scenes.json`; scenes without them render exactly as before. Written by hand or by the app (`episodes/<ep>/scenes.json`). Code: `engine/fx.js`.
+- `scene.bg` – a library image behind the scene: `{src, motion, hold, speed .2-3, size .2-3, count 1-20, opacity, blur, start, tilt 0-1, seed, dir, sound, vol, lay}`.
+  Motions: `down`, `up`, `left`, `right`, `zoom` (from depth), `pop`, `fill` (full screen, then empties), `fillin`, `scroll` (seamless pattern, `dir` = down/up/left/right/dr/dl/ur/ul), `cover`.
+  Placement is **random** (seeded, evenly spread): positions, angles (`tilt` = angle range, 1 = any angle incl. upside down) and sizes; `seed` gives a new layout. `lay.{v,h}.<i> = {dx,dy,sz,rot}` is the owner's hand placement of copy i (drag / pinch in the app preview, "edit layout").
+  `cover`: pictures land at random spots/angles, slow at first, fast in the middle, slow again at the end, until nothing of the scene shows underneath (each new picture lands on a spot still uncovered; opacity / blur / count are ignored).
+  `sound` = whoosh/swipe/airy/low/riser/pop/thud/none, `vol` 0-100.
+- `scene.pins[]` – library pictures stuck on the backdrop in a frame: `{src, frame, photo, x, y, sz, rot, start, seed, vol, fx, lay}`.
+  Frames: `polaroid`, `tape`, `pin`, `torn`, `burnt` (charred edge), `wood`, `gold`, `none`; `photo` = cream/sky/mint/rose/sand/night/kraft/white or `#hex`. Position (`x`,`y` 0-1) is random when added and edited in the preview.
+- `item.fx[]` / `pin.fx[]` – effects that follow the (moving) picture, several can be stacked: `{type, start, dur, anchor, vol, ...}`.
+  `steam`, `smoke`, `page-turn` (`mode` in/out, `hinge` center/left/right), `tea-ring` (cup stain, `tone` tea/coffee/wine), `aged` (turns yellow), `burn` (edges char and crumble), `sparkle`, `shine`, `glow`, `wiggle`, `pulse`, `crack`. The old `clock-rewind` was removed (old scenes that still list it simply ignore it).
   `anchor:[x,y]` (0-1 inside the image) overrides the automatic spot, found from the cut-out's alpha. A per-image default can be put in `library/anchors.json` as `{id:{steam:[x,y],default:[x,y]}}` (optional file).
-- Everything is a pure function of time (`engine/fx.js`), so the parallel chunk rendering stays consistent.
-- Sounds are made in code by `tools/make_bgfx.py <ep>` → `episodes/<ep>/bgfx.wav`, mixed in the merge step (weight 0.8, after sfx). The step is `continue-on-error`; no bg/fx → no file. `"sfx": false` in `request.json` turns them off.
-- Zoom / blur-heavy backgrounds render slower (blur is quantised to keep the cost down).
+- Everything is a pure function of time with seeded randomness, so the parallel chunk rendering stays consistent.
+- Sounds are made in code by `tools/make_bgfx.py <ep>` -> `episodes/<ep>/bgfx.wav`, mixed in the merge step (weight 0.8, after sfx). The step is `continue-on-error`; nothing to play -> no file. `"sfx": false` in `request.json` turns them off.
+- Cover, zoom and blur-heavy backgrounds, and `burn` / `shine` / `crack`, render slower than plain scenes.

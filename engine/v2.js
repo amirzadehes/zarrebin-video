@@ -139,7 +139,7 @@ function drawItem(it, t, tx, ty, size, k) {
   const fl = EDIT ? 0 : Math.sin(t * 2 + k * 1.7), fr = EDIT ? 0 : Math.sin(t * 1.6 + k) * .03;
   if (idx >= 0) REC[idx] = { x: tx, y: ty, size };
   const sq = EDIT ? 0 : bump(t, it.t, .11);   // squash & stretch when the object lands
-  const baseDraw = () => drawImg(it.src, e.x, e.y + fl * size * .02, size * e.s, e.r + fr + rot0, e.a, e.bl ? `blur(${e.bl}px)` : 'none', 1 + sq, 1 - sq);
+  const baseDraw = o => drawImg(it.src, e.x, e.y + fl * size * .02, size * e.s * (o ? o.k : 1), e.r + fr + rot0 + (o ? o.dr : 0), e.a, e.bl ? `blur(${e.bl}px)` : 'none', 1 + sq, 1 - sq);
   if (!EDIT && it.fx && it.fx.length && window.FXL) FXL.item(it, t, { x: e.x, y: e.y + fl * size * .02, size: size * e.s, rot: e.r + fr + rot0, a: e.a, sx: 1 + sq, sy: 1 - sq }, baseDraw);   // image-bound effects follow the picture's own motion
   else baseDraw();
   if (!EDIT) impact(t, it.t, tx, ty, size * .5, k * 13 + (CUR ? CUR.idx : 0));
@@ -222,13 +222,14 @@ function its_corner(t, sc, c) { // items peek in from the corners around a text/
 
 /* ---------- scene, wipe, camera ---------- */
 function drawScene(t, sc) {
-  CUR = sc; const th = THEMES[sc.theme], lt = t - sc.t0, dur = sc.t1 - sc.t0, kc = sc.idx % 4, pc = ramp(lt, 0, dur + .6);
+  CUR = sc; if (EDIT) for (const k in REC) delete REC[k]; const th = THEMES[sc.theme], lt = t - sc.t0, dur = sc.t1 - sc.t0, kc = sc.idx % 4, pc = ramp(lt, 0, dur + .6);
   // camera: each scene gets its own move (push in / pull out, with a slow pan) so consecutive scenes never feel identical
   const z = EDIT ? 1 : (kc % 2 ? lerp(1.08, 1.0, pc) : lerp(1.0, 1.08, pc)), px = EDIT ? 0 : [-1, 1, 0, 0][kc] * lerp(-16, 16, pc), py = EDIT ? 0 : [0, 0, -1, 1][kc] * lerp(-14, 14, pc);
   let shake = 0; sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .35) shake = Math.max(shake, 8 * (1 - d / .35)) }); if (EDIT) { shake = 0 }
   ctx.save(); ctx.translate(W / 2 + px + Math.sin(t * 90) * shake, H / 2 + py + Math.cos(t * 77) * shake); ctx.scale(z, z); ctx.translate(-W / 2, -H / 2 + (V ? 0 : 0));
   if (VOX) vbg(t, VT(sc), sc); else bg(t, th, W * (.3 + .4 * ((sc.idx * .37) % 1)), H * .55, .06 + .03 * (sc.idx % 3));
   if (window.FXL && sc.bg && sc.bg.src) FXL.bg(t, sc);   // optional background picture layer (engine/fx.js)
+  if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc);   // optional framed pictures pinned to the backdrop
   decor(t, sc, th); (TPL[sc.tpl] || TPL.hero)(t, sc); ctx.restore()
 }
 function wipePath(style, p, k) {
@@ -304,7 +305,7 @@ window.frame = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 
 window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
 window.loadData = async (DD, only) => {   // shared by the renderer and the in-app preview (only = scene indices whose images are needed)
   D = DD; VOX = (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
-  D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => srcs.add(i.src)); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src) });
+  D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => srcs.add(i.src)); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
   await Promise.all([...[...srcs].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
   if (window.FXL) await FXL.prepare([...srcs]);
   mkGrain(); mkPaper(); CH.length = 0; buildCaptions(); seek(0); return true

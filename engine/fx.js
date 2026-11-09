@@ -1,28 +1,40 @@
-/* Zarrebin engine — background layer (scene.bg) and image-bound effects (item.fx).
-   Loaded BEFORE v2.js; it only uses v2.js globals (ctx, W, H, B, IM, drawImg, rng, ramp, ...) when called.
-   Every function is a pure function of t (no wall clock), so parallel chunk rendering stays frame-exact.
+/* Zarrebin engine — scene background layer (scene.bg), pinned framed pictures (scene.pins) and image-bound effects (item.fx / pin.fx).
+   Loaded BEFORE v2.js; it only uses v2.js globals (ctx, W, H, B, FMT, EDIT, REC, IM, drawImg, rng, ramp, spr, ...) when called.
+   Every function is a pure function of t (no wall clock), so parallel chunk rendering stays frame-exact. All randomness is seeded.
 
-   scene.bg = { src:'library/x__1.webp', motion:'down|up|left|right|zoom|pop|fill|fillin|scroll', hold:false,
-                speed:1 (.2-3), size:1 (.2-3), count:3 (1-20, fill up to 40), opacity:.9, blur:0 (px), start:0 (s after scene start),
-                dir:'down|up|left|right|dr|dl|ur|ul' (scroll only), sound:'whoosh|swipe|airy|low|riser|pop|thud|none', vol:60 (0-100) }
-   item.fx  = [ { type:'steam|page-turn|clock-rewind', start:s after the image appears, dur:s, anchor:[x,y] (fractions of the image),
-                  vol:0-100, + per type: intensity/height/speed (steam), mode:'in|out' hinge:'center|left|right' (page-turn), turns/radius/hands/tint (clock-rewind) } ]
-   The anchor defaults to the picture itself: the top-centre of the opaque shape for steam, its centre otherwise (measured from the alpha channel).
+   scene.bg   = { src:'library/x__1.webp', motion:'down|up|left|right|zoom|pop|fill|fillin|scroll|cover', hold:false,
+                  speed:1 (.2-3), size:1 (.2-3), count:3 (1-20, fill up to 40, scroll up to 12), opacity:.9, blur:0 (px), start:0 (s after scene start),
+                  tilt:.25 (0-1: random angle range, 1 = any angle incl. upside down; cover default 1), seed:0 (change = new random layout),
+                  dir:'down|up|left|right|dr|dl|ur|ul' (scroll only), sound:'whoosh|swipe|airy|low|riser|pop|thud|none', vol:60 (0-100),
+                  lay:{ v:{ "<i>":{dx,dy,sz,rot} }, h:{...} } (owner's hand placement of copy i, fractions of the canvas, edited in the app preview) }
+              Placement is random (seeded, evenly spread); `cover` fills the whole screen with random-angle pictures that arrive slowly, speed up, and
+              slow down again until nothing of the scene is visible underneath (opacity / blur / count are ignored there; size and speed apply).
+   scene.pins = [ { src, frame:'none|polaroid|tape|pin|torn|burnt|wood|gold', photo:'cream|sky|mint|rose|sand|night|kraft|white|#hex', x,y (0-1, canvas fractions),
+                    sz:1, rot (rad), start (s after scene start), seed, vol:40 (sound of the stick), fx:[...], lay:{ v:{dx,dy,sz,rot}, h:{...} } } ]
+   item.fx / pin.fx = [ { type, start:s after the picture appears, dur, anchor:[x,y] (fractions of the picture), vol:0-100, + per type:
+        steam|smoke : intensity, height, speed            page-turn : mode:'in|out', hinge:'center|left|right'
+        tea-ring    : size, tone:'tea|coffee|wine', amount, seed   aged : dur, amount           burn : dur, amount, ember:false
+        sparkle     : count, size                         shine : dur, every, width            glow : color, radius, rate, dur
+        wiggle      : amp (rad), freq (Hz), dur           pulse : amp, rate                    crack : size, rays, seed } ]
+   The anchor defaults to the picture itself (steam/smoke: top-centre of the opaque shape; tea-ring: lower right; others: centre), measured from the alpha channel.
    library/anchors.json (optional) pins a point per picture id: { "coffee-cup": { "steam": [0.5, 0.2], "default": [0.5, 0.5] } }. */
 window.FXL = (() => {
-  const INFO = {}, SL = {}, PAT = {}; let ANCH = {};
+  const INFO = {}, SL = {}, PAT = {}, CV = {}, CH = {}, SCR = {}, FLD = {}; let ANCH = {};
   const mod = (a, b) => ((a % b) + b) % b, itemId = s => String(s || '').split('/').pop().split('__')[0];
   const num = (v, d, a, b) => { v = parseFloat(v); if (!isFinite(v)) v = d; return Math.max(a, Math.min(b, v)) };
+  const hsh = (a, b = 0, c = 0) => { let x = Math.imul(a | 0, 0x9E3779B1) ^ Math.imul((b | 0) + 0x7F4A7C15, 0x85EBCA6B) ^ Math.imul((c | 0) + 0x165667B1, 0xC2B2AE35); x ^= x >>> 15; x = Math.imul(x, 0x2C1B3C6D); x ^= x >>> 12; x = Math.imul(x, 0x297A2D39); x ^= x >>> 15; return (x >>> 0) / 4294967296 };   // stateless seeded random in [0,1)
+  const cnv = (w, h) => { const c = document.createElement('canvas'); c.width = Math.max(2, Math.round(w)); c.height = Math.max(2, Math.round(h)); return c };
+  const TYPES = ['steam', 'smoke', 'page-turn', 'tea-ring', 'aged', 'burn', 'sparkle', 'shine', 'glow', 'wiggle', 'pulse', 'crack'];
 
-  /* ---------- picture info: bounding box of the opaque pixels + the top-centre of the shape (fractions of the image) ---------- */
+  /* ---------- picture info: bounding box + top-centre + average colour + a coarse inside mask (fractions of the image) ---------- */
   function measure(im) {
-    const w = im.width, h = im.height, k = Math.min(1, 160 / Math.max(w, h)), cw = Math.max(8, Math.round(w * k)), ch = Math.max(8, Math.round(h * k)), d = { w, h, bb: [0, 0, 1, 1], topX: .5 };
+    const w = im.width, h = im.height, k = Math.min(1, 160 / Math.max(w, h)), cw = Math.max(8, Math.round(w * k)), ch = Math.max(8, Math.round(h * k)), d = { w, h, bb: [0, 0, 1, 1], topX: .5, avg: [128, 128, 128], mask: null };
     try {
       const c = document.createElement('canvas'); c.width = cw; c.height = ch; const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(im, 0, 0, cw, ch);
-      const px = g.getImageData(0, 0, cw, ch).data; let x0 = cw, y0 = ch, x1 = -1, y1 = -1;
-      for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) if (px[(y * cw + x) * 4 + 3] > 40) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y }
+      const px = g.getImageData(0, 0, cw, ch).data; let x0 = cw, y0 = ch, x1 = -1, y1 = -1, sr = 0, sg = 0, sb = 0, sn = 0; const mk = new Uint8Array(cw * ch);
+      for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) { const o = (y * cw + x) * 4, a = px[o + 3]; if (a > 40) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y } if (a > 200) { sr += px[o]; sg += px[o + 1]; sb += px[o + 2]; sn++ } if (a > 128) mk[y * cw + x] = 1 }
       if (x1 >= 0) {
-        d.bb = [x0 / cw, y0 / ch, (x1 + 1) / cw, (y1 + 1) / ch];
+        d.bb = [x0 / cw, y0 / ch, (x1 + 1) / cw, (y1 + 1) / ch]; d.mask = { w: cw, h: ch, a: mk }; if (sn) d.avg = [sr / sn | 0, sg / sn | 0, sb / sn | 0];
         const band = Math.max(1, Math.round((y1 - y0 + 1) * .12)); let sx = 0, n = 0;
         for (let y = y0; y < y0 + band; y++) for (let x = x0; x <= x1; x++) if (px[(y * cw + x) * 4 + 3] > 40) { sx += x; n++ }
         if (n) d.topX = (sx / n + .5) / cw
@@ -32,36 +44,54 @@ window.FXL = (() => {
   }
   async function prepare(srcs) {
     try { const r = await fetch('../library/anchors.json?' + Date.now()); if (r.ok) ANCH = await r.json() } catch (e) { }
-    (srcs || []).forEach(src => { const im = IM[src]; if (im && !INFO[src]) INFO[src] = measure(im) })
+    (srcs || []).forEach(src => { const im = IM[src]; if (im && !INFO[src]) INFO[src] = measure(im) });
+    buildPins()
   }
   function anchorOf(it, f, type, inf) {
     if (Array.isArray(f.anchor) && f.anchor.length === 2) return [num(f.anchor[0], .5, -.5, 1.5), num(f.anchor[1], .5, -.5, 1.5)];
     const a = ANCH[itemId(it.src)]; if (a) { if (Array.isArray(a[type])) return a[type]; if (Array.isArray(a.default)) return a.default }
     const [x0, y0, x1, y1] = inf.bb;
-    return type === 'steam' ? [inf.topX, y0 + (y1 - y0) * .04] : [(x0 + x1) / 2, (y0 + y1) / 2]
+    if (type === 'steam' || type === 'smoke') return [inf.topX, y0 + (y1 - y0) * .04];
+    if (type === 'tea-ring') return [x0 + (x1 - x0) * .7, y0 + (y1 - y0) * .72];
+    return [(x0 + x1) / 2, (y0 + y1) / 2]
   }
   const T0 = (it, f, d) => it.t + (f.start == null || f.start === '' || isNaN(+f.start) ? d : +f.start);
   /* run fn in the picture's own pixel space (origin = image centre), following every move / zoom / squash the picture has */
   function local(st, inf, fn) { const s = st.size / Math.max(inf.w, inf.h); ctx.save(); ctx.translate(st.x, st.y); ctx.rotate(st.rot); ctx.scale(s * st.sx, s * st.sy); ctx.globalAlpha = st.a; fn(s); ctx.restore() }
   const unitOf = inf => Math.min((inf.bb[2] - inf.bb[0]) * inf.w, (inf.bb[3] - inf.bb[1]) * inf.h);
+  const envOf = (tau, dur, a = .25, b = .3) => ramp(tau, 0, a) * (dur > 0 ? 1 - ramp(tau, dur - b, dur) : 1);
+  const shadowFor = s => { if (VOX) { ctx.shadowColor = 'rgba(20,25,45,.32)'; ctx.shadowOffsetX = 6 / s; ctx.shadowOffsetY = 22 / s; ctx.shadowBlur = 34 / s } else { ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowOffsetX = 16 / s; ctx.shadowOffsetY = 20 / s; ctx.shadowBlur = 0 } };
 
-  /* ---------- steam ---------- */
-  function puff(x, y, r, a) {
-    if (a < .01) return;
-    let g = ctx.createRadialGradient(x, y + r * .12, 0, x, y + r * .12, r * 1.05); g.addColorStop(0, `rgba(70,60,50,${a * .2})`); g.addColorStop(1, 'rgba(70,60,50,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y + r * .12, r * 1.05, 0, TAU); ctx.fill();   // soft grey under-layer: steam stays visible on light paper
+  /* ---------- scratch / cached layers (image pixel space, at most 640 px) ---------- */
+  function scratch(key, inf) {
+    const k = Math.min(1, 640 / Math.max(inf.w, inf.h)), cw = Math.max(2, Math.round(inf.w * k)), ch = Math.max(2, Math.round(inf.h * k)); let s = SCR[key];
+    if (!s || s.c.width !== cw || s.c.height !== ch) { const c = cnv(cw, ch); s = SCR[key] = { c, g: c.getContext('2d') } }
+    const g = s.g; g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.filter = 'none'; g.shadowColor = 'transparent'; g.clearRect(0, 0, s.c.width, s.c.height); s.k = s.c.width / inf.w; return s
+  }
+  const clipTo = (s, im) => { s.g.setTransform(1, 0, 0, 1, 0, 0); s.g.globalCompositeOperation = 'destination-in'; s.g.drawImage(im, 0, 0, s.c.width, s.c.height); s.g.globalCompositeOperation = 'source-over' };
+  const putLayer = (c, inf, a) => { ctx.globalAlpha *= a; ctx.drawImage(c, -inf.w / 2, -inf.h / 2, inf.w, inf.h) };
+  function stat(key, inf, draw) {   // a layer that never changes: drawn once, in image pixel space, then reused
+    if (CH[key]) return CH[key]; const k = Math.min(1, 640 / Math.max(inf.w, inf.h)), c = cnv(inf.w * k, inf.h * k), g = c.getContext('2d'); g.scale(c.width / inf.w, c.height / inf.h); draw(g); return CH[key] = c
+  }
+
+  /* ---------- steam / smoke ---------- */
+  function puff(x, y, r, a, dark) {
+    if (a < .01) return; let g;
+    if (dark) { g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(48,44,42,${a * .6})`); g.addColorStop(.6, `rgba(60,56,52,${a * .28})`); g.addColorStop(1, 'rgba(60,56,52,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); return }
+    g = ctx.createRadialGradient(x, y + r * .12, 0, x, y + r * .12, r * 1.05); g.addColorStop(0, `rgba(70,60,50,${a * .2})`); g.addColorStop(1, 'rgba(70,60,50,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y + r * .12, r * 1.05, 0, TAU); ctx.fill();   // soft grey under-layer: steam stays visible on light paper
     g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(255,255,255,${a})`); g.addColorStop(.55, `rgba(255,255,255,${a * .45})`); g.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill()
   }
-  function steam(it, t, st, f, inf) {
+  function steam(it, t, st, f, inf, dark) {
     const tau = t - T0(it, f, .3), dur = +f.dur > 0 ? +f.dur : null; if (tau < 0 || (dur && tau > dur)) return;
     let env = ramp(tau, 0, .9); if (dur) env *= 1 - ramp(tau, dur - .8, dur);
-    const ik = num(f.intensity, 1, .2, 2.5), sp = num(f.speed, 1, .3, 3), [ax, ay] = anchorOf(it, f, 'steam', inf), u = unitOf(inf), w = inf.w, h = inf.h;
-    const n = Math.round(Math.max(2, Math.min(6, 1.5 + 1.5 * ik))), P = 11, rise = u * num(f.height, .34, .12, 1.4), spread = u * .09, r0 = u * .042;
+    const ik = num(f.intensity, 1, .2, 2.5), sp = num(f.speed, 1, .3, 3), [ax, ay] = anchorOf(it, f, dark ? 'smoke' : 'steam', inf), u = unitOf(inf), w = inf.w, h = inf.h;
+    const n = Math.round(Math.max(2, Math.min(6, 1.5 + 1.5 * ik))), P = 11, rise = u * num(f.height, dark ? .5 : .34, .12, 1.4), spread = u * (dark ? .13 : .09), r0 = u * (dark ? .055 : .042);
     local(st, inf, () => {
       for (let wi = 0; wi < n; wi++) {
         const off = (n === 1 ? 0 : wi / (n - 1) - .5) * spread * 2;
         for (let k = 0; k < P; k++) {
-          const life = mod(tau * .42 * sp + wi * .318 + k / P, 1), y = (ay - .5) * h - life * rise, sway = Math.sin(life * 6.2 + wi * 2.3 + tau * .9) * u * .06 * (.25 + life);
-          puff((ax - .5) * w + off + sway, y, r0 * (.5 + 1.5 * life), .36 * Math.pow(Math.sin(Math.PI * life), 1.3) * env * Math.min(ik, 1.2))
+          const life = mod(tau * .42 * sp + wi * .318 + k / P, 1), y = (ay - .5) * h - life * rise, sway = Math.sin(life * 6.2 + wi * 2.3 + tau * .9) * u * (dark ? .09 : .06) * (.25 + life);
+          puff((ax - .5) * w + off + sway, y, r0 * (.5 + (dark ? 2.1 : 1.5) * life), (dark ? .5 : .36) * Math.pow(Math.sin(Math.PI * life), 1.3) * env * Math.min(ik, 1.2), dark)
         }
       }
     })
@@ -96,50 +126,251 @@ window.FXL = (() => {
     return true
   }
 
-  /* ---------- clock rewind: a sweep hand with a golden trail winds counter-clockwise over the picture, amber time-wash + ticking ring ---------- */
-  function clockRewind(it, t, st, f, inf) {
-    const dur = num(f.dur, 2.6, .8, 8), tau = t - T0(it, f, .3); if (tau < 0 || tau > dur + .5) return;
-    const env = ramp(tau, 0, .3) * (1 - ramp(tau, dur, dur + .5)), [ax, ay] = anchorOf(it, f, 'clock-rewind', inf), u = unitOf(inf), R = u * num(f.radius, .42, .15, .9);
-    const turns = num(f.turns, 3, .5, 12), p = eio(clamp(tau / dur)), ang = -Math.PI / 2 - TAU * turns * p;   // counter-clockwise
+  /* ---------- aged: the picture slowly turns yellow like old paper (sepia, dark rim, foxing spots, creases, scratches) ---------- */
+  function agedLayer(src, inf) {
+    return stat('aged|' + src, inf, g => {
+      const im = IM[src], w = inf.w, h = inf.h, u = Math.min(w, h), r = rng(hsh(w, h, 7) * 1e6 | 0);
+      g.filter = 'sepia(.9) saturate(1.5) contrast(.9) brightness(.98)'; g.drawImage(im, 0, 0, w, h); g.filter = 'none'; g.globalCompositeOperation = 'source-atop';
+      g.fillStyle = 'rgba(222,176,58,.26)'; g.fillRect(0, 0, w, h);
+      const v = g.createRadialGradient(w / 2, h / 2, u * .22, w / 2, h / 2, Math.hypot(w, h) * .55); v.addColorStop(0, 'rgba(90,50,8,0)'); v.addColorStop(1, 'rgba(90,50,8,.55)'); g.fillStyle = v; g.fillRect(0, 0, w, h);
+      for (let i = 0; i < 46; i++) { const x = r() * w, y = r() * h, rad = u * (.008 + .028 * r()), f = g.createRadialGradient(x, y, 0, x, y, rad); f.addColorStop(0, `rgba(110,60,15,${.14 + .2 * r()})`); f.addColorStop(1, 'rgba(110,60,15,0)'); g.fillStyle = f; g.beginPath(); g.arc(x, y, rad, 0, TAU); g.fill() }
+      const cx = w * (.36 + .28 * r()), cy = h * (.36 + .28 * r()); g.lineWidth = Math.max(1, u * .003);
+      [[cx, 0, cx + (r() - .5) * 20, h], [0, cy, w, cy + (r() - .5) * 20]].forEach(([x0, y0, x1, y1]) => { g.strokeStyle = 'rgba(70,40,10,.2)'; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke(); g.strokeStyle = 'rgba(255,240,200,.22)'; g.beginPath(); g.moveTo(x0 + 2, y0 + 2); g.lineTo(x1 + 2, y1 + 2); g.stroke() });
+      g.lineWidth = Math.max(.8, u * .0018); for (let i = 0; i < 16; i++) { const x = r() * w, y = r() * h, l = u * (.03 + .09 * r()), a = r() * TAU; g.strokeStyle = `rgba(255,245,215,${.16 + .22 * r()})`; g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); g.stroke() }
+    })
+  }
+  function agedOver(it, t, st, f, inf) {
+    const tau = t - T0(it, f, 0); if (tau < 0) return; const q = eio(clamp(tau / num(f.dur, 1.2, .05, 8))) * num(f.amount, .85, .1, 1);
+    local(st, inf, () => putLayer(agedLayer(it.src, inf), inf, q))
+  }
+
+  /* ---------- tea-ring: a cup left a stain on the picture (stamped on, clipped to the picture's own shape) ---------- */
+  function ring(it, t, st, f, inf) {
+    const tau = t - T0(it, f, .2); if (tau < 0) return;
+    const [ax, ay] = anchorOf(it, f, 'tea-ring', inf), u = unitOf(inf), R = u * num(f.size, .22, .08, .7), tone = f.tone || 'tea', seed = f.seed | 0, im = IM[it.src];
+    const lay = stat(['ring', it.src, ax.toFixed(3), ay.toFixed(3), R | 0, tone, seed].join('|'), inf, g => {
+      const col = { tea: [150, 86, 28], coffee: [70, 38, 14], wine: [120, 18, 44] }[tone] || [150, 86, 28], c = a => `rgba(${col[0]},${col[1]},${col[2]},${a})`, cx = ax * inf.w, cy = ay * inf.h;
+      const fg = g.createRadialGradient(cx, cy, 0, cx, cy, R); fg.addColorStop(0, c(.05)); fg.addColorStop(.85, c(.15)); fg.addColorStop(1, c(.2)); g.fillStyle = fg; g.beginPath(); g.ellipse(cx, cy, R, R * .93, 0, 0, TAU); g.fill();
+      const gap = hsh(seed, 7) * TAU, gl = .4 + hsh(seed, 8) * .5; g.lineCap = 'round';
+      for (let a = 0; a < TAU; a += .06) { if (mod(a - gap, TAU) < gl) continue; const n = hsh(seed, Math.round(a * 20), 3); g.strokeStyle = c(.3 + .34 * n); g.lineWidth = R * (.045 + .06 * n); g.beginPath(); g.ellipse(cx, cy, R * (1 + .012 * Math.sin(a * 3 + seed)), R * .93 * (1 + .012 * Math.cos(a * 2)), 0, a, a + .075); g.stroke() }
+      g.strokeStyle = c(.3); g.lineWidth = R * .012; g.beginPath(); g.ellipse(cx, cy, R * .9, R * .93 * .9, 0, gap + gl, gap + TAU); g.stroke();
+      g.strokeStyle = c(.12); g.lineWidth = R * .02; g.beginPath(); g.ellipse(cx, cy, R * 1.07, R * .93 * 1.07, 0, gap + gl * .5, gap + TAU - .3); g.stroke();
+      for (let i = 0; i < 3; i++) { const a = hsh(seed, 20 + i) * TAU, r = R * (1.06 + .14 * hsh(seed, 30 + i)), sz = R * (.018 + .04 * hsh(seed, 40 + i)); g.fillStyle = c(.38); g.beginPath(); g.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, sz, 0, TAU); g.fill() }
+      g.globalCompositeOperation = 'destination-in'; g.drawImage(im, 0, 0, inf.w, inf.h)
+    });
+    const q = eoc(tau / .28), px = (ax - .5) * inf.w, py = (ay - .5) * inf.h;
+    local(st, inf, () => { ctx.translate(px, py); const k = 1.16 - .16 * q; ctx.scale(k, k); ctx.translate(-px, -py); putLayer(lay, inf, q * num(f.amount, .9, .1, 1)) })
+  }
+
+  /* ---------- burn: the edges of the picture char and glow, then crumble away (a ragged burning front moving inwards) ---------- */
+  function vnoise(gw, gh, cell, seed) {
+    const lw = Math.ceil(gw / cell) + 2, lh = Math.ceil(gh / cell) + 2, L = new Float32Array(lw * lh); for (let i = 0; i < L.length; i++) L[i] = hsh(seed, i, 99);
+    const o = new Float32Array(gw * gh);
+    for (let y = 0; y < gh; y++) for (let x = 0; x < gw; x++) { const fx = x / cell, fy = y / cell, ix = fx | 0, iy = fy | 0, ux = fx - ix, uy = fy - iy, sx = ux * ux * (3 - 2 * ux), sy = uy * uy * (3 - 2 * uy), a = L[iy * lw + ix], b = L[iy * lw + ix + 1], c = L[(iy + 1) * lw + ix], d = L[(iy + 1) * lw + ix + 1]; o[y * gw + x] = (a + (b - a) * sx) * (1 - sy) + (c + (d - c) * sx) * sy }
+    return o
+  }
+  function fieldOf(key, im) {   // depth-from-the-edge field of a picture (low resolution) + a ragged noise field, built once
+    if (FLD[key]) return FLD[key];
+    const w = im.width, h = im.height, n = 168, pad = .14 * Math.max(w, h), kf = n / (Math.max(w, h) + 2 * pad), gw = Math.round((w + 2 * pad) * kf), gh = Math.round((h + 2 * pad) * kf);
+    const c = cnv(gw, gh), g = c.getContext('2d', { willReadFrequently: true }); g.filter = `blur(${(Math.min(gw, gh) * .07).toFixed(1)}px)`; g.drawImage(im, pad * kf, pad * kf, w * kf, h * kf); g.filter = 'none';
+    const px = g.getImageData(0, 0, gw, gh).data, d = new Float32Array(gw * gh); for (let i = 0; i < d.length; i++) { const a = px[i * 4 + 3] / 255; d[i] = a > .5 ? Math.min(1, (a - .5) * 2.2) : 0 }
+    const sd = hsh(w, h, 5) * 1e6 | 0, n1 = vnoise(gw, gh, 9, sd), n2 = vnoise(gw, gh, 3.5, sd + 1), nz = new Float32Array(gw * gh); for (let i = 0; i < nz.length; i++) nz[i] = .62 * n1[i] + .38 * n2[i];
+    const ov = cnv(gw, gh), ho = cnv(gw, gh), og = ov.getContext('2d'), hg = ho.getContext('2d');
+    return FLD[key] = { gw, gh, pad, kf, d, nz, ov, ho, og, hg, od: og.createImageData(gw, gh), hd: hg.createImageData(gw, gh) }
+  }
+  const sm = (x, a, b) => { x = clamp((x - a) / (b - a)); return x * x * (3 - 2 * x) };
+  /* g already holds the picture (image space scaled by sc = canvas px per image px); burns it: scorch + char + ember overlay, then the burnt-away hole */
+  function renderBurn(F, g, inf, sc, p, ember, flick) {
+    const o = F.od.data, hh = F.hd.data, d = F.d, nz = F.nz, n = F.gw * F.gh;
+    for (let i = 0; i < n; i++) {
+      const s = d[i] + (nz[i] - .5) * .5 - p, k = i * 4;
+      const hole = s < -.015 ? 1 : s > .015 ? 0 : .5 - s / .03;
+      const aS = s > -.02 && s < .4 ? .7 * (1 - sm(s, .05, .38)) : 0, aC = s < .15 ? 1 - sm(s, .03, .13) : 0, aE = ember * Math.max(0, 1 - Math.abs(s - .075) / .05) * flick * (.7 + .5 * nz[i]);
+      let r = 62, gr = 34, b = 12, a = aS; const a1 = aC + a * (1 - aC); if (a1 > 0) { r = (24 * aC + r * a * (1 - aC)) / a1; gr = (16 * aC + gr * a * (1 - aC)) / a1; b = (12 * aC + b * a * (1 - aC)) / a1 } a = a1;
+      if (aE > 0) { const ee = Math.min(1, aE), a2 = ee + a * (1 - ee), er = 255, eg = 120 + 90 * Math.max(0, 1 - Math.abs(s - .075) / .02), eb = 24; r = (er * ee + r * a * (1 - ee)) / a2; gr = (eg * ee + gr * a * (1 - ee)) / a2; b = (eb * ee + b * a * (1 - ee)) / a2; a = a2 }
+      o[k] = r; o[k + 1] = gr; o[k + 2] = b; o[k + 3] = a * 255; hh[k] = hh[k + 1] = hh[k + 2] = 0; hh[k + 3] = hole * 255
+    }
+    F.og.putImageData(F.od, 0, 0); F.hg.putImageData(F.hd, 0, 0);
+    const x0 = -F.pad * sc, w = F.gw / F.kf * sc, h = F.gh / F.kf * sc;
+    g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.globalCompositeOperation = 'source-atop'; g.drawImage(F.ov, x0, x0, w, h); g.globalCompositeOperation = 'destination-out'; g.drawImage(F.ho, x0, x0, w, h); g.globalCompositeOperation = 'source-over'
+  }
+  function burn(it, t, st, f, inf, fxs) {
+    const tau = t - T0(it, f, .3), dur = num(f.dur, 2.2, .3, 8), amt = num(f.amount, .5, .08, 1), p = eio(clamp(tau / dur)) * amt * .95; if (p < .004) return false;
+    const im = IM[it.src], s = scratch('bn|' + it.src, inf), g = s.g; g.drawImage(im, 0, 0, s.c.width, s.c.height);
+    const ag = fxs.find(x => x.type === 'aged'); if (ag) { const q = eio(clamp((t - T0(it, ag, 0)) / num(ag.dur, 1.2, .05, 8))) * num(ag.amount, .85, .1, 1); if (q > 0) { g.globalAlpha = q; g.drawImage(agedLayer(it.src, inf), 0, 0, s.c.width, s.c.height); g.globalAlpha = 1 } }
+    renderBurn(fieldOf('b|' + it.src, im), g, inf, s.k, p, f.ember === false ? 0 : 1, .75 + .25 * Math.sin(t * 19) * Math.sin(t * 7.3 + 1));
+    local(st, inf, k => { shadowFor(k); if (VOX) ctx.filter = 'sepia(.1) saturate(1.05) contrast(1.05)'; ctx.drawImage(s.c, -inf.w / 2, -inf.h / 2, inf.w, inf.h) });
+    return true
+  }
+
+  /* ---------- sparkle: little twinkling glints on the shape of the picture ---------- */
+  function sparkleFx(it, t, st, f, inf) {
+    const tau = t - T0(it, f, .2); if (tau < 0) return; const n = Math.round(num(f.count, 5, 1, 14)), u = unitOf(inf), r0 = u * num(f.size, .11, .04, .3), env = envOf(tau, +f.dur > 0 ? +f.dur : 0, .3, .5), [x0, y0, x1, y1] = inf.bb, m = inf.mask;
     local(st, inf, () => {
-      ctx.translate((ax - .5) * inf.w, (ay - .5) * inf.h); ctx.globalAlpha *= env;
-      if (f.tint !== false) { const g = ctx.createRadialGradient(0, 0, R * .2, 0, 0, R * 1.08); g.addColorStop(0, 'rgba(255,190,60,.05)'); g.addColorStop(1, 'rgba(255,170,40,.3)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, R * 1.08, 0, TAU); ctx.fill() }
-      ctx.save(); ctx.rotate(TAU * .35 * p); ctx.lineCap = 'round';   // tick ring turns the other way
-      for (let i = 0; i < 60; i++) { const a = i * TAU / 60, big = i % 5 === 0, r1 = R * (big ? .86 : .92); ctx.lineWidth = u * (big ? .016 : .009); ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.beginPath(); ctx.moveTo(Math.cos(a) * r1, Math.sin(a) * r1); ctx.lineTo(Math.cos(a) * R, Math.sin(a) * R); ctx.stroke() }
-      ctx.restore();
-      if (ctx.createConicGradient) { const g = ctx.createConicGradient(ang, 0, 0); g.addColorStop(0, 'rgba(255,196,40,.6)'); g.addColorStop(.22, 'rgba(255,196,40,0)'); g.addColorStop(1, 'rgba(255,196,40,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, R * .92, 0, TAU); ctx.fill() }
-      const hand = (a, len, w) => { ctx.lineCap = 'round'; ctx.strokeStyle = '#14100e'; ctx.lineWidth = w * 1.9; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(a) * len, Math.sin(a) * len); ctx.stroke(); ctx.strokeStyle = '#ffc21a'; ctx.lineWidth = w; ctx.stroke() };
-      hand(ang, R * .92, u * .014);
-      if (f.hands) hand(-Math.PI / 2 - TAU * turns / 12 * p, R * .58, u * .02);
-      ctx.fillStyle = '#14100e'; ctx.beginPath(); ctx.arc(0, 0, u * .02, 0, TAU); ctx.fill(); ctx.fillStyle = '#ffc21a'; ctx.beginPath(); ctx.arc(0, 0, u * .011, 0, TAU); ctx.fill()
+      for (let i = 0; i < n; i++) {
+        let px = (x0 + x1) / 2, py = (y0 + y1) / 2; for (let j = 0; j < 30; j++) { const qx = x0 + (x1 - x0) * hsh(i, j, 11), qy = y0 + (y1 - y0) * hsh(i, j, 12); if (!m || m.a[((qy * m.h) | 0) * m.w + ((qx * m.w) | 0)]) { px = qx; py = qy; break } }
+        const b = Math.pow(Math.max(0, Math.sin(tau * (.55 + hsh(i, 0, 5) * .6) * TAU + hsh(i, 0, 6) * TAU)), 3) * env; if (b < .03) continue;
+        const X = (px - .5) * inf.w, Y = (py - .5) * inf.h, r = r0 * (.45 + .8 * b), g = ctx.createRadialGradient(X, Y, 0, X, Y, r * 1.7); g.addColorStop(0, `rgba(255,244,190,${.55 * b})`); g.addColorStop(1, 'rgba(255,244,190,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(X, Y, r * 1.7, 0, TAU); ctx.fill();
+        ctx.save(); ctx.translate(X, Y); ctx.rotate(.3 * hsh(i, 0, 7)); ctx.beginPath(); for (let a = 0; a < 4; a++) { const ang = a * Math.PI / 2; ctx.lineTo(Math.cos(ang) * r, Math.sin(ang) * r); ctx.lineTo(Math.cos(ang + Math.PI / 4) * r * .18, Math.sin(ang + Math.PI / 4) * r * .18) } ctx.closePath(); ctx.fillStyle = `rgba(255,255,255,${Math.min(1, b * 1.2)})`; ctx.fill(); ctx.restore()
+      }
     })
   }
 
-  /* called by drawItem: base() draws the picture the normal way; page-turn replaces it while the page is turning, the others are drawn over it */
-  function item(it, t, st, base) {
-    const inf = INFO[it.src], fxs = (it.fx || []).filter(f => f && f.type);
+  /* ---------- shine: a light streak sweeps across the picture ---------- */
+  function shine(it, t, st, f, inf) {
+    const dur = num(f.dur, .9, .2, 4), every = num(f.every, 0, 0, 12); let tau = t - T0(it, f, .3); if (tau < 0) return; if (every > 0) tau = mod(tau, dur + every); if (tau > dur) return;
+    const p = eio(tau / dur), im = IM[it.src], s = scratch('sh|' + it.src, inf), g = s.g; g.scale(s.k, s.k); g.translate(inf.w / 2, inf.h / 2); g.rotate(.45);
+    const bw = inf.w * .26 * num(f.width, 1, .4, 2.5), x = lerp(-(inf.w * .75 + bw), inf.w * .75 + bw, p), gr = g.createLinearGradient(x - bw, 0, x + bw, 0);
+    gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(.5, 'rgba(255,255,255,.85)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(-inf.w, -inf.h, inf.w * 2, inf.h * 2); clipTo(s, im);
+    local(st, inf, () => putLayer(s.c, inf, 1))
+  }
+
+  /* ---------- glow: a soft coloured halo that breathes (drawn behind the picture) ---------- */
+  function glow(it, t, st, f, inf) {
+    const tau = t - T0(it, f, 0); if (tau < 0) return; const a = envOf(tau, +f.dur > 0 ? +f.dur : 0, .4, .5) * num(f.amount, 1, .1, 1), pulse = .75 + .25 * Math.sin(tau * TAU * num(f.rate, .8, .1, 4)), im = IM[it.src];
+    local(st, inf, () => { ctx.shadowColor = f.color || '#ffd24a'; ctx.shadowBlur = num(f.radius, 46, 10, 140) * pulse; ctx.globalAlpha *= a; ctx.drawImage(im, -inf.w / 2, -inf.h / 2); ctx.drawImage(im, -inf.w / 2, -inf.h / 2) })
+  }
+
+  /* ---------- wiggle / pulse: the picture itself shakes or beats (changes how the base picture is drawn) ---------- */
+  function motion(it, t, f, o) {
+    const tau = t - T0(it, f, 0); if (tau < 0) return; const dur = +f.dur > 0 ? +f.dur : 0, env = envOf(tau, dur, .15, .3);
+    if (f.type === 'wiggle') o.dr += Math.sin(tau * TAU * num(f.freq, 3.2, .5, 10)) * num(f.amp, .07, .01, .5) * env;
+    else o.k *= 1 + num(f.amp, .07, .01, .5) * Math.pow(Math.max(0, Math.sin(tau * TAU * num(f.rate, 1.2, .3, 4))), 3) * env
+  }
+
+  /* ---------- crack: glass-like cracks spread out of one point ---------- */
+  function crackGeo(key, R, n, seed) {
+    if (CH[key]) return CH[key]; const rays = [];
+    for (let i = 0; i < n; i++) {
+      const a0 = i * TAU / n + (hsh(seed, i, 1) - .5) * .5, len = R * (.55 + .45 * hsh(seed, i, 2)), m = 7; let a = a0, x = 0, y = 0; const pts = [[0, 0]], br = [];
+      for (let k = 1; k <= m; k++) { a += (hsh(seed, i, 10 + k) - .5) * .6; x += Math.cos(a) * len / m; y += Math.sin(a) * len / m; pts.push([x, y]); if (k > 2 && k < m && hsh(seed, i, 30 + k) < .4) { const ba = a + (hsh(seed, i, 50 + k) < .5 ? -1 : 1) * (.5 + .5 * hsh(seed, i, 70 + k)), bl = len / m * (1.2 + 1.5 * hsh(seed, i, 90 + k)); br.push([[x, y], [x + Math.cos(ba) * bl, y + Math.sin(ba) * bl]]) } }
+      rays.push({ pts, br })
+    }
+    const rings = [.13, .3].map((r, j) => { const pts = []; for (let k = 0; k <= 22; k++) { const a = k * TAU / 22, rr = R * r * (1 + (hsh(seed, k, 120 + j) - .5) * .25); pts.push([Math.cos(a) * rr, Math.sin(a) * rr]) } return pts });
+    return CH[key] = { rays, rings }
+  }
+  function strokePartial(g, pts, p) {
+    let L = 0; for (let i = 1; i < pts.length; i++) L += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); let rest = L * p; g.beginPath(); g.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length && rest > 0; i++) { const l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]), q = Math.min(1, rest / l); g.lineTo(lerp(pts[i - 1][0], pts[i][0], q), lerp(pts[i - 1][1], pts[i][1], q)); rest -= l } g.stroke()
+  }
+  function crack(it, t, st, f, inf) {
+    const tau = t - T0(it, f, .3), dur = +f.dur > 0 ? +f.dur : 0; if (tau < 0 || (dur && tau > dur + .3)) return;
+    const [ax, ay] = anchorOf(it, f, 'crack', inf), u = unitOf(inf), R = u * num(f.size, .55, .2, 1.2), geo = crackGeo(['crack', it.src, ax.toFixed(2), ay.toFixed(2), R | 0, f.rays | 0, f.seed | 0].join('|'), R, Math.round(num(f.rays, 8, 4, 14)), f.seed | 0);
+    const p = eoc(tau / .38), s = scratch('cr|' + it.src, inf), g = s.g, lw = Math.max(1.6, u * .007); g.scale(s.k, s.k); g.translate(ax * inf.w, ay * inf.h); g.lineCap = 'round'; g.lineJoin = 'round';
+    for (const pass of [0, 1]) {
+      g.strokeStyle = pass ? 'rgba(255,255,255,.92)' : 'rgba(20,20,34,.5)'; g.lineWidth = pass ? lw : lw * 2.6;
+      geo.rays.forEach(r => { strokePartial(g, r.pts, p); r.br.forEach(b => strokePartial(g, b, ramp(p, .35, 1))) });
+      geo.rings.forEach((pts, j) => { g.globalAlpha = ramp(p, .3 + j * .2, .8 + j * .2); strokePartial(g, pts, 1); g.globalAlpha = 1 })
+    }
+    clipTo(s, IM[it.src]); local(st, inf, () => putLayer(s.c, inf, dur ? 1 - ramp(tau, dur, dur + .3) : 1))
+  }
+
+  /* called by drawItem / pins: base(o) draws the picture the normal way (o = {k, dr}: scale / rotation added by wiggle or pulse);
+     page-turn and burn replace it while they run, the rest is drawn over it */
+  function item(it, t, st0, base) {
+    const inf = INFO[it.src], fxs = (it.fx || []).filter(f => f && TYPES.includes(f.type));
     if (!inf || !fxs.length) { base(); return }
-    const pg = fxs.find(f => f.type === 'page-turn');
-    if (!(pg && pageTurn(it, t, st, pg, inf))) base();
-    fxs.forEach(f => { if (f.type === 'steam') steam(it, t, st, f, inf); else if (f.type === 'clock-rewind') clockRewind(it, t, st, f, inf) })
+    const o = { k: 1, dr: 0 }; fxs.forEach(f => { if (f.type === 'wiggle' || f.type === 'pulse') motion(it, t, f, o) });
+    const st = o.k === 1 && !o.dr ? st0 : { ...st0, size: st0.size * o.k, rot: st0.rot + o.dr };
+    fxs.forEach(f => { if (f.type === 'glow') glow(it, t, st, f, inf) });
+    let done = false, flat = true; const pg = fxs.find(f => f.type === 'page-turn'); if (pg) { done = pageTurn(it, t, st, pg, inf); flat = !done }
+    let burned = false; if (!done) { const bn = fxs.find(f => f.type === 'burn'); if (bn) { done = burned = burn(it, t, st, bn, inf, fxs) } }
+    if (!done) base(o);
+    fxs.forEach(f => {
+      switch (f.type) {
+        case 'steam': steam(it, t, st, f, inf, false); break;
+        case 'smoke': steam(it, t, st, f, inf, true); break;
+        case 'aged': if (flat && !burned) agedOver(it, t, st, f, inf); break;
+        case 'tea-ring': if (flat) ring(it, t, st, f, inf); break;
+        case 'sparkle': if (flat) sparkleFx(it, t, st, f, inf); break;
+        case 'shine': if (flat) shine(it, t, st, f, inf); break;
+        case 'crack': if (flat) crack(it, t, st, f, inf); break
+      }
+    })
+  }
+
+  /* ---------- pinned pictures: a library picture stuck on the scene's backdrop inside a frame ---------- */
+  const PHOTO = { cream: '#efe3c6', sky: '#bfe0f0', mint: '#cfe9d3', rose: '#f4cfd6', sand: '#e8c999', night: '#243049', kraft: '#c9a26b', white: '#fbfaf5' };
+  const speckle = (g, x, y, w, h, seed, n, al) => { for (let i = 0; i < n; i++) { g.fillStyle = hsh(seed, i, 1) < .5 ? `rgba(90,60,20,${al * hsh(seed, i, 2)})` : `rgba(255,255,255,${al * hsh(seed, i, 2)})`; g.fillRect(x + hsh(seed, i, 3) * w, y + hsh(seed, i, 4) * h, 1 + hsh(seed, i, 5) * 2.2, 1 + hsh(seed, i, 6) * 2.2) } };
+  function jagged(g, x, y, w, h, seed, jag, step) {
+    const pts = [], edge = (x0, y0, x1, y1, nx, ny) => { const n = Math.max(2, Math.round(Math.hypot(x1 - x0, y1 - y0) / step)); for (let i = 0; i < n; i++) { const q = i / n, j = (hsh(seed, pts.length, 3) - .5) * 2 * jag; pts.push([x0 + (x1 - x0) * q + nx * j, y0 + (y1 - y0) * q + ny * j]) } };
+    edge(x, y, x + w, y, 0, 1); edge(x + w, y, x + w, y + h, 1, 0); edge(x + w, y + h, x, y + h, 0, 1); edge(x, y + h, x, y, 1, 0); g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath()
+  }
+  function metalFrame(g, x, y, w, h, th, cols, grain) {   // wood / gold: bevelled rectangular frame of thickness th
+    const gr = g.createLinearGradient(x, y, x + w, y + h); cols.forEach((c, i) => gr.addColorStop(i / (cols.length - 1), c)); g.fillStyle = gr; g.fillRect(x, y, w, h);
+    g.strokeStyle = 'rgba(255,240,200,.45)'; g.lineWidth = 2; g.strokeRect(x + 1, y + 1, w - 2, h - 2); g.strokeStyle = 'rgba(0,0,0,.4)'; g.strokeRect(x + th, y + th, w - 2 * th, h - 2 * th);
+    g.save(); g.globalAlpha = grain; g.strokeStyle = '#2a1608'; g.lineWidth = 1; for (let i = 0; i < 36; i++) { const yy = y + hsh(w | 0, i, 8) * h; g.beginPath(); g.moveTo(x, yy); g.bezierCurveTo(x + w * .3, yy + 6, x + w * .6, yy - 6, x + w, yy + 2); g.stroke() } g.restore()
+    g.fillStyle = 'rgba(255,255,255,.18)'; g.beginPath(); g.moveTo(x, y); g.lineTo(x + w, y); g.lineTo(x + w - th, y + th); g.lineTo(x + th, y + th); g.lineTo(x + th, y + h - th); g.lineTo(x, y + h); g.fill();
+    g.fillStyle = 'rgba(0,0,0,.2)'; g.beginPath(); g.moveTo(x + w, y + h); g.lineTo(x, y + h); g.lineTo(x + th, y + h - th); g.lineTo(x + w - th, y + h - th); g.lineTo(x + w - th, y + th); g.lineTo(x + w, y); g.fill()
+  }
+  function frameCanvas(p) {
+    const im = IM[p.src], inf = INFO[p.src], style = p.frame || 'polaroid'; if (!im || !inf || style === 'none') return null;
+    const [bx0, by0, bx1, by1] = inf.bb, bw = (bx1 - bx0) * inf.w, bh = (by1 - by0) * inf.h, k = Math.min(1.25, 560 / Math.max(bw, bh)), cw = bw * k, ch = bh * k, mx = Math.max(cw, ch), seed = (p.seed | 0) + (inf.w | 0);
+    const photo = PHOTO[p.photo] || (/^#[0-9a-f]{3,8}$/i.test(p.photo || '') ? p.photo : PHOTO.cream);
+    const G = { polaroid: [.09, .27, .03], tape: [.075, .075, .11], pin: [.075, .075, .1], torn: [.11, .11, .04], burnt: [.14, .14, .08], wood: [.2, .2, .02], gold: [.21, .21, .02] }[style] || [.08, .08, .03];
+    const padX = G[0] * mx, padT = G[0] * mx, padB = G[1] * mx, ext = G[2] * mx, iw = cw + .12 * mx, ih = ch + .12 * mx, cardW = iw + 2 * padX, cardH = ih + padT + padB, c = cnv(cardW + 2 * ext, cardH + 2 * ext), g = c.getContext('2d'), ox = ext, oy = ext, ax = ox + padX, ay = oy + padT;
+    const paper = (col, col2) => { const gr = g.createLinearGradient(ox, oy, ox + cardW, oy + cardH); gr.addColorStop(0, col); gr.addColorStop(1, col2); g.fillStyle = gr };
+    const photoArea = fill => { if (fill) { g.fillStyle = photo; g.fillRect(ax, ay, iw, ih); const rg = g.createRadialGradient(ax + iw / 2, ay + ih / 2, mx * .1, ax + iw / 2, ay + ih / 2, mx * .75); rg.addColorStop(0, 'rgba(255,255,255,.22)'); rg.addColorStop(1, 'rgba(0,0,0,.14)'); g.fillStyle = rg; g.fillRect(ax, ay, iw, ih); speckle(g, ax, ay, iw, ih, seed, 260, .16) } };
+    const picture = () => g.drawImage(im, bx0 * inf.w, by0 * inf.h, bw, bh, ax + (iw - cw) / 2, ay + (ih - ch) / 2, cw, ch);
+    if (style === 'polaroid' || style === 'tape' || style === 'pin') {
+      paper('#fffdf6', '#efe9d6'); g.fillRect(ox, oy, cardW, cardH); g.strokeStyle = 'rgba(120,100,60,.25)'; g.lineWidth = 2; g.strokeRect(ox + 1, oy + 1, cardW - 2, cardH - 2); photoArea(true); g.strokeStyle = 'rgba(0,0,0,.22)'; g.lineWidth = 3; g.strokeRect(ax, ay, iw, ih); picture();
+      if (style === 'tape') for (const s of [-1, 1]) {
+        g.save(); g.translate(s < 0 ? ox + cardW * .08 : ox + cardW * .92, oy + cardH * .02); g.rotate(s * .62 + (hsh(seed, s + 2, 1) - .5) * .2); const tw = .3 * mx, th = .1 * mx;
+        g.beginPath(); for (let i = 0; i <= 8; i++) g.lineTo(-tw / 2 + (i % 2 ? 4 : 0), -th / 2 + i * th / 8 * 1); for (let i = 8; i >= 0; i--) g.lineTo(tw / 2 - (i % 2 ? 4 : 0), -th / 2 + i * th / 8); g.closePath();
+        g.fillStyle = 'rgba(238,224,168,.82)'; g.fill(); g.fillStyle = 'rgba(255,255,255,.3)'; g.fillRect(-tw / 2 + 6, -th / 2 + th * .12, tw - 12, th * .18); g.strokeStyle = 'rgba(120,100,40,.25)'; g.lineWidth = 1.5; g.stroke(); g.restore()
+      }
+      if (style === 'pin') { const px = ox + cardW / 2, py = oy + .045 * mx, r = .042 * mx; g.fillStyle = 'rgba(0,0,0,.28)'; g.beginPath(); g.ellipse(px + r * .5, py + r * .8, r, r * .7, 0, 0, TAU); g.fill(); const rg = g.createRadialGradient(px - r * .35, py - r * .35, r * .1, px, py, r); rg.addColorStop(0, '#ff8a80'); rg.addColorStop(.45, '#e0262f'); rg.addColorStop(1, '#8a0f18'); g.fillStyle = rg; g.beginPath(); g.arc(px, py, r, 0, TAU); g.fill(); g.fillStyle = 'rgba(255,255,255,.7)'; g.beginPath(); g.ellipse(px - r * .35, py - r * .38, r * .28, r * .16, -.6, 0, TAU); g.fill() }
+    } else if (style === 'torn' || style === 'burnt') {
+      jagged(g, ox, oy, cardW, cardH, seed, style === 'torn' ? .02 * mx : .008 * mx, style === 'torn' ? 13 : 20); paper(style === 'burnt' ? '#ecd9a6' : '#f2e9d2', style === 'burnt' ? '#d8bf86' : '#e1d4b4'); g.fill(); g.save(); g.clip(); speckle(g, ox, oy, cardW, cardH, seed + 3, 420, .2); g.restore(); g.lineWidth = 2; g.strokeStyle = 'rgba(90,70,30,.35)'; g.stroke();
+      g.save(); g.shadowColor = 'rgba(0,0,0,.25)'; g.shadowBlur = 8; g.shadowOffsetY = 3; g.drawImage(im, bx0 * inf.w, by0 * inf.h, bw, bh, ax + (iw - cw) / 2, ay + (ih - ch) / 2, cw, ch); g.restore()
+      if (style === 'burnt') renderBurn(fieldOf('f|' + [p.src, style, seed, c.width].join('|'), c), g, null, 1, .2, .8, 1)
+    } else if (style === 'wood' || style === 'gold') {
+      const th = padX * .62; metalFrame(g, ox, oy, cardW, cardH, th, style === 'wood' ? ['#9a6330', '#6a3f1a', '#8a5a2b', '#4d2c12'] : ['#fbe9a0', '#c99a33', '#f4d77a', '#8e6414'], style === 'wood' ? .16 : .0);
+      g.fillStyle = '#f3ecd8'; g.fillRect(ox + th, oy + th, cardW - 2 * th, cardH - 2 * th); g.strokeStyle = 'rgba(0,0,0,.25)'; g.lineWidth = 2; g.strokeRect(ox + th, oy + th, cardW - 2 * th, cardH - 2 * th); photoArea(true); g.strokeStyle = 'rgba(0,0,0,.35)'; g.lineWidth = 3; g.strokeRect(ax, ay, iw, ih); picture();
+      g.save(); g.beginPath(); g.rect(ax, ay, iw, ih); g.clip(); g.fillStyle = 'rgba(255,255,255,.13)'; g.beginPath(); g.moveTo(ax, ay); g.lineTo(ax + iw * .55, ay); g.lineTo(ax, ay + ih * .55); g.closePath(); g.fill(); g.restore();
+      if (style === 'gold') { g.fillStyle = '#b98a22'; for (const [x, y] of [[ox, oy], [ox + cardW, oy], [ox, oy + cardH], [ox + cardW, oy + cardH], [ox + cardW / 2, oy], [ox + cardW / 2, oy + cardH], [ox, oy + cardH / 2], [ox + cardW, oy + cardH / 2]]) { g.beginPath(); g.arc(x, y, th * .42, 0, TAU); g.fill(); g.fillStyle = '#fbe9a0'; g.beginPath(); g.arc(x - 2, y - 2, th * .2, 0, TAU); g.fill(); g.fillStyle = '#b98a22' } }
+    }
+    return c
+  }
+  const pinKey = (sc, i, p) => p.frame && p.frame !== 'none' ? ['pin', sc.idx, i, p.src, p.frame, p.photo || '', p.seed | 0].join('|') : p.src;
+  function buildPins() {
+    if (typeof D === 'undefined' || !D) return;
+    D.scenes.forEach(sc => (sc.pins || []).forEach((p, i) => { if (!p || !p.src || !IM[p.src]) return; if (!INFO[p.src]) INFO[p.src] = measure(IM[p.src]); const key = pinKey(sc, i, p); if (key === p.src || IM[key]) return; const c = frameCanvas(p); if (c) { IM[key] = c; INFO[key] = measure(c) } }))
+  }
+  function selBox(x, y, im, S, rot) { const m = Math.max(im.width, im.height), w = im.width / m * S, h = im.height / m * S; ctx.save(); ctx.translate(x, y); ctx.rotate(rot || 0); ctx.setLineDash([22, 14]); ctx.lineWidth = 7; ctx.strokeStyle = '#00e5ff'; ctx.strokeRect(-w / 2 - 8, -h / 2 - 8, w + 16, h + 16); ctx.restore() }
+  function pins(t, sc) {
+    const arr = sc.pins; if (!arr || !arr.length) return;
+    arr.forEach((p, i) => {
+      if (!p || !p.src) return; const key = pinKey(sc, i, p), kk = IM[key] ? key : p.src, im = IM[kk]; if (!im) return;
+      const lay = (p.lay && p.lay[FMT]) || {}, S = B * .38 * num(p.sz, 1, .15, 5) * (lay.sz || 1);
+      const px = (p.x == null ? .2 + .6 * hsh(sc.idx, i, 41) : +p.x) * W + (lay.dx || 0) * W, py = (p.y == null ? .2 + .5 * hsh(sc.idx, i, 42) : +p.y) * H + (lay.dy || 0) * H, rot0 = (p.rot == null ? (hsh(sc.idx, i, 43) - .5) * .3 : +p.rot) + (lay.rot || 0);
+      const ts = sc.t0 - .1 + num(p.start, i * .12, 0, 30), age = EDIT ? 99 : t - ts; if (age < 0) return;
+      const q = spr(age, 0, .5, 14), k0 = EDIT ? 1 : 1.45 - .45 * Math.min(q, 1.1), a = EDIT ? 1 : ramp(age, 0, .08), dr = EDIT ? 0 : (1 - Math.min(q, 1)) * .14 * (i % 2 ? 1 : -1), sq = EDIT ? 0 : bump(t, ts, .07);
+      REC[2000 + i] = { x: px, y: py, size: S, src: kk, kind: 'pin' };
+      const base = o => drawImg(kk, px, py, S * k0 * (o ? o.k : 1), rot0 + dr + (o ? o.dr : 0), a, 'none', 1 + sq, 1 - sq, true);
+      if (!EDIT && p.fx && p.fx.length) item({ src: kk, t: ts, fx: p.fx }, t, { x: px, y: py, size: S * k0, rot: rot0 + dr, a, sx: 1 + sq, sy: 1 - sq }, base); else base();
+      if (EDIT && EDIT.sel === 2000 + i) selBox(px, py, im, S, rot0)
+    })
   }
 
   /* ---------- scene background layer ---------- */
-  function slots(sc, N) {   // jittered grid positions (fractions of the canvas), the same for every frame
-    const key = sc.idx + '|' + N + '|' + W; if (SL[key]) return SL[key];
-    const r = rng(sc.idx * 131 + 17), cols = Math.max(1, Math.ceil(Math.sqrt(N * W / H))), rows = Math.ceil(N / cols), cells = [];
-    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) cells.push([i, j]);
-    for (let i = cells.length - 1; i > 0; i--) { const k = Math.floor(r() * (i + 1)); [cells[i], cells[k]] = [cells[k], cells[i]] }
-    const out = []; for (let n = 0; n < N; n++) { const [i, j] = cells[n % cells.length]; out.push({ x: (i + .5 + (r() - .5) * .6) / cols, y: (j + .5 + (r() - .5) * .6) / rows, rot: (r() - .5) * .5, sz: .85 + r() * .3 }) }
-    return SL[key] = out
+  function slotsOf(sc, b, N) {   // random positions that are still spread evenly (best of 10 candidates), then the owner's hand placement on top
+    const tilt = num(b.tilt, .25, 0, 1), key = [sc.idx, N, W, b.seed | 0, tilt].join('|');
+    if (!SL[key]) {
+      const r = rng((sc.idx * 131 + 17) ^ ((b.seed | 0) * 7919)), out = [];
+      for (let i = 0; i < N; i++) { let best = null, bd = -1; for (let c = 0; c < 10; c++) { const q = { x: .08 + .84 * r(), y: .06 + .88 * r() }; let d = 9e9; out.forEach(o => { d = Math.min(d, Math.hypot((o.x - q.x) * W, (o.y - q.y) * H)) }); if (d > bd) { bd = d; best = q } } out.push({ x: best.x, y: best.y, rot: (r() * 2 - 1) * tilt * Math.PI, sz: .8 + r() * .5 }) }
+      SL[key] = out
+    }
+    const lay = (b.lay && b.lay[FMT]) || {};
+    return SL[key].map((s, i) => { const o = lay[i]; return o ? { x: s.x + (o.dx || 0), y: s.y + (o.dy || 0), rot: s.rot + (o.rot || 0), sz: s.sz * (o.sz || 1), fixed: true } : s })
   }
   const DIRS = { down: [0, 1], up: [0, -1], right: [1, 0], left: [-1, 0], dr: [.7, .7], dl: [-.7, .7], ur: [.7, -.7], ul: [-.7, -.7] };
   function pattern(b, sc, S, step) {   // one seamless period of the scrolling pattern, drawn once and reused every frame
-    const key = [sc.idx, b.src, S | 0, W, H].join('|'); if (PAT[key]) return PAT[key];
+    const tilt = num(b.tilt, .15, 0, 1), key = [sc.idx, b.src, S | 0, W, H, b.seed | 0, tilt].join('|'); if (PAT[key]) return PAT[key];
     const im = IM[b.src], nc = Math.ceil(W / step) + 2; let nr = Math.ceil(H / step) + 2; if (nr % 2) nr++;
-    const c = document.createElement('canvas'); c.width = Math.round(nc * step); c.height = Math.round(nr * step); const g = c.getContext('2d'), k = S / Math.max(im.width, im.height), r = rng(sc.idx * 71 + 3);
+    const c = document.createElement('canvas'); c.width = Math.round(nc * step); c.height = Math.round(nr * step); const g = c.getContext('2d'), k = S / Math.max(im.width, im.height), r = rng(sc.idx * 71 + 3 + (b.seed | 0) * 13);
     for (let j = 0; j < nr; j++) for (let i = 0; i < nc; i++) {
-      const cx = (i + .5) * step + (j % 2 ? step / 2 : 0), cy = (j + .5) * step, rot = (r() - .5) * .3;
+      const cx = (i + .5) * step + (j % 2 ? step / 2 : 0) + (r() - .5) * step * .3, cy = (j + .5) * step + (r() - .5) * step * .3, rot = (r() * 2 - 1) * tilt * Math.PI;
       for (let ox = -1; ox <= 1; ox++) for (let oy = -1; oy <= 1; oy++) {
         const x = cx + ox * c.width, y = cy + oy * c.height; if (x < -S || x > c.width + S || y < -S || y > c.height + S) continue;
         g.save(); g.translate(x, y); g.rotate(rot); g.scale(k, k); g.drawImage(im, -im.width / 2, -im.height / 2); g.restore()
@@ -147,44 +378,80 @@ window.FXL = (() => {
     }
     return PAT[key] = c
   }
+  const inv = y => { let a = 0, b = 1; for (let i = 0; i < 28; i++) { const m = (a + b) / 2; if (cvS(m) < y) a = m; else b = m } return (a + b) / 2 };
+  const cvS = x => { const s = x * x * x * (x * (x * 6 - 15) + 10); return .25 * x + .75 * s };   // slow - fast - slow: arrivals per second start at 1/4 of the average, peak at about 1.7x, and end at 1/4 again
+  /* cover: a plan of random placements that provably fills the screen (each new picture lands on a spot still showing the scene), with arrival times along the slow-fast-slow curve */
+  function coverPlan(sc, b, im) {
+    const szk = num(b.size, 1, .2, 3), tilt = num(b.tilt, 1, 0, 1), key = ['cv', sc.idx, W, H, b.src, szk, b.seed | 0, tilt].join('|'); if (CV[key]) return CV[key];
+    const K = 8, gw = Math.ceil(W / K), gh = Math.ceil(H / K), c = cnv(gw, gh), g = c.getContext('2d', { willReadFrequently: true }), r = rng(sc.idx * 977 + (b.seed | 0) * 131 + 5), base = B * .5 * szk, list = [];
+    for (let n = 0; n < 320; n++) {
+      const px = g.getImageData(0, 0, gw, gh).data, U = []; for (let i = 0; i < gw * gh; i++) if (px[i * 4 + 3] < 240) U.push(i);
+      if (list.length) list[list.length - 1].cov = 1 - U.length / (gw * gh); if (!U.length) break;
+      const cell = U[Math.floor(r() * U.length)], S = base * (.75 + .55 * r()) * (1 + Math.max(0, n - 60) * .012), x = ((cell % gw) + .5) * K + (r() - .5) * S * .3, y = (((cell / gw) | 0) + .5) * K + (r() - .5) * S * .3, rot = (r() * 2 - 1) * tilt * Math.PI;
+      g.save(); g.translate(x / K, y / K); g.rotate(rot); const s = S / Math.max(im.width, im.height) / K; g.scale(s, s); g.drawImage(im, -im.width / 2, -im.height / 2); g.restore(); list.push({ x, y, S, rot, cov: 0 })
+    }
+    if (list.length && !list[list.length - 1].cov) list[list.length - 1].cov = 1;
+    return CV[key] = { list, comp: null, avg: (INFO[b.src] || {}).avg || [128, 128, 128] }
+  }
+  function cover(t, sc, b, im, u, sp) {
+    const P = coverPlan(sc, b, im), M = P.list.length; if (!M) return; const Tc = 4 / sp, col = `rgb(${P.avg[0] * .85 | 0},${P.avg[1] * .85 | 0},${P.avg[2] * .85 | 0})`;
+    if (u > Tc + .7) {   // finished: the final picture never changes, so it is drawn once and reused
+      if (!P.comp) { const c = cnv(W, H), g = c.getContext('2d'); g.fillStyle = col; g.fillRect(0, 0, W, H); P.list.forEach(o => { g.save(); g.translate(o.x, o.y); g.rotate(o.rot); const s = o.S / Math.max(im.width, im.height); g.scale(s, s); g.drawImage(im, -im.width / 2, -im.height / 2); g.restore() }); P.comp = c }
+      ctx.drawImage(P.comp, 0, 0); return
+    }
+    const T = i => M < 2 ? 0 : Tc * inv(i / (M - 1)); let cov = 0; for (let i = 0; i < M; i++) if (u >= T(i)) cov = P.list[i].cov; else break;
+    ctx.fillStyle = col; ctx.globalAlpha = ramp(cov, .7, .97); ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
+    for (let i = 0; i < M; i++) {
+      const age = u - T(i); if (age < 0) break; const o = P.list[i], q = spr(age, 0, .5, 16);
+      drawImg(b.src, o.x, o.y, o.S * (.55 + .45 * Math.min(q, 1.1)), o.rot + (1 - Math.min(q, 1)) * .35 * (i % 2 ? 1 : -1), ramp(age, 0, .08), 'none', 1, 1, false)
+    }
+  }
   function bg(t, sc) {
     const b = sc.bg, im = b && b.src && IM[b.src]; if (!im) return;
-    const mot = b.motion || 'down', start = +b.start || 0, u0 = t - sc.t0 - start;
-    if (u0 < 0 && start > 0 && mot !== 'fill') return;
-    const u = Math.max(u0, 0), N = Math.round(num(b.count, 3, 1, mot === 'fill' || mot === 'fillin' ? 40 : 20)), sp = num(b.speed, 1, .2, 3), szk = num(b.size, 1, .2, 3), op = num(b.opacity, .9, .05, 1), blur = num(b.blur, 0, 0, 24);
-    const base = B * .42 * szk / (1 + .05 * (N - 1)), flt = (extra = 0) => { const v = blur + extra; return v >= .9 ? `blur(${(Math.round(v * 2) / 2).toFixed(1)}px)` : 'none' }, SS = slots(sc, N);   // blur is quantised: fewer different filter states, cheaper to render
+    const mot = b.motion || 'down', start = +b.start || 0, u0 = t - sc.t0 - start, edit = !!EDIT;
+    if (!edit && u0 < 0 && start > 0 && mot !== 'fill') return;
+    const u = edit ? 8 : Math.max(u0, 0), N = Math.round(num(b.count, 3, 1, mot === 'fill' || mot === 'fillin' ? 40 : 20)), sp = num(b.speed, 1, .2, 3), szk = num(b.size, 1, .2, 3), op = num(b.opacity, .9, .05, 1), blur = num(b.blur, 0, 0, 24), tilt = num(b.tilt, mot === 'cover' ? 1 : .25, 0, 1);
+    const base = B * .42 * szk / (1 + .05 * (N - 1)), flt = (extra = 0) => { const v = blur + extra; return v >= .9 ? `blur(${(Math.round(v * 2) / 2).toFixed(1)}px)` : 'none' };   // blur is quantised: fewer different filter states, cheaper to render
+    const sd = sc.idx * 7 + (b.seed | 0) * 131, rnd = (i, c, k) => hsh(sd, i * 17 + k, c);
+    if (mot === 'cover') { if (!edit) cover(t, sc, b, im, u, sp); return }
+    const SS = (mot === 'fill' || mot === 'fillin' || mot === 'scroll') ? null : slotsOf(sc, b, N);
+    if (edit && SS) {   // the owner arranges the copies: every copy sits in its settled place, can be selected, dragged, pinched and turned
+      SS.forEach((s, i) => { const S = base * s.sz; REC[1000 + i] = { x: s.x * W, y: s.y * H, size: S, src: b.src, rot: s.rot, kind: 'bg' }; drawImg(b.src, s.x * W, s.y * H, S, s.rot, op, flt(), 1, 1, false); if (EDIT.sel === 1000 + i) selBox(s.x * W, s.y * H, im, S, s.rot) }); return
+    }
+    if (edit && (mot === 'fill' || mot === 'fillin')) return;
     if (mot === 'down' || mot === 'up' || mot === 'left' || mot === 'right') {
       const vert = mot === 'down' || mot === 'up', rev = mot === 'up' || mot === 'left', L = vert ? H : W, tot = L + 2 * base * 1.15, C = 3.2 / sp, gap = C / N;
       for (let i = 0; i < N; i++) {
-        const s = SS[i], S = base * s.sz, sway = Math.sin(u * .9 + i * 1.7);
-        if (b.hold) {   // enters from the edge and settles in its place
-          const ts = i * .2 / sp; if (u < ts) continue;
+        const s = SS[i], sway = Math.sin(u * .9 + i * 1.7);
+        if (b.hold) {   // enters from the edge and settles in its (random) place
+          const S = base * s.sz, ts = i * .2 / sp; if (u < ts) continue;
           const q = Math.min(spr(u, ts, .5, 10), 1.12), px = s.x * W, py = s.y * H, from = vert ? (rev ? H + S : -S) : (rev ? W + S : -S);
-          drawImg(b.src, vert ? px + sway * S * .03 : lerp(from, px, q), vert ? lerp(from, py, q) : py + sway * S * .03, S, s.rot * .4 + Math.sin(u * .7 + i) * .05, op * ramp(u, ts, ts + .15), flt(), 1, 1, false)
-        } else {        // keeps flowing across the screen, one copy after another
-          const ui = u - i * gap; if (ui < 0) continue;
-          const p = mod(ui / C, 1), pos = -base * 1.15 + (rev ? 1 - p : p) * tot, cross = (vert ? s.x * W : s.y * H) + sway * S * .08;
-          drawImg(b.src, vert ? cross : pos, vert ? pos : cross, S, s.rot * .5 + Math.sin(u * .6 + i) * .1, op, flt(), 1, 1, false)
+          drawImg(b.src, vert ? px + sway * S * .03 : lerp(from, px, q), vert ? lerp(from, py, q) : py + sway * S * .03, S, s.rot + Math.sin(u * .7 + i) * .05, op * ramp(u, ts, ts + .15), flt(), 1, 1, false)
+        } else {        // keeps flowing across the screen: every pass takes a new random lane, angle and size
+          const ui = u - i * gap; if (ui < 0) continue; const c = Math.floor(ui / C), p = mod(ui / C, 1), fx = s.fixed;
+          const S = base * (fx ? s.sz : .75 + .55 * rnd(i, c, 3)), rot = fx ? s.rot : (rnd(i, c, 2) * 2 - 1) * tilt * Math.PI, lane = fx ? (vert ? s.x : s.y) : .06 + .88 * rnd(i, c, 1);
+          const pos = -base * 1.15 + (rev ? 1 - p : p) * tot, cross = lane * (vert ? W : H) + sway * S * .08;
+          drawImg(b.src, vert ? cross : pos, vert ? pos : cross, S, rot + Math.sin(u * .6 + i) * .1, op, flt(), 1, 1, false)
         }
       }
     } else if (mot === 'zoom') {   // comes forward out of the background: small, faint and soft -> big and sharp
       const cx = W / 2, cy = H / 2, Cz = 3.6 / sp, L = [];
       for (let i = 0; i < N; i++) {
-        const s = SS[i]; let p, kp, ks, al;
+        const s = SS[i]; let p, kp, ks, al, tx = s.x, ty = s.y, rot = s.rot, sz = s.sz;
         if (b.hold) { const ts = i * .2 / sp; if (u < ts) continue; p = eoc((u - ts) / (1.4 / sp)); kp = p; ks = .12 + .88 * p; al = ramp(p, 0, .2) }
-        else { const ui = u - i * Cz / N; if (ui < 0) continue; p = mod(ui / Cz, 1); kp = .15 + 1.15 * Math.pow(p, 1.4); ks = .12 + 1.1 * Math.pow(p, 1.6); al = ramp(p, 0, .15) * (1 - ramp(p, .82, 1)) }
-        L.push({ p, x: cx + (s.x * W - cx) * kp, y: cy + (s.y * H - cy) * kp, S: base * s.sz * ks, rot: s.rot * (1 - p) * .6, al: al * op })
+        else { const ui = u - i * Cz / N; if (ui < 0) continue; const c = Math.floor(ui / Cz); p = mod(ui / Cz, 1); if (!s.fixed) { tx = .1 + .8 * rnd(i, c, 1); ty = .1 + .8 * rnd(i, c, 4); rot = (rnd(i, c, 2) * 2 - 1) * tilt * Math.PI; sz = .75 + .55 * rnd(i, c, 3) } kp = .15 + 1.15 * Math.pow(p, 1.4); ks = .12 + 1.1 * Math.pow(p, 1.6); al = ramp(p, 0, .15) * (1 - ramp(p, .82, 1)) }
+        L.push({ p, x: cx + (tx * W - cx) * kp, y: cy + (ty * H - cy) * kp, S: base * sz * ks, rot: rot * (b.hold ? (1 - p) * .6 + .4 : 1), al: al * op })
       }
       L.sort((a, c) => a.p - c.p).forEach(o => drawImg(b.src, o.x, o.y, o.S, o.rot, o.al, flt((1 - o.p) * 6), 1, 1, false))
     } else if (mot === 'pop') {
       for (let i = 0; i < N; i++) { const s = SS[i], ts = i * .2 / sp, q = spr(u, ts, .45, 13); if (q <= 0) continue; drawImg(b.src, s.x * W, s.y * H, base * s.sz * Math.min(q, 1.15), s.rot + Math.sin(u * .8 + i) * .04, op * ramp(u, ts, ts + .1), flt(), 1, 1, false) }
-    } else if (mot === 'fill' || mot === 'fillin') {   // the whole screen is covered, then empties tile by tile (fillin: the other way round)
-      const cols = Math.max(1, Math.ceil(Math.sqrt(N * W / H))), rows = Math.ceil(N / cols), tot = cols * rows, cw = W / cols, ch = H / rows, S = Math.max(cw, ch) * 1.08 * szk, E = 3 / sp;
-      const key = 'f|' + sc.idx + '|' + tot; if (!SL[key]) { const r = rng(sc.idx * 53 + 9), ord = [...Array(tot).keys()]; for (let i = tot - 1; i > 0; i--) { const k = Math.floor(r() * (i + 1)); [ord[i], ord[k]] = [ord[k], ord[i]] } const rank = []; ord.forEach((id, k) => { rank[id] = k }); SL[key] = { rank, rot: ord.map(() => (r() - .5) * .22) } }
+    } else if (mot === 'fill' || mot === 'fillin') {   // the whole screen is covered (random angles), then empties tile by tile (fillin: the other way round)
+      const cols = Math.max(1, Math.ceil(Math.sqrt(N * W / H))), rows = Math.ceil(N / cols), tot = cols * rows, cw = W / cols, ch = H / rows, S = Math.max(cw, ch) * 1.3 * szk, E = 3 / sp, tl = num(b.tilt, .25, 0, 1);
+      const key = ['f', sc.idx, tot, b.seed | 0, tl].join('|'); if (!SL[key]) { const r = rng(sc.idx * 53 + 9 + (b.seed | 0) * 17), ord = [...Array(tot).keys()]; for (let i = tot - 1; i > 0; i--) { const k = Math.floor(r() * (i + 1)); [ord[i], ord[k]] = [ord[k], ord[i]] } const rank = []; ord.forEach((id, k) => { rank[id] = k }); SL[key] = { rank, rot: ord.map(() => (r() * 2 - 1) * tl * Math.PI), jx: ord.map(() => (r() - .5) * .3), jy: ord.map(() => (r() - .5) * .3) } }
       const F = SL[key];
       for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
         const id = j * cols + i, T = .4 + F.rank[id] / Math.max(tot - 1, 1) * E, q = mot === 'fill' ? ramp(u, T, T + .4) : 1 - ramp(u, T, T + .4); if (q >= 1) continue;
-        drawImg(b.src, (i + .5) * cw, (j + .5) * ch, S * (1 - .7 * eio(q)), F.rot[id], op * (1 - q), flt(), 1, 1, false)
+        drawImg(b.src, (i + .5 + F.jx[id]) * cw, (j + .5 + F.jy[id]) * ch, S * (1 - .7 * eio(q)), F.rot[id], op * (1 - q), flt(), 1, 1, false)
       }
     } else if (mot === 'scroll') {   // endless tiled pattern drifting in one direction (count = pictures per row)
       const per = Math.max(1, Math.min(12, Math.round(num(b.count, 4, 1, 12)))), S = Math.min(W, H) / per * szk, step = S * 1.12, pat = pattern(b, sc, S, step), d = DIRS[b.dir] || DIRS.down, off = u * sp * S * .9;
@@ -194,5 +461,5 @@ window.FXL = (() => {
       ctx.restore()
     }
   }
-  return { prepare, bg, item }
+  return { prepare, bg, pins, item, TYPES }
 })();
