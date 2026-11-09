@@ -109,6 +109,31 @@ select.sel{width:100%;min-height:44px;font:inherit;background:#17120f;color:var(
 .fxe .row{align-items:center}
 .chk{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px;color:var(--tx)}
 
+/* ---------- build panel: two sections (settings, collapsible / run + review + videos) ---------- */
+#epBuild{display:block;min-width:0}
+.cfgHead{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;user-select:none;min-height:34px}
+.cfgHead .chev{font-size:16px;color:var(--acc)}
+#epCfg.min #cfgBody{display:none}
+#epCfg.min .prog{margin-bottom:0}
+
+/* ---------- review panel: three buttons in one row, background popup, compact control grids ---------- */
+.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.row3>button{min-height:46px;height:auto;padding:6px 4px;font-size:13px;line-height:1.35;text-align:center}
+#bgDlg{max-height:90vh;overflow:auto}
+#bgDlg .dh{display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:-16px;z-index:3;margin:-16px -16px 8px;padding:12px 16px;background:var(--card);border-bottom:1px solid var(--line);border-radius:18px 18px 0 0}
+#bgDlg .fxs{border-top:0;margin-top:0;padding-top:0}
+#bgDlg .pick{max-height:300px;overflow:auto;margin-top:8px}
+.pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px;margin:8px 0;align-items:end}
+.pgrid>div{min-width:0}
+.pgrid label{margin:0 0 4px;font-size:12px;line-height:1.4}
+.pgrid .sel{min-height:40px;padding:0 6px;font-size:13px}
+.pgrid .chk{margin:0;min-height:40px;font-size:13px}
+.sl2r{display:flex;align-items:center;gap:6px}
+.sl2r input[type=range]{flex:1;min-width:0;accent-color:var(--acc);min-height:32px;margin:0}
+.sl2r .sv{flex:0 0 auto;min-width:34px;font-size:12px;text-align:left;direction:ltr;color:var(--acc)}
+.fxpanel .fxe:first-child{border-top:0;margin-top:0;padding-top:0}
+@media (min-width:1024px){ .pgrid{grid-template-columns:repeat(3,minmax(0,1fr))} }
+
 /* ---------- mouse and keyboard (any device with a real pointer) ---------- */
 @media (hover:hover) and (pointer:fine){
   button:not(:disabled):hover,.btn:hover{filter:brightness(1.18)}
@@ -203,6 +228,7 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
 </main>
 
 <dialog id="dlg"><div id="dlgBody"></div><div class="row"><button onclick="dlg.close()">بستن</button></div></dialog>
+<dialog id="bgDlg"><div class="dh"><b id="bgDlgTitle">🖼 پس‌زمینه‌ی صحنه</b><button class="pri" onclick="document.getElementById('bgDlg').close()">✓ تمام</button></div><div id="bgDlgBody"></div></dialog>
 <div id="toast"></div>
 <div id="upl" hidden><div class="uh"><b id="uTitle"></b><span class="ub"><b id="uPct" style="color:var(--acc)"></b><button id="uMin" title="کوچک یا بزرگ کردن">▾</button><button id="uClr">پاک کردن</button></span></div><div class="bar" id="uBar"><i></i></div><div id="uList"></div></div>
 
@@ -333,11 +359,11 @@ async function renderEp(){
     <label><input type="checkbox" id="chS"> نسخه‌ی کوتاه (اینستاگرام و تیک‌تاک)</label>
     <div id="boxL"><label>متن نسخه‌ی بلند (یوتیوب) — فارسی</label><textarea id="epText" rows="8" style="width:100%;min-height:200px;direction:rtl;text-align:right;font-size:15px"></textarea></div>
     <div id="boxS" hidden><label>متن نسخه‌ی کوتاه (اینستاگرام و تیک‌تاک، حدود ۶۰ ثانیه)</label><textarea id="epTextS" rows="5" style="width:100%;min-height:130px;direction:rtl;text-align:right;font-size:15px"></textarea>
-    <p class="hint">نسخه‌ی کوتاه یک قسمت جدا به نام <b>نام‌قسمت-short</b> ساخته می‌شود. تصویرها و کتابخانه بین هر دو مشترک است. نسخه‌ی کوتاه فقط عمودی و با برش‌های سریع‌تر ساخته می‌شود. صدای هر کدام را جدا در «ساخت ویدیو» همان قسمت آپلود کن.</p></div>
+    <p class="hint">نسخه‌ی کوتاه یک قسمت جدا به نام <b>نام‌قسمت-short</b> ساخته می‌شود. تصویرها و کتابخانه بین هر دو مشترک است. نسخه‌ی کوتاه با برش‌های سریع‌تر ساخته می‌شود (پیش‌فرض فقط عمودی؛ در «ساخت ویدیو» می‌توانی یوتیوب را هم تیک بزنی). صدای هر کدام را جدا در «ساخت ویدیو» همان قسمت آپلود کن.</p></div>
     <div class="row"><button class="pri" id="epSend">ارسال و تحلیل</button></div><div class="st" id="epSt"></div></div>
     ${eps.length?`<div class="card"><label>قسمت‌های قبلی</label><div class="row" id="epList">${eps.map(e=>`<button data-e="${e}">${epTitle(e)}</button>`).join('')}</div></div>`:''}
-    <div class="card" id="epBuild"><div class="name">ساخت ویدیو</div>
-      <div id="bProg" class="prog" hidden></div>
+    <div id="epBuild"><div class="card" id="epCfg"><div class="name cfgHead" id="cfgHead" role="button" tabindex="0" aria-expanded="true" title="کوچک یا بزرگ کردن"><span>ساخت ویدیو</span><span class="chev" id="cfgChev">▾</span></div>
+      <div id="bProg" class="prog" hidden></div><div id="cfgBody">
       <label>طول تقریبی ویدیو (اگر صدای خودت را بدهی، طول ویدیو دقیقاً به اندازه‌ی صدای توست و این گزینه نادیده گرفته می‌شود)</label>
       <select id="bMin" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="3">حدود ۳ دقیقه (آزمایشی)</option><option value="5">حدود ۵ دقیقه</option><option value="7" selected>حدود ۷ دقیقه</option><option value="8">حدود ۸ دقیقه</option></select>
       <label>صدای خودت (اختیاری): اگر فایل صدا انتخاب کنی، به‌جای صدای هوش مصنوعی همان استفاده می‌شود</label>
@@ -357,15 +383,19 @@ async function renderEp(){
       <select id="bVoice" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option>Algieba</option><option>Sulafat</option><option>Charon</option><option>Kore</option><option>Puck</option><option>Orus</option><option>Gacrux</option></select>
       <label><input type="checkbox" id="bV" checked> اینستاگرام (عمودی)</label>
       <label><input type="checkbox" id="bH" checked> یوتیوب (افقی)</label>
-      <p class="hint" id="bShortNote" hidden>قسمت کوتاه: فقط اینستاگرام/تیک‌تاک (عمودی) ساخته می‌شود و برش‌ها سریع‌تر است.</p>
-      <p class="hint" id="bCover"></p><div class="row"><button class="pri" id="bGo">۱. آماده‌سازی صحنه‌ها برای بازبینی</button><button id="bGoDirect">ساخت مستقیم (بدون بازبینی)</button></div><div class="st" id="bSt"></div>
+      <p class="hint" id="bShortNote" hidden>قسمت کوتاه: برش‌ها سریع‌تر است. پیش‌فرض فقط اینستاگرام/تیک‌تاک (عمودی) تیک خورده؛ اگر نسخه‌ی یوتیوب (افقی) هم می‌خواهی، تیکش را بزن.</p>
+      <p class="hint" id="bCover"></p></div></div>
+    <div class="card" id="epRun"><div class="row"><button class="pri" id="bGo">۱. آماده‌سازی صحنه‌ها برای بازبینی</button><button id="bGoDirect">ساخت مستقیم (بدون بازبینی)</button></div><div class="st" id="bSt"></div>
       <details id="rvBox" class="rv" style="margin-top:12px"><summary class="btn" style="display:block;text-align:center;cursor:pointer">بازبینی صحنه‌ها و تصویرها</summary><div id="rvBody"><p class="hint">بعد از «آماده‌سازی صحنه‌ها» (حدود ۲ تا ۵ دقیقه) اینجا می‌بینی هر صحنه چه نوشته‌ای و چه تصویرهایی دارد؛ می‌توانی تصویر کم یا از کتابخانه اضافه کنی و بعد ویدیو را بسازی.</p></div></details>
       <p class="hint">ساخت نهایی حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد. می‌توانی اپ را ببندی؛ ویدیوی آماده در لیست زیر می‌آید.</p>
-      <div id="vids"></div></div>
+      <div id="vids"></div></div></div>
     `;
   fillPal(); $('#bPal').value=ls.get('pal_'+S.style,''); $('#bPal').onchange=()=>ls.set('pal_'+S.style,$('#bPal').value);
   $('#bStyle').value=S.style; $('#bStyle').onchange=()=>setStyle($('#bStyle').value);
-  $('#epName').addEventListener('input',shortDefaults); shortDefaults();
+  lastShort=null; $('#epName').addEventListener('input',shortDefaults); shortDefaults();
+  const cfgApply=()=>{ const m=ls.get('cfgMin','')==='1'; $('#epCfg').classList.toggle('min',m); $('#cfgChev').textContent=m?'▴':'▾'; $('#cfgHead').setAttribute('aria-expanded',String(!m)) };
+  const cfgToggle=()=>{ ls.set('cfgMin',ls.get('cfgMin','')==='1'?'':'1'); cfgApply() };
+  $('#cfgHead').onclick=cfgToggle; $('#cfgHead').onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cfgToggle() } }; cfgApply();
   const tg=()=>{ $('#boxL').hidden=!$('#chL').checked; $('#boxS').hidden=!$('#chS').checked }; $('#chL').onchange=tg; $('#chS').onchange=tg; tg();
   $('#bGo').onclick = ()=>buildVideo('review'); $('#bGoDirect').onclick = ()=>buildVideo('direct'); loadVids(); if(cur) loadReview(cur,true);
   el.querySelectorAll('#epList button').forEach(b=>b.onclick=()=>setEpisode(b.dataset.e));
@@ -423,7 +453,10 @@ async function buildVideo(mode){
   try{
     if(ownF){ st.className='st'; st.textContent='در حال آپلود صدا…'; const ext=(ownF.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,'');
       const b64=await toB64(ownF); let osha; try{ osha=(await api('/contents/episodes/'+ep+'/voice_user.'+ext)).sha }catch(e){}
-      await api('/contents/episodes/'+ep+'/voice_user.'+ext,{method:'PUT',body:JSON.stringify({message:'own voice: '+ep,content:b64,branch:'main',sha:osha})}); }
+      await api('/contents/episodes/'+ep+'/voice_user.'+ext,{method:'PUT',body:JSON.stringify({message:'own voice: '+ep,content:b64,branch:'main',sha:osha})});
+      /* the engine takes the first voice_user.* it finds, so an old file with another extension (mp3 vs m4a) would win over the new one: remove every other one */
+      try{ const L=await api('/contents/episodes/'+ep); for(const f of L.filter(x=>x.type==='file'&&/^voice_user\./.test(x.name)&&x.name!=='voice_user.'+ext)){ await delFile('episodes/'+ep+'/'+f.name,f.sha,'remove old voice: '+f.name) } }
+      catch(e){ st.className='st bad'; st.textContent='ویس قبلی پاک نشد، ساخت متوقف شد: '+e.message; return } }
     if(ownF){ let txt=($('#bSpoken')?$('#bSpoken').value:'').trim(); if(txt.length<20) txt=$('#epText').value.trim(); if(txt.length<20){ try{ const j=await api('/contents/episodes/'+ep+'/script.txt'); txt=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))).trim() }catch(e){} }
       txt=cleanScript(txt); if(txt.length>20){ let ssha; try{ ssha=(await api('/contents/episodes/'+ep+'/spoken.txt')).sha }catch(e){}
         await api('/contents/episodes/'+ep+'/spoken.txt',{method:'PUT',body:JSON.stringify({message:'spoken text: '+ep,content:enc(txt),branch:'main',sha:ssha})}); } }
@@ -510,11 +543,11 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
   box.innerHTML=`<div class="row" style="margin-bottom:6px"><button class="pri bPv">▶ پیش‌نمایش</button><button class="bLay">✋ چیدمان</button></div><div class="row" style="margin-bottom:6px"><label style="display:flex;align-items:center;gap:6px;margin:0"><input type="checkbox" class="okv" ${okOf(s,'v')?'checked':''}> عمودی خوب است</label><label style="display:flex;align-items:center;gap:6px;margin:0"><input type="checkbox" class="okh" ${okOf(s,'h')?'checked':''}> افقی خوب است</label></div>
     <label>متنی که راوی در این صحنه می‌گوید</label><div class="narr" style="padding:8px 10px;border:1px dashed var(--line);border-radius:10px;color:var(--mut);font-size:14px;line-height:1.9">${narr(s)||'—'}</div>
     ${s.number!==undefined?`<label>عدد</label><input type="text" class="num" value="${s.number}">`:''}
-    <label>تصویرها (به همین ترتیب نمایش داده می‌شوند)</label>
-    <div class="its">${(s.items||[]).map((it,k)=>`<div class="it"><div class="thumb"><img loading="lazy" src="${thumbUrl(it.src)}"></div><b style="position:absolute;bottom:34px;right:4px;background:#000a;border-radius:8px;padding:0 6px;font-size:12px">${fa(k+1)}</b><button class="x" data-k="${k}">✕</button><button class="ws" data-k="${k}" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏱ ${wordAt(s,it)}</button><button class="xs" data-k="${k}" title="چه زمانی این تصویر بیرون برود" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏏ ${it.out!=null?wordAtT(s,it.out):'تا آخر صحنه'}</button><div style="display:flex;gap:4px;margin-top:4px"><button class="mv" data-k="${k}" data-d="-1" style="min-height:30px;flex:1;padding:0" ${k===0?'disabled':''}>›</button><button class="mv" data-k="${k}" data-d="1" style="min-height:30px;flex:1;padding:0" ${k===n-1?'disabled':''}>‹</button></div></div>`).join('')||'<span class="hint">بدون تصویر</span>'}</div>
+    <label>تصویرها (به همین ترتیب نمایش داده می‌شوند). برای هر تصویر: ⏱ با کدام کلمه بیاید، ⏏ با کدام کلمه برود، ✨ افکت‌هایش</label>
+    <div class="its">${(s.items||[]).map((it,k)=>`<div class="it"><div class="thumb"><img loading="lazy" src="${thumbUrl(it.src)}"></div><b style="position:absolute;top:54px;right:4px;background:#000a;border-radius:8px;padding:0 6px;font-size:12px">${fa(k+1)}</b><button class="x" data-k="${k}">✕</button><button class="ws" data-k="${k}" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏱ ${wordAt(s,it)}</button><button class="xs" data-k="${k}" title="چه زمانی این تصویر بیرون برود" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏏ ${it.out!=null?wordAtT(s,it.out):'تا آخر صحنه'}</button><button class="fxb" data-k="${k}" title="افکت‌های روی این تصویر" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">✨ افکت${(it.fx&&it.fx.length)?' ('+fa(it.fx.length)+')':''}</button><div style="display:flex;gap:4px;margin-top:4px"><button class="mv" data-k="${k}" data-d="-1" style="min-height:30px;flex:1;padding:0" ${k===0?'disabled':''}>›</button><button class="mv" data-k="${k}" data-d="1" style="min-height:30px;flex:1;padding:0" ${k===n-1?'disabled':''}>‹</button></div></div>`).join('')||'<span class="hint">بدون تصویر</span>'}</div>
     <div class="wpanel" hidden style="margin:6px 0;padding:8px;border:1px dashed var(--line);border-radius:10px"><div class="hint wph"></div><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"></div></div>
-    <div class="row"><button class="bAdd">+ افزودن از کتابخانه (آخر صحنه اضافه می‌شود)</button></div><div class="pick" hidden></div>
-    <div class="row" style="margin-top:6px"><button class="bNew">+ تصویر تازه: آپلود در کتابخانه و استفاده در این صحنه</button></div>
+    <div class="fxpanel" hidden style="margin:6px 0;padding:8px;border:1px dashed var(--line);border-radius:10px"><div class="hint fxh"></div><div class="fxhost"></div></div>
+    <div class="row3"><button class="bAdd" title="آخر صحنه اضافه می‌شود">+ از کتابخانه</button><button class="bNew" title="آپلود در کتابخانه و استفاده در این صحنه">+ تصویر تازه</button><button class="bBg" title="تصویر متحرک پشت صحنه">🖼 پس‌زمینه</button></div><div class="pick" hidden></div>
     <div class="newbox" hidden style="margin-top:8px"><label>نام فارسی تصویر</label><input type="text" class="nfa" placeholder="مثلاً: سطل زباله">
       <label class="btn pri" style="display:grid;place-items:center;margin:8px 0 0;color:var(--acc-tx)">انتخاب تصویر و ارسال<input type="file" accept="image/*" hidden class="nfile"></label>
       <p class="hint">زمینه‌ی تصویر باید همان سرخابی یک‌دست باشد (مثل تصویرهای دیگر کتابخانه). حدود ۲ تا ۴ دقیقه طول می‌کشد؛ تصویر پس از ذخیره خودش به آخر همین صحنه اضافه می‌شود. می‌توانی بقیه‌ی صحنه‌ها را ادامه بدهی.</p><div class="st nst"></div></div>`;
@@ -524,17 +557,21 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
   box.querySelector('.okv').onchange=e=>{ setOk(s,'v',e.target.checked); syncOk(i); rvSave() }; box.querySelector('.okh').onchange=e=>{ setOk(s,'h',e.target.checked); syncOk(i); rvSave() };
   const tx=box.querySelector('.txt'); if(tx) tx.oninput=()=>{ s.text=tx.value; clearOk(s); box.querySelector('.okv').checked=false; box.querySelector('.okh').checked=false; updOk(); d.querySelector('summary').innerHTML=sceneHead(s,i); rvSave() };
   const nm=box.querySelector('.num'); if(nm) nm.oninput=()=>{ s.number=nm.value; rvSave() };
-  box.querySelectorAll('.xs').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, wp=box.querySelector('.wpanel'); wp.hidden=false; wp.querySelector('.wph').textContent='تصویر '+fa(k+1)+' با کدام کلمه‌ی راوی از صفحه بیرون برود؟ روی کلمه بزن.';
+  const fxp=box.querySelector('.fxpanel'), selIt=k=>box.querySelectorAll('.it .thumb').forEach((e,j)=>{ e.style.outline=j===k?'2px solid var(--acc)':'' }), fxDone=()=>{ clearOk(s); syncOk(i); rvSave(); pvRefresh(i) };
+  box.querySelectorAll('.fxb').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, it=s.items[k]; if(!it) return; box.querySelector('.wpanel').hidden=true; fxp.hidden=false; selIt(k);
+    fxp.querySelector('.fxh').textContent='افکت‌های تصویر '+fa(k+1)+': به خود تصویر وصل می‌شوند و با حرکتش می‌روند؛ چند افکت را می‌شود روی هم گذاشت.';
+    fxListUI(fxp.querySelector('.fxhost'),it,()=>{ fxDone(); b.textContent='✨ افکت'+(it.fx&&it.fx.length?' ('+fa(it.fx.length)+')':'') }) });
+  box.querySelectorAll('.xs').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, wp=box.querySelector('.wpanel'); wp.hidden=false; fxp.hidden=true; selIt(k); wp.querySelector('.wph').textContent='تصویر '+fa(k+1)+' با کدام کلمه‌ی راوی از صفحه بیرون برود؟ روی کلمه بزن.';
     wp.querySelector('.chips').innerHTML='<button class="chip" data-clr="1" style="min-height:34px;padding:0 10px">تا آخر صحنه</button>'+sceneWords(s).filter(w=>w.t0>s.items[k].t+.4).map(w=>`<button class="chip" data-t="${w.t0}" style="min-height:34px;padding:0 10px">${w.w}</button>`).join('');
     wp.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{ const it=s.items[k]; if(c.dataset.clr) delete it.out; else it.out=+Math.min(+c.dataset.t,s.t1-.2).toFixed(3); rvChanged(i,d,true) }) });
-  box.querySelectorAll('.ws').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, wp=box.querySelector('.wpanel'); wp.hidden=false; wp.querySelector('.wph').textContent='تصویر '+fa(k+1)+' با کدام کلمه‌ی راوی ظاهر شود؟ روی کلمه بزن.';
+  box.querySelectorAll('.ws').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, wp=box.querySelector('.wpanel'); wp.hidden=false; fxp.hidden=true; selIt(k); wp.querySelector('.wph').textContent='تصویر '+fa(k+1)+' با کدام کلمه‌ی راوی ظاهر شود؟ روی کلمه بزن.';
     wp.querySelector('.chips').innerHTML=sceneWords(s).map(w=>`<button class="chip" data-t="${w.t0}" style="min-height:34px;padding:0 10px">${w.w}</button>`).join('');
     wp.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{ const it=s.items[k]; it.t=+Math.max(s.t0+.15,Math.min(+c.dataset.t,s.t1-.5)).toFixed(3); it.fix=true; rvChanged(i,d,true) }) });
   box.querySelectorAll('.x').forEach(b=>b.onclick=()=>{ s.items.splice(+b.dataset.k,1); rvChanged(i,d) });
   box.querySelectorAll('.mv').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, j=k+(+b.dataset.d), a=s.items[k], c=s.items[j]; if(!c) return; const ta=a.t; a.t=c.t; c.t=ta; s.items[k]=c; s.items[j]=a; rvChanged(i,d) });
   box.querySelector('.bAdd').onclick=()=>{ const pk=box.querySelector('.pick'); pk.hidden=!pk.hidden; if(pk.hidden||pk.dataset.f) return; pk.dataset.f=1;
     const its=Object.values(S.catalog.items).filter(x=>x.variants&&x.variants.length).sort((a,b)=>(a.fa||a.en).localeCompare(b.fa||b.en));
-    pk.innerHTML='<input type="text" placeholder="جست‌وجو به فارسی… (مثلاً هواپیما، غذا، پول)" style="width:100%;margin-bottom:8px"><div class="grid">'+its.map(x=>`<div class="tile" data-id="${x.id}" data-q="${nz([x.fa,x.en,...(x.fa_tags||[]),...(x.tags||[])].join(' '))}"><div class="thumb"><img loading="lazy" src="${raw(x.variants[0])}"></div><small>${x.fa||x.en}</small></div>`).join('')+'</div>';
+    pk.innerHTML='<p class="hint" style="margin:0 0 8px">تصویری که انتخاب کنی آخر صحنه اضافه می‌شود.</p><input type="text" placeholder="جست‌وجو به فارسی… (مثلاً هواپیما، غذا، پول)" style="width:100%;margin-bottom:8px"><div class="grid">'+its.map(x=>`<div class="tile" data-id="${x.id}" data-q="${nz([x.fa,x.en,...(x.fa_tags||[]),...(x.tags||[])].join(' '))}"><div class="thumb"><img loading="lazy" src="${raw(x.variants[0])}"></div><small>${x.fa||x.en}</small></div>`).join('')+'</div>';
     pk.querySelector('input').oninput=e=>{ const qs=nz(e.target.value).split(' ').filter(Boolean); pk.querySelectorAll('.tile').forEach(t=>t.hidden=qs.length&&!qs.every(q=>t.dataset.q.includes(q))) };
     pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const it=S.catalog.items[t.dataset.id]; if((s.items||[]).length>=6) return toast('حداکثر ۶ تصویر در هر صحنه');
       s.items=s.items||[]; const last=s.items.length?s.items[s.items.length-1].t:s.t0; const end=Math.max(s.t1-.5,s.t0+.3); const tt=s.items.length?last+Math.max(.35,(end-last)/2):s.t0+.45;
@@ -595,7 +632,8 @@ const FX_LIST=Object.keys(FXS).map(k=>[k,FXS[k].l]);
 const fxNew=t=>{ const sp=FXS[t], f={type:t,start:sp.start}; if(sp.vol) f.vol=sp.vol; (sp.sel||[]).forEach(([k,,,d])=>f[k]=d); (sp.chk||[]).forEach(([k,,d])=>f[k]=d); if(sp.color) f.color=sp.color; if(t==='steam'||t==='smoke') f.height=sp.p[1][5]; return f };
 let pvRT=null; function pvRefresh(i){ if($('#pvModal').hidden||pvI!==i) return; clearTimeout(pvRT); pvRT=setTimeout(pvGo,700) }
 const optsHtml=(arr,cur)=>arr.map(([v,l])=>`<option value="${v}" ${v===cur?'selected':''}>${l}</option>`).join('');
-const slRow=(key,label,min,max,step,val,o)=>{ o=o||{}; return `<div class="sl"><label>${label}</label><input type="range" data-k="${key}" ${o.sc?`data-sc="${o.sc}"`:''} data-u="${o.u||''}" min="${min}" max="${max}" step="${step}" value="${val}"><b class="sv">${fa(+(+val).toFixed(2))}${o.u||''}</b></div>` };
+const slRow=(key,label,min,max,step,val,o)=>{ o=o||{}; const inp=`<input type="range" data-k="${key}" ${o.sc?`data-sc="${o.sc}"`:''} data-u="${o.u||''}" min="${min}" max="${max}" step="${step}" value="${val}"><b class="sv">${fa(+(+val).toFixed(2))}${o.u||''}</b>`;
+  return o.cell ? `<div class="sl2"><label>${label}</label><div class="sl2r">${inp}</div></div>` : `<div class="sl"><label>${label}</label>${inp}</div>` };   // cell: label above the slider, for the two/three-column grid
 function wireSliders(root,get,after){ root.querySelectorAll('input[type=range][data-k]').forEach(r=>r.oninput=()=>{ const k=r.dataset.k, v=+r.value/(+r.dataset.sc||1), o=get(); r.nextElementSibling.textContent=fa(+(+r.value).toFixed(2))+(r.dataset.u||'');
   if(k==='ax'||k==='ay'){ o.anchor=o.anchor||[.5,.5]; o.anchor[k==='ax'?0:1]=v } else if(k==='dur'&&v===0) delete o.dur; else o[k]=v; after() }) }
 function fxBodyHtml(f){ const t=f.type, sp=FXS[t], a=f.anchor;
@@ -632,44 +670,50 @@ function libPicker(pk,onPick,multi){ pk.hidden=!pk.hidden; if(pk.hidden||pk.data
   ok.onclick=()=>{ const its=chosen.map(id=>S.catalog.items[id]); chosen.length=0; pk.querySelectorAll('.tile').forEach(t=>t.style.outline=''); upd(); pk.hidden=true; onPick(its) } }
 function bgFxUI(box,s,i,d){
   const done=()=>{ clearOk(s); syncOk(i); rvSave(); pvRefresh(i) }, again=()=>{ clearOk(s); rvSave(); fillScene(d); pvRefresh(i) };
-  /* ----- 1) the picture behind the scene ----- */
-  const b=s.bg&&s.bg.src?s.bg:null, v=Object.assign({},BG_DEF,b||{}), libIt=b?Object.values(S.catalog.items).find(x=>(x.variants||[]).some(f=>'library/'+f===b.src)):null;
-  const sec=document.createElement('div'); sec.className='fxs';
-  sec.innerHTML=`<label>🖼 پس‌زمینه‌ی صحنه: یک تصویر از کتابخانه که پشت تصویرهای اصلی حرکت می‌کند (جا و زاویه‌ها تصادفی‌اند)</label>
-    <div class="bgrow"><div class="thumb">${b?`<img src="${thumbUrl(b.src)}">`:'—'}</div><div style="flex:1;min-width:0"><div class="hint" style="margin:0">${b?(libIt?(libIt.fa||libIt.en):'تصویر انتخاب‌شده'):'پس‌زمینه‌ای انتخاب نشده'}</div><div class="row" style="margin-top:6px"><button class="bgPick">${b?'تغییر تصویر':'انتخاب از کتابخانه'}</button>${b?'<button class="bgDel">حذف</button>':''}</div></div></div>
-    <div class="pick bgPk" hidden></div>
-    ${b?`<div class="bgOpts"><label>حرکت</label><select class="sel" data-k="motion">${optsHtml(BG_MOTIONS,v.motion)}</select>
-      <label class="chk holdRow"><input type="checkbox" data-k="hold" ${v.hold?'checked':''}> بعد از ورود در صفحه بماند (به‌جای عبور ادامه‌دار)</label>
-      <div class="dirRow"><label>جهت حرکت الگو</label><select class="sel" data-k="dir">${optsHtml(BG_DIRS,v.dir)}</select></div>
-      ${slRow('speed','سرعت',.2,3,.1,v.speed,{u:'×'})}${slRow('size','اندازه',.2,3,.1,v.size,{u:'×'})}<div class="cntRow">${slRow('count','تعداد',1,20,1,v.count)}</div>
-      ${slRow('tilt','زاویه‌ی تصادفی (۱۰۰٪ = هر زاویه، حتی سرووته)',0,100,5,Math.round((b.tilt==null?bgTilt(v.motion):b.tilt)*100),{sc:100,u:'٪'})}
-      <div class="opRow">${slRow('opacity','شفافیت',10,100,5,Math.round(v.opacity*100),{sc:100,u:'٪'})}${slRow('blur','بلور',0,20,1,v.blur,{u:' px'})}</div>${slRow('start','شروع (ثانیه بعد از شروع صحنه)',0,6,.1,v.start,{u:' ث'})}
-      <label>صدای حرکت</label><select class="sel" data-k="sound">${optsHtml(BG_SOUNDS,v.sound)}</select>${slRow('vol','بلندی صدا',0,100,5,v.vol,{u:'٪'})}
-      <div class="row"><button class="bgShuf">🎲 چیدمان تصادفی تازه</button><button class="bgLay">✋ جابه‌جایی تک‌تک تصویرها در پیش‌نمایش</button><button class="pri bgPv">▶ پیش‌نمایش صحنه</button></div></div>`:''}`;
-  box.appendChild(sec);
-  const pk=sec.querySelector('.bgPk');
-  sec.querySelector('.bgPick').onclick=()=>libPicker(pk,it=>{ s.bg=Object.assign({},BG_DEF,s.bg||{},{src:'library/'+it.variants[0]}); toast('پس‌زمینه انتخاب شد'); again() });
-  const del=sec.querySelector('.bgDel'); if(del) del.onclick=()=>{ delete s.bg; again() };
-  if(b){ const vis=()=>{ const m=b.motion||'down', rg=sec.querySelector('input[data-k=count]'), lb=rg.previousElementSibling, mx=(m==='fill'||m==='fillin')?40:(m==='scroll'?12:20), tl=sec.querySelector('input[data-k=tilt]');
-      sec.querySelector('.holdRow').hidden=!['down','up','left','right','zoom'].includes(m); sec.querySelector('.dirRow').hidden=m!=='scroll'; sec.querySelector('.cntRow').hidden=m==='cover'; sec.querySelector('.opRow').hidden=m==='cover';
-      sec.querySelector('.bgLay').hidden=!bgEditable({src:1,motion:m});
-      lb.textContent=m==='scroll'?'تعداد در هر ردیف':(m==='fill'||m==='fillin')?'تعداد خانه‌ها':'تعداد'; rg.max=mx; if(+rg.value>mx){ rg.value=mx; b.count=mx; rg.nextElementSibling.textContent=fa(mx) }
-      if(b.tilt==null){ tl.value=Math.round(bgTilt(m)*100); tl.nextElementSibling.textContent=fa(tl.value)+'٪' } }; vis();
-    wireSliders(sec.querySelector('.bgOpts'),()=>b,done);
-    sec.querySelectorAll('.bgOpts select[data-k],.bgOpts input[type=checkbox][data-k]').forEach(el=>el.onchange=()=>{ b[el.dataset.k]=el.type==='checkbox'?el.checked:el.value; if(el.dataset.k==='motion'){ delete b.lay; if(el.value==='cover'&&b.tilt==null) b.sound='riser' } vis(); done() });
-    sec.querySelector('.bgShuf').onclick=()=>{ b.seed=1+Math.floor(Math.random()*9999); delete b.lay; toast('چیدمان تازه'); done() };
-    sec.querySelector('.bgLay').onclick=()=>openPreview(i,'edit',1000);
-    sec.querySelector('.bgPv').onclick=()=>openPreview(i,'play') }
-  /* ----- 2) pictures pinned to the backdrop, inside a frame ----- */
+  /* ----- 1) the picture behind the scene: its options live in a popup, opened by the "پس‌زمینه" button next to the add-picture buttons ----- */
+  const dlgB=$('#bgDlg'), bodyB=$('#bgDlgBody'), btnBg=box.querySelector('.bBg');
+  const bgLabel=()=>{ btnBg.textContent='🖼 پس‌زمینه'+(s.bg&&s.bg.src?' ✓':'') };
+  const buildBg=()=>{
+    const b=s.bg&&s.bg.src?s.bg:null, v=Object.assign({},BG_DEF,b||{}), libIt=b?Object.values(S.catalog.items).find(x=>(x.variants||[]).some(f=>'library/'+f===b.src)):null;
+    const sec=document.createElement('div'); sec.className='fxs';
+    sec.innerHTML=`<label>🖼 پس‌زمینه‌ی صحنه: یک تصویر از کتابخانه که پشت تصویرهای اصلی حرکت می‌کند (جا و زاویه‌ها تصادفی‌اند)</label>
+      <div class="bgrow"><div class="thumb">${b?`<img src="${thumbUrl(b.src)}">`:'—'}</div><div style="flex:1;min-width:0"><div class="hint" style="margin:0">${b?(libIt?(libIt.fa||libIt.en):'تصویر انتخاب‌شده'):'پس‌زمینه‌ای انتخاب نشده'}</div><div class="row" style="margin-top:6px"><button class="bgPick">${b?'تغییر تصویر':'انتخاب از کتابخانه'}</button>${b?'<button class="bgDel">حذف</button>':''}</div></div></div>
+      <div class="pick bgPk" hidden></div>
+      ${b?`<div class="bgOpts"><label>حرکت</label><select class="sel" data-k="motion">${optsHtml(BG_MOTIONS,v.motion)}</select>
+        <label class="chk holdRow"><input type="checkbox" data-k="hold" ${v.hold?'checked':''}> بعد از ورود در صفحه بماند (به‌جای عبور ادامه‌دار)</label>
+        <div class="dirRow"><label>جهت حرکت الگو</label><select class="sel" data-k="dir">${optsHtml(BG_DIRS,v.dir)}</select></div>
+        ${slRow('speed','سرعت',.2,3,.1,v.speed,{u:'×'})}${slRow('size','اندازه',.2,3,.1,v.size,{u:'×'})}<div class="cntRow">${slRow('count','تعداد',1,20,1,v.count)}</div>
+        ${slRow('tilt','زاویه‌ی تصادفی (۱۰۰٪ = هر زاویه، حتی سرووته)',0,100,5,Math.round((b.tilt==null?bgTilt(v.motion):b.tilt)*100),{sc:100,u:'٪'})}
+        <div class="opRow">${slRow('opacity','شفافیت',10,100,5,Math.round(v.opacity*100),{sc:100,u:'٪'})}${slRow('blur','بلور',0,20,1,v.blur,{u:' px'})}</div>${slRow('start','شروع (ثانیه بعد از شروع صحنه)',0,6,.1,v.start,{u:' ث'})}
+        <label>صدای حرکت</label><select class="sel" data-k="sound">${optsHtml(BG_SOUNDS,v.sound)}</select>${slRow('vol','بلندی صدا',0,100,5,v.vol,{u:'٪'})}
+        <div class="row"><button class="bgShuf">🎲 چیدمان تصادفی تازه</button><button class="bgLay">✋ جابه‌جایی تک‌تک تصویرها در پیش‌نمایش</button><button class="pri bgPv">▶ پیش‌نمایش صحنه</button></div></div>`:''}`;
+    bodyB.innerHTML=''; bodyB.appendChild(sec);
+    const redo=()=>{ clearOk(s); syncOk(i); rvSave(); bgLabel(); buildBg(); pvRefresh(i) };   // the popup is rebuilt in place; the scene list behind it stays as it is
+    const pk=sec.querySelector('.bgPk');
+    sec.querySelector('.bgPick').onclick=()=>libPicker(pk,it=>{ s.bg=Object.assign({},BG_DEF,s.bg||{},{src:'library/'+it.variants[0]}); toast('پس‌زمینه انتخاب شد'); redo() });
+    const del=sec.querySelector('.bgDel'); if(del) del.onclick=()=>{ delete s.bg; redo() };
+    if(b){ const vis=()=>{ const m=b.motion||'down', rg=sec.querySelector('input[data-k=count]'), lb=rg.previousElementSibling, mx=(m==='fill'||m==='fillin')?40:(m==='scroll'?12:20), tl=sec.querySelector('input[data-k=tilt]');
+        sec.querySelector('.holdRow').hidden=!['down','up','left','right','zoom'].includes(m); sec.querySelector('.dirRow').hidden=m!=='scroll'; sec.querySelector('.cntRow').hidden=m==='cover'; sec.querySelector('.opRow').hidden=m==='cover';
+        sec.querySelector('.bgLay').hidden=!bgEditable({src:1,motion:m});
+        lb.textContent=m==='scroll'?'تعداد در هر ردیف':(m==='fill'||m==='fillin')?'تعداد خانه‌ها':'تعداد'; rg.max=mx; if(+rg.value>mx){ rg.value=mx; b.count=mx; rg.nextElementSibling.textContent=fa(mx) }
+        if(b.tilt==null){ tl.value=Math.round(bgTilt(m)*100); tl.nextElementSibling.textContent=fa(tl.value)+'٪' } }; vis();
+      wireSliders(sec.querySelector('.bgOpts'),()=>b,done);
+      sec.querySelectorAll('.bgOpts select[data-k],.bgOpts input[type=checkbox][data-k]').forEach(el=>el.onchange=()=>{ b[el.dataset.k]=el.type==='checkbox'?el.checked:el.value; if(el.dataset.k==='motion'){ delete b.lay; if(el.value==='cover'&&b.tilt==null) b.sound='riser' } vis(); done() });
+      sec.querySelector('.bgShuf').onclick=()=>{ b.seed=1+Math.floor(Math.random()*9999); delete b.lay; toast('چیدمان تازه'); done() };
+      sec.querySelector('.bgLay').onclick=()=>{ dlgB.close(); openPreview(i,'edit',1000) };   // the preview is behind the popup: close it first
+      sec.querySelector('.bgPv').onclick=()=>{ dlgB.close(); openPreview(i,'play') } }
+  };
+  btnBg.onclick=()=>{ buildBg(); $('#bgDlgTitle').textContent='🖼 پس‌زمینه‌ی صحنه '+fa(i+1); dlgB.showModal() }; bgLabel();
+  /* ----- 2) pictures pinned to the backdrop, inside a frame: the controls sit side by side in a grid ----- */
   const ps=document.createElement('div'); ps.className='fxs'; s.pins=(s.pins||[]).map(pinNorm);
   ps.innerHTML=`<label>📌 آیتم‌های چسبیده به زمینه‌ی صحنه: مثل عکس روی دیوار، با قاب و افکت (از اول صحنه ثابت‌اند و پشت تصویرهای اصلی قرار می‌گیرند)</label>`+s.pins.map((p,k)=>`<div class="fxit" data-k="${k}"><div class="bgrow"><div class="thumb" style="width:56px;height:56px"><img loading="lazy" src="${thumbUrl(p.src)}"></div><div style="flex:1;min-width:0"><b style="font-size:13px">عکس چسبیده ${fa(k+1)}</b><div class="row" style="margin-top:4px"><button class="pnShuf">🎲 جای تازه</button><button class="pnDel">✕ حذف</button></div></div></div>
-    <label>قاب و حاشیه</label><select class="sel" data-k="frame">${optsHtml(FRAMES,p.frame||'polaroid')}</select>
-    <label>چیزی که عکس را به دیوار می‌چسباند</label><select class="sel" data-k="attach">${optsHtml(ATTACH,p.attach||'none')}</select>
-    <label>رنگ کارت</label><select class="sel" data-k="card">${optsHtml(CARDS,p.card||'white')}</select>
-    <label class="chk"><input type="checkbox" data-k="curl" ${p.curl?'checked':''}> گوشه‌ی برگشته (کنده شدن گوشه)</label>
+    <div class="pgrid"><div><label>قاب و حاشیه</label><select class="sel" data-k="frame">${optsHtml(FRAMES,p.frame||'polaroid')}</select></div>
+    <div><label>چسباننده‌ی عکس به دیوار</label><select class="sel" data-k="attach">${optsHtml(ATTACH,p.attach||'none')}</select></div>
+    <div><label>رنگ کارت</label><select class="sel" data-k="card">${optsHtml(CARDS,p.card||'white')}</select></div>
     <div class="phRow"><label>رنگ زمینه‌ی عکس</label><select class="sel" data-k="photo">${optsHtml(PHOTOS,p.photo||'cream')}</select></div>
-    ${slRow('sz','اندازه',.3,3,.05,p.sz==null?1:p.sz,{u:'×'})}${slRow('rot','چرخش',-60,60,1,Math.round((p.rot==null?0:p.rot)*57.2958),{sc:57.2958,u:'°'})}${slRow('shadow','سایه‌ی زیر عکس',0,100,5,Math.round((p.shadow==null?.6:p.shadow)*100),{sc:100,u:'٪'})}${slRow('start','ظاهر شدن (۰ = از اول صحنه، ثابت و بدون افکت)',0,10,.1,p.start==null?0:p.start,{u:' ث'})}
-    <div class="pnFx"></div></div>`).join('')+`<label>قاب برای عکس‌های تازه</label><select class="sel pnFrameNew">${optsHtml(FRAMES,PIN_LAST)}</select><label>چسب برای عکس‌های تازه</label><select class="sel pnAttNew">${optsHtml(ATTACH,ATT_LAST)}</select><div class="row"><button class="pnAdd">+ انتخاب یک یا چند عکس از کتابخانه و چسباندن</button>${s.pins.length?'<button class="pnLay">✋ جابه‌جایی در پیش‌نمایش</button>':''}</div><div class="pick pnPk" hidden></div>`;
+    <div><label class="chk"><input type="checkbox" data-k="curl" ${p.curl?'checked':''}> گوشه‌ی برگشته</label></div>
+    ${slRow('sz','اندازه',.3,3,.05,p.sz==null?1:p.sz,{u:'×',cell:1})}${slRow('rot','چرخش',-60,60,1,Math.round((p.rot==null?0:p.rot)*57.2958),{sc:57.2958,u:'°',cell:1})}${slRow('shadow','سایه‌ی زیر عکس',0,100,5,Math.round((p.shadow==null?.6:p.shadow)*100),{sc:100,u:'٪',cell:1})}${slRow('start','ظاهر شدن (۰ = از اول صحنه)',0,10,.1,p.start==null?0:p.start,{u:' ث',cell:1})}</div>
+    <div class="pnFx"></div></div>`).join('')+`<div class="pgrid"><div><label>قاب برای عکس‌های تازه</label><select class="sel pnFrameNew">${optsHtml(FRAMES,PIN_LAST)}</select></div><div><label>چسب برای عکس‌های تازه</label><select class="sel pnAttNew">${optsHtml(ATTACH,ATT_LAST)}</select></div></div><div class="row"><button class="pnAdd">+ انتخاب یک یا چند عکس از کتابخانه و چسباندن</button>${s.pins.length?'<button class="pnLay">✋ جابه‌جایی در پیش‌نمایش</button>':''}</div><div class="pick pnPk" hidden></div>`;
   box.appendChild(ps);
   ps.querySelectorAll('.fxit').forEach(card=>{ const k=+card.dataset.k, p=s.pins[k];
     const vis=()=>{ card.querySelector('.phRow').hidden=['torn','burnt','none'].includes(p.frame||'polaroid') }; vis();
@@ -686,13 +730,7 @@ function bgFxUI(box,s,i,d){
     toast(fa(its.length)+' عکس چسبیده اضافه شد؛ جایشان را در پیش‌نمایش مشخص کن'); clearOk(s); rvSave(); fillScene(d); openPreview(i,'edit',2000+first) },true);
   ps.querySelector('.pnFrameNew').onchange=e=>{ PIN_LAST=e.target.value }; ps.querySelector('.pnAttNew').onchange=e=>{ ATT_LAST=e.target.value };
   const pl=ps.querySelector('.pnLay'); if(pl) pl.onclick=()=>openPreview(i,'edit',2000);
-  if(!s.pins.length) delete s.pins;
-  /* ----- 3) effects bound to each picture of the scene ----- */
-  const items=s.items||[]; if(!items.length) return;
-  const fx=document.createElement('div'); fx.className='fxs';
-  fx.innerHTML=`<label>✨ افکت روی تصویرها: به خود تصویر وصل می‌شود و با حرکتش می‌رود (چند افکت را می‌شود روی هم گذاشت)</label>`+items.map((it,k)=>`<div class="fxit" data-k="${k}"><div class="bgrow"><div class="thumb" style="width:56px;height:56px"><img loading="lazy" src="${thumbUrl(it.src)}"></div><div style="flex:1;min-width:0"><b style="font-size:13px">تصویر ${fa(k+1)}</b></div></div><div class="fxHost"></div></div>`).join('')+`<div class="row"><button class="pri fxPv">▶ پیش‌نمایش صحنه</button></div>`;
-  box.appendChild(fx); fx.querySelector('.fxPv').onclick=()=>openPreview(i,'play');
-  fx.querySelectorAll('.fxit').forEach(card=>fxListUI(card.querySelector('.fxHost'),items[+card.dataset.k],done)) }
+  if(!s.pins.length) delete s.pins }
 function rvChanged(i,d,byTime){ const s=RV.data.scenes[i]; clearOk(s); updOk();
   if(byTime) s.items.sort((a,b)=>a.t-b.t);   // the owner picked a word: the order follows the time
   else { const ts=s.items.map(it=>it.t).sort((a,b)=>a-b); s.items.forEach((it,j)=>{ it.t=ts[j] }) }   // otherwise the order is the owner's: hand the time slots out in that order
@@ -719,7 +757,8 @@ async function rvContinue(){ const st=$('#rvSt'); const rq=await readJson('episo
 function epHead(ep){ const eps=S.eps||[]; return `<div class="card"><label>قسمت</label><select id="needEp" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px">${epSelOptions(ep)}</select></div>` }
 function epSelOptions(ep){ const eps=S.eps||[]; return (eps.includes(ep)||!ep?'':`<option value="${ep}" selected>${epTitle(ep)}</option>`)+eps.map(e=>`<option value="${e}" ${e===ep?'selected':''}>${epTitle(e)}</option>`).join('')+(!ep?'<option value="">— یک قسمت انتخاب کن —</option>':'') }
 function bindEpHead(){ const s=$('#needEp'); if(s) s.onchange=()=>{ if(s.value) setEpisode(s.value) } }
-function shortDefaults(){ const n=$('#epName'); if(!n||!$('#bH')) return; const sh=/-short$/.test(slug(n.value)); if(sh){ $('#bV').checked=true; $('#bH').checked=false } $('#bH').disabled=sh; $('#bShortNote').hidden=!sh }
+let lastShort=null;   // both checkboxes stay free to change; a short episode only gets a different starting choice (vertical only), and only when the name switches between short and long
+function shortDefaults(){ const n=$('#epName'); if(!n||!$('#bH')) return; const sh=/-short$/.test(slug(n.value)); $('#bShortNote').hidden=!sh; if(sh===lastShort) return; const was=lastShort; lastShort=sh; if(sh){ $('#bV').checked=true; $('#bH').checked=false } else if(was===true){ $('#bH').checked=true } }
 function renderEpLabels(){ document.querySelectorAll('#epList button').forEach(b=>b.textContent=epTitle(b.dataset.e)); const rb=document.querySelector('#rvBody p.hint b'); if(rb&&RV) rb.textContent=epTitle(RV.ep); const ne=$('#needEp'); if(ne){ const cur=ne.value; ne.innerHTML=epSelOptions(cur) } }
 function setEpisode(e){ ls.set('curEp',e); const n=$('#epName'); if(n) n.value=e; const fa_=$('#epFa'); if(fa_) fa_.value=S.titles[e]||''; readText(e); showNeeds(e); shortDefaults() }
 async function showNeeds(ep){
@@ -773,6 +812,12 @@ async function put(path, b64, msg){
   for(let k=0;k<4;k++){
     try{ return await api('/contents/'+path, { method:'PUT', body: JSON.stringify({ message: msg, content: b64, branch:'main' }) }); }
     catch(e){ if(k===3 || ![409,422,502,503].includes(e.status)) throw e; await sleep(1500*(k+1)); }
+  }
+}
+async function delFile(path, sha, msg){
+  for(let k=0;k<4;k++){
+    try{ return await api('/contents/'+path, { method:'DELETE', body: JSON.stringify({ message: msg, sha, branch:'main' }) }); }
+    catch(e){ if(e.status===404) return; if(k===3 || ![409,422,502,503].includes(e.status)) throw e; await sleep(1500*(k+1)); }
   }
 }
 let putChain = Promise.resolve();   // every write to the repo goes through one queue: GitHub rejects parallel commits to the same branch
