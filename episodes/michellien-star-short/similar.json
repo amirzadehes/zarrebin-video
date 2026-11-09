@@ -1,9 +1,29 @@
 {
+ "one-star": [
+  "star",
+  "star-rating"
+ ],
+ "two-stars": [
+  "star",
+  "star-rating",
+  "three-stars"
+ ],
+ "three-stars": [
+  "star",
+  "star-rating",
+  "two-stars"
+ ],
+ "money-bag": [
+  "money-coins",
+  "banknotes",
+  "cash",
+  "euro-sign"
+ ],
+ "earth-globe": [
+  "planet-earth"
+ ],
  "magnifier-search": [
   "magnifying-glass"
- ],
- "clock-wall": [
-  "alarm-clock"
  ],
  "question-mark": [
   "question-mark-2"
@@ -11,14 +31,13 @@
  "light-bulb-idea": [
   "bulb"
  ],
- "brain-colorful": [
-  "brain-pink"
- ],
  "medal": [
   "trophy"
  ],
- "map-pin": [
-  "map-folded",
-  "compass"
+ "star-rating": [
+  "star",
+  "three-stars",
+  "two-stars",
+  "one-star"
  ]
 }
