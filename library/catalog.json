@@ -1018,6 +1018,16 @@
    ],
    "fa_tags_for": "غذا"
   },
+  "foot-footprint": {
+   "id": "foot-footprint",
+   "en": "foot footprint",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "foot-footprint__1.webp"
+   ]
+  },
   "football-referee": {
    "id": "football-referee",
    "en": "football referee",

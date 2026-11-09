@@ -1,24 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 17:00:46 UTC",
-   "ok": [
-    {
-     "file": "chart-up__mw82vyx00mg.jpg",
-     "id": "chart-up",
-     "saved": "chart-up__1.webp",
-     "kb": 61
-    },
-    {
-     "file": "reservation-card__mw82vumy053.jpg",
-     "id": "reservation-card",
-     "saved": "reservation-card__1.webp",
-     "kb": 116
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-08 17:41:45 UTC",
    "ok": [
     {
@@ -789,6 +771,27 @@
     },
     {
      "file": "thumbs-down__mw9v3gtf1d0.jpg",
+     "reason": "زمینه یک‌دست نیست (سایه یا گرادیان دارد)"
+    }
+   ]
+  },
+  {
+   "time": "2026-11-09 23:05:35 UTC",
+   "ok": [
+    {
+     "file": "foot-footprint__mw9vcxjy0j8.jpg",
+     "id": "foot-footprint",
+     "saved": "foot-footprint__1.webp",
+     "kb": 283
+    }
+   ],
+   "failed": [
+    {
+     "file": "foot-footprint__mw9vcxk91x8.jpg",
+     "reason": "شیء از لبه‌ی کادر بیرون زده یا بریده شده"
+    },
+    {
+     "file": "foot-footprint__mw9vcxkb2mg.jpg",
      "reason": "زمینه یک‌دست نیست (سایه یا گرادیان دارد)"
     }
    ]
