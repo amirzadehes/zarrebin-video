@@ -22,14 +22,15 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          finished=no
-          for round in 1 2 3 4 5; do
-            git fetch -q origin main && git reset -q --hard origin/main
-            python3 tools/fetch_sfx.py
-            git add -A sfx sfx_catalog.json
-            if git diff --cached --quiet; then echo "nothing new"; finished=yes; break; fi
-            git commit -qm "sfx: add CC0 sound effects from Freesound"
-            if git push -q origin main; then echo "round $round pushed"; finished=yes; break; fi
-            echo "push conflict, redo round"; sleep 4
+          git fetch -q origin main && git reset -q --hard origin/main
+          python3 tools/fetch_sfx.py
+          git add -A sfx sfx_catalog.json
+          if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
+          git commit -qm "sfx: add CC0 sound effects from Freesound"
+          # the download is slow, so on a push conflict only rebase the new commit (it adds new files only) instead of downloading again
+          for round in 1 2 3 4 5 6; do
+            git fetch -q origin main && git rebase -q origin/main
+            if git push -q origin HEAD:main; then echo "pushed in round $round"; exit 0; fi
+            echo "push conflict, retry"; sleep 4
           done
-          if [ "$finished" != yes ]; then echo "gave up after 5 rounds"; exit 1; fi
+          echo "gave up after 6 rounds"; exit 1
