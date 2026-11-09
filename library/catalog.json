@@ -1594,13 +1594,22 @@
   "pill": {
    "id": "pill",
    "en": "pill",
-   "fa": "",
+   "fa": "قرص",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "pill__1.webp",
     "pill__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "دارو",
+    "قرص",
+    "داروی خوراکی",
+    "پزشکی",
+    "بهداشت",
+    "درمان"
+   ],
+   "fa_tags_for": "قرص"
   },
   "planet-earth": {
    "id": "planet-earth",
