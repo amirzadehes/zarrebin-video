@@ -2516,6 +2516,18 @@
    ],
    "fa_tags_for": "سه ستاره"
   },
+  "thumbs-up": {
+   "id": "thumbs-up",
+   "en": "thumbs up",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "thumbs-up__1.webp",
+    "thumbs-up__2.webp",
+    "thumbs-up__3.webp"
+   ]
+  },
   "tire-company-logo": {
    "id": "tire-company-logo",
    "en": "michelin tire company logo",
