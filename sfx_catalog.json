@@ -1,1 +1,730 @@
-{}
+{
+ "alarm-clock": {
+  "by": "Kesu",
+  "freesound_id": 182351,
+  "license": "CC0",
+  "name": "Alarm clock beep",
+  "query": "alarm clock",
+  "seconds": 1.49
+ },
+ "applause": {
+  "by": "nickrave",
+  "freesound_id": 245639,
+  "license": "CC0",
+  "name": "MORECLAPS.aif",
+  "query": "applause clapping crowd",
+  "seconds": 3.45
+ },
+ "baby-giggle": {
+  "by": "jamesmbock",
+  "freesound_id": 458645,
+  "license": "CC0",
+  "name": "babygiggle.mp3",
+  "query": "baby giggle",
+  "seconds": 1.87
+ },
+ "balloon-pop": {
+  "by": "Huminaatio",
+  "freesound_id": 266981,
+  "license": "CC0",
+  "name": "Balloon pop",
+  "query": "balloon pop",
+  "seconds": 0.59
+ },
+ "bass-drop": {
+  "by": "newagesoup",
+  "freesound_id": 348243,
+  "license": "CC0",
+  "name": "PUNCH-BOXING-02.wav",
+  "query": "bass drop boom",
+  "seconds": 1.28
+ },
+ "bell-ding": {
+  "by": "Froey_",
+  "freesound_id": 834128,
+  "license": "CC0",
+  "name": "Doorbell",
+  "query": "bell ding",
+  "seconds": 3.2
+ },
+ "bird-chirp": {
+  "by": "D4XX",
+  "freesound_id": 607242,
+  "license": "CC0",
+  "name": "Great Tit",
+  "query": "bird chirp",
+  "seconds": 1.99
+ },
+ "book-drop": {
+  "by": "SpaceJoe",
+  "freesound_id": 484900,
+  "license": "CC0",
+  "name": "Book Drop - 4",
+  "query": "book drop",
+  "seconds": 1.46
+ },
+ "box-drop": {
+  "by": "PkBiggums",
+  "freesound_id": 678535,
+  "license": "CC0",
+  "name": "Box_Shatter.wav",
+  "query": "cardboard box drop",
+  "seconds": 0.76
+ },
+ "button-press": {
+  "by": "StavSounds",
+  "freesound_id": 546078,
+  "license": "CC0",
+  "name": "button-pressed.wav",
+  "query": "button press",
+  "seconds": 0.69
+ },
+ "camera-beep": {
+  "by": "athenspublic",
+  "freesound_id": 266753,
+  "license": "CC0",
+  "name": "beep.mp3",
+  "query": "camera beep focus",
+  "seconds": 1.53
+ },
+ "camera-flash": {
+  "by": "Anthousai",
+  "freesound_id": 337229,
+  "license": "CC0",
+  "name": "pentax me - shutter 04.wav",
+  "query": "camera flash photo",
+  "seconds": 0.7
+ },
+ "camera-shutter": {
+  "by": "Nox_Sound",
+  "freesound_id": 553077,
+  "license": "CC0",
+  "name": "Foley_Mechanism_Camera_Button_Mono_H5.wav",
+  "query": "camera shutter click",
+  "seconds": 2.42
+ },
+ "car-brake": {
+  "by": "prsvl",
+  "freesound_id": 437537,
+  "license": "CC0",
+  "name": "Braking on gravel (bike)",
+  "query": "car brake screech",
+  "seconds": 2.8
+ },
+ "car-horn": {
+  "by": "qubodup",
+  "freesound_id": 843250,
+  "license": "CC0",
+  "name": "Explosion 4 (Burning Car rec by Ñado)",
+  "query": "car horn",
+  "seconds": 0.42
+ },
+ "cash-register": {
+  "by": "modusmogulus",
+  "freesound_id": 787907,
+  "license": "CC0",
+  "name": "Diamonds cash register type SFX",
+  "query": "cash register",
+  "seconds": 1.92
+ },
+ "cat-meow": {
+  "by": "steffcaffrey",
+  "freesound_id": 262306,
+  "license": "CC0",
+  "name": "Cat_Twit1.wav",
+  "query": "cat meow",
+  "seconds": 0.55
+ },
+ "cheering-crowd": {
+  "by": "Stevedrums",
+  "freesound_id": 393402,
+  "license": "CC0",
+  "name": "Group_Yay_Cheer.wav",
+  "query": "crowd cheering hooray",
+  "seconds": 1.91
+ },
+ "clap-single": {
+  "by": "xUMR",
+  "freesound_id": 478657,
+  "license": "CC0",
+  "name": "clap.wav",
+  "query": "single hand clap",
+  "seconds": 0.5
+ },
+ "click": {
+  "by": "6sdeimos",
+  "freesound_id": 731993,
+  "license": "CC0",
+  "name": "click 1",
+  "query": "ui click",
+  "seconds": 1.85
+ },
+ "clock-tick": {
+  "by": "CAT-FOX_ALEX",
+  "freesound_id": 817323,
+  "license": "CC0",
+  "name": "Clock Ticking",
+  "query": "clock tick",
+  "seconds": 0.93
+ },
+ "coin": {
+  "by": "SoundDesignForYou",
+  "freesound_id": 646673,
+  "license": "CC0",
+  "name": "Coin Pickup SFX [1]",
+  "query": "coin collect",
+  "seconds": 1.5
+ },
+ "correct-answer": {
+  "by": "craigscottuk",
+  "freesound_id": 644943,
+  "license": "CC0",
+  "name": "Quiz Gameshow Correct Ding 03.mp3",
+  "query": "correct answer ding",
+  "seconds": 2.0
+ },
+ "cough": {
+  "by": "dastudiospr",
+  "freesound_id": 537150,
+  "license": "CC0",
+  "name": "Male cough",
+  "query": "cough",
+  "seconds": 1.21
+ },
+ "crowd-boo": {
+  "by": "jayfrosting",
+  "freesound_id": 333393,
+  "license": "CC0",
+  "name": "Boo 5 only a couple people.wav",
+  "query": "crowd boo",
+  "seconds": 2.82
+ },
+ "crowd-gasp": {
+  "by": "jayfrosting",
+  "freesound_id": 333398,
+  "license": "CC0",
+  "name": "Gasp 2 with wonder.wav",
+  "query": "crowd gasp",
+  "seconds": 3.15
+ },
+ "crowd-laugh": {
+  "by": "mglennsound",
+  "freesound_id": 678668,
+  "license": "CC0",
+  "name": "AF Crowd Small Laugh.wav",
+  "query": "crowd laughing",
+  "seconds": 1.73
+ },
+ "crowd-ooh": {
+  "by": "CHallSmith",
+  "freesound_id": 870650,
+  "license": "CC0",
+  "name": "Group Ooh 1",
+  "query": "crowd ooh",
+  "seconds": 2.81
+ },
+ "dog-bark": {
+  "by": "cribbler",
+  "freesound_id": 396307,
+  "license": "CC0",
+  "name": "Dog play.WAV",
+  "query": "dog bark",
+  "seconds": 2.55
+ },
+ "door-close": {
+  "by": "MathewHenry",
+  "freesound_id": 700705,
+  "license": "CC0",
+  "name": "Metal Door Squeaking 8 (Medium)",
+  "query": "door close",
+  "seconds": 1.88
+ },
+ "door-creak": {
+  "by": "MathewHenry",
+  "freesound_id": 700705,
+  "license": "CC0",
+  "name": "Metal Door Squeaking 8 (Medium)",
+  "query": "door creak",
+  "seconds": 1.88
+ },
+ "door-knock": {
+  "by": "sukondi",
+  "freesound_id": 553297,
+  "license": "CC0",
+  "name": "Knock on Door/Wood | Knocking 3 Times on Wood.mp3",
+  "query": "door knock",
+  "seconds": 1.61
+ },
+ "engine-start": {
+  "by": "ellanjellan",
+  "freesound_id": 524829,
+  "license": "CC0",
+  "name": "carengine-startupwithkeys.wav",
+  "query": "car engine start",
+  "seconds": 3.38
+ },
+ "error-buzz": {
+  "by": "Mihacappy",
+  "freesound_id": 844147,
+  "license": "CC0",
+  "name": "sfx_wrong_generic.wav",
+  "query": "error buzzer",
+  "seconds": 0.78
+ },
+ "finger-snap": {
+  "by": "oceanography",
+  "freesound_id": 751915,
+  "license": "CC0",
+  "name": "DoubleFingerSnap1",
+  "query": "finger snap",
+  "seconds": 0.65
+ },
+ "footsteps": {
+  "by": "Ali_6868",
+  "freesound_id": 384878,
+  "license": "CC0",
+  "name": "Right Gravel Footstep 4",
+  "query": "footsteps",
+  "seconds": 0.57
+ },
+ "glass-break": {
+  "by": "Johnny97",
+  "freesound_id": 566448,
+  "license": "CC0",
+  "name": "break01.wav",
+  "query": "glass break",
+  "seconds": 1.28
+ },
+ "glitch": {
+  "by": "DneproMan",
+  "freesound_id": 334891,
+  "license": "CC0",
+  "name": "MA_SFX_SysEnter_4.wav",
+  "query": "digital glitch",
+  "seconds": 2.68
+ },
+ "gulp": {
+  "by": "Defaultv",
+  "freesound_id": 534336,
+  "license": "CC0",
+  "name": "Drink_Gulp.mp3",
+  "query": "gulp swallow",
+  "seconds": 1.04
+ },
+ "heartbeat": {
+  "by": "8bitmyketison",
+  "freesound_id": 701100,
+  "license": "CC0",
+  "name": "Heartbeat Loop 73/146 BPM.wav",
+  "query": "heartbeat",
+  "seconds": 3.29
+ },
+ "heavy-thud": {
+  "by": "AudioPapkin",
+  "freesound_id": 813053,
+  "license": "CC0",
+  "name": "Big robot footstep 002",
+  "query": "heavy thud",
+  "seconds": 1.63
+ },
+ "impact-hit": {
+  "by": "AudioPapkin",
+  "freesound_id": 755054,
+  "license": "CC0",
+  "name": "Sound Design Elements Impact SFX PS 017",
+  "query": "cinematic impact hit",
+  "seconds": 1.73
+ },
+ "keyboard-typing": {
+  "by": "Joao_Janz",
+  "freesound_id": 478343,
+  "license": "CC0",
+  "name": "Bouncing Power Up 1_4",
+  "query": "keyboard typing",
+  "seconds": 1.2
+ },
+ "keys-jingle": {
+  "by": "Johnnie_Holiday",
+  "freesound_id": 697897,
+  "license": "CC0",
+  "name": "JH Alarm Clock 1.wav",
+  "query": "keys jingle",
+  "seconds": 3.27
+ },
+ "kids-cheer": {
+  "by": "StuffIamStuffIamnot",
+  "freesound_id": 859076,
+  "license": "CC0",
+  "name": "KidApplause",
+  "query": "kids cheering",
+  "seconds": 3.18
+ },
+ "laugh-short": {
+  "by": "mglennsound",
+  "freesound_id": 678668,
+  "license": "CC0",
+  "name": "AF Crowd Small Laugh.wav",
+  "query": "short laugh",
+  "seconds": 1.73
+ },
+ "level-up": {
+  "by": "crunchymaniac",
+  "freesound_id": 646114,
+  "license": "CC0",
+  "name": "Level-Up.mp3",
+  "query": "level up",
+  "seconds": 2.34
+ },
+ "magic-sparkle": {
+  "by": "nomiqbomi",
+  "freesound_id": 578801,
+  "license": "CC0",
+  "name": "Synth Texture 4",
+  "query": "magic sparkle",
+  "seconds": 2.16
+ },
+ "marker-write": {
+  "by": "JellyDaisies",
+  "freesound_id": 761658,
+  "license": "CC0",
+  "name": "Pencil Scribble (20)",
+  "query": "marker writing",
+  "seconds": 0.94
+ },
+ "message-pop": {
+  "by": "BlueSiren",
+  "freesound_id": 414384,
+  "license": "CC0",
+  "name": "Plop Sound made with my mouth",
+  "query": "message pop",
+  "seconds": 2.21
+ },
+ "metal-clang": {
+  "by": "Sadiquecat",
+  "freesound_id": 718749,
+  "license": "CC0",
+  "name": "Metal Shovel Impact SFX (leading woosh)2",
+  "query": "metal clang",
+  "seconds": 2.55
+ },
+ "mouse-click": {
+  "by": "planet_jvk",
+  "freesound_id": 825193,
+  "license": "CC0",
+  "name": "Mouse Click",
+  "query": "mouse click",
+  "seconds": 0.49
+ },
+ "notification": {
+  "by": "craigscottuk",
+  "freesound_id": 644943,
+  "license": "CC0",
+  "name": "Quiz Gameshow Correct Ding 03.mp3",
+  "query": "notification ping",
+  "seconds": 2.0
+ },
+ "page-turn": {
+  "by": "phantastonia",
+  "freesound_id": 457916,
+  "license": "CC0",
+  "name": "Turn over the book page 2",
+  "query": "page turn paper",
+  "seconds": 2.57
+ },
+ "paper-crumple": {
+  "by": "aldenroth2",
+  "freesound_id": 272015,
+  "license": "CC0",
+  "name": "Crumpling Paper",
+  "query": "paper crumple",
+  "seconds": 3.04
+ },
+ "paper-rip": {
+  "by": "omgitsjo",
+  "freesound_id": 710162,
+  "license": "CC0",
+  "name": "Paper Rip 3",
+  "query": "paper tear rip",
+  "seconds": 0.8
+ },
+ "pen-click": {
+  "by": "ShangusBurger",
+  "freesound_id": 764056,
+  "license": "CC0",
+  "name": "CRWDCheer_Short Affirmative Cheer_ShaneVincent_GSC24_FUMA-AmbeoVR.wav",
+  "query": "pen click",
+  "seconds": 2.93
+ },
+ "phone-ring": {
+  "by": "newagesoup",
+  "freesound_id": 369081,
+  "license": "CC0",
+  "name": "VSH-10-fist-thump-metal pipe-short.wav",
+  "query": "phone ring",
+  "seconds": 2.5
+ },
+ "phone-vibrate": {
+  "by": "mobaudio",
+  "freesound_id": 384485,
+  "license": "CC0",
+  "name": "cell phone vibrate wood table_loopable.wav",
+  "query": "phone vibrate",
+  "seconds": 3.01
+ },
+ "photo-print": {
+  "by": "larspriebe",
+  "freesound_id": 444682,
+  "license": "CC0",
+  "name": "taking a Polaroid photo",
+  "query": "polaroid photo print",
+  "seconds": 3.41
+ },
+ "pop-bubble": {
+  "by": "randbsoundbites",
+  "freesound_id": 804664,
+  "license": "CC0",
+  "name": "Opening a magic potion",
+  "query": "bubble pop",
+  "seconds": 0.64
+ },
+ "printer": {
+  "by": "twisterad3",
+  "freesound_id": 413838,
+  "license": "CC0",
+  "name": "Thermal Receipt Print & Cut",
+  "query": "printer printing",
+  "seconds": 1.57
+ },
+ "punch": {
+  "by": "Hoggington",
+  "freesound_id": 536256,
+  "license": "CC0",
+  "name": "Metal Gauntlet Punch 3",
+  "query": "punch hit",
+  "seconds": 0.48
+ },
+ "record-scratch": {
+  "by": "Bronxio",
+  "freesound_id": 238574,
+  "license": "CC0",
+  "name": "Scratch Hit A 1 - 1 bar - 106 BPM (no swing).WAV",
+  "query": "record scratch",
+  "seconds": 2.26
+ },
+ "rewind": {
+  "by": "nic_navr08",
+  "freesound_id": 832279,
+  "license": "CC0",
+  "name": "tape rewind imitation",
+  "query": "tape rewind",
+  "seconds": 3.46
+ },
+ "riser": {
+  "by": "AudioPapkin",
+  "freesound_id": 511874,
+  "license": "CC0",
+  "name": "Riser Hit sfx 031.wav",
+  "query": "riser build up",
+  "seconds": 2.16
+ },
+ "rooster": {
+  "by": "JoMungus",
+  "freesound_id": 719773,
+  "license": "CC0",
+  "name": "Morning rooster crow",
+  "query": "rooster crow",
+  "seconds": 2.27
+ },
+ "scissors": {
+  "by": "Abir19",
+  "freesound_id": 629513,
+  "license": "CC0",
+  "name": "scissors;snips.wav",
+  "query": "scissors cut",
+  "seconds": 2.39
+ },
+ "sigh": {
+  "by": "_stubb",
+  "freesound_id": 389631,
+  "license": "CC0",
+  "name": "Huff 2",
+  "query": "sigh",
+  "seconds": 2.9
+ },
+ "siren": {
+  "by": "egomassive",
+  "freesound_id": 536773,
+  "license": "CC0",
+  "name": "Siren.ogg",
+  "query": "police siren short",
+  "seconds": 0.92
+ },
+ "slap": {
+  "by": "xUMR",
+  "freesound_id": 478657,
+  "license": "CC0",
+  "name": "clap.wav",
+  "query": "slap",
+  "seconds": 0.5
+ },
+ "sneeze": {
+  "by": "9voltfan",
+  "freesound_id": 736456,
+  "license": "CC0",
+  "name": "Sneeze",
+  "query": "sneeze",
+  "seconds": 0.8
+ },
+ "splash": {
+  "by": "swordofkings128",
+  "freesound_id": 398039,
+  "license": "CC0",
+  "name": "water splash 2",
+  "query": "water splash",
+  "seconds": 1.89
+ },
+ "stamp": {
+  "by": "I.fekry",
+  "freesound_id": 470710,
+  "license": "CC0",
+  "name": "traditional stamp.wav",
+  "query": "rubber stamp",
+  "seconds": 1.59
+ },
+ "success-chime": {
+  "by": "Rob_Marion",
+  "freesound_id": 541981,
+  "license": "CC0",
+  "name": "GASP_Chimes_Success_2.wav",
+  "query": "success chime",
+  "seconds": 1.59
+ },
+ "suspense": {
+  "by": "nomiqbomi",
+  "freesound_id": 578353,
+  "license": "CC0",
+  "name": "Dissonant Piano Sting 1",
+  "query": "suspense sting",
+  "seconds": 2.68
+ },
+ "swipe": {
+  "by": "Sheyvan",
+  "freesound_id": 568299,
+  "license": "CC0",
+  "name": "Sfx - Whoosh High 1 (4).wav",
+  "query": "swipe air",
+  "seconds": 0.5
+ },
+ "switch-toggle": {
+  "by": "LukaCafuka",
+  "freesound_id": 753402,
+  "license": "CC0",
+  "name": "Radio receiver on/off",
+  "query": "switch toggle",
+  "seconds": 3.21
+ },
+ "tape-rip": {
+  "by": "WeeJee_vdH",
+  "freesound_id": 267712,
+  "license": "CC0",
+  "name": "Ripping Off Tape",
+  "query": "tape rip",
+  "seconds": 2.0
+ },
+ "tension-hit": {
+  "by": "AudioPapkin",
+  "freesound_id": 754771,
+  "license": "CC0",
+  "name": "Riser Hit sfx 097",
+  "query": "tension hit",
+  "seconds": 2.52
+ },
+ "thunder": {
+  "by": "BaDoink",
+  "freesound_id": 563338,
+  "license": "CC0",
+  "name": "Thunder Bucket.wav",
+  "query": "thunder",
+  "seconds": 0.69
+ },
+ "timer-ding": {
+  "by": "JulesV4",
+  "freesound_id": 615949,
+  "license": "CC0",
+  "name": "Ding Effect.wav",
+  "query": "timer ding",
+  "seconds": 1.53
+ },
+ "typewriter": {
+  "by": "newagesoup",
+  "freesound_id": 348238,
+  "license": "CC0",
+  "name": "MECH-KEYBOARD-02.wav",
+  "query": "typewriter key",
+  "seconds": 1.28
+ },
+ "water-drip": {
+  "by": "qubodup",
+  "freesound_id": 792924,
+  "license": "CC0",
+  "name": "Bottle Drip",
+  "query": "water drip",
+  "seconds": 0.43
+ },
+ "water-pour": {
+  "by": "Mullnet",
+  "freesound_id": 164050,
+  "license": "CC0",
+  "name": "pouring_water.mp3",
+  "query": "water pour",
+  "seconds": 3.08
+ },
+ "whoosh-long": {
+  "by": "saturdaysoundguy",
+  "freesound_id": 394181,
+  "license": "CC0",
+  "name": "ARCHERY flyby 2.wav",
+  "query": "whoosh swoosh long",
+  "seconds": 0.44
+ },
+ "whoosh-short": {
+  "by": "NearTheAtmoshphere",
+  "freesound_id": 683185,
+  "license": "CC0",
+  "name": "Power Up",
+  "query": "whoosh short",
+  "seconds": 1.97
+ },
+ "win-fanfare": {
+  "by": "DZeDeNZ",
+  "freesound_id": 522240,
+  "license": "CC0",
+  "name": "result-3.mp3",
+  "query": "win fanfare short",
+  "seconds": 2.0
+ },
+ "wood-knock": {
+  "by": "sukondi",
+  "freesound_id": 553297,
+  "license": "CC0",
+  "name": "Knock on Door/Wood | Knocking 3 Times on Wood.mp3",
+  "query": "wood knock",
+  "seconds": 1.61
+ },
+ "wrong-answer": {
+  "by": "Beetlemuse",
+  "freesound_id": 692847,
+  "license": "CC0",
+  "name": "False C",
+  "query": "wrong answer buzz",
+  "seconds": 1.53
+ },
+ "zipper": {
+  "by": "magnuswaker",
+  "freesound_id": 697827,
+  "license": "CC0",
+  "name": "HAULAGE",
+  "query": "zipper",
+  "seconds": 1.16
+ }
+}
