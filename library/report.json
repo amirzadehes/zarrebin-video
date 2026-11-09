@@ -1,39 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 15:29:31 UTC",
-   "ok": [
-    {
-     "file": "earth-globe__mw7zhi4h0.jpg",
-     "id": "earth-globe",
-     "saved": "earth-globe__1.webp",
-     "kb": 159
-    },
-    {
-     "file": "question-mark__mw7zfn2e0.jpg",
-     "id": "question-mark",
-     "saved": "question-mark__1.webp",
-     "kb": 86
-    },
-    {
-     "file": "restaurant__mw7z4bwz.jpg",
-     "id": "restaurant",
-     "saved": "restaurant__1.webp",
-     "kb": 137
-    }
-   ],
-   "failed": [
-    {
-     "file": "restaurant__mw7zfdqy0.jpg",
-     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: restaurant__1.webp)"
-    },
-    {
-     "file": "restaurant__mw7zhtc80.jpg",
-     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: restaurant__1.webp)"
-    }
-   ]
-  },
-  {
    "time": "2026-11-08 16:39:48 UTC",
    "ok": [
     {
@@ -705,6 +672,36 @@
      "id": "pill",
      "saved": "pill__2.webp",
      "kb": 100
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-09 22:11:21 UTC",
+   "ok": [
+    {
+     "file": "gears__mw9teooh01l.jpg",
+     "id": "gears",
+     "saved": "gears__1.webp",
+     "kb": 263
+    },
+    {
+     "file": "gears__mw9teoos1ho.jpg",
+     "id": "gears",
+     "saved": "gears__2.webp",
+     "kb": 274
+    },
+    {
+     "file": "gears__mw9teop42un.jpg",
+     "id": "gears",
+     "saved": "gears__3.webp",
+     "kb": 188
+    },
+    {
+     "file": "gears__mw9teopl3qr.jpg",
+     "id": "gears",
+     "saved": "gears__4.webp",
+     "kb": 217
     }
    ],
    "failed": []

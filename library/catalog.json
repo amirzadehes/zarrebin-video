@@ -1023,6 +1023,19 @@
    ],
    "fa_tags_for": "پمپ بنزین"
   },
+  "gears": {
+   "id": "gears",
+   "en": "gears",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "gears__1.webp",
+    "gears__2.webp",
+    "gears__3.webp",
+    "gears__4.webp"
+   ]
+  },
   "head-profile": {
    "id": "head-profile",
    "en": "human head in side profile",
