@@ -1591,6 +1591,17 @@
    ],
    "fa_tags_for": "تلفن هوشمند"
   },
+  "pill": {
+   "id": "pill",
+   "en": "pill",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "pill__1.webp",
+    "pill__2.webp"
+   ]
+  },
   "planet-earth": {
    "id": "planet-earth",
    "en": "planet earth",
