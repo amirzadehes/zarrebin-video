@@ -1,0 +1,31 @@
+name: Fetch sound effects
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: fetch-sfx
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download CC0 sound effects from Freesound and commit (repeat on push conflict)
+        env:
+          FREESOUND_API_KEY: ${{ secrets.FREESOUND_API_KEY }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          finished=no
+          for round in 1 2 3 4 5; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            python3 tools/fetch_sfx.py
+            git add -A sfx sfx_catalog.json
+            if git diff --cached --quiet; then echo "nothing new"; finished=yes; break; fi
+            git commit -qm "sfx: add CC0 sound effects from Freesound"
+            if git push -q origin main; then echo "round $round pushed"; finished=yes; break; fi
+            echo "push conflict, redo round"; sleep 4
+          done
+          if [ "$finished" != yes ]; then echo "gave up after 5 rounds"; exit 1; fi
