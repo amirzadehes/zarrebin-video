@@ -11,9 +11,6 @@
  "rubber-tire": [
   "tire-company-logo"
  ],
- "two-brothers": [
-  "adult-male-human"
- ],
  "red-guidebook": [
   "book",
   "book-open"
@@ -28,9 +25,9 @@
   "star"
  ],
  "one-star": [
-  "star",
   "two-stars",
   "three-stars",
+  "star",
   "star-rating"
  ],
  "two-stars": [
@@ -80,7 +77,6 @@
   "street-food-stall"
  ],
  "cityscape-chicago": [
-  "eiffel-tower",
   "hotel-building",
   "factory"
  ],

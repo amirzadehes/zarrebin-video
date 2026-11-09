@@ -38,9 +38,7 @@
   "map-folded"
  ],
  "chart-up": [
-  "arrow-up",
-  "arrow-right",
-  "curved-arrow"
+  "arrow-up"
  ],
  "money-bag": [
   "banknotes",
@@ -86,10 +84,7 @@
   "chart-up"
  ],
  "credit-card": [
-  "banknotes",
-  "cash",
-  "money-bag",
-  "money-coins"
+  "reservation-card"
  ],
  "newspaper": [
   "book",
