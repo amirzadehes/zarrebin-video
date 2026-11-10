@@ -1589,14 +1589,23 @@
   "magnet": {
    "id": "magnet",
    "en": "magnet",
-   "fa": "",
+   "fa": "مغناطیس",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "magnet__1.webp",
     "magnet__2.webp",
     "magnet__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "مغناطیس",
+    "آهن",
+    "آهنک",
+    "مغناطیسی",
+    "جاذبه",
+    "مغناطیسی‌ساز"
+   ],
+   "fa_tags_for": "مغناطیس"
   },
   "magnifying-glass": {
    "id": "magnifying-glass",
