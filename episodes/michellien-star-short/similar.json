@@ -1,1 +1,44 @@
-{}
+{
+ "star": [
+  "star-rating",
+  "three-stars",
+  "two-stars",
+  "one-star"
+ ],
+ "rubber-tire": [
+  "tire-company-logo"
+ ],
+ "restaurant": [
+  "roadside-restaurant"
+ ],
+ "one-star": [
+  "star",
+  "star-rating",
+  "two-stars",
+  "three-stars"
+ ],
+ "two-stars": [
+  "star",
+  "star-rating",
+  "one-star",
+  "three-stars"
+ ],
+ "three-stars": [
+  "star",
+  "star-rating",
+  "one-star",
+  "two-stars"
+ ],
+ "chef-hat": [
+  "chef"
+ ],
+ "earth-globe": [
+  "planet-earth"
+ ],
+ "magnifier-search": [
+  "magnifying-glass"
+ ],
+ "light-bulb-idea": [
+  "bulb"
+ ]
+}

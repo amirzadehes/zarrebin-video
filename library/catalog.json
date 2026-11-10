@@ -762,7 +762,15 @@
     "critic__1.webp",
     "critic__2.webp",
     "critic__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "نقد",
+    "بررسی",
+    "تحلیل",
+    "ارزیابی",
+    "نظر"
+   ],
+   "fa_tags_for": "منتقد"
   },
   "cross-mark": {
    "id": "cross-mark",
@@ -1494,13 +1502,22 @@
   "lock-open": {
    "id": "lock-open",
    "en": "lock open",
-   "fa": "",
+   "fa": "قفل باز",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "lock-open__1.webp",
     "lock-open__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "قفل",
+    "باز کردن",
+    "امنیت",
+    "کلید",
+    "دسترس",
+    "قفل‌گشایی"
+   ],
+   "fa_tags_for": "قفل باز"
   },
   "magnifying-glass": {
    "id": "magnifying-glass",
