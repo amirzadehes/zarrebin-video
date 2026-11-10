@@ -1,24 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 21:15:55 UTC",
-   "ok": [
-    {
-     "file": "lock-closed__mw8c00lb033.jpg",
-     "id": "lock-closed",
-     "saved": "lock-closed__1.webp",
-     "kb": 168
-    },
-    {
-     "file": "lock-closed__mw8c00lk1lb.jpg",
-     "id": "lock-closed",
-     "saved": "lock-closed__2.webp",
-     "kb": 117
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-08 21:17:12 UTC",
    "ok": [
     {
@@ -940,6 +922,29 @@
     }
    ],
    "failed": []
+  },
+  {
+   "time": "2026-11-10 10:02:57 UTC",
+   "ok": [
+    {
+     "file": "auto-repair-shop__mwaitfk52sz.jpg",
+     "id": "auto-repair-shop",
+     "saved": "auto-repair-shop__3.webp",
+     "kb": 184
+    },
+    {
+     "file": "auto-repair-shop__mwaitfkc3qd.jpg",
+     "id": "auto-repair-shop",
+     "saved": "auto-repair-shop__4.webp",
+     "kb": 178
+    }
+   ],
+   "failed": [
+    {
+     "file": "auto-repair-shop__mwaitfjt1bt.jpg",
+     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: auto-repair-shop__2.webp)"
+    }
+   ]
   }
  ]
 }
