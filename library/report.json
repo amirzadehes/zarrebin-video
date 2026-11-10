@@ -1,30 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 21:22:04 UTC",
-   "ok": [
-    {
-     "file": "broken-heart__mw8c7zzv0tj.jpg",
-     "id": "broken-heart",
-     "saved": "broken-heart__1.webp",
-     "kb": 155
-    },
-    {
-     "file": "shield__mw8c7uyi0dc.jpg",
-     "id": "shield",
-     "saved": "shield__1.webp",
-     "kb": 185
-    },
-    {
-     "file": "shield__mw8c7uys1l2.jpg",
-     "id": "shield",
-     "saved": "shield__2.webp",
-     "kb": 195
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-08 21:22:59 UTC",
    "ok": [
     {
@@ -924,6 +900,36 @@
      "id": "doctor",
      "saved": "doctor__4.webp",
      "kb": 141
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-10 21:08:33 UTC",
+   "ok": [
+    {
+     "file": "scientist__mwb6m14902u.jpg",
+     "id": "scientist",
+     "saved": "scientist__1.webp",
+     "kb": 134
+    },
+    {
+     "file": "scientist__mwb6m14j18o.jpg",
+     "id": "scientist",
+     "saved": "scientist__2.webp",
+     "kb": 152
+    },
+    {
+     "file": "scientist__mwb6m15628l.jpg",
+     "id": "scientist",
+     "saved": "scientist__3.webp",
+     "kb": 152
+    },
+    {
+     "file": "scientist__mwb6m15m35x.jpg",
+     "id": "scientist",
+     "saved": "scientist__4.webp",
+     "kb": 144
     }
    ],
    "failed": []

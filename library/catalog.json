@@ -2483,6 +2483,19 @@
    ],
    "fa_tags_for": "تراز عدالت"
   },
+  "scientist": {
+   "id": "scientist",
+   "en": "scientist",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "scientist__1.webp",
+    "scientist__2.webp",
+    "scientist__3.webp",
+    "scientist__4.webp"
+   ]
+  },
   "secret-inspector": {
    "id": "secret-inspector",
    "en": "inspector wearing black raincoat",
