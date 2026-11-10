@@ -1087,14 +1087,23 @@
   "fist": {
    "id": "fist",
    "en": "fist",
-   "fa": "",
+   "fa": "مشت",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "fist__1.webp",
     "fist__2.webp",
     "fist__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "مشت",
+    "دست",
+    "انگشت",
+    "ضربه",
+    "مبارزه",
+    "ورزش"
+   ],
+   "fa_tags_for": "مشت"
   },
   "flask": {
    "id": "flask",
