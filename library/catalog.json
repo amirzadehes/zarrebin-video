@@ -3048,6 +3048,20 @@
    ],
    "fa_tags_for": "مغز خسته"
   },
+  "train": {
+   "id": "train",
+   "en": "train",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "train__1.webp",
+    "train__2.webp",
+    "train__3.webp",
+    "train__4.webp",
+    "train__5.webp"
+   ]
+  },
   "tree": {
    "id": "tree",
    "en": "tree",
