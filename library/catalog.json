@@ -159,7 +159,17 @@
     "auto-repair-shop__2.webp",
     "auto-repair-shop__3.webp",
     "auto-repair-shop__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "تعمیرات خودرو",
+    "گاراژ",
+    "مکانیک",
+    "سرویس خودرو",
+    "کارگاه",
+    "خدمات خودرو",
+    "تعمیر"
+   ],
+   "fa_tags_for": "تعمیرگاه"
   },
   "banknotes": {
    "id": "banknotes",
