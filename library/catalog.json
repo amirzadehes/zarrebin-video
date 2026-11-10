@@ -759,7 +759,9 @@
    ],
    "has_text_in_image": false,
    "variants": [
-    "critic__1.webp"
+    "critic__1.webp",
+    "critic__2.webp",
+    "critic__3.webp"
    ]
   },
   "cross-mark": {
@@ -1488,6 +1490,17 @@
     "محافظت"
    ],
    "fa_tags_for": "قفل بسته"
+  },
+  "lock-open": {
+   "id": "lock-open",
+   "en": "lock open",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "lock-open__1.webp",
+    "lock-open__2.webp"
+   ]
   },
   "magnifying-glass": {
    "id": "magnifying-glass",

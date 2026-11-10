@@ -1,24 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 17:43:30 UTC",
-   "ok": [
-    {
-     "file": "arrow-right__mw84f4yq0ti.jpg",
-     "id": "arrow-right",
-     "saved": "arrow-right__1.webp",
-     "kb": 70
-    },
-    {
-     "file": "arrow-right__mw84f4zf1gi.jpg",
-     "id": "arrow-right",
-     "saved": "arrow-right__2.webp",
-     "kb": 84
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-08 17:47:02 UTC",
    "ok": [
     {
@@ -857,6 +839,41 @@
     }
    ],
    "failed": []
+  },
+  {
+   "time": "2026-11-10 07:38:55 UTC",
+   "ok": [
+    {
+     "file": "critic__mwadnbet29s.jpg",
+     "id": "critic",
+     "saved": "critic__2.webp",
+     "kb": 272
+    },
+    {
+     "file": "critic__mwadnbf539e.jpg",
+     "id": "critic",
+     "saved": "critic__3.webp",
+     "kb": 283
+    },
+    {
+     "file": "lock-open__mwadou430wx.jpg",
+     "id": "lock-open",
+     "saved": "lock-open__1.webp",
+     "kb": 174
+    },
+    {
+     "file": "lock-open__mwadou4g1eb.jpg",
+     "id": "lock-open",
+     "saved": "lock-open__2.webp",
+     "kb": 210
+    }
+   ],
+   "failed": [
+    {
+     "file": "critic__mwadnbei12i.jpg",
+     "reason": "زمینه یک‌دست نیست (سایه یا گرادیان دارد)"
+    }
+   ]
   }
  ]
 }
