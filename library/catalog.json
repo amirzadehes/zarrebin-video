@@ -1563,6 +1563,19 @@
    ],
    "fa_tags_for": "نقشه تا شده"
   },
+  "medal": {
+   "id": "medal",
+   "en": "medal",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "medal__1.webp",
+    "medal__2.webp",
+    "medal__3.webp",
+    "medal__4.webp"
+   ]
+  },
   "megaphone": {
    "id": "megaphone",
    "en": "megaphone",

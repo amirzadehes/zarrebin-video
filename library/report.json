@@ -1,24 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 17:47:02 UTC",
-   "ok": [
-    {
-     "file": "stopwatch__mw84jez008f.jpg",
-     "id": "stopwatch",
-     "saved": "stopwatch__1.webp",
-     "kb": 128
-    },
-    {
-     "file": "stopwatch__mw84jez41wj.jpg",
-     "id": "stopwatch",
-     "saved": "stopwatch__2.webp",
-     "kb": 141
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-08 17:48:38 UTC",
    "ok": [
     {
@@ -874,6 +856,36 @@
      "reason": "زمینه یک‌دست نیست (سایه یا گرادیان دارد)"
     }
    ]
+  },
+  {
+   "time": "2026-11-10 07:49:33 UTC",
+   "ok": [
+    {
+     "file": "medal__mwae2l7a0er.jpg",
+     "id": "medal",
+     "saved": "medal__1.webp",
+     "kb": 116
+    },
+    {
+     "file": "medal__mwae2l7m1fu.jpg",
+     "id": "medal",
+     "saved": "medal__2.webp",
+     "kb": 108
+    },
+    {
+     "file": "medal__mwae2l802gx.jpg",
+     "id": "medal",
+     "saved": "medal__3.webp",
+     "kb": 169
+    },
+    {
+     "file": "medal__mwae2l8e347.jpg",
+     "id": "medal",
+     "saved": "medal__4.webp",
+     "kb": 116
+    }
+   ],
+   "failed": []
   }
  ]
 }
