@@ -1,36 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 21:17:12 UTC",
-   "ok": [
-    {
-     "file": "rain-cloud__mw8c1r4i0cg.jpg",
-     "id": "rain-cloud",
-     "saved": "rain-cloud__1.webp",
-     "kb": 104
-    },
-    {
-     "file": "rain-cloud__mw8c1r4m1uz.jpg",
-     "id": "rain-cloud",
-     "saved": "rain-cloud__2.webp",
-     "kb": 156
-    },
-    {
-     "file": "tree__mw8c1i280mv.jpg",
-     "id": "tree",
-     "saved": "tree__1.webp",
-     "kb": 152
-    },
-    {
-     "file": "tree__mw8c1i2n16t.jpg",
-     "id": "tree",
-     "saved": "tree__2.webp",
-     "kb": 199
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-08 21:20:20 UTC",
    "ok": [
     {
@@ -945,6 +915,30 @@
      "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: auto-repair-shop__2.webp)"
     }
    ]
+  },
+  {
+   "time": "2026-11-10 21:04:39 UTC",
+   "ok": [
+    {
+     "file": "family__mwb6h5m80az.jpg",
+     "id": "family",
+     "saved": "family__1.webp",
+     "kb": 175
+    },
+    {
+     "file": "family__mwb6h5ml10b.jpg",
+     "id": "family",
+     "saved": "family__2.webp",
+     "kb": 291
+    },
+    {
+     "file": "family__mwb6h5mt24i.jpg",
+     "id": "family",
+     "saved": "family__3.webp",
+     "kb": 152
+    }
+   ],
+   "failed": []
   }
  ]
 }

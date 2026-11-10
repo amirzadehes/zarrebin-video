@@ -1089,6 +1089,18 @@
    ],
    "fa_tags_for": "کارخانه"
   },
+  "family": {
+   "id": "family",
+   "en": "family",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "family__1.webp",
+    "family__2.webp",
+    "family__3.webp"
+   ]
+  },
   "fire": {
    "id": "fire",
    "en": "fire",
