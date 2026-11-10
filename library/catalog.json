@@ -473,6 +473,20 @@
    ],
    "fa_tags_for": "همبرگر"
   },
+  "bus": {
+   "id": "bus",
+   "en": "bus",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "bus__1.webp",
+    "bus__2.webp",
+    "bus__3.webp",
+    "bus__4.webp",
+    "bus__5.webp"
+   ]
+  },
   "caffeine-molecule": {
    "id": "caffeine-molecule",
    "en": "caffeine molecule",

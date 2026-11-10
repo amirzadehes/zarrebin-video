@@ -1,18 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 23:03:29 UTC",
-   "ok": [
-    {
-     "file": "adult-male-human__mw8fugnh.jpg",
-     "id": "adult-male-human",
-     "saved": "adult-male-human__1.webp",
-     "kb": 146
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-09 19:59:24 UTC",
    "ok": [
     {
@@ -936,6 +924,42 @@
      "id": "taxi-car",
      "saved": "taxi-car__5.webp",
      "kb": 92
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-10 21:17:18 UTC",
+   "ok": [
+    {
+     "file": "bus__mwb6xdk70nt.jpg",
+     "id": "bus",
+     "saved": "bus__1.webp",
+     "kb": 118
+    },
+    {
+     "file": "bus__mwb6xdkj1w7.jpg",
+     "id": "bus",
+     "saved": "bus__2.webp",
+     "kb": 127
+    },
+    {
+     "file": "bus__mwb6xdkt2m1.jpg",
+     "id": "bus",
+     "saved": "bus__3.webp",
+     "kb": 133
+    },
+    {
+     "file": "bus__mwb6xdl23m3.jpg",
+     "id": "bus",
+     "saved": "bus__4.webp",
+     "kb": 100
+    },
+    {
+     "file": "bus__mwb6xdl94y5.jpg",
+     "id": "bus",
+     "saved": "bus__5.webp",
+     "kb": 116
     }
    ],
    "failed": []
