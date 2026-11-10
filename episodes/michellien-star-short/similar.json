@@ -1,31 +1,23 @@
 {
  "star": [
-  "star-rating",
-  "three-stars",
-  "two-stars",
-  "one-star"
+  "star-rating"
  ],
  "rubber-tire": [
   "tire-company-logo"
  ],
  "restaurant": [
-  "roadside-restaurant"
+  "roadside-restaurant",
+  "street-food-stall"
  ],
  "one-star": [
-  "star",
-  "star-rating",
   "two-stars",
   "three-stars"
  ],
  "two-stars": [
-  "star",
-  "star-rating",
   "one-star",
   "three-stars"
  ],
  "three-stars": [
-  "star",
-  "star-rating",
   "one-star",
   "two-stars"
  ],
@@ -40,5 +32,8 @@
  ],
  "light-bulb-idea": [
   "bulb"
+ ],
+ "medal": [
+  "trophy"
  ]
 }

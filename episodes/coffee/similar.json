@@ -14,13 +14,10 @@
   "bulb"
  ],
  "brain-hacker": [
-  "brain-colorful",
-  "brain-gears",
-  "brain-pink"
+  "brain-gears"
  ],
- "brain-colorful": [
-  "brain-gears",
-  "brain-pink"
+ "person-sleeping": [
+  "eye-sleepy"
  ],
  "fatigue-brain": [
   "tired-brain"
@@ -30,24 +27,14 @@
   "old-key"
  ],
  "lock-closed": [
-  "lock-open",
   "padlock"
  ],
- "adrenaline": [
-  "caffeine-molecule",
-  "purple-molecule"
- ],
- "heart": [
-  "broken-heart"
- ],
  "hand-tremble": [
-  "hand-stop"
+  "hand-stop",
+  "pointing-hand"
  ],
  "espresso-cup": [
   "coffee-cup"
- ],
- "hourglass": [
-  "stopwatch"
  ],
  "clock-wall": [
   "alarm-clock"

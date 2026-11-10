@@ -1,12 +1,16 @@
 {
  "star": [
   "star-rating",
-  "three-stars",
+  "one-star",
   "two-stars",
-  "one-star"
+  "three-stars"
  ],
  "rubber-tire": [
   "tire-company-logo"
+ ],
+ "book-open": [
+  "book",
+  "books-stack"
  ],
  "star-rating": [
   "star",
@@ -16,32 +20,24 @@
  ],
  "one-star": [
   "star",
+  "star-rating",
   "two-stars",
-  "three-stars",
-  "star-rating"
+  "three-stars"
  ],
  "two-stars": [
   "star",
+  "star-rating",
   "one-star",
-  "three-stars",
-  "star-rating"
+  "three-stars"
  ],
  "three-stars": [
   "star",
+  "star-rating",
   "one-star",
-  "two-stars",
-  "star-rating"
+  "two-stars"
  ],
- "social-media": [
-  "item"
- ],
- "clock-wall": [
-  "alarm-clock"
- ],
- "street-food-stall": [
-  "restaurant",
-  "roadside-restaurant",
-  "food"
+ "money-bag": [
+  "money-coins"
  ],
  "tire-company-logo": [
   "rubber-tire"
