@@ -2673,6 +2673,17 @@
    ],
    "fa_tags_for": "تلسکوپ"
   },
+  "test-tubes": {
+   "id": "test-tubes",
+   "en": "test tubes",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "test-tubes__1.webp",
+    "test-tubes__2.webp"
+   ]
+  },
   "thermometer": {
    "id": "thermometer",
    "en": "thermometer",
