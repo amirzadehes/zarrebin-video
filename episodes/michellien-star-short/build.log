@@ -1,14 +1,7 @@
-sentences where the recording differs from the pasted text: 14 of 28
-own voice + own text: words matched 97%
-library images offered to the director: 127 | priority (this episode): 34
+using the reviewed scenes.json: 23 scenes
 model: openai/gpt-oss-120b
-model openai/gpt-oss-120b is rate limited for a long time (542s): switching model
-model: qwen/qwen3.8-27b
-model qwen/qwen3.8-27b is rate limited for a long time (842s): switching model
-model: openai/gpt-oss-20b
-model openai/gpt-oss-20b is rate limited for a long time (482s): switching model
-director fallback for sentences 0-11 (no AI): Groq: every model has hit its rate limit; try again later
-director fallback for sentences 12-23 (no AI): Groq: every model has hit its rate limit; try again later
-director fallback for sentences 24-27 (no AI): Groq: every model has hit its rate limit; try again later
-coverage pass skipped: Groq: every model has hit its rate limit; try again later
-scenes 23 total 126.09 templates {'hero': 23, 'duo': 0, 'trio': 0, 'statement': 0, 'stat': 0}
+sfx matched: {'car': 'car-horn.mp3', 'calendar': 'page-turn.mp3', 'checkmark': 'correct-answer.mp3', 'cross-mark': 'correct-answer.mp3', 'factory': 'metal-clang.mp3', 'food': 'gulp.mp3', 'map-folded': 'page-turn.mp3', 'people-standing-in-line': 'footsteps.mp3', 'reservation-card': 'paper-crumple.mp3', 'secret-inspector': 'suspense.mp3', 'star': 'magic-sparkle.mp3', 'star-rating': 'success-chime.mp3', 'three-stars': 'success-chime.mp3', 'wrench': 'metal-clang.mp3'}
+sfx events 72 dropped (too dense) 39 from library 22 peak 0.51 seconds 127.1
+bgfx events 73 peak 0.44 seconds 129.1
+model: openai/gpt-oss-120b
+no music uploaded yet (app > settings > music) - video will have no background music
