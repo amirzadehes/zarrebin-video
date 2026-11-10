@@ -790,6 +790,19 @@
    ],
    "fa_tags_for": "علامت تیک‌کلیک"
   },
+  "crown": {
+   "id": "crown",
+   "en": "crown",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "crown__1.webp",
+    "crown__2.webp",
+    "crown__3.webp",
+    "crown__4.webp"
+   ]
+  },
   "curved-arrow": {
    "id": "curved-arrow",
    "en": "curved arrow",
