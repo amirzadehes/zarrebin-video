@@ -1084,6 +1084,18 @@
    ],
    "fa_tags_for": "آتش"
   },
+  "fist": {
+   "id": "fist",
+   "en": "fist",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "fist__1.webp",
+    "fist__2.webp",
+    "fist__3.webp"
+   ]
+  },
   "flask": {
    "id": "flask",
    "en": "flask",

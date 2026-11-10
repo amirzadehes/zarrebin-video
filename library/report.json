@@ -1,36 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 21:14:25 UTC",
-   "ok": [
-    {
-     "file": "laptop__mw8by5gu0qv.jpg",
-     "id": "laptop",
-     "saved": "laptop__1.webp",
-     "kb": 146
-    },
-    {
-     "file": "laptop__mw8by5h21w0.jpg",
-     "id": "laptop",
-     "saved": "laptop__2.webp",
-     "kb": 109
-    },
-    {
-     "file": "phone-smartphone__mw8bxx3z0pw.jpg",
-     "id": "phone-smartphone",
-     "saved": "phone-smartphone__1.webp",
-     "kb": 178
-    },
-    {
-     "file": "shield-check__mw8bycwl06d.jpg",
-     "id": "shield-check",
-     "saved": "shield-check__1.webp",
-     "kb": 120
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-08 21:15:29 UTC",
    "ok": [
     {
@@ -943,6 +913,30 @@
      "id": "magnet",
      "saved": "magnet__3.webp",
      "kb": 137
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-10 08:26:54 UTC",
+   "ok": [
+    {
+     "file": "fist__mwafengs007.jpg",
+     "id": "fist",
+     "saved": "fist__1.webp",
+     "kb": 170
+    },
+    {
+     "file": "fist__mwafenh31i1.jpg",
+     "id": "fist",
+     "saved": "fist__2.webp",
+     "kb": 137
+    },
+    {
+     "file": "fist__mwafenhk2yy.jpg",
+     "id": "fist",
+     "saved": "fist__3.webp",
+     "kb": 146
     }
    ],
    "failed": []
