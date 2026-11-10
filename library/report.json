@@ -1,48 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 21:20:20 UTC",
-   "ok": [
-    {
-     "file": "leaf__mw8c57n90li.jpg",
-     "id": "leaf",
-     "saved": "leaf__1.webp",
-     "kb": 175
-    },
-    {
-     "file": "leaf__mw8c57nb1q1.jpg",
-     "id": "leaf",
-     "saved": "leaf__2.webp",
-     "kb": 142
-    },
-    {
-     "file": "snowflake__mw8c5edq0tn.jpg",
-     "id": "snowflake",
-     "saved": "snowflake__1.webp",
-     "kb": 177
-    },
-    {
-     "file": "snowflake__mw8c5ee018e.jpg",
-     "id": "snowflake",
-     "saved": "snowflake__2.webp",
-     "kb": 162
-    },
-    {
-     "file": "water-drop__mw8c51540q3.jpg",
-     "id": "water-drop",
-     "saved": "water-drop__1.webp",
-     "kb": 147
-    },
-    {
-     "file": "water-drop__mw8c515f1av.jpg",
-     "id": "water-drop",
-     "saved": "water-drop__2.webp",
-     "kb": 99
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-08 21:22:04 UTC",
    "ok": [
     {
@@ -936,6 +894,36 @@
      "id": "family",
      "saved": "family__3.webp",
      "kb": 152
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-10 21:05:56 UTC",
+   "ok": [
+    {
+     "file": "doctor__mwb6ivom0zq.jpg",
+     "id": "doctor",
+     "saved": "doctor__1.webp",
+     "kb": 123
+    },
+    {
+     "file": "doctor__mwb6ivoz1e5.jpg",
+     "id": "doctor",
+     "saved": "doctor__2.webp",
+     "kb": 123
+    },
+    {
+     "file": "doctor__mwb6ivpb2m1.jpg",
+     "id": "doctor",
+     "saved": "doctor__3.webp",
+     "kb": 113
+    },
+    {
+     "file": "doctor__mwb6ivpm30x.jpg",
+     "id": "doctor",
+     "saved": "doctor__4.webp",
+     "kb": 141
     }
    ],
    "failed": []

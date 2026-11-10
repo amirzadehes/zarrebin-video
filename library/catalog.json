@@ -920,6 +920,19 @@
    ],
    "fa_tags_for": "دانه‌دانه هلیکس"
   },
+  "doctor": {
+   "id": "doctor",
+   "en": "doctor",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "doctor__1.webp",
+    "doctor__2.webp",
+    "doctor__3.webp",
+    "doctor__4.webp"
+   ]
+  },
   "earth-globe": {
    "id": "earth-globe",
    "en": "earth globe",
