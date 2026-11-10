@@ -1064,7 +1064,7 @@
   "flask": {
    "id": "flask",
    "en": "flask",
-   "fa": "",
+   "fa": "فلاسک",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -1072,7 +1072,16 @@
     "flask__2.webp",
     "flask__3.webp",
     "flask__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "آزمایشگاه",
+    "ظرف",
+    "شیشه‌ای",
+    "محفظه",
+    "شیمی",
+    "تجربه"
+   ],
+   "fa_tags_for": "فلاسک"
   },
   "food": {
    "id": "food",
@@ -2689,13 +2698,22 @@
   "test-tubes": {
    "id": "test-tubes",
    "en": "test tubes",
-   "fa": "",
+   "fa": "لوله آزمایش",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "test-tubes__1.webp",
     "test-tubes__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "آزمایشگاه",
+    "لوله",
+    "شیشه‌ای",
+    "تجربه",
+    "شیمی",
+    "نمونه"
+   ],
+   "fa_tags_for": "لوله آزمایش"
   },
   "thermometer": {
    "id": "thermometer",
