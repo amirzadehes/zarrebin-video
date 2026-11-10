@@ -146,6 +146,19 @@
    ],
    "fa_tags_for": "اتم"
   },
+  "auto-repair-shop": {
+   "id": "auto-repair-shop",
+   "en": "auto repair shop",
+   "fa": "تعمیرگاه",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "auto-repair-shop__1.webp",
+    "auto-repair-shop__2.webp"
+   ]
+  },
   "banknotes": {
    "id": "banknotes",
    "en": "banknotes",
