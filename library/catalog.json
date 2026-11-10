@@ -793,7 +793,7 @@
   "crown": {
    "id": "crown",
    "en": "crown",
-   "fa": "",
+   "fa": "تاج",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -801,7 +801,16 @@
     "crown__2.webp",
     "crown__3.webp",
     "crown__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "تاج",
+    "سر",
+    "زیور",
+    "پادشاهی",
+    "سلطنت",
+    "مملکت"
+   ],
+   "fa_tags_for": "تاج"
   },
   "curved-arrow": {
    "id": "curved-arrow",
@@ -1579,7 +1588,7 @@
   "medal": {
    "id": "medal",
    "en": "medal",
-   "fa": "",
+   "fa": "مدال",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -1587,7 +1596,16 @@
     "medal__2.webp",
     "medal__3.webp",
     "medal__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "مدال",
+    "جایزه",
+    "مسابقه",
+    "افتخار",
+    "نشان",
+    "ورزشی"
+   ],
+   "fa_tags_for": "مدال"
   },
   "megaphone": {
    "id": "megaphone",
