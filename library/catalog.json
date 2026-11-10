@@ -123,6 +123,20 @@
    ],
    "fa_tags_for": "پیکان بالا"
   },
+  "atom": {
+   "id": "atom",
+   "en": "atom",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "atom__1.webp",
+    "atom__2.webp",
+    "atom__3.webp",
+    "atom__4.webp",
+    "atom__5.webp"
+   ]
+  },
   "banknotes": {
    "id": "banknotes",
    "en": "banknotes",
