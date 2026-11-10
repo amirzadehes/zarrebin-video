@@ -1061,6 +1061,19 @@
    ],
    "fa_tags_for": "آتش"
   },
+  "flask": {
+   "id": "flask",
+   "en": "flask",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "flask__1.webp",
+    "flask__2.webp",
+    "flask__3.webp",
+    "flask__4.webp"
+   ]
+  },
   "food": {
    "id": "food",
    "en": "food",
