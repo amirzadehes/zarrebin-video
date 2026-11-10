@@ -1586,6 +1586,18 @@
    ],
    "fa_tags_for": "قفل باز"
   },
+  "magnet": {
+   "id": "magnet",
+   "en": "magnet",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "magnet__1.webp",
+    "magnet__2.webp",
+    "magnet__3.webp"
+   ]
+  },
   "magnifying-glass": {
    "id": "magnifying-glass",
    "en": "magnifying glass",
