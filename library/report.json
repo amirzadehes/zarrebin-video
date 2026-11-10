@@ -1,42 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 21:32:20 UTC",
-   "ok": [
-    {
-     "file": "arrow-down__mw8ckubd0kl.jpg",
-     "id": "arrow-down",
-     "saved": "arrow-down__1.webp",
-     "kb": 81
-    },
-    {
-     "file": "arrow-down__mw8ckubp18s.jpg",
-     "id": "arrow-down",
-     "saved": "arrow-down__2.webp",
-     "kb": 120
-    },
-    {
-     "file": "arrow-up__mw8cl1dx0yt.jpg",
-     "id": "arrow-up",
-     "saved": "arrow-up__1.webp",
-     "kb": 124
-    },
-    {
-     "file": "arrow-up__mw8cl1e010n.jpg",
-     "id": "arrow-up",
-     "saved": "arrow-up__2.webp",
-     "kb": 100
-    },
-    {
-     "file": "curved-arrow__mw8cko4i09g.jpg",
-     "id": "curved-arrow",
-     "saved": "curved-arrow__1.webp",
-     "kb": 91
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-08 23:03:29 UTC",
    "ok": [
     {
@@ -936,6 +900,42 @@
      "id": "teacher",
      "saved": "teacher__4.webp",
      "kb": 135
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-10 21:14:56 UTC",
+   "ok": [
+    {
+     "file": "taxi-car__mwb6uho003f.jpg",
+     "id": "taxi-car",
+     "saved": "taxi-car__1.webp",
+     "kb": 96
+    },
+    {
+     "file": "taxi-car__mwb6uhoc1a9.jpg",
+     "id": "taxi-car",
+     "saved": "taxi-car__2.webp",
+     "kb": 82
+    },
+    {
+     "file": "taxi-car__mwb6uhor2y7.jpg",
+     "id": "taxi-car",
+     "saved": "taxi-car__3.webp",
+     "kb": 82
+    },
+    {
+     "file": "taxi-car__mwb6uhoz3ez.jpg",
+     "id": "taxi-car",
+     "saved": "taxi-car__4.webp",
+     "kb": 108
+    },
+    {
+     "file": "taxi-car__mwb6uhp84l3.jpg",
+     "id": "taxi-car",
+     "saved": "taxi-car__5.webp",
+     "kb": 92
     }
    ],
    "failed": []

@@ -2782,6 +2782,20 @@
    ],
    "fa_tags_for": "سیرنگ"
   },
+  "taxi-car": {
+   "id": "taxi-car",
+   "en": "taxi car",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "taxi-car__1.webp",
+    "taxi-car__2.webp",
+    "taxi-car__3.webp",
+    "taxi-car__4.webp",
+    "taxi-car__5.webp"
+   ]
+  },
   "tea-cup": {
    "id": "tea-cup",
    "en": "tea cup with a tea bag",
