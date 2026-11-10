@@ -1,1 +1,102 @@
-{}
+{
+ "star": [
+  "one-star",
+  "star-rating",
+  "three-stars",
+  "two-stars"
+ ],
+ "rubber-tire": [
+  "tire-company-logo"
+ ],
+ "car": [
+  "taxi-car"
+ ],
+ "red-guidebook": [
+  "book",
+  "book-open",
+  "books-stack"
+ ],
+ "hotel-building": [
+  "city",
+  "cityscape-chicago"
+ ],
+ "book-open": [
+  "book",
+  "books-stack"
+ ],
+ "star-rating": [
+  "star",
+  "one-star",
+  "two-stars",
+  "three-stars"
+ ],
+ "one-star": [
+  "star",
+  "two-stars",
+  "three-stars",
+  "star-rating"
+ ],
+ "two-stars": [
+  "star",
+  "one-star",
+  "three-stars",
+  "star-rating"
+ ],
+ "three-stars": [
+  "star",
+  "one-star",
+  "two-stars",
+  "star-rating"
+ ],
+ "chef-hat": [
+  "chef"
+ ],
+ "money-bag": [
+  "banknotes",
+  "cash",
+  "money-coins"
+ ],
+ "clock-wall": [
+  "alarm-clock",
+  "hourglass",
+  "stopwatch"
+ ],
+ "street-food-stall": [
+  "restaurant",
+  "roadside-restaurant"
+ ],
+ "reservation-card": [
+  "restaurant",
+  "roadside-restaurant"
+ ],
+ "cash": [
+  "banknotes",
+  "money-bag",
+  "money-coins"
+ ],
+ "banknotes": [
+  "cash",
+  "money-bag",
+  "money-coins"
+ ],
+ "restaurant-sign": [
+  "restaurant",
+  "roadside-restaurant",
+  "street-food-stall"
+ ],
+ "cityscape-chicago": [
+  "city",
+  "hotel-building"
+ ],
+ "wine-glass": [
+  "coffee-cup",
+  "espresso-cup",
+  "tea-cup"
+ ],
+ "mobile-app": [
+  "phone-smartphone"
+ ],
+ "tire-company-logo": [
+  "rubber-tire"
+ ]
+}

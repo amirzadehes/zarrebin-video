@@ -476,7 +476,7 @@
   "bus": {
    "id": "bus",
    "en": "bus",
-   "fa": "",
+   "fa": "اتوبوس",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -485,7 +485,16 @@
     "bus__3.webp",
     "bus__4.webp",
     "bus__5.webp"
-   ]
+   ],
+   "fa_tags": [
+    "حمل و نقل",
+    "اتوبوس",
+    "شهر",
+    "مسافربری",
+    "جاده",
+    "رانندگی"
+   ],
+   "fa_tags_for": "اتوبوس"
   },
   "caffeine-molecule": {
    "id": "caffeine-molecule",
@@ -937,7 +946,7 @@
   "doctor": {
    "id": "doctor",
    "en": "doctor",
-   "fa": "",
+   "fa": "پزشک",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -945,7 +954,16 @@
     "doctor__2.webp",
     "doctor__3.webp",
     "doctor__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "پزشکی",
+    "سلامت",
+    "درمان",
+    "بیمار",
+    "کلینیک",
+    "دارو"
+   ],
+   "fa_tags_for": "پزشک"
   },
   "earth-globe": {
    "id": "earth-globe",
@@ -1119,14 +1137,23 @@
   "family": {
    "id": "family",
    "en": "family",
-   "fa": "",
+   "fa": "خانواده",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "family__1.webp",
     "family__2.webp",
     "family__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "خانواده",
+    "والدین",
+    "فرزندان",
+    "خانه",
+    "رابطه",
+    "نسل"
+   ],
+   "fa_tags_for": "خانواده"
   },
   "fire": {
    "id": "fire",
@@ -2500,7 +2527,7 @@
   "scientist": {
    "id": "scientist",
    "en": "scientist",
-   "fa": "",
+   "fa": "دانشمند",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -2508,7 +2535,16 @@
     "scientist__2.webp",
     "scientist__3.webp",
     "scientist__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "علم",
+    "تحقیق",
+    "آزمایش",
+    "دانشگاه",
+    "فناوری",
+    "نوآوری"
+   ],
+   "fa_tags_for": "دانشمند"
   },
   "secret-inspector": {
    "id": "secret-inspector",
@@ -2799,7 +2835,7 @@
   "taxi-car": {
    "id": "taxi-car",
    "en": "taxi car",
-   "fa": "",
+   "fa": "تاکسی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -2808,7 +2844,16 @@
     "taxi-car__3.webp",
     "taxi-car__4.webp",
     "taxi-car__5.webp"
-   ]
+   ],
+   "fa_tags": [
+    "تاکسی",
+    "حمل و نقل",
+    "شهر",
+    "مسافرت",
+    "راننده",
+    "کرایه"
+   ],
+   "fa_tags_for": "تاکسی"
   },
   "tea-cup": {
    "id": "tea-cup",
@@ -2835,7 +2880,7 @@
   "teacher": {
    "id": "teacher",
    "en": "teacher",
-   "fa": "",
+   "fa": "معلم",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -2843,7 +2888,16 @@
     "teacher__2.webp",
     "teacher__3.webp",
     "teacher__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "آموزش",
+    "مدرسه",
+    "دانش‌آموز",
+    "درس",
+    "کلاس",
+    "تربیت"
+   ],
+   "fa_tags_for": "معلم"
   },
   "telescope": {
    "id": "telescope",
@@ -3051,7 +3105,7 @@
   "train": {
    "id": "train",
    "en": "train",
-   "fa": "",
+   "fa": "قطار",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -3060,7 +3114,16 @@
     "train__3.webp",
     "train__4.webp",
     "train__5.webp"
-   ]
+   ],
+   "fa_tags": [
+    "ریلی",
+    "حمل و نقل",
+    "راه‌آهن",
+    "ایستگاه",
+    "مسافربری",
+    "سرعت"
+   ],
+   "fa_tags_for": "قطار"
   },
   "tree": {
    "id": "tree",
