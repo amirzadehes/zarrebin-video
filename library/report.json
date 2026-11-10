@@ -1,24 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-08 17:43:06 UTC",
-   "ok": [
-    {
-     "file": "checkmark__mw84ebja0ex.jpg",
-     "id": "checkmark",
-     "saved": "checkmark__1.webp",
-     "kb": 71
-    },
-    {
-     "file": "checkmark__mw84ebjn1ec.jpg",
-     "id": "checkmark",
-     "saved": "checkmark__2.webp",
-     "kb": 57
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-08 17:43:30 UTC",
    "ok": [
     {
@@ -863,6 +845,18 @@
      "reason": "زمینه یک‌دست نیست (سایه یا گرادیان دارد)"
     }
    ]
+  },
+  {
+   "time": "2026-11-10 07:37:51 UTC",
+   "ok": [
+    {
+     "file": "critic__mwadnbe70wd.jpg",
+     "id": "critic",
+     "saved": "critic__1.webp",
+     "kb": 264
+    }
+   ],
+   "failed": []
   }
  ]
 }

@@ -750,6 +750,18 @@
    ],
    "fa_tags_for": "ماه و ستاره"
   },
+  "critic": {
+   "id": "critic",
+   "en": "critic",
+   "fa": "منتقد",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "critic__1.webp"
+   ]
+  },
   "cross-mark": {
    "id": "cross-mark",
    "en": "cross mark",
