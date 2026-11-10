@@ -2804,6 +2804,19 @@
    ],
    "fa_tags_for": "فنجان چای"
   },
+  "teacher": {
+   "id": "teacher",
+   "en": "teacher",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "teacher__1.webp",
+    "teacher__2.webp",
+    "teacher__3.webp",
+    "teacher__4.webp"
+   ]
+  },
   "telescope": {
    "id": "telescope",
    "en": "telescope",
