@@ -126,7 +126,7 @@
   "atom": {
    "id": "atom",
    "en": "atom",
-   "fa": "",
+   "fa": "اتم",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -135,7 +135,16 @@
     "atom__3.webp",
     "atom__4.webp",
     "atom__5.webp"
-   ]
+   ],
+   "fa_tags": [
+    "فیزیک",
+    "شیمی",
+    "ذره",
+    "عنصر",
+    "انرژی",
+    "علم"
+   ],
+   "fa_tags_for": "اتم"
   },
   "banknotes": {
    "id": "banknotes",

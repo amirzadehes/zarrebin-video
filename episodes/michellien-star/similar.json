@@ -1,1 +1,34 @@
-{}
+{
+ "star-rating": [
+  "one-star",
+  "two-stars",
+  "three-stars",
+  "star"
+ ],
+ "one-star": [
+  "two-stars",
+  "three-stars",
+  "star",
+  "star-rating"
+ ],
+ "two-stars": [
+  "one-star",
+  "three-stars",
+  "star",
+  "star-rating"
+ ],
+ "three-stars": [
+  "one-star",
+  "two-stars",
+  "star",
+  "star-rating"
+ ],
+ "chef-hat": [
+  "chef"
+ ],
+ "money-bag": [
+  "banknotes",
+  "cash",
+  "money-coins"
+ ]
+}
