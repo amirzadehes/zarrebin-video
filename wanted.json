@@ -393,5 +393,13 @@
   "tags": [
    "mine"
   ]
+ },
+ {
+  "id": "auto-repair-shop",
+  "en": "auto repair shop",
+  "fa": "تعمیرگاه",
+  "tags": [
+   "mine"
+  ]
  }
 ]

@@ -1,1 +1,56 @@
-{}
+{
+ "star": [
+  "star-rating",
+  "three-stars",
+  "two-stars",
+  "one-star"
+ ],
+ "rubber-tire": [
+  "tire-company-logo"
+ ],
+ "book-open": [
+  "book"
+ ],
+ "star-rating": [
+  "star",
+  "one-star",
+  "two-stars",
+  "three-stars"
+ ],
+ "one-star": [
+  "star",
+  "star-rating",
+  "two-stars",
+  "three-stars"
+ ],
+ "two-stars": [
+  "star",
+  "star-rating",
+  "one-star",
+  "three-stars"
+ ],
+ "three-stars": [
+  "star",
+  "star-rating",
+  "one-star",
+  "two-stars"
+ ],
+ "social-media": [
+  "item"
+ ],
+ "chef-hat": [
+  "chef"
+ ],
+ "money-bag": [
+  "money-coins",
+  "cash",
+  "banknotes",
+  "euro-sign"
+ ],
+ "clock-wall": [
+  "alarm-clock"
+ ],
+ "tire-company-logo": [
+  "rubber-tire"
+ ]
+}
