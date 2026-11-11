@@ -1,72 +1,332 @@
 [
  {
   "from": 0,
-  "to": 1,
-  "tpl": "hero"
+  "to": 2,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "question-mark",
+    "at": "امروز"
+   }
+  ],
+  "text": "*سنت مارتین* چیست؟",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "سنت مارتین"
+  ]
  },
  {
   "from": 2,
-  "to": 3,
-  "tpl": "hero"
- },
- {
-  "from": 4,
   "to": 5,
-  "tpl": "hero"
+  "tpl": "duo",
+  "items": [
+   {
+    "id": "calendar",
+    "at": "سال"
+   },
+   {
+    "id": "earth-globe",
+    "at": "مجارستان"
+   }
+  ],
+  "text": "سال 316، مارتین در *مجارستان* متولد شد",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "سال 316",
+   "مجارستان"
+  ]
  },
  {
-  "from": 6,
-  "to": 7,
-  "tpl": "hero"
+  "from": 5,
+  "to": 8,
+  "tpl": "trio",
+  "items": [
+   {
+    "id": "soldier",
+    "at": "افسر"
+   },
+   {
+    "id": "helmet",
+    "at": "سرباز"
+   },
+   {
+    "id": "taxi-car",
+    "at": "پونزه"
+   }
+  ],
+  "text": "پدرش افسر رومی، مارتین پونزه سالگی *سرباز* شد",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "پدر افسر",
+   "پونزه سالگی"
+  ]
  },
  {
   "from": 8,
-  "to": 9,
-  "tpl": "hero"
+  "to": 11,
+  "tpl": "statement",
+  "items": [],
+  "text": "*گدا* لخت در شب سرد می‌لرزید",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "گدا",
+   "شب سرد"
+  ]
  },
  {
-  "from": 10,
-  "to": 11,
-  "tpl": "hero"
+  "from": 11,
+  "to": 14,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "cloak",
+    "at": "شنل"
+   }
+  ],
+  "text": "شنل ارتشی نصف شد، *نیمه* به گدا داد",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "شنل",
+   "نیمه"
+  ]
  },
  {
   "from": 12,
-  "to": 13,
-  "tpl": "hero"
- },
- {
-  "from": 14,
-  "to": 15,
-  "tpl": "hero"
- },
- {
-  "from": 16,
-  "to": 17,
-  "tpl": "hero"
- },
- {
-  "from": 18,
-  "to": 19,
-  "tpl": "hero"
- },
- {
-  "from": 20,
-  "to": 21,
-  "tpl": "hero"
- },
- {
-  "from": 22,
   "to": 23,
-  "tpl": "hero"
+  "tpl": "statement"
  },
  {
   "from": 24,
-  "to": 25,
-  "tpl": "hero"
+  "to": 26,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "calendar",
+    "at": "روز"
+   },
+   {
+    "id": "question-mark",
+    "at": "سنت"
+   }
+  ],
+  "text": "*سنت* مارتین کی؟",
+  "kw": [
+   "سنت مارتین",
+   "روز خاکسپاری"
+  ],
+  "decor": []
  },
  {
   "from": 26,
-  "to": 27,
-  "tpl": "hero"
+  "to": 28,
+  "tpl": "duo",
+  "items": [
+   {
+    "id": "rocket",
+    "at": "کباب"
+   },
+   {
+    "id": "goose",
+    "at": "غاز"
+   }
+  ],
+  "text": "کبابِ *غاز*؟",
+  "kw": [
+   "کباب غاز",
+   "افسانه"
+  ],
+  "decor": []
+ },
+ {
+  "from": 28,
+  "to": 31,
+  "tpl": "trio",
+  "items": [
+   {
+    "id": "hourglass",
+    "at": "تاریخه"
+   },
+   {
+    "id": "clock-wall",
+    "at": "زمان"
+   },
+   {
+    "id": "calendar",
+    "at": "سال"
+   }
+  ],
+  "text": "چند *اتفاق* در یک تاریخ",
+  "kw": [
+   "چند اتفاق",
+   "تاریخ"
+  ],
+  "decor": []
+ },
+ {
+  "from": 31,
+  "to": 34,
+  "tpl": "statement",
+  "items": [],
+  "text": "*غذا* و مالیات با غاز",
+  "kw": [
+   "مالیات",
+   "غاز"
+  ],
+  "decor": []
+ },
+ {
+  "from": 34,
+  "to": 36,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "rocket",
+    "at": "چهل"
+   },
+   {
+    "id": "calendar",
+    "at": "روز"
+   }
+  ],
+  "text": "*چهل* روز تا کریسمس",
+  "kw": [
+   "چهل روزه",
+   "کریسمس"
+  ],
+  "decor": []
+ },
+ {
+  "from": 36,
+  "to": 38,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "fire",
+    "at": "فانوس"
+   }
+  ],
+  "text": "*فانوس* رژه",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "فانوس",
+   "رژه"
+  ]
+ },
+ {
+  "from": 38,
+  "to": 40,
+  "tpl": "duo",
+  "items": [
+   {
+    "id": "map-folded",
+    "at": "راین‌لند"
+   },
+   {
+    "id": "rocket",
+    "at": "آلمان"
+   }
+  ],
+  "text": "رژه در *آلمان*",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "راین‌لند",
+   "آلمان"
+  ]
+ },
+ {
+  "from": 40,
+  "to": 42,
+  "tpl": "trio",
+  "items": [
+   {
+    "id": "clock-wall",
+    "at": "سال"
+   },
+   {
+    "id": "compass",
+    "at": "مسیر"
+   },
+   {
+    "id": "road",
+    "at": "راه"
+   }
+  ],
+  "text": "سفر زمان و مسیر",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "سال",
+   "مسیر",
+   "راه"
+  ]
+ },
+ {
+  "from": 42,
+  "to": 44,
+  "tpl": "statement",
+  "items": [],
+  "text": "چه می‌گذره؟",
+  "number": "",
+  "decor": [],
+  "kw": []
+ },
+ {
+  "from": 44,
+  "to": 46,
+  "tpl": "duo",
+  "items": [
+   {
+    "id": "two-brothers",
+    "at": "مارتین"
+   },
+   {
+    "id": "fire",
+    "at": "آتش"
+   }
+  ],
+  "text": "مارتین و *آتش*",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "مارتین",
+   "آتش"
+  ]
+ },
+ {
+  "from": 46,
+  "to": 48,
+  "tpl": "hero",
+  "items": [
+   {
+    "id": "fire",
+    "at": "آتش"
+   },
+   {
+    "id": "star",
+    "at": "ستاره"
+   },
+   {
+    "id": "exclamation-mark",
+    "at": "!"
+   }
+  ],
+  "text": "*آتش* بزرگ",
+  "number": "",
+  "decor": [],
+  "kw": [
+   "آتش"
+  ]
+ },
+ {
+  "from": 48,
+  "to": 50,
+  "tpl": "statement"
  }
 ]
