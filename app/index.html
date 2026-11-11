@@ -461,7 +461,8 @@ async function buildVideo(mode){
   if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return; }
   if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس (همان که متن را با آن فرستادی)'; return; }
   const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
-  try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده'; return; }
+  /* an own-voice episode does not need a pasted script: the recording itself (Whisper) is the text. Only a computer-voice episode needs script.txt */
+  if(!$('#bOwn').files[0]){ try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده؛ یا ویس خودت را انتخاب کن، یا متن را در بالا بنویس و «ارسال و تحلیل» را بزن.'; return; } }
   try{ const t=($('#epFa')?$('#epFa').value:'').trim(); if(t){ await saveTitle(ep, t); renderEpLabels() } }catch(_){}
   const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.sfx_vol=+$('#bSfxVol').value; body.subs=$('#bSubs').checked; if($('#bTitles')&&$('#bTitles').checked) body.titles=true; body.music=$('#bMusic').value; body.style=S.style; body.review=(mode==='review'); if(/-short$/.test(ep)) body.short=true; body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
   st.className='st'; st.textContent='در حال شروع…';
@@ -485,6 +486,7 @@ async function buildVideo(mode){
     let sha; try{ sha=(await api('/contents/episodes/'+ep+'/request.json')).sha }catch(e){}
     await api('/contents/episodes/'+ep+'/request.json',{method:'PUT',body:JSON.stringify({message:'build video: '+ep,content:enc(JSON.stringify(body)),branch:'main',sha})});
     if(ownF){ try{ $('#bOwn').value=''; if($('#bSpoken')) $('#bSpoken').value='' }catch(_){} }
+    S.eps=[...new Set([...(S.eps||[]),ep])]; try{ renderEpLabels() }catch(_){}
     setTimeout(buildStatus,6000); setTimeout(buildStatus,20000);
     if(mode==='review'){ st.className='st ok'; st.textContent='صحنه‌ها در حال آماده شدن‌اند (۲ تا ۵ دقیقه)…'; let old=''; try{ old=(await api('/contents/episodes/'+ep+'/scenes.json')).sha }catch(e){}
       for(let k=0;k<60;k++){ await sleep(15000); let nw=''; try{ nw=(await api('/contents/episodes/'+ep+'/scenes.json')).sha }catch(e){}
