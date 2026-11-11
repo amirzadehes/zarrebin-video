@@ -207,7 +207,10 @@ def main(ep):
         print('using the reviewed scenes.json:', len(D.get('scenes', [])), 'scenes'); emit_plan(meta, req); return
     if not T: sys.exit('timing.json missing; run narrate_tts.py first')
     lib = library()
-    needs = load(f'{d}/needs.json', {}).get('items') or []; prio = {n['id'] for n in needs} & set(lib)
+    import srctext
+    needs = (load(f'{d}/needs.json', {}).get('items') or []) if srctext.needs_current(ep) else []   # a list made from an older text of this folder is not this episode's list
+    if not needs: print('no current needs list for this episode: the director gets no priority images from it')
+    prio = {n['id'] for n in needs} & set(lib)
     picks = {k: [i for i in v if i in lib] for k, v in (load(f'{d}/picks.json', {}) or {}).items() if isinstance(v, list)}   # images the owner chose for a need (similar ones from the library)
     for v in picks.values(): prio |= set(v)
     PICK_NOTE.clear(); PICK_NOTE.extend(f"«{(next((n.get('fa') for n in needs if n['id'] == k), '') or k)}» ← {', '.join(v)}" for k, v in picks.items() if v)

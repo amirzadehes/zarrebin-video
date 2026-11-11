@@ -454,6 +454,8 @@ async function delVid(row){
   try{ await api('/releases/'+row.dataset.id,{method:'DELETE'}); try{ await api('/git/refs/tags/'+row.dataset.tag,{method:'DELETE'}) }catch(e){} row.remove(); toast('پاک شد ✓'); }
   catch(e){ toast('خطا: '+e.message) }
 }
+/* word overlap of two texts (0..1, relative to the shorter one): tells "same episode, small edits" from "a different episode typed into an old folder" */
+function textOverlap(a,b){ const W=t=>new Set(nz(t).split(' ').filter(w=>w.length>2)); const A=W(a), B=W(b); if(!A.size||!B.size) return 1; let n=0; A.forEach(w=>{ if(B.has(w)) n++ }); return n/Math.min(A.size,B.size) }
 async function buildVideo(mode){
   const st=$('#bSt'), ep=slug($('#epName').value);
   if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return; }
@@ -463,6 +465,10 @@ async function buildVideo(mode){
   try{ const t=($('#epFa')?$('#epFa').value:'').trim(); if(t){ await saveTitle(ep, t); renderEpLabels() } }catch(_){}
   const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.sfx_vol=+$('#bSfxVol').value; body.subs=$('#bSubs').checked; if($('#bTitles')&&$('#bTitles').checked) body.titles=true; body.music=$('#bMusic').value; body.style=S.style; body.review=(mode==='review'); if(/-short$/.test(ep)) body.short=true; body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
   st.className='st'; st.textContent='در حال شروع…';
+  if(ownF){   /* a new episode typed into an old folder (same English name, only the Persian name changed) would be built on top of the old one and keep its needed-images list */
+    let nt=($('#bSpoken')?$('#bSpoken').value:'').trim(); if(nt.length<20) nt=$('#epText').value.trim(); nt=cleanScript(nt); let prev='';
+    try{ prev=decB64(await api('/contents/episodes/'+ep+'/spoken.txt')) }catch(e){ try{ prev=decB64(await api('/contents/episodes/'+ep+'/script.txt')) }catch(_){} }
+    if(nt.length>20&&prev.length>20&&textOverlap(nt,prev)<.5&&!confirm('متن تازه با متن قبلیِ «'+epTitle(ep)+'» خیلی فرق دارد؛ انگار قسمت جدیدی است ولی نام انگلیسی همان قسمت قبلی مانده.\n\nاگر ادامه بدهی، صدا، صحنه‌ها و فهرست عکس‌های مورد نیاز آن قسمت با قسمت جدید جایگزین می‌شود. برای نگه داشتن قسمت قبلی، اول یک نام انگلیسی تازه بنویس و متن را با «ارسال و تحلیل» بفرست.\n\nروی همین قسمت ادامه بدهم؟')){ st.className='st bad'; st.textContent='متوقف شد؛ برای قسمت جدید یک نام انگلیسی تازه بنویس.'; return } }
   try{
     if(ownF){ st.className='st'; st.textContent='در حال آپلود صدا…'; const ext=(ownF.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,'');
       const b64=await toB64(ownF); let osha; try{ osha=(await api('/contents/episodes/'+ep+'/voice_user.'+ext)).sha }catch(e){}
@@ -482,7 +488,7 @@ async function buildVideo(mode){
     setTimeout(buildStatus,6000); setTimeout(buildStatus,20000);
     if(mode==='review'){ st.className='st ok'; st.textContent='صحنه‌ها در حال آماده شدن‌اند (۲ تا ۵ دقیقه)…'; let old=''; try{ old=(await api('/contents/episodes/'+ep+'/scenes.json')).sha }catch(e){}
       for(let k=0;k<60;k++){ await sleep(15000); let nw=''; try{ nw=(await api('/contents/episodes/'+ep+'/scenes.json')).sha }catch(e){}
-        if(nw&&nw!==old){ await loadReview(ep,false); $('#rvBox').open=true; st.textContent='صحنه‌ها آماده است؛ پایین بازبینی کن و بعد «ادامه» را بزن.'; $('#rvBox').scrollIntoView({behavior:'smooth'}); return }
+        if(nw&&nw!==old){ await loadReview(ep,false); ls.set('curEp',ep); showNeeds(ep); $('#rvBox').open=true; st.textContent='صحنه‌ها آماده است؛ پایین بازبینی کن و بعد «ادامه» را بزن.'; $('#rvBox').scrollIntoView({behavior:'smooth'}); return }
         try{ const r=(await api('/actions/runs?per_page=3')).workflow_runs.find(x=>x.name==='Make video'); if(r&&r.status==='completed'&&r.conclusion==='failure'&&Date.now()-new Date(r.created_at)<20*60000){ st.className='st bad'; st.textContent='آماده‌سازی ناموفق بود؛ در «build.log» قسمت دلیلش هست.'; return } }catch(e){} }
       return }
     st.className='st ok'; st.textContent='شروع شد. حدود ۱۰ تا ۳۰ دقیقه بعد ویدیو در همین لیست می‌آید.';

@@ -1,6 +1,8 @@
 """Reads episodes/<ep>/script.txt, asks Groq which sticker objects the episode needs,
 writes episodes/<ep>/needs.json. Usage: python tools/analyze_episode.py <ep>"""
 import json, os, re, sys, urllib.request, urllib.error
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import srctext
 
 def load(p, d):
     try: return json.load(open(p, encoding='utf8'))
@@ -18,9 +20,9 @@ def pick_model(key):
             if p in i.lower(): return i
     return ids[0]
 
-def main(ep):
+def main(ep, text=None):
     d = f'episodes/{ep}'
-    text = open(f'{d}/script.txt', encoding='utf8').read().strip()
+    if text is None: text = open(f'{d}/script.txt', encoding='utf8').read().strip()
     cat = load('library/catalog.json', {'items': {}})['items']
     have = {i for i, v in cat.items() if v.get('variants')}
     known = {}
@@ -66,7 +68,7 @@ def main(ep):
         seen.add(i); k = known.get(i, {})
         out.append({'id': i, 'en': it.get('en') or k.get('en') or i.replace('-', ' '), 'fa': it.get('fa') or k.get('fa', ''),
                     'why': it.get('why', ''), 'tags': []})
-    json.dump({'episode': ep, 'items': out}, open(f'{d}/needs.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
+    json.dump({'episode': ep, 'src_h': srctext.digest(text), 'items': out}, open(f'{d}/needs.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
     print(len(out), 'items;', sum(1 for o in out if o['id'] not in have), 'missing')
 
 if __name__ == '__main__': main(sys.argv[1])

@@ -77,7 +77,7 @@ def pick_mood(ep, req):
     if m in MOODS: return m
     try:
         sys.path.insert(0, os.path.dirname(__file__)); import groqlib
-        txt = open(f'episodes/{ep}/script.txt', encoding='utf8').read()[:3500]
+        import srctext; txt = srctext.source_text(ep)[:3500]
         a = groqlib.chat('You choose background music mood for a podcast explainer video. Answer with exactly one word from: calm, curious, mystery, upbeat, dramatic. '
                          'calm=wellbeing, sleep, relaxed topics; curious=science/facts/everyday trivia; mystery=secrets, history, crime, unknown; upbeat=fun, money, lifestyle, food; dramatic=serious, danger, social issues.',
                          txt, max_tokens=20, temperature=0).strip().lower()
