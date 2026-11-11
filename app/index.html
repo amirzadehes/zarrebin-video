@@ -530,12 +530,23 @@ function pvSelBuild(cur){ const s=RV&&RV.data.scenes[pvI], box=$('#pvSel'); if(!
   box.querySelectorAll('button').forEach(b=>b.onclick=()=>{ $('#pvFrame').contentWindow.postMessage({type:'sel',idx:+b.dataset.k},'*'); pvSelBuild(+b.dataset.k) }) }
 function pvTools(){ $('#pvTools').hidden=$('#pvHint').hidden=pvMode!=='edit'; pvSelBuild(pvSelCur); $('#pvEdit').classList.toggle('on',pvMode==='edit'); $('#pvPlay').classList.toggle('on',pvMode==='play') }
 function pvOkLabel(){ const s=RV&&RV.data.scenes[pvI]; $('#pvOk').textContent=s&&okOf(s,pvFmt)?'✓ تأیید شده':'✓ این صحنه خوب است ('+(pvFmt==='v'?'عمودی':'افقی')+')' }
-function pvSend(){ if(!RV||pvI<0) return; const f=$('#pvFrame').contentWindow; if(pvMode==='all') f.postMessage({type:'playall',data:RV.data,ep:RV.ep,scene:0,sfxVol:+(($('#bSfxVol')||{}).value||65)},'*'); else if(pvMode==='edit') f.postMessage({type:'edit',data:RV.data,ep:RV.ep,scene:pvI,sel:pvSelCur},'*'); else f.postMessage({type:'load',data:RV.data,ep:RV.ep,scene:pvI},'*') }
+/* voice.mp3 for the preview comes straight from the GitHub API (pinned to the file's sha), never from the GitHub Pages copy:
+   Pages lags a few minutes behind a push and the browser caches it, so the OLD episode's voice kept playing under the NEW subtitles */
+const PV_AUD={};
+async function pvAudioUrl(ep){
+  const L=await api('/contents/episodes/'+ep); const f=(L||[]).find(x=>x.type==='file'&&x.name==='voice.mp3'); if(!f) throw new Error('voice.mp3 در مخزن نیست');
+  const c=PV_AUD[ep]; if(c&&c.sha===f.sha) return c.url;
+  const r=await fetch('https://api.github.com/repos/'+S.repo+'/contents/episodes/'+ep+'/voice.mp3?ref=main',{headers:Object.assign({Accept:'application/vnd.github.raw'},S.token?{Authorization:'Bearer '+S.token}:{}),cache:'no-store'});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const url=URL.createObjectURL(new Blob([await r.arrayBuffer()],{type:'audio/mpeg'})); if(c) URL.revokeObjectURL(c.url); PV_AUD[ep]={sha:f.sha,url}; return url }
+async function pvSend(){ if(!RV||pvI<0) return; const f=$('#pvFrame').contentWindow; let audio; try{ audio=await pvAudioUrl(RV.ep) }catch(e){ toast('صدای این قسمت از مخزن گرفته نشد: '+e.message,5000); return }
+  if(pvMode==='all') f.postMessage({type:'playall',data:RV.data,ep:RV.ep,audio,scene:0,sfxVol:+(($('#bSfxVol')||{}).value||65)},'*'); else if(pvMode==='edit') f.postMessage({type:'edit',data:RV.data,ep:RV.ep,audio,scene:pvI,sel:pvSelCur},'*'); else f.postMessage({type:'load',data:RV.data,ep:RV.ep,audio,scene:pvI},'*') }
 function pvGo(){ if(pvReady) pvSend(); else pvQ=true }
 function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&fmt='+f; pvLayout(); pvOkLabel() }
 addEventListener('resize',()=>{ if(!$('#pvModal').hidden) pvLayout() });
 addEventListener('message',e=>{ const m=e.data||{};
   if(m.type==='ready'){ pvReady=true; if(pvQ){ pvQ=false; pvSend() } }
+  if(m.type==='audio-mismatch'){ toast('⚠️ طول صدا ('+fa(Math.round(m.a))+' ثانیه) با صحنه‌ها ('+fa(Math.round(m.t))+' ثانیه) نمی‌خواند؛ «آماده‌سازی صحنه‌ها» را دوباره بزن.',9000) }
   else if(m.type==='layout'&&RV){ const s=RV.data.scenes[m.scene]; if(!s) return; let o;
     if(m.kind==='pin'){ o=s.pins&&s.pins[m.idx]; if(!o) return; o.lay=o.lay||{}; o.lay[m.fmt]=m.lay }
     else if(m.kind==='bg'){ o=s.bg; if(!o) return; o.lay=o.lay||{}; o.lay[m.fmt]=o.lay[m.fmt]||{}; o.lay[m.fmt][m.idx]=m.lay }

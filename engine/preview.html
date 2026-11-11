@@ -57,13 +57,17 @@ function lay(){ const id=currentSel(), k=kindOf(id), i=id%1000;
 function resetLay(){ const id=currentSel(), k=kindOf(id), i=id%1000;
   if(k==='pin'){ const q=sc.pins[i]; if(q.lay) delete q.lay[FMT] } else if(k==='bg'){ const l=sc.bg.lay&&sc.bg.lay[FMT]; if(l) delete l[i] } else { const it=sc.items[id]; if(it.lay) delete it.lay[FMT] } }
 function post(){ const s=currentSel(); if(s<0) return; parent.postMessage({type:'layout',scene:si,kind:kindOf(s),idx:s%1000,sel:s,fmt:FMT,lay:{...lay()}},'*') }
+/* the voice comes from the parent app as a blob URL fetched through the GitHub API (m.audio); the Pages copy is only a fallback and is cache-busted, because Pages lags behind a push and an old voice would play under new subtitles */
+function setAudio(m){ const u=m.audio||('../episodes/'+m.ep+'/voice.mp3?v='+Date.now()); if(au.dataset.u===u&&(m.audio||au.dataset.ep===m.ep)) return false; au.dataset.u=u; au.dataset.ep=m.ep; au.src=u; return true }
+async function loadAudio(m,to){ const ch=setAudio(m); if(!ch&&au.readyState>=1){ chkAudio(); return } await new Promise(r=>{ au.onloadedmetadata=r; au.onerror=r; setTimeout(r,to) }); chkAudio() }
+function chkAudio(){ const T=D&&D.meta&&D.meta.total; if(T&&isFinite(au.duration)&&au.duration>0&&Math.abs(au.duration-T)>4) parent.postMessage({type:'audio-mismatch',a:au.duration,t:T},'*') }
 addEventListener('message',async e=>{ const m=e.data||{}; if(m.type==='stop'){ stop(); return }
   if(m.type==='adj'){ if(mode!=='edit'||currentSel()<0) return; const L=lay(); if(m.op==='bigger') L.sz=clampv((L.sz||1)*1.12,.3,3); else if(m.op==='smaller') L.sz=clampv((L.sz||1)/1.12,.3,3); else if(m.op==='rot') L.rot=((L.rot||0)+.2)%(Math.PI*2); else if(m.op==='reset') resetLay(); seek(editT()); post(); return }
-  if(m.type==='playall'){ stop(); msg.hidden=false; msg.textContent='در حال آماده‌سازی کل ویدیو…'; try{ await loadData(m.data); au.src='../episodes/'+m.ep+'/voice.mp3'; await new Promise(r=>{ au.onloadedmetadata=r; au.onerror=r; setTimeout(r,6000) }); ALL=true; SYN=m.sfxVol==null?65:+m.sfxVol; sc={t0:0,t1:D.meta.total,items:[],pins:[]}; si=0; play() }catch(err){ msg.textContent='خطا: '+err.message } return }
+  if(m.type==='playall'){ stop(); msg.hidden=false; msg.textContent='در حال آماده‌سازی کل ویدیو…'; try{ await loadData(m.data); await loadAudio(m,6000); ALL=true; SYN=m.sfxVol==null?65:+m.sfxVol; sc={t0:0,t1:D.meta.total,items:[],pins:[]}; si=0; play() }catch(err){ msg.textContent='خطا: '+err.message } return }
   if(m.type==='sel'){ if(sc&&getRec()[m.idx]){ edit(m.idx); post() } return }
   if(m.type==='edit'){ ALL=false; if(m.data) await ld(m); edit(m.sel>=1000?m.sel:Math.min(m.sel||0,sc.items.length-1)); post(); return }
   if(m.type!=='load') return; ALL=false; stop(); msg.hidden=false; msg.textContent='در حال آماده‌سازی…';
-  try{ await ld(m); au.src='../episodes/'+m.ep+'/voice.mp3'; await new Promise(r=>{ au.onloadedmetadata=r; au.onerror=r; setTimeout(r,4000) }); play() }catch(err){ msg.textContent='خطا: '+err.message } });
-async function ld(m){ si=m.scene; await loadData(m.data,[si-1,si,si+1].filter(k=>k>=0&&k<m.data.scenes.length)); sc=D.scenes[si]; fit(); if(!au.src.includes('/'+m.ep+'/')) au.src='../episodes/'+m.ep+'/voice.mp3' }
+  try{ await ld(m); await loadAudio(m,4000); play() }catch(err){ msg.textContent='خطا: '+err.message } });
+async function ld(m){ si=m.scene; await loadData(m.data,[si-1,si,si+1].filter(k=>k>=0&&k<m.data.scenes.length)); sc=D.scenes[si]; fit(); setAudio(m) }
 parent.postMessage({type:'ready'},'*');
 </script></body></html>

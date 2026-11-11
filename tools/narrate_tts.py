@@ -93,6 +93,7 @@ def own_voice(ep, req):
     import glob, align_whisper, groqlib
     d = f'episodes/{ep}'; cand = sorted(glob.glob(f'{d}/voice_user.*'))
     if not cand: sys.exit('own_voice requested but no voice_user file was uploaded')
+    if len(cand) > 1: sys.exit('more than one uploaded voice file (%s): an old one would be picked by mistake; delete the extra ones and build again' % ', '.join(os.path.basename(c) for c in cand))
     lang = req.get('lang', 'fa'); os.makedirs('tmp_tts', exist_ok=True)
     subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-i', cand[0], '-ar', '44100', '-ac', '1', '-c:a', 'libmp3lame', '-b:a', '160k', f'{d}/voice.mp3'])
     subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-i', cand[0], '-ar', '16000', '-ac', '1', '-c:a', 'libmp3lame', '-b:a', '48k', 'tmp_tts/for_whisper.mp3'])
