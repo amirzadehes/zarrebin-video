@@ -17,7 +17,9 @@
         steam|smoke : intensity, height, speed            page-turn : mode:'in|out', hinge:'center|left|right'
         tea-ring    : size, tone:'tea|coffee|wine', amount, seed   aged : dur, amount           burn : dur, amount, ember:false
         sparkle     : count, size                         shine : dur, every, width            glow : color, radius, rate, dur
-        wiggle      : amp (rad), freq (Hz), dur           pulse : amp, rate                    crack : size, rays, seed } ]
+        wiggle      : amp (rad), freq (Hz), dur           pulse : amp, rate                    crack : size, rays, seed 
+        bubble      : text ("*word*" between stars is highlighted), style:'speech|box|thought|shout|whisper|paper', file:'bubbles/x.png' (own picture, replaces the drawn shape),
+                      pos:'up|upr|upl|right|left|down' (where the bubble sits relative to the anchor), size .5-1.8, fs .6-1.8 (text size), tail .3-2.2, flip:false (own picture only), dur (0 = while the picture is there), anchor = the point the tail touches } ]
    The anchor defaults to the picture itself (steam/smoke: top-centre of the opaque shape; tea-ring: lower right; others: centre), measured from the alpha channel.
    library/anchors.json (optional) pins a point per picture id: { "coffee-cup": { "steam": [0.5, 0.2], "default": [0.5, 0.5] } }. */
 window.FXL = (() => {
@@ -26,7 +28,7 @@ window.FXL = (() => {
   const num = (v, d, a, b) => { v = parseFloat(v); if (!isFinite(v)) v = d; return Math.max(a, Math.min(b, v)) };
   const hsh = (a, b = 0, c = 0) => { let x = Math.imul(a | 0, 0x9E3779B1) ^ Math.imul((b | 0) + 0x7F4A7C15, 0x85EBCA6B) ^ Math.imul((c | 0) + 0x165667B1, 0xC2B2AE35); x ^= x >>> 15; x = Math.imul(x, 0x2C1B3C6D); x ^= x >>> 12; x = Math.imul(x, 0x297A2D39); x ^= x >>> 15; return (x >>> 0) / 4294967296 };   // stateless seeded random in [0,1)
   const cnv = (w, h) => { const c = document.createElement('canvas'); c.width = Math.max(2, Math.round(w)); c.height = Math.max(2, Math.round(h)); return c };
-  const TYPES = ['steam', 'smoke', 'page-turn', 'tea-ring', 'aged', 'burn', 'sparkle', 'shine', 'glow', 'wiggle', 'pulse', 'crack', 'fold'];
+  const TYPES = ['steam', 'smoke', 'page-turn', 'tea-ring', 'aged', 'burn', 'sparkle', 'shine', 'glow', 'wiggle', 'pulse', 'crack', 'fold', 'bubble'];
 
   /* ---------- picture info: bounding box + top-centre + average colour + a coarse inside mask (fractions of the image) ---------- */
   function measure(im) {
@@ -53,7 +55,7 @@ window.FXL = (() => {
     if (Array.isArray(f.anchor) && f.anchor.length === 2) return [num(f.anchor[0], .5, -.5, 1.5), num(f.anchor[1], .5, -.5, 1.5)];
     const a = ANCH[itemId(it.src)]; if (a) { if (Array.isArray(a[type])) return a[type]; if (Array.isArray(a.default)) return a.default }
     const [x0, y0, x1, y1] = inf.bb;
-    if (type === 'steam' || type === 'smoke') return [inf.topX, y0 + (y1 - y0) * .04];
+    if (type === 'steam' || type === 'smoke' || type === 'bubble') return [inf.topX, y0 + (y1 - y0) * (type === 'bubble' ? .1 : .04)];
     if (type === 'tea-ring') return [x0 + (x1 - x0) * .7, y0 + (y1 - y0) * .72];
     return [(x0 + x1) / 2, (y0 + y1) / 2]
   }
@@ -279,6 +281,69 @@ window.FXL = (() => {
     local(st, inf, () => putLayer(lay, inf, num(f.amount, .7, .1, 1)))
   }
 
+
+  /* ---------- bubble: a speech / thought bubble stuck to the picture. The tail touches the anchor, so the bubble follows every move, zoom, squash and wobble of the picture.
+     It is kept inside the safe area of the frame (not under the top bar or the captions). Own bubble pictures (bubbles/*.png, uploaded in the app) replace the drawn shape. ---------- */
+  const BUBBLES = ['speech', 'box', 'thought', 'shout', 'whisper', 'paper'];
+  const BDIR = { up: [0, -1], upr: [.72, -.7], upl: [-.72, -.7], right: [1, -.2], left: [-1, -.2], down: [0, 1] };
+  function bubble(it, t, st, f, inf) {
+    if (f.off) return;   // switched off in the app (settings are kept)
+    const t0 = T0(it, f, .4), tau = t - t0; if (tau < 0) return;
+    const dur = num(f.dur, 0, 0, 60), text = String(f.text == null ? '' : f.text).trim(), img = f.file ? IM[f.file] : null;
+    if (!text && !img) return; if (dur > 0 && tau > dur + .3) return;
+    const k = spr(tau, 0, .5, 14) * (dur > 0 ? 1 - ramp(tau, dur, dur + .25) : 1); if (k <= .001) return;
+    const style = BUBBLES.includes(f.style) ? f.style : 'speech', [ax, ay] = anchorOf(it, f, 'bubble', inf), seed = (f.seed | 0) + 17;
+    local(st, inf, s => {
+      ctx.scale(1 / s, 1 / s);   // canvas pixels from here on, origin = the picture's centre
+      const tip = { x: (ax - .5) * inf.w * s, y: (ay - .5) * inf.h * s };
+      let [dx, dy] = BDIR[f.pos] || BDIR.up; const dl = Math.hypot(dx, dy); dx /= dl; dy /= dl;
+      const tl = num(f.tail, 1, .3, 2.2), sz = num(f.size, 1, .4, 2); let fs = Math.round(B * .047 * num(f.fs, 1, .6, 1.8)), Wb, Hb, maxW;
+      const rectLike = !!img || style === 'box' || style === 'paper';
+      if (img) {
+        Wb = B * .56 * sz; Hb = Wb * img.height / img.width; const bx = Wb * .68, by = Hb * .56;
+        for (let g = 0; g < 14; g++) { const L = wrapTokens(text, `900 ${fs}px Vz`, bx); if (L.lines.length * fs * 1.32 <= by && Math.max(...L.lines.map(l => l.w), 0) <= bx + 1) break; fs = Math.max(22, Math.round(fs * .9)) }
+        maxW = bx
+      } else {
+        maxW = B * .46 * sz; const L = wrapTokens(text, `900 ${fs}px Vz`, maxW), tw = Math.max(...L.lines.map(l => l.w), fs * 2), th = L.lines.length * fs * 1.32;
+        if (rectLike) { Wb = tw + fs * 1.6; Hb = th + fs * 1.2 } else { Wb = (tw + fs * .5) * 1.42; Hb = (th + fs * .4) * 1.55 }
+      }
+      const rx = Wb / 2, ry = Hb / 2, r = rectLike ? Math.min(rx / Math.max(Math.abs(dx), 1e-6), ry / Math.max(Math.abs(dy), 1e-6)) : rx * ry / Math.hypot(ry * dx, rx * dy);
+      const Lt = fs * (img ? .4 : 2.3) * tl; let cx = tip.x + dx * (r + Lt), cy = tip.y + dy * (r + Lt);
+      /* keep the bubble inside the safe area of the frame: work out where it lands on the canvas, move it back, convert the shift to picture space */
+      const M = ctx.getTransform(), det = M.a * M.d - M.b * M.c, c0 = CONTENT();
+      if (Math.abs(det) > 1e-6) {
+        const X = M.a * cx + M.c * cy + M.e, Y = M.b * cx + M.d * cy + M.f, hw = rx + 24, hh = ry + 24;
+        const X2 = Math.max(c0.x0 + 30 + hw, Math.min(c0.x1 - 30 - hw, X)), Y2 = Math.max(c0.y0 + 10 + hh, Math.min(c0.y1 + 30 - hh, Y)), sx_ = X2 - X, sy_ = Y2 - Y;
+        cx += (M.d * sx_ - M.c * sy_) / det; cy += (-M.b * sx_ + M.a * sy_) / det
+      }
+      ctx.translate(tip.x, tip.y); ctx.scale(k, k); ctx.translate(-tip.x, -tip.y);   // pops out of the anchor
+      const ink = VOX ? '#2a1f14' : INK, fill = VOX ? '#fbf3df' : '#ffffff', lw = Math.max(5, fs * .13);
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      if (img) {
+        ctx.save(); ctx.translate(cx, cy); if (f.flip) ctx.scale(-1, 1); if (VOX) { ctx.shadowColor = 'rgba(40,25,10,.35)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 8 } ctx.drawImage(img, -Wb / 2, -Hb / 2, Wb, Hb); ctx.restore()
+      } else {
+        const shapes = [], tx = tip.x - cx, ty = tip.y - cy, td = Math.hypot(tx, ty) || 1, ux = tx / td, uy = ty / td;
+        const rt = rectLike ? Math.min(rx / Math.max(Math.abs(ux), 1e-6), ry / Math.max(Math.abs(uy), 1e-6)) : rx * ry / Math.hypot(ry * ux, rx * uy);   // body edge towards the tip
+        if (style === 'box') shapes.push(g => { g.beginPath(); g.roundRect(cx - rx, cy - ry, Wb, Hb, fs * .9) });
+        else if (style === 'paper') shapes.push(g => torn(cx, cy, Wb, Hb, seed, 6));
+        else if (style === 'shout') shapes.push(g => { g.beginPath(); const n = 15; for (let i = 0; i < n * 2; i++) { const a = i * Math.PI / n + .2, q = i % 2 ? .76 + .08 * hsh(seed, i, 1) : 1.04 + .06 * hsh(seed, i, 2); g.lineTo(cx + Math.cos(a) * rx * q, cy + Math.sin(a) * ry * q) } g.closePath() });
+        else if (style === 'thought') shapes.push(g => { g.beginPath(); g.ellipse(cx, cy, rx * .86, ry * .86, 0, 0, TAU); const m = 10, br = Math.min(rx, ry) * .44; for (let i = 0; i < m; i++) { const a = i * TAU / m + .3, x = cx + Math.cos(a) * rx * .76, y = cy + Math.sin(a) * ry * .76; g.moveTo(x + br, y); g.arc(x, y, br, 0, TAU) } });
+        else shapes.push(g => { g.beginPath(); g.ellipse(cx, cy, rx, ry, 0, 0, TAU) });
+        if (style === 'thought') {   // little circles leading to the anchor
+          const gap = Math.max(td - rt, 10); [[.2, .15], [.52, .1], [.82, .06]].forEach(([q, rr]) => { const x = cx + ux * (rt + gap * q), y = cy + uy * (rt + gap * q), R = Math.max(5, fs * rr * 2.2); shapes.push(g => { g.beginPath(); g.arc(x, y, R, 0, TAU) }) })
+        } else {   // curved tail from the body edge to the anchor
+          const bx = cx + ux * rt * .86, by = cy + uy * rt * .86, px = -uy, py = ux, hw = Math.min(Wb, Hb) * .13, bend = (ux >= 0 ? 1 : -1) * Lt * .22, mx = (bx + tip.x) / 2 + px * bend, my = (by + tip.y) / 2 + py * bend;
+          shapes.push(g => { g.beginPath(); g.moveTo(bx + px * hw, by + py * hw); g.quadraticCurveTo(mx + px * hw * .3, my + py * hw * .3, tip.x, tip.y); g.quadraticCurveTo(mx - px * hw * .5, my - py * hw * .5, bx - px * hw, by - py * hw); g.closePath() })
+        }
+        ctx.strokeStyle = ink; ctx.lineWidth = lw * 2; if (style === 'whisper') ctx.setLineDash([lw * 2.4, lw * 1.8]);
+        shapes.forEach(sh => { sh(ctx); ctx.stroke() }); ctx.setLineDash([]);   // outline first, then the fills cover the inner half of every outline: only the outline of the whole shape stays
+        if (VOX) { ctx.shadowColor = 'rgba(40,25,10,.35)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 8 } else { ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowOffsetX = 8; ctx.shadowOffsetY = 10 }
+        ctx.fillStyle = fill; shapes.forEach(sh => { sh(ctx); ctx.fill() }); ctx.shadowColor = 'transparent'
+      }
+      if (text) drawText(text, cx, img ? cy - Hb * .07 : cy, fs, maxW, { reveal: i => spr(tau, .1 + i * .07, .55, 15) })
+    })
+  }
+
   /* called by drawItem / pins: base(o) draws the picture the normal way (o = {k, dr}: scale / rotation added by wiggle or pulse);
      page-turn and burn replace it while they run, the rest is drawn over it */
   function item(it, t, st0, base) {
@@ -302,6 +367,7 @@ window.FXL = (() => {
         case 'crack': if (flat) crack(it, t, st, f, inf); break
       }
     })
+    fxs.forEach(f => { if (f.type === 'bubble') bubble(it, t, st, f, inf) })   // bubbles last: always on top of the other effects
   }
 
   /* ---------- pinned pictures: a library picture stuck on the scene's backdrop inside a frame ---------- */
@@ -398,16 +464,37 @@ window.FXL = (() => {
     ctx.save(); ctx.translate(x, y); ctx.rotate(rot + (o ? o.dr : 0)); if (sh > 0) { ctx.shadowColor = `rgba(25,12,0,${.5 * sh})`; ctx.shadowBlur = 6 + 22 * sh; ctx.shadowOffsetX = 5 * sh + 1; ctx.shadowOffsetY = 12 * sh + 2 }
     ctx.scale(s, s); ctx.globalAlpha = a; if (VOX) ctx.filter = 'sepia(.1) saturate(1.05) contrast(1.05)'; ctx.drawImage(im, -im.width / 2, -im.height / 2); ctx.restore()
   }
-  function pins(t, sc) {
+  function pins(t, sc, top) {
     const arr = sc.pins; if (!arr || !arr.length) return;
     arr.forEach((p, i) => {
-      if (!p || !p.src) return; const key = pinKey(sc, i, p), kk = IM[key] ? key : p.src, im = IM[kk]; if (!im) return;
+      if (!p || !p.src || !!p.top !== !!top) return; const key = pinKey(sc, i, p), kk = IM[key] ? key : p.src, im = IM[kk]; if (!im) return;
       const lay = (p.lay && p.lay[FMT]) || {}, S = B * .38 * num(p.sz, 1, .15, 5) * (lay.sz || 1), sh = num(p.shadow, .6, 0, 1);
       const px = (p.x == null ? .2 + .6 * hsh(sc.idx, i, 41) : +p.x) * W + (lay.dx || 0) * W, py = (p.y == null ? .2 + .5 * hsh(sc.idx, i, 42) : +p.y) * H + (lay.dy || 0) * H, rot0 = (p.rot == null ? (hsh(sc.idx, i, 43) - .5) * .3 : +p.rot) + (lay.rot || 0);
-      const st0 = num(p.start, 0, 0, 30), t1 = sc.t0 + st0, a = EDIT || st0 <= 0 ? 1 : ramp(t, t1, t1 + .15); if (a <= 0) return;   // present from the first frame of the scene (start = 0)
+      const st0 = num(p.start, 0, 0, 120), t1 = sc.t0 + st0, en = p.end == null || p.end === '' ? 0 : num(p.end, 0, 0, 300), t2 = en > st0 ? sc.t0 + en : 0;
+      const inT = p.in || (st0 > 0 ? 'fade' : 'none'), outT = p.out || (t2 ? 'fade' : 'none'), inD = num(p.inD, .45, .1, 3), outD = num(p.outD, .4, .1, 3);
+      let a = 1, k = 1, dx = 0, dy = 0, dr = 0;
+      const eff = (kind, u, sgn) => {   // u: 0 -> 1 progress of the entrance (sgn = 1) or the exit (sgn = -1)
+        const e = sgn > 0 ? u : 1 - u, inv = 1 - e, ease = 1 - Math.pow(1 - e, 3);
+        if (kind === 'none') { a *= e >= 1 ? 1 : (sgn > 0 ? 0 : 1); if (sgn < 0) a *= e > 0 ? 1 : 0; return }
+        if (kind === 'fade') { a *= ease; return }
+        if (kind === 'pop') { a *= Math.min(1, e * 3); k *= sgn > 0 ? (e < 1 ? ease + Math.sin(e * Math.PI) * .22 : 1) : ease; return }
+        if (kind === 'stamp') { a *= Math.min(1, e * 4); k *= 1 + inv * (sgn > 0 ? 1.6 : .5); dr += inv * (sgn > 0 ? -.35 : .25); return }
+        if (kind === 'drop') { a *= Math.min(1, e * 3); dy += -inv * H * .35 * (sgn > 0 ? 1 : -1); if (sgn < 0) dy = inv * H * .35; return }
+        if (kind === 'left') { a *= Math.min(1, e * 2); dx -= inv * W * .6; return }
+        if (kind === 'right') { a *= Math.min(1, e * 2); dx += inv * W * .6; return }
+        if (kind === 'up') { a *= Math.min(1, e * 2); dy -= inv * H * .4; return }
+        if (kind === 'spin') { a *= ease; k *= ease; dr += inv * 3.4 * (sgn > 0 ? -1 : 1); return }
+        a *= ease
+      };
+      if (!EDIT) {
+        if (st0 > 0 || inT !== 'none') { if (t < t1) return; if (inT !== 'none') eff(inT, Math.min(1, (t - t1) / inD), 1) }
+        if (t2) { if (t >= t2 + (outT === 'none' ? 0 : outD)) return; if (t >= t2 && outT !== 'none') eff(outT, Math.min(1, (t - t2) / outD), -1) }
+      }
+      if (a <= 0.003) return;
+      const px2 = px + dx, py2 = py + dy, S2 = S * k, rot2 = rot0 + dr;
       REC[2000 + i] = { x: px, y: py, size: S, src: kk, kind: 'pin' };
-      const base = o => drawPinImg(kk, px, py, S, rot0, a, sh, o);
-      if (!EDIT && p.fx && p.fx.length) item({ src: kk, t: Math.min(sc.t0, t1), fx: p.fx }, t, { x: px, y: py, size: S, rot: rot0, a, sx: 1, sy: 1 }, base); else base();
+      const base = o => drawPinImg(kk, px2, py2, S2, rot2, a, sh, o);
+      if (!EDIT && p.fx && p.fx.length) item({ src: kk, t: Math.min(sc.t0, t1), fx: p.fx }, t, { x: px2, y: py2, size: S2, rot: rot2, a, sx: 1, sy: 1 }, base); else base();
       if (EDIT && EDIT.sel === 2000 + i) selBox(px, py, im, S, rot0)
     })
   }

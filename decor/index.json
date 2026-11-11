@@ -1,0 +1,97 @@
+[
+ {
+  "id": "dashpath",
+  "name": "مسیر خط‌چین",
+  "file": "decor/dashpath.png"
+ },
+ {
+  "id": "stamp_ok",
+  "name": "مهر تایید",
+  "file": "decor/stamp_ok.png"
+ },
+ {
+  "id": "stamp_no",
+  "name": "مهر رد",
+  "file": "decor/stamp_no.png"
+ },
+ {
+  "id": "stamp_secret",
+  "name": "مهر محرمانه",
+  "file": "decor/stamp_secret.png"
+ },
+ {
+  "id": "stamp_urgent",
+  "name": "مهر فوری",
+  "file": "decor/stamp_urgent.png"
+ },
+ {
+  "id": "check",
+  "name": "تیک سبز",
+  "file": "decor/check.png"
+ },
+ {
+  "id": "cross",
+  "name": "ضربدر قرمز",
+  "file": "decor/cross.png"
+ },
+ {
+  "id": "circle",
+  "name": "دایره‌ی ماژیکی",
+  "file": "decor/circle.png"
+ },
+ {
+  "id": "underline",
+  "name": "خط زیر ماژیکی",
+  "file": "decor/underline.png"
+ },
+ {
+  "id": "arrow_curve",
+  "name": "پیکان خمیده",
+  "file": "decor/arrow_curve.png"
+ },
+ {
+  "id": "arrow_straight",
+  "name": "پیکان مستقیم",
+  "file": "decor/arrow_straight.png"
+ },
+ {
+  "id": "burst",
+  "name": "انفجار «جدید»",
+  "file": "decor/burst.png"
+ },
+ {
+  "id": "question",
+  "name": "علامت سؤال",
+  "file": "decor/question.png"
+ },
+ {
+  "id": "exclaim",
+  "name": "علامت تعجب",
+  "file": "decor/exclaim.png"
+ },
+ {
+  "id": "location",
+  "name": "نشان مکان",
+  "file": "decor/location.png"
+ },
+ {
+  "id": "bulb",
+  "name": "لامپ ایده",
+  "file": "decor/bulb.png"
+ },
+ {
+  "id": "star",
+  "name": "ستاره",
+  "file": "decor/star.png"
+ },
+ {
+  "id": "heart",
+  "name": "قلب",
+  "file": "decor/heart.png"
+ },
+ {
+  "id": "tape",
+  "name": "نوار چسب",
+  "file": "decor/tape.png"
+ }
+]

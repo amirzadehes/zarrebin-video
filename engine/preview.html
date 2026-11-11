@@ -16,11 +16,13 @@ let sc=null, si=0, raf=0, playing=false, mode='play', ptrs=new Map(), pinch0=nul
 function fit(){ const k=Math.min(innerWidth/W, innerHeight/H); cvs.style.width=(W*k)+'px'; cvs.style.height=(H*k)+'px' } addEventListener('resize',fit); fit();
 /* sound effects chosen in the app (fx of type 'sound', files in ../sfx/): played together with the voice while the scene preview runs.
    Same times as tools/make_bgfx.py: picture time (it.t) or scene start + pin.start, plus fx.start; fx.end stops it early. Level ~ the final mix (clip peak .8 x weight .8) */
-let sfxEv=[], sfxLast=0, sfxAct=new Set();
+let sfxEv=[], sfxLast=0, sfxAct=new Set(), ALL=false, SYN=0;
 function sfxBuild(){ sfxEv=[]; const add=(t0,f)=>{ if(!f||f.type!=='sound'||!f.file) return; const st=clampv(+f.start||0,0,600), en=+f.end||0; sfxEv.push({t:t0+st,file:String(f.file).split('/').pop(),dur:en>st?en-st:0,vol:clampv(f.vol==null?70:+f.vol,0,100)/100}) };
-  (sc.items||[]).forEach(it=>(it.fx||[]).forEach(f=>add(it.t,f))); (sc.pins||[]).forEach(q=>(q.fx||[]).forEach(f=>add(sc.t0+clampv(+q.start||0,0,30),f))) }
+  (ALL?D.scenes:[sc]).forEach(s=>{ (s.items||[]).forEach(it=>{ (it.fx||[]).forEach(f=>add(it.t,f)); if(ALL&&SYN>0) sfxEv.push({t:it.t,synth:1}) }); (s.pins||[]).forEach(q=>{ (q.fx||[]).forEach(f=>add(s.t0+clampv(+q.start||0,0,120),f)); if(ALL&&SYN>0&&+q.start>0) sfxEv.push({t:s.t0+(+q.start),synth:1}) }) }) }
+/* approximate entrance sound (pop + whoosh) at the owner's volume: the real sfx.wav only exists after the build */
+let AC=null; function synth(){ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); const t=AC.currentTime, g0=clampv(SYN/100,0,1.5)*.4, o=AC.createOscillator(), g=AC.createGain(); o.frequency.setValueAtTime(520,t); o.frequency.exponentialRampToValueAtTime(130,t+.12); g.gain.setValueAtTime(g0,t); g.gain.exponentialRampToValueAtTime(.0008,t+.16); o.connect(g).connect(AC.destination); o.start(t); o.stop(t+.18) }catch(e){} }
 function sfxStop(){ sfxAct.forEach(a=>{ try{ a.pause() }catch(e){} }); sfxAct.clear() }
-function sfxFire(from,to){ sfxEv.forEach(e=>{ if(e.t<from||e.t>=to) return; const a=new Audio('../sfx/'+encodeURIComponent(e.file)); a.volume=Math.min(1,e.vol*.64); sfxAct.add(a); a.onended=()=>sfxAct.delete(a); a.play().catch(()=>sfxAct.delete(a));
+function sfxFire(from,to){ sfxEv.forEach(e=>{ if(e.t<from||e.t>=to) return; if(e.synth){ synth(); return } const a=new Audio('../sfx/'+encodeURIComponent(e.file)); a.volume=Math.min(1,e.vol*.64); sfxAct.add(a); a.onended=()=>sfxAct.delete(a); a.play().catch(()=>sfxAct.delete(a));
   if(e.dur>0) setTimeout(()=>{ try{ a.pause() }catch(x){} sfxAct.delete(a) },e.dur*1000) }) }
 let sfxTm=0;   // own 25 ms timer: a slow frame (big scene, weak phone) must not delay a sound
 function sfxPoll(){ const t=au.currentTime; if(t>=sfxLast){ sfxFire(sfxLast,t+.001); sfxLast=t+.001 } else sfxLast=t }
@@ -57,9 +59,10 @@ function resetLay(){ const id=currentSel(), k=kindOf(id), i=id%1000;
 function post(){ const s=currentSel(); if(s<0) return; parent.postMessage({type:'layout',scene:si,kind:kindOf(s),idx:s%1000,sel:s,fmt:FMT,lay:{...lay()}},'*') }
 addEventListener('message',async e=>{ const m=e.data||{}; if(m.type==='stop'){ stop(); return }
   if(m.type==='adj'){ if(mode!=='edit'||currentSel()<0) return; const L=lay(); if(m.op==='bigger') L.sz=clampv((L.sz||1)*1.12,.3,3); else if(m.op==='smaller') L.sz=clampv((L.sz||1)/1.12,.3,3); else if(m.op==='rot') L.rot=((L.rot||0)+.2)%(Math.PI*2); else if(m.op==='reset') resetLay(); seek(editT()); post(); return }
+  if(m.type==='playall'){ stop(); msg.hidden=false; msg.textContent='در حال آماده‌سازی کل ویدیو…'; try{ await loadData(m.data); au.src='../episodes/'+m.ep+'/voice.mp3'; await new Promise(r=>{ au.onloadedmetadata=r; au.onerror=r; setTimeout(r,6000) }); ALL=true; SYN=m.sfxVol==null?65:+m.sfxVol; sc={t0:0,t1:D.meta.total,items:[],pins:[]}; si=0; play() }catch(err){ msg.textContent='خطا: '+err.message } return }
   if(m.type==='sel'){ if(sc&&getRec()[m.idx]){ edit(m.idx); post() } return }
-  if(m.type==='edit'){ if(m.data) await ld(m); edit(m.sel>=1000?m.sel:Math.min(m.sel||0,sc.items.length-1)); post(); return }
-  if(m.type!=='load') return; stop(); msg.hidden=false; msg.textContent='در حال آماده‌سازی…';
+  if(m.type==='edit'){ ALL=false; if(m.data) await ld(m); edit(m.sel>=1000?m.sel:Math.min(m.sel||0,sc.items.length-1)); post(); return }
+  if(m.type!=='load') return; ALL=false; stop(); msg.hidden=false; msg.textContent='در حال آماده‌سازی…';
   try{ await ld(m); au.src='../episodes/'+m.ep+'/voice.mp3'; await new Promise(r=>{ au.onloadedmetadata=r; au.onerror=r; setTimeout(r,4000) }); play() }catch(err){ msg.textContent='خطا: '+err.message } });
 async function ld(m){ si=m.scene; await loadData(m.data,[si-1,si,si+1].filter(k=>k>=0&&k<m.data.scenes.length)); sc=D.scenes[si]; fit(); if(!au.src.includes('/'+m.ep+'/')) au.src='../episodes/'+m.ep+'/voice.mp3' }
 parent.postMessage({type:'ready'},'*');

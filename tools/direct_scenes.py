@@ -182,6 +182,7 @@ def compile_scenes(ep, T, raw, lib, req):
             if sc['number'] is None: sc.pop('number')
     for w in Wd: w['kw'] = bool(norm(w['w'])) and any(len(q) > 1 and q in norm(w['w']) for q in kwall)
     meta = {'total': total, 'rtl': T.get('lang', 'fa') == 'fa', 'topLabel': req.get('label') or title_of(ep) or ep.upper().replace('-', ' '), 'lang': T.get('lang', 'fa'), 'episode': ep, 'style': req.get('style', 'comic'), 'palette': req.get('palette', ''), 'subs': req.get('subs', True), 'base': req.get('base', '')}
+    if req.get('titles'): meta['titles'] = True   # optional: key text (sc.text, *word* highlighted) on every scene
     json.dump({'meta': meta, 'words': Wd, 'scenes': scenes}, open(f'episodes/{ep}/scenes.json', 'w', encoding='utf8'), ensure_ascii=False)
     return meta, scenes
 
@@ -198,6 +199,9 @@ def main(ep):
         meta = load(f'{d}/scenes.json', {}).get('meta') or {}
         for k in ('style', 'palette', 'base', 'subs'):
             if k in req: meta[k] = req[k]
+        if 'titles' in req:   # key text of every scene (per scene the review can switch it: scene.keyOn)
+            if req['titles']: meta['titles'] = True
+            else: meta.pop('titles', None)
         if not req.get('label') and title_of(ep): meta['topLabel'] = title_of(ep)   # the Persian episode name shown top-left
         D = load(f'{d}/scenes.json', {}); D['meta'] = meta; json.dump(D, open(f'{d}/scenes.json', 'w', encoding='utf8'), ensure_ascii=False)
         print('using the reviewed scenes.json:', len(D.get('scenes', [])), 'scenes'); emit_plan(meta, req); return

@@ -27,6 +27,8 @@ let VOX = false;
 let SYM = false;
 /* scene title cards (hero/duo/trio) are OFF: the caption itself sits on the paper. ?titles=1 / meta.titles brings them back. */
 let TITLES = false;
+/* per scene: sc.keyOn true = show the key-text card for this scene, false = hide it, missing = follow TITLES (meta.titles / ?titles=1). The text is sc.text, a *word* between stars is highlighted. */
+const tOn = sc => sc.keyOn === false ? false : (TITLES || sc.keyOn === true);
 const VTHEMES = [
   { base: '#e0cfa9', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#bba67c' }, { base: '#d8c59c', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#b29c70' },
   { base: '#e6d7b4', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#c4b185' }, { base: '#d4bf95', fg: '#2a1f14', mark: '#c6ff3d', acc: '#7a2e1d', sh: '#ae986c' },
@@ -179,7 +181,7 @@ const TPL = {
     if (its[0]) { const e = ent(its[0].en, t, its[0].t, cx, cy); if (e && t < its[0].t + .9) ring(cx, cy, 80 + (t - its[0].t) * 900, clamp(1 - (t - its[0].t) / .6) * .9, '#fff'); drawItem(its[0], t, cx, cy, hs * (1 + .015 * Math.sin(t * 3)), 0); sparks(t, its[0].t + .1, cx, cy, 6, hs * .62, sc.idx + 3) }
     const n = its.length - 1; its.slice(1).forEach((it, i) => { const a = -Math.PI / 2 + (i + .5) * TAU / Math.max(n, 1) + (n === 1 ? 2.2 : 0) + t * .06, rx = V ? W * .36 : W * .3, ry = V ? H * .2 : H * .27;
       drawItem(it, t, cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, B * .34, i + 1) });
-    if (sc.text && TITLES) { const e = spr(t, sc.t0 + .35, .5, 12); if (e > 0) { const yy = V ? c.y1 - 70 : c.y1 - 30; const th2 = sc.text.replace(/\*/g, ''); const w = measure(`900 ${Math.round(B * .07)}px Vz`, th2) + 70; card(cx, yy, Math.min(w, W * .9), B * .13, '#ffe15a', -.03, 1, e); ctx.save(); ctx.translate(cx, yy + 4); ctx.scale(e, e); ctx.rotate(-.03); drawText(sc.text, 0, 0, B * .07, W * .85, { hlBg: '#ff3b4a' }); ctx.restore() } }
+    if (sc.text && tOn(sc)) { const e = spr(t, sc.t0 + .35, .5, 12); if (e > 0) { const yy = V ? c.y1 - 70 : c.y1 - 30; const th2 = sc.text.replace(/\*/g, ''); const w = measure(`900 ${Math.round(B * .07)}px Vz`, th2) + 70; card(cx, yy, Math.min(w, W * .9), B * .13, '#ffe15a', -.03, 1, e); ctx.save(); ctx.translate(cx, yy + 4); ctx.scale(e, e); ctx.rotate(-.03); drawText(sc.text, 0, 0, B * .07, W * .85, { hlBg: '#ff3b4a' }); ctx.restore() } }
   },
   duo(t, sc) {
     const c = CONTENT(), th = THEMES[sc.theme], its = sc.items, sz = B * (V ? .62 : .66);
@@ -188,13 +190,13 @@ const TPL = {
     const t2 = its[1] ? its[1].t : sc.t0 + 1, lk = spr(t, t2 + .05, .45, 13);
     if (!SYM) impact(t, t2, mid[0], mid[1], B * .22, sc.idx + 5);   // symbol-free face-off: a short impact burst where the two meet
     if (lk > 0 && SYM) { const kind = sc.link || 'vs'; if (kind === 'plus') plusSign(mid[0], mid[1], 70, '#ffe15a', 1, lk); else if (kind === 'arrow') arrow(mid[0], mid[1], 230, V ? Math.PI / 2 : 0, '#ffe15a', 1, lk); else vsBadge(mid[0], mid[1], 100, 1, lk) }
-    if (sc.text && TITLES) { const e = spr(t, sc.t0 + .4, .5, 12); if (e > 0) { card(W / 2, V ? c.y0 + 50 : c.y0 - 10, W * (V ? .8 : .5), B * .12, '#fff', .02, 1, e); ctx.save(); ctx.translate(W / 2, (V ? c.y0 + 50 : c.y0 - 10) + 4); ctx.scale(e, e); drawText(sc.text, 0, 0, B * .06, W * (V ? .76 : .46), {}); ctx.restore() } }
+    if (sc.text && tOn(sc)) { const e = spr(t, sc.t0 + .4, .5, 12); if (e > 0) { card(W / 2, V ? c.y0 + 50 : c.y0 - 10, W * (V ? .8 : .5), B * .12, '#fff', .02, 1, e); ctx.save(); ctx.translate(W / 2, (V ? c.y0 + 50 : c.y0 - 10) + 4); ctx.scale(e, e); drawText(sc.text, 0, 0, B * .06, W * (V ? .76 : .46), {}); ctx.restore() } }
   },
   trio(t, sc) {
     const c = CONTENT(), its = sc.items, n = Math.max(its.length, 1), sz = B * (n > 3 ? (V ? .46 : .36) : V ? .44 : .46);
     its.forEach((it, i) => { let x, y; if (V && n > 3) { const rows = Math.ceil(n / 2); y = c.y0 + 150 + (c.y1 - c.y0 - 190) * (Math.floor(i / 2) + .5) / rows; x = (n % 2 && i === n - 1) ? W * .5 : W * (i % 2 ? .72 : .28) } else if (V) { const rows = n; y = c.y0 + 110 + (c.y1 - c.y0 - 130) * (i + .5) / rows; x = W * (i % 2 ? .66 : .34) } else { x = W * (i + .5) / n; y = H * .46 + (i % 2 ? 40 : -30) }
       drawItem(it, t, x, y, sz, i) });
-    if (sc.text && TITLES) { const e = spr(t, sc.t0 + .3, .5, 12); if (e > 0) { const y = V ? c.y0 + 50 : c.y0 - 10; card(W / 2, y, W * (V ? .82 : .5), B * .12, '#ffe15a', -.02, 1, e); ctx.save(); ctx.translate(W / 2, y + 4); ctx.scale(e, e); drawText(sc.text, 0, 0, B * .06, W * (V ? .78 : .46), {}); ctx.restore() } }
+    if (sc.text && tOn(sc)) { const e = spr(t, sc.t0 + .3, .5, 12); if (e > 0) { const y = V ? c.y0 + 50 : c.y0 - 10; card(W / 2, y, W * (V ? .82 : .5), B * .12, '#ffe15a', -.02, 1, e); ctx.save(); ctx.translate(W / 2, y + 4); ctx.scale(e, e); drawText(sc.text, 0, 0, B * .06, W * (V ? .78 : .46), {}); ctx.restore() } }
   },
   statement(t, sc) {
     const c = CONTENT(), cx = W / 2, cy = (c.y0 + c.y1) / 2, th = THEMES[sc.theme], size = B * (V ? .115 : .105), maxW = W * (V ? .8 : .52);
@@ -202,13 +204,13 @@ const TPL = {
     const gap = Math.min(.2, Math.max(sc.t1 - sc.t0 - 1.2, .6) / Math.max(words, 1)); const reveal = i => spr(t, tw[i] !== undefined ? tw[i] : sc.t0 + .3 + i * gap, .5, 14);
     const e0 = spr(t, sc.t0 + .1, .5, 12); const L = wrapTokens(sc.text || '', `900 ${size}px Vz`, maxW), hh = L.lines.length * size * 1.32 + 90, ww = Math.max(...L.lines.map(l => l.w), 200) + 110;
     its_corner(t, sc, c);
-    if (TITLES) { card(cx, cy, ww, hh, sc.card || '#fff', -.025, 1, e0); ctx.save(); ctx.translate(cx, cy); ctx.rotate(-.025); ctx.scale(e0, e0); drawText(sc.text || '', 0, 0, size, maxW, { reveal }); ctx.restore() }
+    if (tOn(sc)) { card(cx, cy, ww, hh, sc.card || '#fff', -.025, 1, e0); ctx.save(); ctx.translate(cx, cy); ctx.rotate(-.025); ctx.scale(e0, e0); drawText(sc.text || '', 0, 0, size, maxW, { reveal }); ctx.restore() }
     sparks(t, sc.t0 + .2, cx, cy, 8, ww * .6, sc.idx + 11)
   },
   stat(t, sc) {
     const c = CONTENT(), cx = W / 2, cy = (c.y0 + c.y1) / 2, e0 = spr(t, sc.t0 + .15, .45, 12), num = String(sc.number || '');
     const sz = B * (V ? .34 : .3); const w = measure(`900 ${sz}px Vz`, num) + 120; its_corner(t, sc, c);
-    if (TITLES) {   // big number card + label are off: the caption is the only text on screen
+    if (tOn(sc)) {   // big number card + label are off: the caption is the only text on screen
     card(cx, cy - (V ? 40 : 10), w, sz * 1.45, '#ffe15a', -.04, 1, e0); ctx.save(); ctx.translate(cx, cy - (V ? 36 : 6)); ctx.rotate(-.04); ctx.scale(e0, e0); ctx.font = `900 ${sz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = D.meta.rtl ? 'rtl' : 'ltr'; ctx.fillStyle = INK; ctx.fillText(num, 0, 10); ctx.restore();
     if (sc.text) { const e1 = spr(t, sc.t0 + .55, .5, 12); const ty = cy + sz * .95; drawText(sc.text, cx, ty, B * .075, W * (V ? .82 : .6), { color: '#fff', stroke: true, reveal: () => e1 }) }
     }
@@ -229,8 +231,8 @@ function drawScene(t, sc) {
   ctx.save(); ctx.translate(W / 2 + px + Math.sin(t * 90) * shake, H / 2 + py + Math.cos(t * 77) * shake); ctx.scale(z, z); ctx.translate(-W / 2, -H / 2 + (V ? 0 : 0));
   if (VOX) vbg(t, VT(sc), sc); else bg(t, th, W * (.3 + .4 * ((sc.idx * .37) % 1)), H * .55, .06 + .03 * (sc.idx % 3));
   if (window.FXL && sc.bg && sc.bg.src) FXL.bg(t, sc);   // optional background picture layer (engine/fx.js)
-  if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc);   // optional framed pictures pinned to the backdrop
-  decor(t, sc, th); (TPL[sc.tpl] || TPL.hero)(t, sc); ctx.restore()
+  if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, false);   // optional framed pictures pinned to the backdrop
+  decor(t, sc, th); (TPL[sc.tpl] || TPL.hero)(t, sc); if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, true); ctx.restore()   // pins marked 'top' (stamps, arrows) lie over the pictures
 }
 function wipePath(style, p, k) {
   const e = eio(p); ctx.beginPath();
@@ -305,7 +307,7 @@ window.frame = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 
 window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
 window.loadData = async (DD, only) => {   // shared by the renderer and the in-app preview (only = scene indices whose images are needed)
   D = DD; VOX = (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
-  D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => srcs.add(i.src)); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
+  D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => { srcs.add(i.src); (i.fx || []).forEach(f => { if (f && f.type === 'bubble' && f.file) srcs.add(f.file) }) }); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
   await Promise.all([...[...srcs].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
   if (window.FXL) await FXL.prepare([...srcs]);
   mkGrain(); mkPaper(); CH.length = 0; buildCaptions(); seek(0); return true

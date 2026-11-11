@@ -195,6 +195,9 @@ def main(ep):
         if tpl == 'duo' and len(sc.get('items', [])) > 1: put(pick('land'), sc['items'][1]['t'] + .06, jit(.5), 1)   # the two objects meet (matches the impact burst)
     buf = np.tanh(buf * .9) * .85
     b, a = butter(2, 11000 / (SR / 2), btype='low'); buf = lfilter(b, a, buf)
+    try: vol = float(req.get('sfx_vol', 65)) / 100.0   # owner's volume for entrance/exit sounds (percent, default 65 = a bit quieter than before)
+    except Exception: vol = .65
+    buf = buf * max(0.0, min(vol, 1.5))
     pcm = (np.clip(buf, -1, 1) * 32767).astype('<i2')
     with wave.open(f'episodes/{ep}/sfx.wav', 'wb') as w: w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes(pcm.tobytes())
     print('sfx events', n_ev, 'dropped (too dense)', n_skip, 'from library', n_lib, 'peak %.2f' % np.abs(buf).max(), 'seconds', round(len(buf) / SR, 1))

@@ -242,8 +242,9 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
   <p class="hint" id="pvHint" hidden style="margin:0;text-align:center">تصویر را از ردیف بالا انتخاب کن (یا روی خودش لمس کن) و بکش؛ با دو انگشت هم می‌شود اندازه را عوض کرد.</p>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button class="pri" id="pvOk">✓ این صحنه خوب است</button><button id="pvClose">بستن</button></div></div>
 <script>
-const DEFAULT_TPL = "{subject}, hand-drawn comic ink illustration, bold black outline, vivid saturated colors, single object centered, isolated on a flat solid magenta background (#DD0F7A), no shadow, no text, vertical 9:16, closed outline, no glow or rays outside the outline";
-const VOX_TPL = "A modern, present-day {subject} (the object itself must look contemporary and current, NOT antique or old-fashioned), drawn and rendered in the style of a vintage engraving illustration hand-colored with rich vivid watercolor: strong saturated yet slightly aged palette (deep ochre, teal, brick red, olive green, golden yellow, warm cream), bold colors with good contrast, fine dark ink linework with crosshatching, rich detail. Only the drawing technique is vintage, the subject is modern. Single subject centered, isolated on a flat solid magenta background (#DD0F7A), no shadow, no text, no frame, vertical 9:16, closed clean outline, no glow or rays outside the outline";
+const VAR_CLAUSE = "{subject}, wide padding around subject, no cropping, complete object visible, drawn and rendered in the style of an illustration with rich vivid watercolor bold colors with good contrast, fine dark ink linework with crosshatching, rich detail. Only the drawing technique is vintage, the subject is in current time. Single subject centered full shape, isolated on a flat solid magenta background (#DD0F7A), no shadow, no text, no frame, vertical 9:16, closed clean outline, no glow or rays outside the outline. If the subject involves a person, freely vary the viewing direction, gender, age and ethnicity from image to image; only the visual pattern above stays fixed.";
+const DEFAULT_TPL = VAR_CLAUSE;
+const VOX_TPL = VAR_CLAUSE;
 const $ = s => document.querySelector(s);
 const ls = { get:(k,d)=>{try{return localStorage.getItem(k)??d}catch(e){return d}}, set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}} };
 const fa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
@@ -267,6 +268,13 @@ async function loadTitles(eps){ await Promise.all((eps||[]).map(async e=>{ if(S.
 async function saveTitle(ep, t){ t=String(t||'').trim(); if(!t||S.titles[ep]===t) return; let sha; try{ sha=(await api('/contents/episodes/'+ep+'/title.txt')).sha }catch(_){}
   await api('/contents/episodes/'+ep+'/title.txt',{method:'PUT',body:JSON.stringify({message:'episode title: '+ep,content:enc(t),branch:'main',sha})}); S.titles[ep]=t }
 const slug = s => s.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+
+/* approximate pop + whoosh in the browser, at the chosen volume (the real sfx.wav is synthesised at build time) */
+let _ac=null;
+function sfxBeep(vol, when){ try{ _ac=_ac||new (window.AudioContext||window.webkitAudioContext)(); const ac=_ac, t=ac.currentTime+(when||0), g0=Math.max(0,Math.min(1.5,vol/100))*.5;
+  const o=ac.createOscillator(), g=ac.createGain(); o.type='sine'; o.frequency.setValueAtTime(520,t); o.frequency.exponentialRampToValueAtTime(130,t+.12); g.gain.setValueAtTime(g0,t); g.gain.exponentialRampToValueAtTime(.0008,t+.16); o.connect(g).connect(ac.destination); o.start(t); o.stop(t+.18);
+  const n=ac.createBuffer(1,ac.sampleRate*.35,ac.sampleRate), d=n.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);
+  const s=ac.createBufferSource(), f=ac.createBiquadFilter(), g2=ac.createGain(); s.buffer=n; f.type='bandpass'; f.frequency.setValueAtTime(600,t+.2); f.frequency.exponentialRampToValueAtTime(3200,t+.5); g2.gain.value=g0*.5; s.connect(f).connect(g2).connect(ac.destination); s.start(t+.2) }catch(e){} }
 function prompt(subject){ return (S.style==='vox'?VOX_TPL:DEFAULT_TPL).replace('{subject}', subject); }
 async function copy(text){ try{ await navigator.clipboard.writeText(text); return true }catch(e){ const t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); let ok=false; try{ ok=document.execCommand('copy') }catch(e){} t.remove(); return ok } }
 
@@ -373,6 +381,10 @@ async function renderEp(){
       <p class="hint">اگر صدای خودت را بدهی، زیرنویس از چیزی که واقعاً گفته‌ای ساخته می‌شود. متن بالا یا متن کادر پایین فقط املای کلمه‌ها را درست می‌کند.</p>
       <label><input type="checkbox" id="bSubs" checked> زیرنویس روی ویدیو (اگر خاموش کنی، زیرنویس ساخته نمی‌شود)</label>
       <label><input type="checkbox" id="bSfx" checked> افکت‌های صوتی ریز (پاپ، ویژ، دینگ)</label>
+      <label>بلندی صدای افکت ورود و خروج عکس‌ها: <b id="bSfxVN">65</b>٪ <button type="button" class="btn" id="bSfxTest" style="padding:2px 10px">شنیدن نمونه</button></label>
+      <input type="range" id="bSfxVol" min="0" max="120" step="5" value="65" style="width:100%">
+      <p class="hint">نمونه فقط تقریبی است (پاپ و ویژ)؛ صدای واقعی را در پیش‌نمایش کامل پایین بازبینی هم می‌شود شنید. ۱۰۰٪ همان بلندی قبلی است.</p>
+      <label><input type="checkbox" id="bTitles"> متن کلیدی روی هر صحنه (بخش کلیدی سکانس، کلمه‌ی مهم بین ستاره؛ در بازبینی برای هر صحنه جدا هم می‌شود روشن یا خاموشش کرد)</label>
       <label>سبک تصویر</label>
       <select id="bStyle" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="comic" selected>کمیک (رنگارنگ و پرانرژی)</option><option value="vox">ووکس (ساده، مدرن، شبیه ویدیوهای توضیحی Vox)</option></select>
       <label>پالت رنگی</label>
@@ -449,7 +461,7 @@ async function buildVideo(mode){
   const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
   try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده'; return; }
   try{ const t=($('#epFa')?$('#epFa').value:'').trim(); if(t){ await saveTitle(ep, t); renderEpLabels() } }catch(_){}
-  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.subs=$('#bSubs').checked; body.music=$('#bMusic').value; body.style=S.style; body.review=(mode==='review'); if(/-short$/.test(ep)) body.short=true; body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
+  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.sfx_vol=+$('#bSfxVol').value; body.subs=$('#bSubs').checked; if($('#bTitles')&&$('#bTitles').checked) body.titles=true; body.music=$('#bMusic').value; body.style=S.style; body.review=(mode==='review'); if(/-short$/.test(ep)) body.short=true; body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
   st.className='st'; st.textContent='در حال شروع…';
   try{
     if(ownF){ st.className='st'; st.textContent='در حال آپلود صدا…'; const ext=(ownF.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -489,14 +501,14 @@ async function loadReview(ep, quiet){ const body=$('#rvBody'); if(!body) return;
   try{ const j=await api('/contents/episodes/'+ep+'/scenes.json'); let txt=j.content&&j.content.replace(/\n/g,'')?new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))):null;
     if(!txt){ const r=await fetch(j.download_url); txt=await r.text() }
     RV={ep, sha:j.sha, data:JSON.parse(txt)}; renderReview() }catch(e){ if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
-function thumbUrl(src){ return raw(src.replace(/^library\//,'')) }
+function thumbUrl(src){ return /^decor\//.test(src)?'https://raw.githubusercontent.com/'+S.repo+'/main/'+src:raw(src.replace(/^library\//,'')) }
 function renderReview(){ const body=$('#rvBody'); if(!RV||!body) return; const sc=RV.data.scenes; const empty=sc.filter(s=>!(s.items||[]).length&&s.tpl!=='stat').length;
   body.innerHTML=`<p class="hint"><b>${epTitle(RV.ep)}</b>: ${fa(sc.length)} صحنه${empty?` · <span style="color:#e0733f">${fa(empty)} صحنه بدون تصویر (علامت ⚠️)</span>`:''}. هر صحنه را باز کن؛ با ✕ تصویر را حذف کن یا از کتابخانه اضافه کن. تغییرها خودکار ذخیره می‌شوند. <b id="rvOk"></b></p>`+
   sc.map((s,i)=>{ const n=(s.items||[]).length; const warn=!n&&s.tpl!=='stat';
     return `<details class="sc ${warn?'warn':''}" data-i="${i}"><summary>${sceneHead(s,i)}</summary><div class="body"></div></details>`}).join('')+
-  `<div class="row" style="margin-top:12px"><button class="pri" id="rvGo">۲. ادامه: ساخت ویدیو با همین صحنه‌ها</button></div><div class="st" id="rvSt"></div>`;
+  `<div class="row" style="margin-top:12px"><button id="rvSubAll">✏️ ویرایش زیرنویس کل قسمت (املا)</button></div><div class="row" style="margin-top:12px"><button id="rvAll">▶ دیدن کل ویدیو (پیش‌نمایش با صدا و افکت‌ها، قبل از ساخت نهایی)</button></div><div class="row" style="margin-top:12px"><button class="pri" id="rvGo">۲. ادامه: ساخت ویدیو با همین صحنه‌ها</button></div><div class="st" id="rvSt"></div>`;
   updOk(); body.querySelectorAll('details.sc').forEach(d=>d.addEventListener('toggle',()=>{ if(d.open) fillScene(d) }));
-  $('#rvGo').onclick=rvContinue }
+  $('#rvGo').onclick=rvContinue; $('#rvSubAll').onclick=subAllDialog; $('#rvAll').onclick=()=>openPreview(0,'all') }
 const nz=t=>String(t||'').toLowerCase().replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/[\u200c\u064b-\u065f]/g,'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\s+/g,' ').trim();
 
 const okOf=(s,f)=>!!(s.ok&&typeof s.ok==='object'?s.ok[f]:(f==='v'&&s.ok===true));
@@ -518,7 +530,7 @@ function pvSelBuild(cur){ const s=RV&&RV.data.scenes[pvI], box=$('#pvSel'); if(!
   box.querySelectorAll('button').forEach(b=>b.onclick=()=>{ $('#pvFrame').contentWindow.postMessage({type:'sel',idx:+b.dataset.k},'*'); pvSelBuild(+b.dataset.k) }) }
 function pvTools(){ $('#pvTools').hidden=$('#pvHint').hidden=pvMode!=='edit'; pvSelBuild(pvSelCur); $('#pvEdit').classList.toggle('on',pvMode==='edit'); $('#pvPlay').classList.toggle('on',pvMode==='play') }
 function pvOkLabel(){ const s=RV&&RV.data.scenes[pvI]; $('#pvOk').textContent=s&&okOf(s,pvFmt)?'✓ تأیید شده':'✓ این صحنه خوب است ('+(pvFmt==='v'?'عمودی':'افقی')+')' }
-function pvSend(){ if(!RV||pvI<0) return; const f=$('#pvFrame').contentWindow; if(pvMode==='edit') f.postMessage({type:'edit',data:RV.data,ep:RV.ep,scene:pvI,sel:pvSelCur},'*'); else f.postMessage({type:'load',data:RV.data,ep:RV.ep,scene:pvI},'*') }
+function pvSend(){ if(!RV||pvI<0) return; const f=$('#pvFrame').contentWindow; if(pvMode==='all') f.postMessage({type:'playall',data:RV.data,ep:RV.ep,scene:0,sfxVol:+(($('#bSfxVol')||{}).value||65)},'*'); else if(pvMode==='edit') f.postMessage({type:'edit',data:RV.data,ep:RV.ep,scene:pvI,sel:pvSelCur},'*'); else f.postMessage({type:'load',data:RV.data,ep:RV.ep,scene:pvI},'*') }
 function pvGo(){ if(pvReady) pvSend(); else pvQ=true }
 function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&fmt='+f; pvLayout(); pvOkLabel() }
 addEventListener('resize',()=>{ if(!$('#pvModal').hidden) pvLayout() });
@@ -533,23 +545,99 @@ function openPreview(i,mode,sel){ if(!RV) return; pvI=i; pvMode=mode||'play'; pv
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('#pvModal').hidden) $('#pvClose').click() });   // Esc closes the preview (desktop)
 $('#pvClose').onclick=()=>{ $('#pvModal').hidden=true; document.body.classList.remove('pvdock'); try{ $('#pvFrame').contentWindow.postMessage({type:'stop'},'*') }catch(e){} };
 $('#pvV').onclick=()=>pvSetFmt('v'); $('#pvH').onclick=()=>pvSetFmt('h');
-$('#pvPlay').onclick=()=>{ pvMode='play'; pvTools(); pvGo() }; $('#pvEdit').onclick=()=>{ pvMode='edit'; pvTools(); pvGo() };
+$('#pvPlay').onclick=()=>{ if(pvMode==='all'){ pvGo(); return } pvMode='play'; pvTools(); pvGo() }; $('#pvEdit').onclick=()=>{ pvMode='edit'; pvTools(); pvGo() };
 document.querySelectorAll('#pvTools button').forEach(b=>b.onclick=()=>$('#pvFrame').contentWindow.postMessage({type:'adj',op:b.dataset.op},'*'));
 /* after approving a scene, the next one opens in the preview and its details open in the list on the other side of the dock */
 function pvShowDetails(i){ const bx=$('#rvBox'); if(bx) bx.open=true; document.querySelectorAll('details.sc[open]').forEach(d=>{ if(+d.dataset.i!==i) d.open=false });
   const d=document.querySelector(`details.sc[data-i="${i}"]`); if(!d) return; d.open=true; if(!d.querySelector('.body').children.length) fillScene(d); d.scrollIntoView({block:'start',behavior:'smooth'}) }
 $('#pvOk').onclick=()=>{ if(pvI<0) return; setOk(RV.data.scenes[pvI],pvFmt,true); syncOk(pvI); rvSave(); $('#pvOk').textContent='✓ تأیید شد'; if(pvI+1<RV.data.scenes.length){ pvI++; pvShowDetails(pvI); setTimeout(()=>{ pvTools(); pvOkLabel(); pvGo() },400) } else $('#pvClose').click() };
-const sceneHead=(s,i)=>{ const n=(s.items||[]).length, warn=!n&&s.tpl!=='stat'; return `${okOf(s,'v')&&okOf(s,'h')?'✅ ':(okOf(s,'v')||okOf(s,'h'))?'🔸 ':''}${warn?'⚠️ ':''}${s.bg&&s.bg.src?'🖼 ':''}<b>${fa(i+1)}</b> · ${(s.text||s.number||'').replace(/\*/g,'')||'—'} <span style="color:var(--mut)">(${fa(n)} تصویر)</span>` };
 const sceneWords=s=>(RV.data.words||[]).filter(w=>w.t0>=s.t0-.02&&w.t0<s.t1-.02);
+/* ---------- subtitle (spelling) editing: the words live in scenes.json -> words[] {w,t0,t1,s,kw}. *word* = highlighted word ---------- */
+const subText=s=>sceneWords(s).map(w=>w.kw?'*'+w.w+'*':w.w).join(' ');
+const subTokens=t=>String(t||'').split(/\s+/).filter(Boolean).map(x=>({w:x.replace(/\*/g,''),kw:x.includes('*')})).filter(x=>x.w);
+function applySubText(s,txt){
+  const all=RV.data.words||[], idx=[]; all.forEach((w,j)=>{ if(w.t0>=s.t0-.02&&w.t0<s.t1-.02) idx.push(j) });
+  const old=idx.map(j=>all[j]), nw=subTokens(txt); if(!old.length||!nw.length) return false;
+  const a=old.map(o=>nz(o.w)), b=nw.map(x=>nz(x.w)), n=a.length, m=b.length, L=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+  for(let i=n-1;i>=0;i--) for(let j=m-1;j>=0;j--) L[i][j]=a[i]===b[j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+  const out=[]; let dels=[], ins=[];
+  const flush=nextOld=>{ if(!ins.length){ dels=[]; return }
+    const prev=out[out.length-1]; let t0,t1;
+    if(dels.length){ t0=dels[0].t0; t1=dels[dels.length-1].t1 }   // replaced words: the new ones share the time of the old ones
+    else { t0=prev?prev.t1:(nextOld?nextOld.t0-.3*ins.length:s.t0); t1=nextOld?nextOld.t0:t0+.3*ins.length;
+      if(t1-t0<.12*ins.length){ if(prev){ const mid=prev.t0+(prev.t1-prev.t0)*.6; prev.t1=+mid.toFixed(3); t0=mid } t1=Math.max(t1,t0+.12*ins.length) } }
+    const tot=ins.reduce((q,x)=>q+x.w.length+1,0), sb=dels.length?dels[0].s:(prev?prev.s:(nextOld?nextOld.s:0)); let c=t0;
+    ins.forEach(x=>{ const d=(t1-t0)*(x.w.length+1)/tot; out.push({w:x.w,t0:+c.toFixed(3),t1:+Math.max(c+d-.02,c+.05).toFixed(3),s:sb,kw:x.kw}); c+=d }); dels=[]; ins=[] };
+  let i=0,j=0;
+  while(i<n||j<m){
+    if(i<n&&j<m&&a[i]===b[j]){ flush(old[i]); out.push({...old[i],w:nw[j].w,kw:nw[j].kw}); i++; j++ }
+    else if(i<n&&(j>=m||L[i+1][j]>=L[i][j+1])){ dels.push(old[i]); i++ }
+    else { ins.push(nw[j]); j++ } }
+  flush(null); all.splice(idx[0],idx.length,...out); return true }
+/* the subtitle editor of the whole episode: one box per scene (opened by the button above the scene list) */
+function subAllDialog(){
+  const sc=RV.data.scenes, body=$('#dlgBody');
+  body.innerHTML='<div class="name">✏️ ویرایش زیرنویس کل قسمت</div><p class="hint">املای هر زیرنویس را درست کن. زمان‌بندی کلمه‌ها حفظ می‌شود؛ اگر کلمه‌ای را دو تکه یا دو کلمه را یکی کنی، زمان همان جا بین کلمه‌های تازه پخش می‌شود. کلمه‌ی هایلایت‌شده بین ستاره است: *کلمه*. تغییرها خودکار ذخیره می‌شوند و در ساخت بعدی ویدیو می‌آیند («۲. ادامه: ساخت ویدیو با همین صحنه‌ها»).</p><div style="max-height:62vh;overflow:auto;padding-inline-end:4px">'+
+    sc.map((s,i)=>`<label>صحنه ${fa(i+1)} · ${mmss(s.t0)}</label><textarea class="saTx" data-i="${i}" rows="2" style="width:100%;direction:rtl;min-height:64px"></textarea>`).join('')+'</div>';
+  body.querySelectorAll('.saTx').forEach(t=>{ const s=sc[+t.dataset.i]; t.value=subText(s); t.onchange=()=>{ if(applySubText(s,t.value)){ t.value=subText(s); rvSave() } } });
+  dlg.addEventListener('close',()=>document.querySelectorAll('details.sc[open]').forEach(d=>fillScene(d)),{once:true}); dlg.showModal() }
+
+/* ---------- speech bubble on a picture (item.fx entry of type 'bubble'; drawn by engine/fx.js, follows the picture like the steam effect) ---------- */
+const BSTY=[['speech','گفتگو','<ellipse cx="32" cy="18" rx="26" ry="14"/><path d="M24 29 L18 43 L36 31Z"/>'],['box','مستطیل','<rect x="6" y="5" width="52" height="26" rx="9"/><path d="M24 31 L18 43 L36 31Z"/>'],['thought','فکر','<ellipse cx="32" cy="17" rx="24" ry="12"/><circle cx="22" cy="35" r="3.6"/><circle cx="17" cy="42" r="2.4"/>'],['shout','فریاد','<path d="M32 3 L38 11 L48 6 L48 15 L60 17 L51 24 L58 33 L46 32 L42 42 L34 34 L26 43 L22 33 L9 36 L14 26 L3 20 L15 15 L13 6 L24 11Z"/>'],['whisper','نجوا','<ellipse cx="32" cy="18" rx="26" ry="14" stroke-dasharray="5 4"/><path d="M24 29 L18 43 L36 31Z" stroke-dasharray="5 4"/>'],['paper','کاغذ','<path d="M5 6 L13 4 L24 6 L36 4 L47 6 L59 4 L58 18 L60 30 L48 32 L36 30 L24 32 L12 30 L4 32 L6 18Z"/><path d="M24 31 L18 43 L36 31Z"/>']];
+const BPOS=[['up','بالا'],['upr','بالا راست'],['upl','بالا چپ'],['right','راست'],['left','چپ'],['down','پایین']];
+const bbOf=it=>((it&&it.fx)||[]).find(f=>f&&f.type==='bubble'), bbOn=it=>{ const f=bbOf(it); return !!(f&&!f.off) };
+const bbBtnTxt=it=>'💬 حباب'+(bbOn(it)?' ✓':'');
+const bbUrl=n=>'https://raw.githubusercontent.com/'+S.repo+'/main/bubbles/'+encodeURIComponent(n);
+async function loadBubbles(){ if(S.bub) return S.bub; try{ const l=await api('/contents/bubbles'); S.bub=(l||[]).filter(x=>x.type==='file'&&/\.(png|webp)$/i.test(x.name)).map(x=>x.name) }catch(e){ S.bub=[] } return S.bub }
+function bubbleUI(host,obj,done){
+  const f=bbOf(obj)||null;
+  if(!S.bub) loadBubbles().then(()=>{ if(host.isConnected) bubbleUI(host,obj,done) });
+  const own=S.bub||[], on=!!(f&&!f.off), cur=f?(f.file||''):'';
+  const sty=BSTY.map(([k,l,svg])=>`<button class="bsty" data-s="${k}" style="min-height:64px;padding:4px;display:grid;place-items:center;gap:2px;font-size:12px;${on&&!cur&&(f.style||'speech')===k?'outline:2px solid var(--acc)':''}"><svg viewBox="0 0 64 46" width="64" height="46" fill="#fff" stroke="#222" stroke-width="3" stroke-linejoin="round" style="background:#e6d9b8;border-radius:6px">${svg}</svg>${l}</button>`).join('');
+  const mine=own.map(n=>`<button class="bown" data-n="${n}" style="min-height:64px;padding:4px;${on&&cur==='bubbles/'+n?'outline:2px solid var(--acc)':''}"><img src="${bbUrl(n)}" style="max-width:100%;max-height:54px;object-fit:contain;background:#e6d9b8;border-radius:6px"></button>`).join('');
+  host.innerHTML=`<label class="chk"><input type="checkbox" class="bbOn" ${on?'checked':''}> 💬 حباب گفتگو روی این تصویر روشن باشد</label>`+(on?`<div class="bbBody">
+    <label>متن حباب (کلمه‌ی مهم را بین دو ستاره بگذار، مثل: این *مهم* است)</label><textarea class="bbTx" rows="2" style="width:100%;direction:rtl"></textarea>
+    <label>مدل حباب</label><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">${sty}</div>
+    <label>حباب خودت (آپلودشده)</label><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">${mine||'<span class="hint" style="grid-column:1/-1;margin:0">هنوز حبابی آپلود نکرده‌ای.</span>'}</div>
+    <label class="btn" style="display:grid;place-items:center;margin:8px 0 0;cursor:pointer">+ آپلود حباب خودم (PNG یا WebP با زمینه‌ی شفاف)<input type="file" accept="image/png,image/webp" hidden class="bbFile"></label>
+    <p class="hint">برای حباب خودت: نوکش پایین وسط عکس باشد؛ متن وسط آن نوشته می‌شود. اگر نوکش به سمت دیگر است «آینه» را بزن.</p>
+    <label>جای حباب نسبت به تصویر</label><select class="sel" data-k="pos">${optsHtml(BPOS,f.pos||'up')}</select>
+    ${slRow('start','شروع (ثانیه بعد از ظاهر شدن تصویر)',0,10,.1,f.start==null?.4:f.start,{u:' ث'})}
+    ${slRow('dur','مدت (۰ = تا آخر)',0,10,.5,f.dur==null?0:f.dur,{u:' ث'})}
+    ${slRow('size','اندازه‌ی حباب',.5,1.8,.1,f.size==null?1:f.size)}
+    ${slRow('fs','اندازه‌ی نوشته',.6,1.8,.1,f.fs==null?1:f.fs)}
+    ${slRow('tail','درازی دُم',.3,2.2,.1,f.tail==null?1:f.tail)}
+    ${cur?`<label class="chk"><input type="checkbox" class="bbFlip" ${f.flip?'checked':''}> آینه (برعکس کردن حباب خودم)</label>`:''}
+    <label class="chk"><input type="checkbox" class="bbAuto" ${f.anchor?'':'checked'}> جای نوک حباب خودکار (بالای تصویر)</label>
+    ${f.anchor?slRow('ax','جای افقی نوک',0,100,1,Math.round(f.anchor[0]*100),{u:'٪'})+slRow('ay','جای عمودی نوک',0,100,1,Math.round(f.anchor[1]*100),{u:'٪'}):''}</div>`:'');
+  const redraw=()=>bubbleUI(host,obj,done);
+  host.querySelector('.bbOn').onchange=e=>{ if(e.target.checked){ if(f){ delete f.off } else { obj.fx=obj.fx||[]; obj.fx.push({type:'bubble',start:.4,text:'',style:'speech',pos:'up',size:1,fs:1,tail:1}) } } else if(f) f.off=true; redraw(); done() };
+  if(!on) return;
+  const tx=host.querySelector('.bbTx'); tx.value=f.text||''; tx.oninput=()=>{ f.text=tx.value; done() };
+  host.querySelectorAll('.bsty').forEach(b=>b.onclick=()=>{ f.style=b.dataset.s; delete f.file; delete f.flip; redraw(); done() });
+  host.querySelectorAll('.bown').forEach(b=>b.onclick=()=>{ f.file='bubbles/'+b.dataset.n; redraw(); done() });
+  host.querySelector('.bbFile').onchange=async e=>{ const fl=e.target.files[0]; e.target.value=''; if(!fl) return; if(!S.token) return toast('اول توکن را در تنظیمات وارد کن');
+    const name='bubble-'+Date.now().toString(36)+'.'+(/webp/i.test(fl.type)?'webp':'png'); toast('در حال آپلود…');
+    try{ await put('bubbles/'+name,await toB64(fl),'bubble: '+name); (S.bub=S.bub||[]).push(name); f.file='bubbles/'+name; redraw(); done(); toast('آپلود شد و روی این حباب گذاشته شد') }catch(err){ toast('آپلود نشد: '+err.message) } };
+  host.querySelector('select[data-k=pos]').onchange=e=>{ f.pos=e.target.value; done() };
+  wireSliders(host,()=>f,done);
+  const fl=host.querySelector('.bbFlip'); if(fl) fl.onchange=()=>{ f.flip=fl.checked; done() };
+  host.querySelector('.bbAuto').onchange=e=>{ if(e.target.checked) delete f.anchor; else f.anchor=[.5,.1]; redraw(); done() } }
+const sceneHead=(s,i)=>{ const n=(s.items||[]).length, warn=!n&&s.tpl!=='stat'; return `${okOf(s,'v')&&okOf(s,'h')?'✅ ':(okOf(s,'v')||okOf(s,'h'))?'🔸 ':''}${warn?'⚠️ ':''}${s.bg&&s.bg.src?'🖼 ':''}<b>${fa(i+1)}</b> · ${(s.text||s.number||'').replace(/\*/g,'')||'—'} <span style="color:var(--mut)">(${fa(n)} تصویر)</span>` };
 const wordAtT=(s,t)=>{ let b=null; sceneWords(s).forEach(w=>{ if(w.t0<=t+.08) b=w }); return b?b.w:'—' };
 const wordAt=(s,it)=>{ let b=null; sceneWords(s).forEach(w=>{ if(w.t0<=it.t+.08) b=w }); return b?b.w:'—' };
 const narr=s=>(RV.data.words||[]).filter(w=>w.t0>=s.t0-.02&&w.t0<s.t1-.02).map(w=>w.w).join(' ');
 function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySelector('.body'), n=(s.items||[]).length;
   box.innerHTML=`<div class="row" style="margin-bottom:6px"><button class="pri bPv">▶ پیش‌نمایش</button><button class="bLay">✋ چیدمان</button></div><div class="row" style="margin-bottom:6px"><label style="display:flex;align-items:center;gap:6px;margin:0"><input type="checkbox" class="okv" ${okOf(s,'v')?'checked':''}> عمودی خوب است</label><label style="display:flex;align-items:center;gap:6px;margin:0"><input type="checkbox" class="okh" ${okOf(s,'h')?'checked':''}> افقی خوب است</label></div>
     <label>متنی که راوی در این صحنه می‌گوید</label><div class="narr" style="padding:8px 10px;border:1px dashed var(--line);border-radius:10px;color:var(--mut);font-size:14px;line-height:1.9">${narr(s)||'—'}</div>
+    <details class="subEd" style="margin:8px 0"><summary class="btn" style="display:block;text-align:center;cursor:pointer">✏️ ویرایش زیرنویس این صحنه (املا)</summary>
+      <textarea class="subTx" rows="4" style="width:100%;direction:rtl;margin-top:6px"></textarea>
+      <p class="hint">املای زیرنویس را درست کن و بیرون از کادر بزن؛ زمان‌بندی کلمه‌ها حفظ می‌شود. کلمه‌ی هایلایت‌شده بین ستاره است: *کلمه*.</p></details>
+    <label class="chk"><input type="checkbox" class="keyOn"> 📝 متن کلیدی این صحنه روی صفحه نوشته شود</label>
+    <div class="keyBox" hidden><textarea class="keyTx" rows="2" style="width:100%;direction:rtl" placeholder="مثلاً: *انرژی* مغز"></textarea><p class="hint">بخش کلیدی سکانس؛ کلمه‌ی مهم را بین دو ستاره بگذار: *کلمه*. (برای قالب «عدد» همین‌جا برچسب زیر عدد است.)</p></div>
     ${s.number!==undefined?`<label>عدد</label><input type="text" class="num" value="${s.number}">`:''}
     <label>تصویرها (به همین ترتیب نمایش داده می‌شوند). برای هر تصویر: ⏱ با کدام کلمه بیاید، ⏏ با کدام کلمه برود، ✨ افکت‌هایش</label>
-    <div class="its">${(s.items||[]).map((it,k)=>`<div class="it"><div class="thumb"><img loading="lazy" src="${thumbUrl(it.src)}"></div><b style="position:absolute;top:54px;right:4px;background:#000a;border-radius:8px;padding:0 6px;font-size:12px">${fa(k+1)}</b><button class="x" data-k="${k}">✕</button><button class="ws" data-k="${k}" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏱ ${wordAt(s,it)}</button><button class="xs" data-k="${k}" title="چه زمانی این تصویر بیرون برود" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏏ ${it.out!=null?wordAtT(s,it.out):'تا آخر صحنه'}</button><button class="fxb" data-k="${k}" title="افکت‌های روی این تصویر" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${fxBtnTxt(it)}</button><button class="snb" data-k="${k}" title="صدایی که با این تصویر پخش شود (شروع، پایان و بلندی)" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${snBtnTxt(it)}</button><div style="display:flex;gap:4px;margin-top:4px"><button class="mv" data-k="${k}" data-d="-1" style="min-height:30px;flex:1;padding:0" ${k===0?'disabled':''}>›</button><button class="mv" data-k="${k}" data-d="1" style="min-height:30px;flex:1;padding:0" ${k===n-1?'disabled':''}>‹</button></div></div>`).join('')||'<span class="hint">بدون تصویر</span>'}</div>
+    <div class="its">${(s.items||[]).map((it,k)=>`<div class="it"><div class="thumb"><img loading="lazy" src="${thumbUrl(it.src)}"></div><b style="position:absolute;top:54px;right:4px;background:#000a;border-radius:8px;padding:0 6px;font-size:12px">${fa(k+1)}</b><button class="x" data-k="${k}">✕</button><button class="ws" data-k="${k}" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏱ ${wordAt(s,it)}</button><button class="xs" data-k="${k}" title="چه زمانی این تصویر بیرون برود" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏏ ${it.out!=null?wordAtT(s,it.out):'تا آخر صحنه'}</button><button class="fxb" data-k="${k}" title="افکت‌های روی این تصویر" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${fxBtnTxt(it)}</button><button class="snb" data-k="${k}" title="صدایی که با این تصویر پخش شود (شروع، پایان و بلندی)" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${snBtnTxt(it)}</button><button class="bbb" data-k="${k}" title="حباب گفتگوی متصل به این تصویر" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${bbBtnTxt(it)}</button><div style="display:flex;gap:4px;margin-top:4px"><button class="mv" data-k="${k}" data-d="-1" style="min-height:30px;flex:1;padding:0" ${k===0?'disabled':''}>›</button><button class="mv" data-k="${k}" data-d="1" style="min-height:30px;flex:1;padding:0" ${k===n-1?'disabled':''}>‹</button></div></div>`).join('')||'<span class="hint">بدون تصویر</span>'}</div>
     <div class="wpanel" hidden style="margin:6px 0;padding:8px;border:1px dashed var(--line);border-radius:10px"><div class="hint wph"></div><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"></div></div>
     <div class="fxpanel" hidden style="margin:6px 0;padding:8px;border:1px dashed var(--line);border-radius:10px"><div class="hint fxh"></div><div class="fxhost"></div></div>
     <div class="row3"><button class="bAdd" title="آخر صحنه اضافه می‌شود">+ از کتابخانه</button><button class="bNew" title="آپلود در کتابخانه و استفاده در این صحنه">+ تصویر تازه</button><button class="bBg" title="تصویر متحرک پشت صحنه">🖼 پس‌زمینه</button></div><div class="pick" hidden></div>
@@ -562,6 +650,12 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
   box.querySelector('.okv').onchange=e=>{ setOk(s,'v',e.target.checked); syncOk(i); rvSave() }; box.querySelector('.okh').onchange=e=>{ setOk(s,'h',e.target.checked); syncOk(i); rvSave() };
   const tx=box.querySelector('.txt'); if(tx) tx.oninput=()=>{ s.text=tx.value; clearOk(s); box.querySelector('.okv').checked=false; box.querySelector('.okh').checked=false; updOk(); d.querySelector('summary').innerHTML=sceneHead(s,i); rvSave() };
   const nm=box.querySelector('.num'); if(nm) nm.oninput=()=>{ s.number=nm.value; rvSave() };
+  const subTx=box.querySelector('.subTx'); subTx.value=subText(s);
+  subTx.onchange=()=>{ if(applySubText(s,subTx.value)){ subTx.value=subText(s); box.querySelector('.narr').textContent=narr(s)||'—'; rvSave() } };
+  const keyOn=box.querySelector('.keyOn'), keyBox=box.querySelector('.keyBox'), keyTx=box.querySelector('.keyTx'), keyEff=()=>s.keyOn!==undefined?!!s.keyOn:!!(RV.data.meta&&RV.data.meta.titles);
+  keyOn.checked=keyEff(); keyBox.hidden=!keyOn.checked; keyTx.value=s.text||'';
+  keyOn.onchange=()=>{ s.keyOn=keyOn.checked; if(keyOn.checked&&!(s.text||'').trim()){ s.text=narr(s).split(' ').slice(0,6).join(' '); keyTx.value=s.text } keyBox.hidden=!keyOn.checked; clearOk(s); syncOk(i); d.querySelector('summary').innerHTML=sceneHead(s,i); rvSave(); pvRefresh(i) };
+  keyTx.oninput=()=>{ s.text=keyTx.value; clearOk(s); syncOk(i); d.querySelector('summary').innerHTML=sceneHead(s,i); rvSave(); pvRefresh(i) };
   const fxp=box.querySelector('.fxpanel'), selIt=k=>box.querySelectorAll('.it .thumb').forEach((e,j)=>{ e.style.outline=j===k?'2px solid var(--acc)':'' }), fxDone=()=>{ clearOk(s); syncOk(i); rvSave(); pvRefresh(i) };
   box.querySelectorAll('.fxb').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, it=s.items[k]; if(!it) return; box.querySelector('.wpanel').hidden=true; fxp.hidden=false; selIt(k);
     fxp.querySelector('.fxh').textContent='افکت‌های تصویر '+fa(k+1)+': به خود تصویر وصل می‌شوند و با حرکتش می‌روند؛ چند افکت را می‌شود روی هم گذاشت.';
@@ -569,6 +663,9 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
   box.querySelectorAll('.snb').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, it=s.items[k]; if(!it) return; box.querySelector('.wpanel').hidden=true; fxp.hidden=false; selIt(k);
     fxp.querySelector('.fxh').textContent='صدای تصویر '+fa(k+1)+': همزمان با ظاهر شدن این تصویر پخش می‌شود. شروع و پایان را تنظیم کن؛ «▶ پیش‌نمایش صحنه» صدا را همراه تصویر و راوی پخش می‌کند.';
     fxListUI(fxp.querySelector('.fxhost'),it,()=>{ fxDone(); b.textContent=snBtnTxt(it) },'sound') });
+  box.querySelectorAll('.bbb').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, it=s.items[k]; if(!it) return; box.querySelector('.wpanel').hidden=true; fxp.hidden=false; selIt(k);
+    fxp.querySelector('.fxh').textContent='حباب گفتگوی تصویر '+fa(k+1)+': به خود تصویر وصل می‌شود و با حرکتش تکان می‌خورد (مثل بخار)؛ نوک حباب بالای تصویر می‌نشیند. برای دیدنش «▶ پیش‌نمایش» را بزن.';
+    bubbleUI(fxp.querySelector('.fxhost'),it,()=>{ fxDone(); b.textContent=bbBtnTxt(it) }) });
   box.querySelectorAll('.xs').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, wp=box.querySelector('.wpanel'); wp.hidden=false; fxp.hidden=true; selIt(k); wp.querySelector('.wph').textContent='تصویر '+fa(k+1)+' با کدام کلمه‌ی راوی از صفحه بیرون برود؟ روی کلمه بزن.';
     wp.querySelector('.chips').innerHTML='<button class="chip" data-clr="1" style="min-height:34px;padding:0 10px">تا آخر صحنه</button>'+sceneWords(s).filter(w=>w.t0>s.items[k].t+.4).map(w=>`<button class="chip" data-t="${w.t0}" style="min-height:34px;padding:0 10px">${w.w}</button>`).join('');
     wp.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{ const it=s.items[k]; if(c.dataset.clr) delete it.out; else it.out=+Math.min(+c.dataset.t,s.t1-.2).toFixed(3); rvChanged(i,d,true) }) });
@@ -611,6 +708,7 @@ async function newForScene(i,d,faName,f,st){
 const BG_MOTIONS=[['down','از بالا به پایین'],['up','از پایین به بالا'],['right','از چپ به راست'],['left','از راست به چپ'],['zoom','از عمق صحنه بیاید جلو'],['pop','با جهش ظاهر شود'],['fill','کل صفحه پر باشد، کم‌کم خالی شود'],['fillin','صفحه خالی باشد، کم‌کم پر شود'],['scroll','الگوی بی‌پایان (اسکرول)'],['cover','پوشاندن کامل: آهسته شروع، تند، دوباره آهسته (تصادفی)']];
 const BG_SOUNDS=[['whoosh','ویژ'],['swipe','سوییپ'],['airy','نفس هوا'],['low','ویژ بم'],['riser','بالارونده'],['pop','پاپ'],['thud','تپ سنگین'],['none','بدون صدا']];
 const BG_DIRS=[['down','به پایین'],['up','به بالا'],['right','به راست'],['left','به چپ'],['dr','مورب: پایین راست'],['dl','مورب: پایین چپ'],['ur','مورب: بالا راست'],['ul','مورب: بالا چپ']];
+const PIN_IN=[['none','بدون (ناگهانی)'],['fade','محو شدن'],['pop','جهش (پاپ)'],['stamp','کوبیده‌شدن مثل مهر'],['drop','افتادن از بالا'],['left','لغزیدن از چپ'],['right','لغزیدن از راست'],['up','بالا آمدن از پایین'],['spin','چرخیدن و بزرگ شدن']];
 const FRAMES=[['polaroid','پولارویید (قاب سفید)'],['plain','کارت ساده‌ی کاغذی'],['stamp','لبه‌ی تمبری'],['film','نوار فیلم'],['torn','کاغذ پاره'],['burnt','قدیمی با حاشیه‌ی سوخته'],['wood','قاب چوبی'],['gold','قاب طلایی'],['none','بدون قاب (فقط خود تصویر)']];
 const ATTACH=[['pin-red','پونز قرمز'],['pin-blue','پونز آبی'],['pin-brass','پونز برنجی'],['tape-corners','چسب نواری دو گوشه'],['tape-top','چسب نواری وسط بالا'],['tape-4','چسب نواری چهار گوشه'],['washi','چسب کاغذی رنگی'],['clip','گیره‌ی کاغذ'],['nail','میخ'],['magnet','آهنربا'],['putty','خمیر چسب'],['string','دو پونز با نخ آویز'],['none','بدون چسب']];
 const CARDS=[['white','سفید'],['cream','کرم'],['kraft','کرافت'],['black','مشکی'],['rose','صورتی کمرنگ']];
@@ -636,6 +734,7 @@ const FXS={
  fold:{l:'تا و چروک کاغذ',vol:0,start:0,p:[['folds','تعداد تا',1,3,1,2],['amount','شدت',10,100,5,70,'٪',100]]},
  crack:{l:'ترک خوردن مثل شیشه',vol:60,start:.3,anchor:1,p:[['size','اندازه',20,120,5,55,'٪',100],['rays','تعداد ترک‌ها',4,14,1,8]]}
 };
+FXS.bubble={l:'💬 حباب گفتگو',vol:0,start:.4,p:[]};   // own button (💬 حباب) and own panel, not in the effect list
 FXS.sound={l:'🔊 صدای افکت (از کتابخانه‌ی صداها)',vol:70,start:0,p:[]};   // no picture effect: only a sound from sfx/ placed on the picture's time line (rendered by tools/make_bgfx.py)
 const SFX_FA={'alarm-clock':'زنگ ساعت','applause':'تشویق (دست زدن)','baby-giggle':'خنده‌ی نوزاد','balloon-pop':'ترکیدن بادکنک','bass-drop':'بم سنگین (دراپ)','bell-ding':'زنگ دینگ','bird-chirp':'جیک‌جیک پرنده','book-drop':'افتادن کتاب','box-drop':'افتادن جعبه','button-press':'فشردن دکمه','camera-beep':'بوق فوکوس دوربین','camera-flash':'فلاش دوربین','camera-shutter':'شاتر دوربین','car-brake':'ترمز ماشین','car-horn':'بوق ماشین','cash-register':'صندوق فروشگاه','cat-meow':'میو گربه','cheering-crowd':'هورای جمعیت','clap-single':'یک دست زدن','click':'کلیک','clock-tick':'تیک‌تاک ساعت','coin':'سکه','correct-answer':'جواب درست','cough':'سرفه','crowd-boo':'هوی جمعیت','crowd-gasp':'آخ جمعیت (شگفتی)','crowd-laugh':'خنده‌ی جمعیت','crowd-murmur':'همهمه‌ی جمعیت','crowd-ooh':'اوووه جمعیت','dog-bark':'پارس سگ','door-close':'بسته شدن در','door-creak':'قیژ در','door-knock':'در زدن','engine-start':'روشن شدن موتور','error-buzz':'بوق خطا','fail-trombone':'ترومبون شکست','fast-pass':'عبور سریع','finger-snap':'بشکن','footsteps':'صدای قدم','glass-break':'شکستن شیشه','glitch':'گلیچ دیجیتال','gulp':'قورت دادن','heartbeat':'ضربان قلب','heavy-thud':'ضربه‌ی سنگین','impact-hit':'ضربه‌ی سینمایی','keyboard-typing':'تایپ با کیبورد','keys-jingle':'جیرینگ کلید','kids-cheer':'هورای بچه‌ها','laugh-short':'خنده‌ی کوتاه','level-up':'مرحله‌ی بعد','magic-sparkle':'برق جادویی','marker-write':'نوشتن با ماژیک','message-pop':'پیام تازه','metal-clang':'برخورد فلز','money-counting':'شمردن پول','mouse-click':'کلیک موس','notification':'نوتیف','page-turn':'ورق زدن','paper-crumple':'مچاله شدن کاغذ','paper-rip':'پاره شدن کاغذ','pen-click':'کلیک خودکار','phone-ring':'زنگ تلفن','phone-vibrate':'لرزش موبایل','photo-print':'چاپ عکس','pop-bubble':'ترکیدن حباب','printer':'پرینتر','punch':'مشت','record-scratch':'خط افتادن صفحه','rewind':'عقب زدن نوار','riser':'بالارونده','rooster':'خروس','scissors':'قیچی','sigh':'آه کشیدن','siren':'آژیر','slap':'سیلی','sneeze':'عطسه','splash':'شلپ آب','stadium-roar':'غریو ورزشگاه','stamp':'مهر زدن','stopwatch':'کرنومتر','success-chime':'موفقیت','surprise':'شگفتی','suspense':'تعلیق','swipe':'سوییپ','switch-toggle':'کلید برق','tape-rip':'کندن چسب','tension-hit':'ضربه‌ی تنش','thunder':'رعد','timer-ding':'زنگ تایمر','typewriter':'ماشین تحریر','water-drip':'چکیدن آب','water-pour':'ریختن آب','whistle-cheer':'سوت و هورا','whoosh-long':'ویژ بلند','whoosh-short':'ویژ کوتاه','win-fanfare':'فانفار پیروزی','wood-knock':'تقه به چوب','wrong-answer':'جواب غلط','zipper':'زیپ','zoom-in':'نزدیک شدن (زوم)','metal-trash-can-filled':'سطل زباله‌ی فلزی'};
 const sfxLabel=n=>{ const b=n.replace(/\.[^.]+$/,''); return SFX_FA[b]||b };
@@ -644,8 +743,8 @@ async function loadSfxFiles(){ if(S.sfx) return S.sfx; try{ const l=await api('/
 let sfxAud=null, sfxTm=null;
 function sfxPlay(f){ try{ if(sfxAud){ sfxAud.pause(); clearTimeout(sfxTm) } if(!f.file) return; sfxAud=new Audio(sfxUrl(f.file)); sfxAud.volume=Math.max(0,Math.min(1,(f.vol==null?70:f.vol)/100)); sfxAud.play().catch(()=>toast('پخش صدا ممکن نشد'));
   const st=+f.start||0, en=+f.end||0; if(en>st) sfxTm=setTimeout(()=>sfxAud&&sfxAud.pause(),(en-st)*1000) }catch(e){} }
-const FX_LIST=Object.keys(FXS).filter(k=>k!=='sound').map(k=>[k,FXS[k].l]);   // the sound has its own button under ✨ (see fxListUI mode 'sound')
-const fxCnt=(o,snd)=>((o&&o.fx)||[]).filter(f=>f&&((f.type==='sound')===!!snd)&&(snd||FXS[f.type])).length;
+const FX_LIST=Object.keys(FXS).filter(k=>k!=='sound'&&k!=='bubble').map(k=>[k,FXS[k].l]);   // the sound has its own button under ✨ (see fxListUI mode 'sound')
+const fxCnt=(o,snd)=>((o&&o.fx)||[]).filter(f=>f&&((f.type==='sound')===!!snd)&&f.type!=='bubble'&&(snd||FXS[f.type])).length;
 const fxBtnTxt=it=>'✨ افکت'+(fxCnt(it)?' ('+fa(fxCnt(it))+')':''), snBtnTxt=it=>'🔊 صدا'+(fxCnt(it,1)?' ('+fa(fxCnt(it,1))+')':'');
 const fxNew=t=>{ const sp=FXS[t], f={type:t,start:sp.start}; if(sp.vol) f.vol=sp.vol; (sp.sel||[]).forEach(([k,,,d])=>f[k]=d); (sp.chk||[]).forEach(([k,,d])=>f[k]=d); if(sp.color) f.color=sp.color; if(t==='steam'||t==='smoke') f.height=sp.p[1][5]; return f };
 let pvRT=null; function pvRefresh(i){ if($('#pvModal').hidden||pvI!==i) return; clearTimeout(pvRT); pvRT=setTimeout(pvGo,700) }
@@ -675,7 +774,7 @@ function fxBodyHtml(f){ const t=f.type, sp=FXS[t], a=f.anchor;
 function fxListUI(host,obj,done,mode){ const SND=mode==='sound';
   if(obj.fx){ obj.fx=obj.fx.filter(f=>f&&FXS[f.type]); if(!obj.fx.length) delete obj.fx }   // effects that no longer exist (the old clock) are dropped
   const list=obj.fx||[];
-  host.innerHTML=list.map((f,j)=>(f.type==='sound')!==SND?'':`<div class="fxe" data-j="${j}"><div class="row" style="margin:0;gap:6px;flex-wrap:nowrap">${SND?'<b style="flex:1;font-size:13px">🔊 صدا</b>':`<select class="sel fxT" style="flex:1">${optsHtml(FX_LIST,f.type)}</select>`}<button class="fxDel" style="min-height:44px">✕</button></div><div class="fxBody">${fxBodyHtml(f)}</div></div>`).join('')+(SND?`<div class="row" style="margin-top:6px"><button class="sndAdd">+ افزودن صدا</button><button class="pri sndPv">▶ پیش‌نمایش صحنه</button></div>`:`<select class="sel fxAdd" style="margin-top:6px"><option value="">+ افزودن افکت روی این تصویر…</option>${optsHtml(FX_LIST,'')}</select>`);
+  host.innerHTML=list.map((f,j)=>(f.type==='sound')!==SND||f.type==='bubble'?'':`<div class="fxe" data-j="${j}"><div class="row" style="margin:0;gap:6px;flex-wrap:nowrap">${SND?'<b style="flex:1;font-size:13px">🔊 صدا</b>':`<select class="sel fxT" style="flex:1">${optsHtml(FX_LIST,f.type)}</select>`}<button class="fxDel" style="min-height:44px">✕</button></div><div class="fxBody">${fxBodyHtml(f)}</div></div>`).join('')+(SND?`<div class="row" style="margin-top:6px"><button class="sndAdd">+ افزودن صدا</button><button class="pri sndPv">▶ پیش‌نمایش صحنه</button></div>`:`<select class="sel fxAdd" style="margin-top:6px"><option value="">+ افزودن افکت روی این تصویر…</option>${optsHtml(FX_LIST,'')}</select>`);
   const redraw=()=>fxListUI(host,obj,done,mode);
   if(!S.sfx&&SND&&list.some(f=>f.type==='sound')) loadSfxFiles().then(()=>{ if(host.isConnected) redraw() });
   host.querySelectorAll('.fxe').forEach(card=>{ const j=+card.dataset.j, f=list[j], body=card.querySelector('.fxBody');
@@ -740,9 +839,11 @@ function bgFxUI(box,s,i,d){
     <div><label>چسباننده‌ی عکس به دیوار</label><select class="sel" data-k="attach">${optsHtml(ATTACH,p.attach||'none')}</select></div>
     <div><label>رنگ کارت</label><select class="sel" data-k="card">${optsHtml(CARDS,p.card||'white')}</select></div>
     <div class="phRow"><label>رنگ زمینه‌ی عکس</label><select class="sel" data-k="photo">${optsHtml(PHOTOS,p.photo||'cream')}</select></div>
-    <div><label class="chk"><input type="checkbox" data-k="curl" ${p.curl?'checked':''}> گوشه‌ی برگشته</label></div>
-    ${slRow('sz','اندازه',.3,3,.05,p.sz==null?1:p.sz,{u:'×',cell:1})}${slRow('rot','چرخش',-60,60,1,Math.round((p.rot==null?0:p.rot)*57.2958),{sc:57.2958,u:'°',cell:1})}${slRow('shadow','سایه‌ی زیر عکس',0,100,5,Math.round((p.shadow==null?.6:p.shadow)*100),{sc:100,u:'٪',cell:1})}${slRow('start','ظاهر شدن (۰ = از اول صحنه)',0,10,.1,p.start==null?0:p.start,{u:' ث',cell:1})}</div>
-    <div class="pnFx"></div><div class="pnSnd" style="margin-top:8px;border-top:1px dashed var(--line);padding-top:6px"></div></div>`).join('')+`<div class="pgrid"><div><label>قاب برای عکس‌های تازه</label><select class="sel pnFrameNew">${optsHtml(FRAMES,PIN_LAST)}</select></div><div><label>چسب برای عکس‌های تازه</label><select class="sel pnAttNew">${optsHtml(ATTACH,ATT_LAST)}</select></div></div><div class="row"><button class="pnAdd">+ انتخاب یک یا چند عکس از کتابخانه و چسباندن</button>${s.pins.length?'<button class="pnLay">✋ جابه‌جایی در پیش‌نمایش</button>':''}</div><div class="pick pnPk" hidden></div>`;
+    <div><label class="chk"><input type="checkbox" data-k="curl" ${p.curl?'checked':''}> گوشه‌ی برگشته</label></div><div><label class="chk"><input type="checkbox" data-k="top" ${p.top?'checked':''}> روی تصویرهای اصلی (جلوتر از آن‌ها)</label></div>
+    ${slRow('sz','اندازه',.3,3,.05,p.sz==null?1:p.sz,{u:'×',cell:1})}${slRow('rot','چرخش',-60,60,1,Math.round((p.rot==null?0:p.rot)*57.2958),{sc:57.2958,u:'°',cell:1})}${slRow('shadow','سایه‌ی زیر عکس',0,100,5,Math.round((p.shadow==null?.6:p.shadow)*100),{sc:100,u:'٪',cell:1})}${slRow('start','زمان ورود (۰ = از اول صحنه)',0,30,.1,p.start==null?0:p.start,{u:' ث',cell:1})}${slRow('end','زمان خروج (۰ = تا آخر صحنه)',0,60,.1,p.end==null?0:p.end,{u:' ث',cell:1})}
+    <div><label>افکت ورود</label><select class="sel" data-k="in">${optsHtml(PIN_IN,p.in||(p.start>0?'fade':'none'))}</select></div>${slRow('inD','مدت افکت ورود',.1,3,.05,p.inD==null?.45:p.inD,{u:' ث',cell:1})}
+    <div><label>افکت خروج</label><select class="sel" data-k="out">${optsHtml(PIN_IN,p.out||(p.end>0?'fade':'none'))}</select></div>${slRow('outD','مدت افکت خروج',.1,3,.05,p.outD==null?.4:p.outD,{u:' ث',cell:1})}</div>
+    <div class="pnFx"></div><div class="pnSnd" style="margin-top:8px;border-top:1px dashed var(--line);padding-top:6px"></div></div>`).join('')+`<div class="pgrid"><div><label>قاب برای عکس‌های تازه</label><select class="sel pnFrameNew">${optsHtml(FRAMES,PIN_LAST)}</select></div><div><label>چسب برای عکس‌های تازه</label><select class="sel pnAttNew">${optsHtml(ATTACH,ATT_LAST)}</select></div></div><div class="row"><button class="pnAdd">+ انتخاب یک یا چند عکس از کتابخانه و چسباندن</button><button class="pnDec">+ استیکر ثابت (مهر، مسیر، تیک…)</button>${s.pins.length?'<button class="pnLay">✋ جابه‌جایی در پیش‌نمایش</button>':''}</div><div class="pick pnPk" hidden></div><div class="pick pnDk" hidden></div>`;
   box.appendChild(ps);
   ps.querySelectorAll('.fxit').forEach(card=>{ const k=+card.dataset.k, p=s.pins[k];
     const vis=()=>{ card.querySelector('.phRow').hidden=['torn','burnt','none'].includes(p.frame||'polaroid') }; vis();
@@ -758,6 +859,12 @@ function bgFxUI(box,s,i,d){
     its.forEach(it=>{ let best=null,bd=-1; for(let c=0;c<10;c++){ const q={x:.2+.6*Math.random(),y:.18+.5*Math.random()}; let dm=9; s.pins.forEach(o=>{ dm=Math.min(dm,Math.hypot((o.x-q.x)*1,(o.y-q.y)*1.78)) }); if(dm>bd){ bd=dm; best=q } }
       s.pins.push({src:'library/'+it.variants[0],frame:fr,attach:at,card:'white',photo:'cream',x:+best.x.toFixed(3),y:+best.y.toFixed(3),rot:+((Math.random()-.5)*.3).toFixed(3),sz:1,start:0,seed:1+Math.floor(Math.random()*9999)}) });
     toast(fa(its.length)+' عکس چسبیده اضافه شد؛ جایشان را در پیش‌نمایش مشخص کن'); clearOk(s); rvSave(); fillScene(d); openPreview(i,'edit',2000+first) },true);
+  ps.querySelector('.pnDec').onclick=async()=>{ const dk=ps.querySelector('.pnDk'); dk.hidden=!dk.hidden; if(dk.hidden||dk.dataset.f) return; dk.dataset.f=1; dk.innerHTML='<p class="hint">در حال بارگذاری…</p>';
+    try{ const r=await fetch('https://raw.githubusercontent.com/'+S.repo+'/main/decor/index.json?'+Date.now()); const idx=await r.json();
+      dk.innerHTML=idx.map(d=>`<button class="dkb" data-f="${d.file}" title="${d.name}" style="width:84px;height:84px;padding:4px;margin:3px;background:#d8ccb4;border-radius:8px"><img loading="lazy" src="${thumbUrl(d.file)}" style="max-width:100%;max-height:100%"></button>`).join('');
+      dk.querySelectorAll('.dkb').forEach(b=>b.onclick=()=>{ s.pins=s.pins||[]; const first=s.pins.length;
+        s.pins.push({src:b.dataset.f,top:true,frame:'none',attach:'none',card:'white',photo:'cream',x:+(.25+.5*Math.random()).toFixed(3),y:+(.2+.45*Math.random()).toFixed(3),rot:+((Math.random()-.5)*.2).toFixed(3),sz:1,shadow:0,start:0,seed:1+Math.floor(Math.random()*9999)});
+        toast('استیکر اضافه شد؛ جایش را در پیش‌نمایش مشخص کن'); clearOk(s); rvSave(); fillScene(d); openPreview(i,'edit',2000+first) }) }catch(e){ dk.innerHTML='<p class="hint">فهرست استیکرها هنوز در مخزن نیست.</p>' } };
   ps.querySelector('.pnFrameNew').onchange=e=>{ PIN_LAST=e.target.value }; ps.querySelector('.pnAttNew').onchange=e=>{ ATT_LAST=e.target.value };
   const pl=ps.querySelector('.pnLay'); if(pl) pl.onclick=()=>openPreview(i,'edit',2000);
   if(!s.pins.length) delete s.pins }
@@ -1000,6 +1107,12 @@ loadAll();
   const set=()=>{ const r=nav.getBoundingClientRect(), b=r.bottom>innerHeight*.5?0:Math.max(0,Math.round(r.bottom)); document.documentElement.style.setProperty('--tabsB',b+'px') };
   ['scroll','resize'].forEach(e=>addEventListener(e,set,{passive:true})); new ResizeObserver(set).observe(nav);
   document.addEventListener('click',()=>setTimeout(set,0),true); set(); })();
+</script>
+<script>
+(function(){ const r=document.getElementById('bSfxVol'), n=document.getElementById('bSfxVN'), b=document.getElementById('bSfxTest'); if(!r) return;
+  try{ const v=localStorage.getItem('sfxVol'); if(v!=null){ r.value=v; n.textContent=v } }catch(e){}
+  r.oninput=()=>{ n.textContent=r.value; try{ localStorage.setItem('sfxVol',r.value) }catch(e){} };
+  b.onclick=()=>sfxBeep(+r.value,0); })();
 </script>
 </body>
 </html>
