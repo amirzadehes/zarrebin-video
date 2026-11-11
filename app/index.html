@@ -909,14 +909,16 @@ let lastShort=null;   // both checkboxes stay free to change; a short episode on
 function shortDefaults(){ const n=$('#epName'); if(!n||!$('#bH')) return; const sh=/-short$/.test(slug(n.value)); $('#bShortNote').hidden=!sh; if(sh===lastShort) return; const was=lastShort; lastShort=sh; if(sh){ $('#bV').checked=true; $('#bH').checked=false } else if(was===true){ $('#bH').checked=true } }
 function renderEpLabels(){ document.querySelectorAll('#epList button').forEach(b=>b.textContent=epTitle(b.dataset.e)); const rb=document.querySelector('#rvBody p.hint b'); if(rb&&RV) rb.textContent=epTitle(RV.ep); const ne=$('#needEp'); if(ne){ const cur=ne.value; ne.innerHTML=epSelOptions(cur) } }
 function setEpisode(e){ ls.set('curEp',e); const n=$('#epName'); if(n) n.value=e; const fa_=$('#epFa'); if(fa_) fa_.value=S.titles[e]||''; readText(e); showNeeds(e); shortDefaults() }
+let NEED_SEQ=0;   /* showNeeds is started from several places (page load, renderAll, the episode list, the dropdown) and each run waits on the network: only the newest run may draw, otherwise a slow answer for the remembered episode lands last and replaces the one the owner just picked */
 async function showNeeds(ep){
+  const my=++NEED_SEQ, stale=()=>my!==NEED_SEQ;
   const box = $('#want'); const head = epHead(ep);
-  if(!ep){ box.innerHTML=head+'<p class="hint">اول در تب «ساخت ویدیو» متن یک قسمت را بفرست تا تحلیل شود؛ فهرست تصویرهای لازم همین‌جا می‌آید. یا از بالا قسمت قبلی را انتخاب کن.</p>'; bindEpHead(); return false }
-  if(!box.children.length){ box.innerHTML=head+'<p class="hint">در حال خواندن…</p>'; bindEpHead(); }
-  const j = await readJson('episodes/'+ep+'/needs.json', null);
+  if(!ep){ box.dataset.ep=''; box.innerHTML=head+'<p class="hint">اول در تب «ساخت ویدیو» متن یک قسمت را بفرست تا تحلیل شود؛ فهرست تصویرهای لازم همین‌جا می‌آید. یا از بالا قسمت قبلی را انتخاب کن.</p>'; bindEpHead(); return false }
+  if(!box.children.length||box.dataset.ep!==ep){ box.dataset.ep=ep; box.innerHTML=head+'<p class="hint">در حال خواندن…</p>'; bindEpHead(); }
+  const j = await readJson('episodes/'+ep+'/needs.json', null); if(stale()) return false;
   if(!j){ box.innerHTML=head+'<p class="hint">هنوز تحلیلی برای این قسمت نیست (اگر تازه فرستاده‌ای، یک دقیقه صبر کن).</p>'; bindEpHead(); return false; }
   if(j.error){ box.innerHTML=head+`<p class="hint" style="color:var(--bad)">تحلیل خطا داد. ${/GROQ_API_KEY is not set/.test(j.message||'')?'کلید Groq هنوز در Secrets ریپو گذاشته نشده است.':'دلیل: '+(j.message||'نامشخص')}</p>`; bindEpHead(); return true; }
-  const sim = await readJson('episodes/'+ep+'/similar.json', {}); S.picks = await readJson('episodes/'+ep+'/picks.json', {});
+  const sim = await readJson('episodes/'+ep+'/similar.json', {}); const picks = await readJson('episodes/'+ep+'/picks.json', {}); if(stale()) return false; S.picks = picks;
   const L = j.items.map(w=>({...w, n:(S.catalog.items[w.id]?.variants||[]).length, sim:(sim[w.id]||[]).filter(i=>S.catalog.items[i])})).sort((a,b)=>((a.n>0||(S.picks[a.id]||[]).length>0)-(b.n>0||(S.picks[b.id]||[]).length>0)));
   const miss = L.filter(x=>x.n===0&&!(S.picks[x.id]||[]).length).length;
   const tmp = document.createElement('div'); cards(tmp, L, true, `<p class="hint"><b>${epTitle(ep)}</b>: ${fa(L.length)} تصویر لازم است؛ ${fa(miss)} مورد را هنوز نداریم (بالای فهرست). هر مورد را همین‌جا آپلود کن؛ آنچه در کتابخانه هست دوباره ساخته نمی‌شود.${S.pending?` · ${fa(S.pending)} تصویر در صف پردازش`:''}</p>`);
