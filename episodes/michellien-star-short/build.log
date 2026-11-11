@@ -2,11 +2,11 @@ sentences where the recording differs from the pasted text: 34 of 51
 own voice + own text: words matched 95%
 library images offered to the director: 160 | priority (this episode): 35
 model: openai/gpt-oss-120b
-rate limited, waiting 12s
-rate limited, waiting 17s
-rate limited, waiting 19s
-rate limited, waiting 9s
-rate limited, waiting 8s
-coverage pass: placed 0 of 21 unused priority images
-scenes 42 total 261.08 templates {'hero': 36, 'duo': 2, 'trio': 3, 'statement': 1, 'stat': 0}
+rate limited, waiting 4s
+rate limited, waiting 28s
+rate limited, waiting 27s
+rate limited, waiting 21s
+rate limited, waiting 3s
+coverage pass: placed 1 of 24 unused priority images
+scenes 42 total 261.08 templates {'hero': 32, 'duo': 0, 'trio': 10, 'statement': 0, 'stat': 0}
 voice check ok: voice.mp3 259.9s, timing 259.9s
