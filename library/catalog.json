@@ -1375,6 +1375,19 @@
    ],
    "fa_tags_for": "قبقاب فارغ‌التحصیلی"
   },
+  "grave": {
+   "id": "grave",
+   "en": "grave",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "grave__1.webp",
+    "grave__2.webp",
+    "grave__3.webp",
+    "grave__4.webp"
+   ]
+  },
   "hammer": {
    "id": "hammer",
    "en": "hammer",
