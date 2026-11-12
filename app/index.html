@@ -45,6 +45,7 @@ dialog{background:var(--card);color:var(--tx);border:1px solid var(--line);borde
 dialog{margin:calc(var(--tabsB,0px) + 10px) auto auto;max-height:calc(100dvh - var(--tabsB,0px) - 20px);overflow:auto;box-shadow:0 12px 40px #000c}
 dialog::backdrop{background:transparent}
 .vars{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.vwrap{min-width:0}.vdel{width:100%;margin-top:6px;min-height:40px;padding:0 6px;font-size:13px}
 .run{border-top:1px solid var(--line);padding-top:10px;margin-top:10px;font-size:13px}
 .run b{color:var(--acc)}
 .card,.row>*{min-width:0}
@@ -959,8 +960,19 @@ function renderLib(){
   const its = Object.values(S.catalog.items||{});
   $('#btnLib').textContent = 'نمایش کتابخانه‌ی تصاویر ('+fa(its.length)+' مورد)';
   $('#lib').innerHTML = its.length ? `<div class="grid">${its.map(i=>`<div class="tile" data-id="${i.id}"><div class="thumb"><img loading="lazy" src="${raw(i.variants[0])}"></div><small>${i.fa||i.en}</small><span class="badge">${fa(i.variants.length)}</span></div>`).join('')}</div>` : '<p class="hint">هنوز تصویری در کتابخانه نیست.</p>';
-  document.querySelectorAll('#lib .tile').forEach(t=>t.onclick=()=>{ const i=S.catalog.items[t.dataset.id]; $('#dlgBody').innerHTML=`<div class="name">${i.fa||i.en}</div><div class="en">${i.id}</div><div class="row"><button id="dlgEdit">ویرایش نام</button></div>${i.has_text_in_image?'<p class="hint" style="color:var(--bad)">این تصویر متن دارد و برای نسخه‌ی چندزبانه مناسب نیست.</p>':''}<div class="vars">${i.variants.map(v=>`<div class="thumb" style="width:100%;height:auto;aspect-ratio:1"><img src="${raw(v)}"></div>`).join('')}</div>`; dlg.showModal(); $('#dlgEdit').onclick=()=>{ dlg.close(); renameItem(i.id, i.fa||i.en, i.en) }; });
+  document.querySelectorAll('#lib .tile').forEach(t=>t.onclick=()=>{ const i=S.catalog.items[t.dataset.id]; $('#dlgBody').innerHTML=`<div class="name">${i.fa||i.en}</div><div class="en">${i.id}</div><div class="row"><button id="dlgEdit">ویرایش نام</button><label class="btn pri" style="display:grid;place-items:center;margin:0;color:var(--acc-tx)">افزودن تصویر<input type="file" accept="image/*" multiple hidden id="dlgAdd"></label></div><div class="st" id="dlgSt"></div>${i.has_text_in_image?'<p class="hint" style="color:var(--bad)">این تصویر متن دارد و برای نسخه‌ی چندزبانه مناسب نیست.</p>':''}<div class="vars">${i.variants.map(v=>`<div class="vwrap"><div class="thumb" style="width:100%;height:auto;aspect-ratio:1"><img src="${raw(v)}"></div><button class="vdel" data-v="${v}">🗑 پاک کردن</button></div>`).join('')}</div>`; dlg.showModal(); $('#dlgEdit').onclick=()=>{ dlg.close(); renameItem(i.id, i.fa||i.en, i.en) };
+    $('#dlgAdd').onchange=e=>{ const fl=[...e.target.files]; if(!fl.length) return; upload(i.id, fl, $('#dlgSt'), e.target); toast('ارسال شروع شد؛ وضعیت در پنل پایین صفحه است'); dlg.close() };
+    document.querySelectorAll('#dlgBody .vdel').forEach(btn=>btn.onclick=()=>delVariant(i, btn.dataset.v, btn)) });
 }
+async function delVariant(i, v, btn){
+  if(!S.token){ toast('اول توکن را در تنظیمات وارد کن'); return }
+  if(!confirm('این تصویر برای همیشه از کتابخانه پاک شود؟\nاگر در قسمت‌های قبلی استفاده شده باشد، ساخت دوباره‌ی آن قسمت‌ها بدون آن می‌شود.')) return;
+  const all=document.querySelectorAll('#dlgBody .vdel'); all.forEach(b=>b.disabled=true); btn.textContent='در حال ارسال…';
+  try{ await put('deletes/'+Date.now().toString(36)+'.json', enc(JSON.stringify({files:[v]})), 'delete: '+v);
+    btn.textContent='در حال پاک شدن…';
+    for(let k=0;k<24;k++){ await sleep(5000); const c=await readJson('library/catalog.json', null); if(c&&!Object.values(c.items||{}).some(x=>(x.variants||[]).includes(v))){ S.catalog=c; renderLib(); dlg.close(); toast('✓ پاک شد'); return } }
+    btn.textContent='هنوز پاک نشده؛ کمی بعد صفحه را تازه کن'; all.forEach(b=>b.disabled=false);
+  }catch(e){ btn.textContent='خطا: '+e.message; all.forEach(b=>b.disabled=false) } }
 let keepEpDone=false;
 function renderAll(){ if(!keepEpDone){ keepEpDone=true; renderEp(); } renderGen(); renderWant(); renderLib(); }
 

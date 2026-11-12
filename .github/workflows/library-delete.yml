@@ -1,0 +1,29 @@
+name: Delete library pictures
+on:
+  push:
+    branches: [main]
+    paths: ['deletes/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: library-delete
+  cancel-in-progress: false
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Apply delete requests and commit
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for round in 1 2 3 4 5 6; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            python tools/delete_library.py
+            git add -A
+            if git diff --cached --quiet; then echo "nothing to do"; exit 0; fi
+            git commit -qm "library: delete pictures"
+            if git push -q origin main; then echo pushed; exit 0; fi; sleep 4
+          done; exit 1
