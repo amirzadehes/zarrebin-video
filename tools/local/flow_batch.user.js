@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ذره‌بین – ساخت خودکار تصویر در Google Flow
 // @namespace    https://github.com/amirzadehes/zarrebin-video
-// @version      0.1.5
+// @version      0.2.0
 // @description  تصویرهای کم‌داشته‌ی یک قسمت را در Flow می‌سازد (۴ تصویر برای هر پرامپت) و در inbox ریبو آپلود می‌کند
 // @match        https://flow.google.com/*
 // @match        https://labs.google/fx/*
@@ -57,6 +57,7 @@
       <div><label>حداکثر تعداد پرامپت</label><input id="lim" type="number" value="3" min="1"></div>
       <div><label>مکث بین پرامپت‌ها (ثانیه)</label><input id="pause" type="number" value="20" min="5"></div>
     </div>
+    <label style="display:flex;gap:6px;align-items:center;margin:2px 0 8px"><input id="semi" type="checkbox" checked style="width:auto;margin:0"> نیمه‌خودکار: خودم Enter را می‌زنم</label>
     <div class="row">
       <button id="go">شروع</button>
       <button id="stop" class="red">توقف</button>
@@ -70,6 +71,7 @@
   $('#ep').value = store.get('ep', '');
   $('#lim').value = store.get('lim', 3);
   $('#pause').value = store.get('pause', 20);
+  $('#semi').checked = store.get('semi', true);
   $('#min').onclick = () => $('#box').classList.toggle('min');
   $('#box').addEventListener('click', e => { if ($('#box').classList.contains('min')) { $('#box').classList.remove('min'); e.stopPropagation(); } }, true);
   const log = m => {
@@ -137,6 +139,9 @@
   }
   function startBtn() { return deepAll('button[aria-label="Start generation"]').find(visible); }
 
+  function beep() {
+    try { const c = new (window.AudioContext || window.webkitAudioContext)(); const o = c.createOscillator(); o.frequency.value = 880; o.connect(c.destination); o.start(); setTimeout(() => { o.stop(); c.close(); }, 250); } catch (e) {}
+  }
   async function typePrompt(text) {
     const box = promptBox();
     if (!box) throw new Error('کادر پرامپت پیدا نشد');
@@ -171,7 +176,7 @@
   }
 
   /* ---------- یک پرامپت: تولید و گرفتن ۴ تصویر ---------- */
-  async function generate(promptText) {
+  async function generate(promptText, semi) {
     const before = new Set(gridImgs().map(i => i.src));
     await typePrompt(promptText);
     const tilesBefore = deepAll('flow-image-tile').length;
@@ -180,6 +185,13 @@
     const boxEmpty = () => { const bx = promptBox(); return !!bx && bx.innerText.trim().length < 5; };
     const startedNow = () => deepAll('flow-image-tile').length > tilesBefore || gridImgs().some(i => !before.has(i.src)) || boxEmpty() || deepAll(spinSel).length > spinBefore || (() => { const b2 = startBtn(); return !b2 || b2.disabled || b2.getAttribute('aria-disabled') === 'true'; })();
     const btnState = () => { const b = startBtn(); return b ? `disabled=${b.disabled} aria-disabled=${b.getAttribute('aria-disabled')}` : 'دکمه پیدا نشد'; };
+    if (semi) {
+      const bx = promptBox(); if (bx) bx.focus();
+      log('✋ پرامپت آماده است؛ در کادر Enter بزن.');
+      beep();
+      if (!(await waitFor(startedNow, 600000, 500))) throw new Error('Enter زده نشد (۱۰ دقیقه صبر شد)');
+      log('پرامپت فرستاده شد؛ منتظر تصویرها…');
+    } else {
     let btn = await waitFor(() => { const b = startBtn(); return b && !b.disabled && b.getAttribute('aria-disabled') !== 'true' ? b : null; }, 8000);
     if (!btn) {
       // تلاش دوباره برای بیدار کردن ویرایشگر
@@ -209,6 +221,7 @@
     }
     if (!started) { dumpDiag('ارسال پرامپت اثری نداشت (' + btnState() + ')'); throw new Error('Flow پرامپت را نپذیرفت'); }
     log('پرامپت فرستاده شد؛ منتظر تصویرها…');
+    }
     let dumped = false;
 
     // منتظر ظهور تصویرهای تازه؛ وقتی تعداد ۵ ثانیه ثابت ماند تمام است
@@ -322,7 +335,7 @@
       const tok = $('#tok').value.trim(), ep = $('#ep').value.trim();
       const lim = Math.max(1, +$('#lim').value || 1), pause = Math.max(5, +$('#pause').value || 20);
       if (!tok || !ep) throw new Error('توکن و نام قسمت را وارد کن.');
-      store.set('tok', tok); store.set('ep', ep); store.set('lim', lim); store.set('pause', pause);
+      store.set('tok', tok); store.set('ep', ep); store.set('lim', lim); store.set('pause', pause); store.set('semi', $('#semi').checked);
 
       const st = settingsText();
       log('تنظیمات Flow: ' + st);
@@ -339,7 +352,7 @@
         log(`▶ ${it.id}`);
         try {
           const prompt = tpl.replace('{subject}', it.en);
-          const tiles = await generate(prompt);
+          const tiles = await generate(prompt, $('#semi').checked);
           const hashes = new Set(); let up = 0;
           for (let k = 0; k < tiles.length; k++) {
             if (STOP) break;
