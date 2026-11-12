@@ -1,16 +1,18 @@
 {
+ "adult-male-human": [
+  "roman-helmet"
+ ],
  "banknotes": [
   "cash",
   "money-bag",
-  "money-coins",
-  "euro-sign"
+  "money-coins"
  ],
  "goose": [
   "roast-goose"
  ],
  "group-people": [
-  "people-standing-in-line",
   "family",
+  "people-standing-in-line",
   "two-brothers"
  ],
  "food": [
@@ -18,5 +20,25 @@
  ],
  "flag": [
   "banner"
+ ],
+ "saint-martin": [
+  "bishop"
+ ],
+ "roast-goose": [
+  "goose"
+ ],
+ "shield": [
+  "shield-check"
+ ],
+ "map-pin": [
+  "map-folded",
+  "compass"
+ ],
+ "star": [
+  "star-rating",
+  "one-star",
+  "two-stars",
+  "three-stars",
+  "crescent-moon"
  ]
 }
