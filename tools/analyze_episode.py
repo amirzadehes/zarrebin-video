@@ -35,11 +35,12 @@ def main(ep, text=None):
         "The video is built from layered cut-out sticker objects. Read the narration text (Persian) and list the "
         "concrete, drawable single objects needed to illustrate it: 30 to 45 items, ordered by narration order. "
         "Each item must be ONE physical object or symbol (never a scene, never text, letters or numbers, never a real person's face). "
-        "Prefer these existing ids when they fit the meaning (reuse = no new drawing needed): " + ", ".join(sorted(known)) + ". "
+        "Existing library pictures (id=description). Reuse one only when its description fits the meaning AND this episode's setting (period, place); reuse means no new drawing is needed: " + "; ".join("%s=%s" % (i, str(known[i].get('en', ''))[:60]) for i in sorted(known)) + ". "
+        "FIRST read the whole text and decide the episode's setting: the period (year or decade), the place or culture, and what everyday things looked like then. Write it as one English sentence in \"setting\". EVERY item must match this setting: clothing, uniforms, vehicles, weapons, buildings, cities, tools and technology of that time and place (an episode about World War II needs WWII uniforms, tanks and bombed European towns, never modern ones; a medieval episode needs medieval clothes and castles). Only when the narration of a specific item clearly jumps to another time (a flashback, or today) does that item get that other time. For things whose look depends on the era or place, put a short tag in the new id (soldier-ww2, tank-ww2, city-ruins-ww2) so it never collides with the same thing from another period. "
         "Reuse an existing id only when it is the same kind of thing AND from the same era; a specific historical or period figure (e.g. a Roman soldier, a medieval bishop) must get its own new id, never a generic modern person or object id such as adult-male-human. "
         "For anything else invent a new kebab-case English id. "
         "For every item write \"en\" as a detailed English image description of 12 to 25 words: what the object is, its key visual details (material, colour, shape, typical parts) and, in parentheses at the very end, the era it belongs to in this episode's story, decided from the narration, for example (modern, today) or (ancient Rome, 4th century) or (medieval Europe). Say \"male\" or \"female\" for a specific person. The same object can need different eras in different episodes. "
-        'Return JSON only: {"items":[{"id":"kebab-id","en":"detailed English description ending with the era in parentheses","fa":"نام فارسی کوتاه","why":"چند کلمه فارسی: کجای متن"}]}')
+        'Return JSON only: {"setting":"one sentence: period, place, look of everyday things","items":[{"id":"kebab-id","en":"detailed English description ending with the era in parentheses","fa":"نام فارسی کوتاه","why":"چند کلمه فارسی: کجای متن"}]}')
     try: model = pick_model(key)
     except urllib.error.HTTPError as e: sys.exit('Groq error %s: %s' % (e.code, e.read()[:300]))
     print('model:', model)
@@ -63,6 +64,11 @@ def main(ep, text=None):
             if isinstance(o, dict) and 'id' in o: items.append(o); pos = end
             else: pos = k + 1
         except ValueError: pos = k + 1
+    sm = re.search(r'"setting"\s*:\s*"((?:[^"\\]|\\.)*)"', content)
+    setting = ''
+    if sm:
+        try: setting = json.loads('"' + sm.group(1) + '"').strip()
+        except ValueError: setting = sm.group(1).strip()
     out, seen = [], set()
     for it in items:
         i = re.sub(r'[^a-z0-9-]+', '-', str(it.get('id', '')).lower()).strip('-')
@@ -70,7 +76,7 @@ def main(ep, text=None):
         seen.add(i); k = known.get(i, {})
         out.append({'id': i, 'en': it.get('en') or k.get('en') or i.replace('-', ' '), 'fa': it.get('fa') or k.get('fa', ''),
                     'why': it.get('why', ''), 'tags': []})
-    json.dump({'episode': ep, 'src_h': srctext.digest(text), 'items': out}, open(f'{d}/needs.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
+    json.dump({'episode': ep, 'src_h': srctext.digest(text), 'setting': setting, 'items': out}, open(f'{d}/needs.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
     print(len(out), 'items;', sum(1 for o in out if o['id'] not in have), 'missing')
 
 if __name__ == '__main__': main(sys.argv[1])
