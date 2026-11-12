@@ -192,6 +192,18 @@
    ],
    "fa_tags_for": "اسناد پولی"
   },
+  "banner": {
+   "id": "banner",
+   "en": "banner",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "banner__1.webp",
+    "banner__2.webp",
+    "banner__3.webp"
+   ]
+  },
   "battery-empty": {
    "id": "battery-empty",
    "en": "cylindrical battery with plain body, almost empty, small red charge",
