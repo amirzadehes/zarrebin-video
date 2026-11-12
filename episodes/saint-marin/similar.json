@@ -1,18 +1,22 @@
 {
- "adult-male-human": [
-  "person-happy",
-  "person-thinking",
-  "person-worried",
-  "head-profile"
+ "banknotes": [
+  "cash",
+  "money-bag",
+  "money-coins",
+  "euro-sign"
+ ],
+ "goose": [
+  "roast-goose"
  ],
  "group-people": [
   "people-standing-in-line",
-  "family"
+  "family",
+  "two-brothers"
  ],
- "star": [
-  "star-rating",
-  "one-star",
-  "two-stars",
-  "three-stars"
+ "food": [
+  "roast-goose"
+ ],
+ "flag": [
+  "banner"
  ]
 }

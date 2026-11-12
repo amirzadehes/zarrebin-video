@@ -195,7 +195,7 @@
   "banner": {
    "id": "banner",
    "en": "banner",
-   "fa": "",
+   "fa": "پرچم",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -203,7 +203,16 @@
     "banner__2.webp",
     "banner__3.webp",
     "banner__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "پرچم",
+    "نماد",
+    "نشان",
+    "قاب",
+    "سپر",
+    "تزیین"
+   ],
+   "fa_tags_for": "پرچم"
   },
   "battery-empty": {
    "id": "battery-empty",
@@ -317,14 +326,23 @@
   "bishop": {
    "id": "bishop",
    "en": "bishop",
-   "fa": "",
+   "fa": "کشیش",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "bishop__1.webp",
     "bishop__2.webp",
     "bishop__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کشیش",
+    "دین",
+    "کلیسا",
+    "روحانی",
+    "پادشاهی",
+    "مسیحیت"
+   ],
+   "fa_tags_for": "کشیش"
   },
   "book": {
    "id": "book",
@@ -561,7 +579,7 @@
   "candle": {
    "id": "candle",
    "en": "candle",
-   "fa": "",
+   "fa": "شمع",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -569,7 +587,16 @@
     "candle__2.webp",
     "candle__3.webp",
     "candle__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "شمع",
+    "نور",
+    "روشنایی",
+    "مراسم",
+    "عطری",
+    "دکور"
+   ],
+   "fa_tags_for": "شمع"
   },
   "car": {
    "id": "car",
@@ -691,14 +718,23 @@
   "church": {
    "id": "church",
    "en": "church",
-   "fa": "",
+   "fa": "کلیسا",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "church__1.webp",
     "church__2.webp",
     "church__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کلیسا",
+    "معبد",
+    "دین",
+    "مسیحیت",
+    "محل عبادت",
+    "ساختمان"
+   ],
+   "fa_tags_for": "کلیسا"
   },
   "city": {
    "id": "city",
@@ -1018,7 +1054,7 @@
   "document": {
    "id": "document",
    "en": "document",
-   "fa": "",
+   "fa": "سند",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -1026,7 +1062,16 @@
     "document__2.webp",
     "document__3.webp",
     "document__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "سند",
+    "مدرک",
+    "قانون",
+    "مدارک",
+    "متن",
+    "رونوشت"
+   ],
+   "fa_tags_for": "سند"
   },
   "earth-globe": {
    "id": "earth-globe",
@@ -1408,14 +1453,23 @@
   "goose": {
    "id": "goose",
    "en": "goose",
-   "fa": "",
+   "fa": "غاز",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "goose__1.webp",
     "goose__2.webp",
     "goose__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "غاز",
+    "پرنده",
+    "حیوان",
+    "آبزی",
+    "غذا",
+    "طبیعت"
+   ],
+   "fa_tags_for": "غاز"
   },
   "graduation-cap": {
    "id": "graduation-cap",
@@ -1441,7 +1495,7 @@
   "grave": {
    "id": "grave",
    "en": "grave",
-   "fa": "",
+   "fa": "قبر",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -1449,7 +1503,16 @@
     "grave__2.webp",
     "grave__3.webp",
     "grave__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "قبر",
+    "دفن",
+    "مرگ",
+    "آرامگاه",
+    "مقبره",
+    "یادبود"
+   ],
+   "fa_tags_for": "قبر"
   },
   "hammer": {
    "id": "hammer",
@@ -1693,12 +1756,21 @@
   "lantern": {
    "id": "lantern",
    "en": "lantern",
-   "fa": "",
+   "fa": "بچه ها و فانوس‌ها",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "lantern__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "فانوس",
+    "نور",
+    "روشنایی",
+    "دستگاه روشنایی",
+    "جشن",
+    "کودکان"
+   ],
+   "fa_tags_for": "بچه ها و فانوس‌ها"
   },
   "laptop": {
    "id": "laptop",
@@ -2546,12 +2618,21 @@
   "roast-goose": {
    "id": "roast-goose",
    "en": "roast goose",
-   "fa": "",
+   "fa": "غاز کبابی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "roast-goose__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "غاز کبابی",
+    "غذا",
+    "کباب",
+    "پخت",
+    "جشن",
+    "دستپخت"
+   ],
+   "fa_tags_for": "غاز کبابی"
   },
   "rocket": {
    "id": "rocket",
@@ -2575,12 +2656,21 @@
   "roman-helmet": {
    "id": "roman-helmet",
    "en": "roman helmet",
-   "fa": "",
+   "fa": "کلاه‌خود رومی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "roman-helmet__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کلاه‌خود",
+    "رومی",
+    "زره",
+    "سرباز",
+    "تاریخ",
+    "جنگ"
+   ],
+   "fa_tags_for": "کلاه‌خود رومی"
   },
   "rubber-tire": {
    "id": "rubber-tire",
@@ -2624,14 +2714,23 @@
   "saint-martin": {
    "id": "saint-martin",
    "en": "saint martin",
-   "fa": "",
+   "fa": "سنت مارتین",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "saint-martin__1.webp",
     "saint-martin__2.webp",
     "saint-martin__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "سنت مارتین",
+    "قدیس",
+    "مسیحیت",
+    "دین",
+    "تاریخ",
+    "شخصیت"
+   ],
+   "fa_tags_for": "سنت مارتین"
   },
   "scales-justice": {
    "id": "scales-justice",
@@ -2946,7 +3045,7 @@
   "sword": {
    "id": "sword",
    "en": "sword",
-   "fa": "",
+   "fa": "شمشیر",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -2954,7 +3053,16 @@
     "sword__2.webp",
     "sword__3.webp",
     "sword__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "شمشیر",
+    "سلاح",
+    "جنگ",
+    "فلز",
+    "تاریخ",
+    "قهرمان"
+   ],
+   "fa_tags_for": "شمشیر"
   },
   "syringe": {
    "id": "syringe",
@@ -3248,7 +3356,7 @@
   "torch": {
    "id": "torch",
    "en": "torch",
-   "fa": "",
+   "fa": "مشعل",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -3256,7 +3364,16 @@
     "torch__2.webp",
     "torch__3.webp",
     "torch__4.webp"
-   ]
+   ],
+   "fa_tags": [
+    "مشعل",
+    "نور",
+    "روشنایی",
+    "آتش",
+    "ابزار",
+    "جشن"
+   ],
+   "fa_tags_for": "مشعل"
   },
   "train": {
    "id": "train",
