@@ -36,6 +36,7 @@ def main(ep, text=None):
         "concrete, drawable single objects needed to illustrate it: 30 to 45 items, ordered by narration order. "
         "Each item must be ONE physical object or symbol (never a scene, never text, letters or numbers, never a real person's face). "
         "Prefer these existing ids when they fit the meaning (reuse = no new drawing needed): " + ", ".join(sorted(known)) + ". "
+        "Reuse an existing id only when it is the same kind of thing AND from the same era; a specific historical or period figure (e.g. a Roman soldier, a medieval bishop) must get its own new id, never a generic modern person or object id such as adult-male-human. "
         "For anything else invent a new kebab-case English id. "
         'Return JSON only: {"items":[{"id":"kebab-id","en":"short English description for an image prompt, single object","fa":"نام فارسی کوتاه","why":"چند کلمه فارسی: کجای متن"}]}')
     try: model = pick_model(key)
