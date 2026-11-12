@@ -1639,6 +1639,16 @@
    ],
    "fa_tags_for": "کلید"
   },
+  "lantern": {
+   "id": "lantern",
+   "en": "lantern",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "lantern__1.webp"
+   ]
+  },
   "laptop": {
    "id": "laptop",
    "en": "laptop",
@@ -3138,6 +3148,19 @@
     "خواب"
    ],
    "fa_tags_for": "مغز خسته"
+  },
+  "torch": {
+   "id": "torch",
+   "en": "torch",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "torch__1.webp",
+    "torch__2.webp",
+    "torch__3.webp",
+    "torch__4.webp"
+   ]
   },
   "train": {
    "id": "train",

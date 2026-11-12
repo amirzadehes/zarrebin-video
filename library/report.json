@@ -1,18 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-09 20:54:53 UTC",
-   "ok": [
-    {
-     "file": "item-4__mw9qos50.jpg",
-     "id": "item-4",
-     "saved": "item-4__1.webp",
-     "kb": 202
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-09 21:01:45 UTC",
    "ok": [
     {
@@ -1026,6 +1014,42 @@
      "id": "bishop",
      "saved": "bishop__3.webp",
      "kb": 236
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-12 09:49:57 UTC",
+   "ok": [
+    {
+     "file": "lantern__mwdd9an5019.jpg",
+     "id": "lantern",
+     "saved": "lantern__1.webp",
+     "kb": 375
+    },
+    {
+     "file": "torch__mwdd8jys0wx.jpg",
+     "id": "torch",
+     "saved": "torch__1.webp",
+     "kb": 86
+    },
+    {
+     "file": "torch__mwdd8jz91b0.jpg",
+     "id": "torch",
+     "saved": "torch__2.webp",
+     "kb": 93
+    },
+    {
+     "file": "torch__mwdd8jzn29h.jpg",
+     "id": "torch",
+     "saved": "torch__3.webp",
+     "kb": 96
+    },
+    {
+     "file": "torch__mwdd8k013bv.jpg",
+     "id": "torch",
+     "saved": "torch__4.webp",
+     "kb": 102
     }
    ],
    "failed": []
