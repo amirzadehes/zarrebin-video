@@ -1,22 +1,16 @@
 {
  "star": [
   "star-rating",
-  "three-stars",
+  "one-star",
   "two-stars",
-  "one-star"
+  "three-stars"
  ],
  "rubber-tire": [
   "tire-company-logo"
  ],
  "map-folded": [
+  "map-pin",
   "compass"
- ],
- "wrench": [
-  "hammer"
- ],
- "hotel-building": [
-  "city",
-  "cityscape-chicago"
  ],
  "restaurant": [
   "roadside-restaurant",
@@ -24,20 +18,12 @@
   "reservation-card"
  ],
  "car": [
-  "taxi-car",
-  "bus",
-  "train"
- ],
- "eiffel-tower": [
-  "city",
-  "cityscape-chicago"
+  "taxi-car"
  ],
  "two-brothers": [
   "family",
-  "adult-male-human"
- ],
- "road": [
-  "roadside-restaurant"
+  "group-people",
+  "people-standing-in-line"
  ],
  "one-star": [
   "star",
@@ -58,7 +44,8 @@
   "two-stars"
  ],
  "compass": [
-  "map-folded"
+  "map-folded",
+  "map-pin"
  ],
  "chart-up": [
   "arrow-up",
@@ -82,9 +69,8 @@
  ],
  "dinner-plate": [
   "food",
-  "street-food-stall",
-  "restaurant",
-  "roadside-restaurant"
+  "silverware-set",
+  "street-food-stall"
  ],
  "trophy": [
   "medal",
@@ -120,8 +106,7 @@
   "document",
   "book",
   "book-open",
-  "books-stack",
-  "red-guidebook"
+  "books-stack"
  ],
  "microphone": [
   "megaphone"

@@ -1,6 +1,9 @@
 {
- "adult-male-human": [
+ "roman-soldier": [
   "roman-helmet"
+ ],
+ "cloak": [
+  "half-cloak"
  ],
  "banknotes": [
   "cash",
@@ -15,31 +18,132 @@
   "people-standing-in-line",
   "two-brothers"
  ],
+ "beggar": [
+  "group-people",
+  "people-standing-in-line",
+  "person-worried"
+ ],
+ "bishop": [
+  "saint-martin",
+  "doctor",
+  "teacher",
+  "scientist",
+  "critic",
+  "chef",
+  "football-referee",
+  "secret-inspector"
+ ],
+ "dinner-plate": [
+  "food",
+  "street-food-stall",
+  "restaurant",
+  "roadside-restaurant"
+ ],
  "food": [
-  "roast-goose",
   "burger",
-  "street-food-stall"
+  "dinner-plate",
+  "street-food-stall",
+  "restaurant",
+  "roadside-restaurant",
+  "spice-jar",
+  "coffee-cup",
+  "espresso-cup",
+  "tea-cup",
+  "wine-glass",
+  "moka-pot",
+  "coffee-beans"
  ],
  "flag": [
-  "banner"
+  "banner",
+  "trophy",
+  "medal",
+  "star",
+  "star-rating",
+  "one-star",
+  "two-stars",
+  "three-stars"
+ ],
+ "torch": [
+  "fire",
+  "candle",
+  "lantern",
+  "lightning-burst"
+ ],
+ "money-bag": [
+  "money-coins",
+  "banknotes",
+  "cash",
+  "price-tag"
+ ],
+ "money-coins": [
+  "money-bag",
+  "banknotes",
+  "cash",
+  "price-tag"
+ ],
+ "document": [
+  "book",
+  "book-open",
+  "books-stack",
+  "calendar",
+  "red-guidebook",
+  "reservation-card"
+ ],
+ "road": [
+  "city",
+  "cityscape-chicago",
+  "factory",
+  "hotel-building",
+  "church",
+  "eiffel-tower",
+  "gas-pump",
+  "taxi-car",
+  "bus",
+  "train",
+  "car",
+  "auto-repair-shop"
+ ],
+ "half-cloak": [
+  "cloak",
+  "roman-helmet",
+  "roman-soldier",
+  "bishop",
+  "saint-martin",
+  "thief-mask"
  ],
  "saint-martin": [
-  "bishop"
+  "roman-soldier",
+  "cloak",
+  "half-cloak"
  ],
  "roast-goose": [
-  "goose"
+  "goose",
+  "food"
+ ],
+ "candle": [
+  "fire"
  ],
  "shield": [
   "shield-check"
  ],
+ "roman-helmet": [
+  "roman-soldier"
+ ],
  "map-pin": [
   "map-folded",
-  "compass"
+  "church"
+ ],
+ "hourglass": [
+  "clock-wall",
+  "stopwatch"
  ],
  "star": [
+  "star-rating",
   "one-star",
   "two-stars",
-  "three-stars",
-  "star-rating"
+  "three-stars"
+ ],
+ "wheat": [
+  "leaf"
  ]
 }

@@ -6,8 +6,7 @@
   "coffee-plant"
  ],
  "tea-cup": [
-  "wine-glass",
-  "dinner-plate"
+  "wine-glass"
  ],
  "battery-empty": [
   "battery-full",
@@ -42,7 +41,8 @@
  "adenosine": [
   "caffeine-molecule",
   "purple-molecule",
-  "atom"
+  "atom",
+  "dna-helix"
  ],
  "receptor": [
   "neuron",
@@ -94,9 +94,9 @@
   "moka-pot"
  ],
  "hourglass": [
+  "clock-wall",
   "stopwatch",
-  "alarm-clock",
-  "clock-wall"
+  "alarm-clock"
  ],
  "clock-wall": [
   "hourglass",
