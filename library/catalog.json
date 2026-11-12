@@ -301,6 +301,18 @@
    ],
    "fa_tags_for": "زنگ"
   },
+  "bishop": {
+   "id": "bishop",
+   "en": "bishop",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "bishop__1.webp",
+    "bishop__2.webp",
+    "bishop__3.webp"
+   ]
+  },
   "book": {
    "id": "book",
    "en": "book",
