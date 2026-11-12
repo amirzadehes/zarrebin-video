@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ذره‌بین – ساخت خودکار تصویر در Google Flow
 // @namespace    https://github.com/amirzadehes/zarrebin-video
-// @version      0.1.4
+// @version      0.1.5
 // @description  تصویرهای کم‌داشته‌ی یک قسمت را در Flow می‌سازد (۴ تصویر برای هر پرامپت) و در inbox ریبو آپلود می‌کند
 // @match        https://flow.google.com/*
 // @match        https://labs.google/fx/*
@@ -48,7 +48,7 @@
     #log{height:150px;overflow:auto;background:#0e0f12;border-radius:6px;padding:6px;margin-top:7px;direction:ltr;text-align:left;font:11px/1.5 monospace;white-space:pre-wrap}
   </style>
   <div class="box" id="box">
-    <div class="hd"><span>🖼 ذره‌بین ← Flow v0.1.4</span><span id="min" style="cursor:pointer">▁</span></div>
+    <div class="hd"><span>🖼 ذره‌بین ← Flow v0.1.5</span><span id="min" style="cursor:pointer">▁</span></div>
     <label>توکن گیت‌هاب (فقط همین‌جا ذخیره می‌شود)</label>
     <input id="tok" type="password" placeholder="github_pat_...">
     <label>نام پوشه‌ی قسمت (مثلاً saint-marin)</label>
@@ -195,13 +195,19 @@
         el.dispatchEvent(t.startsWith('pointer') ? new PointerEvent(t, { ...o, pointerId: 1, pointerType: 'mouse', isPrimary: true }) : new MouseEvent(t, o));
       }
     };
-    realClick(btn);
-    if (!(await waitFor(startedNow, 12000, 500))) {
-      log('کلیک اثری نداشت؛ با Enter امتحان می‌کنم…');
-      const box = promptBox(); box.focus();
-      for (const t of ['keydown', 'keypress', 'keyup']) box.dispatchEvent(new KeyboardEvent(t, { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true, cancelable: true }));
-      if (!(await waitFor(startedNow, 12000, 500))) { dumpDiag('ارسال پرامپت اثری نداشت (' + btnState() + ')'); throw new Error('Flow پرامپت را نپذیرفت'); }
+    const tries = [
+      ['کلیک ماوس', () => realClick(btn)],
+      ['Enter روی خود دکمه', () => { btn.focus(); for (const t of ['keydown', 'keypress', 'keyup']) btn.dispatchEvent(new KeyboardEvent(t, { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true, cancelable: true, composed: true })); }],
+      ['Enter ساختگی در کادر', () => { const bx = promptBox(); bx.focus(); for (const t of ['keydown', 'keypress', 'keyup']) bx.dispatchEvent(new KeyboardEvent(t, { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true, cancelable: true, composed: true })); }],
+      ['insertParagraph (Enter مرورگر)', () => { const bx = promptBox(); bx.focus(); document.execCommand('insertParagraph', false, null); }],
+    ];
+    let started = false;
+    for (const [name, fn] of tries) {
+      log('تلاش: ' + name);
+      try { fn(); } catch (e) { log('  خطا: ' + e.message); }
+      if (await waitFor(startedNow, 8000, 500)) { started = true; log('  ✔ کار کرد: ' + name); store.set('startMethod', name); break; }
     }
+    if (!started) { dumpDiag('ارسال پرامپت اثری نداشت (' + btnState() + ')'); throw new Error('Flow پرامپت را نپذیرفت'); }
     log('پرامپت فرستاده شد؛ منتظر تصویرها…');
     let dumped = false;
 
