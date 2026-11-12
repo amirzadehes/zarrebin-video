@@ -2672,6 +2672,16 @@
    ],
    "fa_tags_for": "کلاه‌خود رومی"
   },
+  "roman-soldier": {
+   "id": "roman-soldier",
+   "en": "roman soldier",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "roman-soldier__1.webp"
+   ]
+  },
   "rubber-tire": {
    "id": "rubber-tire",
    "en": "rubber tire",

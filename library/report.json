@@ -1,24 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-09 22:10:29 UTC",
-   "ok": [
-    {
-     "file": "pill__mw9te0ht0yn.jpg",
-     "id": "pill",
-     "saved": "pill__1.webp",
-     "kb": 100
-    },
-    {
-     "file": "pill__mw9te0i01qd.jpg",
-     "id": "pill",
-     "saved": "pill__2.webp",
-     "kb": 100
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-09 22:11:21 UTC",
    "ok": [
     {
@@ -1160,6 +1142,18 @@
      "id": "roman-helmet",
      "saved": "roman-helmet__1.webp",
      "kb": 215
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-12 21:15:19 UTC",
+   "ok": [
+    {
+     "file": "roman-soldier__mwe1qmlm0.jpg",
+     "id": "roman-soldier",
+     "saved": "roman-soldier__1.webp",
+     "kb": 210
     }
    ],
    "failed": []
