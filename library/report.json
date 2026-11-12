@@ -1,16 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-09 21:07:51 UTC",
-   "ok": [],
-   "failed": [
-    {
-     "file": "critic__mw9r5la9.jpg",
-     "reason": "شیء از لبه‌ی کادر بیرون زده یا بریده شده"
-    }
-   ]
-  },
-  {
    "time": "2026-11-09 21:13:40 UTC",
    "ok": [
     {
@@ -1062,6 +1052,18 @@
      "id": "banner",
      "saved": "banner__3.webp",
      "kb": 276
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-12 09:52:24 UTC",
+   "ok": [
+    {
+     "file": "banner__mwddbk303w6.jpg",
+     "id": "banner",
+     "saved": "banner__4.webp",
+     "kb": 281
     }
    ],
    "failed": []
