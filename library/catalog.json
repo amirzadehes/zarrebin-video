@@ -1936,6 +1936,18 @@
    ],
    "fa_tags_for": "نقشه تا شده"
   },
+  "map-pin": {
+   "id": "map-pin",
+   "en": "map pin",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "map-pin__1.webp",
+    "map-pin__2.webp",
+    "map-pin__3.webp"
+   ]
+  },
   "medal": {
    "id": "medal",
    "en": "medal",

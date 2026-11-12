@@ -1,36 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-09 22:49:15 UTC",
-   "ok": [
-    {
-     "file": "graduation-cap__mw9us2o80jj.jpg",
-     "id": "graduation-cap",
-     "saved": "graduation-cap__1.webp",
-     "kb": 105
-    },
-    {
-     "file": "graduation-cap__mw9us2oj1xg.jpg",
-     "id": "graduation-cap",
-     "saved": "graduation-cap__2.webp",
-     "kb": 117
-    },
-    {
-     "file": "pencil__mw9urw9c0ro.jpg",
-     "id": "pencil",
-     "saved": "pencil__1.webp",
-     "kb": 80
-    },
-    {
-     "file": "pencil__mw9urw9n1n6.jpg",
-     "id": "pencil",
-     "saved": "pencil__2.webp",
-     "kb": 71
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-09 22:49:50 UTC",
    "ok": [
     {
@@ -1124,6 +1094,30 @@
      "id": "wheat",
      "saved": "wheat__2.webp",
      "kb": 204
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-12 21:19:18 UTC",
+   "ok": [
+    {
+     "file": "map-pin__mwe1vz7802i.jpg",
+     "id": "map-pin",
+     "saved": "map-pin__1.webp",
+     "kb": 170
+    },
+    {
+     "file": "map-pin__mwe1vz7g1fo.jpg",
+     "id": "map-pin",
+     "saved": "map-pin__2.webp",
+     "kb": 115
+    },
+    {
+     "file": "map-pin__mwe1vz7k21s.jpg",
+     "id": "map-pin",
+     "saved": "map-pin__3.webp",
+     "kb": 101
     }
    ],
    "failed": []
