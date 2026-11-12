@@ -675,6 +675,18 @@
    ],
    "fa_tags_for": "کلاه سرآشپز"
   },
+  "church": {
+   "id": "church",
+   "en": "church",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "church__1.webp",
+    "church__2.webp",
+    "church__3.webp"
+   ]
+  },
   "city": {
    "id": "city",
    "en": "city",
@@ -2872,6 +2884,19 @@
     "آسمان"
    ],
    "fa_tags_for": "خورشید"
+  },
+  "sword": {
+   "id": "sword",
+   "en": "sword",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "sword__1.webp",
+    "sword__2.webp",
+    "sword__3.webp",
+    "sword__4.webp"
+   ]
   },
   "syringe": {
    "id": "syringe",

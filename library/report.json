@@ -1,18 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-09 21:13:40 UTC",
-   "ok": [
-    {
-     "file": "chef__mw9rcynw.jpg",
-     "id": "chef",
-     "saved": "chef__1.webp",
-     "kb": 269
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-09 22:07:44 UTC",
    "ok": [
     {
@@ -1064,6 +1052,54 @@
      "id": "banner",
      "saved": "banner__4.webp",
      "kb": 281
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-12 09:53:37 UTC",
+   "ok": [
+    {
+     "file": "church__mwdddnfz0cm.jpg",
+     "id": "church",
+     "saved": "church__1.webp",
+     "kb": 234
+    },
+    {
+     "file": "church__mwdddngd1rt.jpg",
+     "id": "church",
+     "saved": "church__2.webp",
+     "kb": 178
+    },
+    {
+     "file": "church__mwdddngq2lt.jpg",
+     "id": "church",
+     "saved": "church__3.webp",
+     "kb": 180
+    },
+    {
+     "file": "sword__mwdddqyu0lp.jpg",
+     "id": "sword",
+     "saved": "sword__1.webp",
+     "kb": 57
+    },
+    {
+     "file": "sword__mwdddqzg1ba.jpg",
+     "id": "sword",
+     "saved": "sword__2.webp",
+     "kb": 58
+    },
+    {
+     "file": "sword__mwdddqzq20s.jpg",
+     "id": "sword",
+     "saved": "sword__3.webp",
+     "kb": 65
+    },
+    {
+     "file": "sword__mwdddqzz38p.jpg",
+     "id": "sword",
+     "saved": "sword__4.webp",
+     "kb": 60
     }
    ],
    "failed": []
