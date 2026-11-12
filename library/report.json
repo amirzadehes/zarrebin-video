@@ -1,18 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-09 22:54:34 UTC",
-   "ok": [
-    {
-     "file": "megaphone__mw9uyqz100g.jpg",
-     "id": "megaphone",
-     "saved": "megaphone__1.webp",
-     "kb": 154
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-09 22:56:19 UTC",
    "ok": [
     {
@@ -1124,6 +1112,24 @@
      "id": "group-people",
      "saved": "group-people__2.webp",
      "kb": 180
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-12 21:23:19 UTC",
+   "ok": [
+    {
+     "file": "fire__mwe20qmm0ul.jpg",
+     "id": "fire",
+     "saved": "fire__4.webp",
+     "kb": 217
+    },
+    {
+     "file": "fire__mwe20qmn1bn.jpg",
+     "id": "fire",
+     "saved": "fire__5.webp",
+     "kb": 224
     }
    ],
    "failed": []
