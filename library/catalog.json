@@ -3529,6 +3529,17 @@
    ],
    "fa_tags_for": "قطره آب"
   },
+  "wheat": {
+   "id": "wheat",
+   "en": "wheat",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "wheat__1.webp",
+    "wheat__2.webp"
+   ]
+  },
   "wine-glass": {
    "id": "wine-glass",
    "en": "wine glass",
