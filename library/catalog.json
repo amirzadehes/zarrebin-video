@@ -1342,6 +1342,18 @@
    ],
    "fa_tags_for": "دنده‌ها"
   },
+  "goose": {
+   "id": "goose",
+   "en": "goose",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "goose__1.webp",
+    "goose__2.webp",
+    "goose__3.webp"
+   ]
+  },
   "graduation-cap": {
    "id": "graduation-cap",
    "en": "graduation cap",
