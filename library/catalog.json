@@ -332,7 +332,9 @@
    "variants": [
     "bishop__1.webp",
     "bishop__2.webp",
-    "bishop__3.webp"
+    "bishop__3.webp",
+    "bishop__4.webp",
+    "bishop__5.webp"
    ],
    "fa_tags": [
     "کشیش",
@@ -1349,7 +1351,8 @@
    ],
    "has_text_in_image": false,
    "variants": [
-    "food__1.webp"
+    "food__1.webp",
+    "food__2.webp"
    ],
    "fa_tags": [
     "غذا",
