@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ذره‌بین – ساخت خودکار تصویر در Google Flow
 // @namespace    https://github.com/amirzadehes/zarrebin-video
-// @version      0.1.3
+// @version      0.1.4
 // @description  تصویرهای کم‌داشته‌ی یک قسمت را در Flow می‌سازد (۴ تصویر برای هر پرامپت) و در inbox ریبو آپلود می‌کند
 // @match        https://flow.google.com/*
 // @match        https://labs.google/fx/*
@@ -48,7 +48,7 @@
     #log{height:150px;overflow:auto;background:#0e0f12;border-radius:6px;padding:6px;margin-top:7px;direction:ltr;text-align:left;font:11px/1.5 monospace;white-space:pre-wrap}
   </style>
   <div class="box" id="box">
-    <div class="hd"><span>🖼 ذره‌بین ← Flow v0.1.3</span><span id="min" style="cursor:pointer">▁</span></div>
+    <div class="hd"><span>🖼 ذره‌بین ← Flow v0.1.4</span><span id="min" style="cursor:pointer">▁</span></div>
     <label>توکن گیت‌هاب (فقط همین‌جا ذخیره می‌شود)</label>
     <input id="tok" type="password" placeholder="github_pat_...">
     <label>نام پوشه‌ی قسمت (مثلاً saint-marin)</label>
@@ -175,7 +175,10 @@
     const before = new Set(gridImgs().map(i => i.src));
     await typePrompt(promptText);
     const tilesBefore = deepAll('flow-image-tile').length;
-    const startedNow = () => deepAll('flow-image-tile').length > tilesBefore || gridImgs().some(i => !before.has(i.src));
+    const spinSel = '[role="progressbar"], mat-progress-spinner, mat-spinner, mat-progress-bar, [class*="generating"], [class*="loading"], [class*="skeleton"], [class*="placeholder"]';
+    const spinBefore = deepAll(spinSel).length;
+    const boxEmpty = () => { const bx = promptBox(); return !!bx && bx.innerText.trim().length < 5; };
+    const startedNow = () => deepAll('flow-image-tile').length > tilesBefore || gridImgs().some(i => !before.has(i.src)) || boxEmpty() || deepAll(spinSel).length > spinBefore || (() => { const b2 = startBtn(); return !b2 || b2.disabled || b2.getAttribute('aria-disabled') === 'true'; })();
     const btnState = () => { const b = startBtn(); return b ? `disabled=${b.disabled} aria-disabled=${b.getAttribute('aria-disabled')}` : 'دکمه پیدا نشد'; };
     let btn = await waitFor(() => { const b = startBtn(); return b && !b.disabled && b.getAttribute('aria-disabled') !== 'true' ? b : null; }, 8000);
     if (!btn) {
@@ -193,11 +196,11 @@
       }
     };
     realClick(btn);
-    if (!(await waitFor(startedNow, 7000, 500))) {
+    if (!(await waitFor(startedNow, 12000, 500))) {
       log('کلیک اثری نداشت؛ با Enter امتحان می‌کنم…');
       const box = promptBox(); box.focus();
       for (const t of ['keydown', 'keypress', 'keyup']) box.dispatchEvent(new KeyboardEvent(t, { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true, cancelable: true }));
-      if (!(await waitFor(startedNow, 7000, 500))) { dumpDiag('ارسال پرامپت اثری نداشت (' + btnState() + ')'); throw new Error('Flow پرامپت را نپذیرفت'); }
+      if (!(await waitFor(startedNow, 12000, 500))) { dumpDiag('ارسال پرامپت اثری نداشت (' + btnState() + ')'); throw new Error('Flow پرامپت را نپذیرفت'); }
     }
     log('پرامپت فرستاده شد؛ منتظر تصویرها…');
     let dumped = false;
@@ -269,8 +272,8 @@
   function dumpDiag(why) {
     const info = {
       why, url: location.pathname.replace(/[0-9a-f-]{20,}/g, 'ID'),
-      imgs: deepAll('img').filter(visible).slice(0, 25).map(i => ({ nat: i.naturalWidth + 'x' + i.naturalHeight, shown: Math.round(i.getBoundingClientRect().width) + 'x' + Math.round(i.getBoundingClientRect().height), cls: i.className, grid: inGrid(i) })),
-      buttons: deepAll('button').filter(visible).slice(0, 40).map(b => ({ a: b.getAttribute('aria-label'), t: (b.innerText || '').slice(0, 25) })),
+      imgs: deepAll('img').filter(visible).slice(-6).map(i => ({ nat: i.naturalWidth + 'x' + i.naturalHeight, shown: Math.round(i.getBoundingClientRect().width) + 'x' + Math.round(i.getBoundingClientRect().height), cls: i.className, grid: inGrid(i) })),
+      buttons: deepAll('button').filter(visible).slice(-14).map(b => ({ a: b.getAttribute('aria-label'), t: (b.innerText || '').slice(0, 25) })),
     };
     log('تشخیص:\n' + JSON.stringify(info));
   }
