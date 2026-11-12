@@ -1,30 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-09 22:51:59 UTC",
-   "ok": [
-    {
-     "file": "bell__mw9uvfc20ol.jpg",
-     "id": "bell",
-     "saved": "bell__1.webp",
-     "kb": 166
-    },
-    {
-     "file": "thought-bubble__mw9uv8fv0o0.jpg",
-     "id": "thought-bubble",
-     "saved": "thought-bubble__1.webp",
-     "kb": 135
-    },
-    {
-     "file": "thought-bubble__mw9uv8ga1uk.jpg",
-     "id": "thought-bubble",
-     "saved": "thought-bubble__2.webp",
-     "kb": 143
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-09 22:54:34 UTC",
    "ok": [
     {
@@ -1118,6 +1094,36 @@
      "id": "half-cloak",
      "saved": "half-cloak__2.webp",
      "kb": 260
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-12 21:21:34 UTC",
+   "ok": [
+    {
+     "file": "cloak__mwe1ysy800v.jpg",
+     "id": "cloak",
+     "saved": "cloak__1.webp",
+     "kb": 239
+    },
+    {
+     "file": "cloak__mwe1ysyi1og.jpg",
+     "id": "cloak",
+     "saved": "cloak__2.webp",
+     "kb": 222
+    },
+    {
+     "file": "group-people__mwe1y7bi0r6.jpg",
+     "id": "group-people",
+     "saved": "group-people__1.webp",
+     "kb": 139
+    },
+    {
+     "file": "group-people__mwe1y7bq146.jpg",
+     "id": "group-people",
+     "saved": "group-people__2.webp",
+     "kb": 180
     }
    ],
    "failed": []

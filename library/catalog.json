@@ -776,6 +776,17 @@
    ],
    "fa_tags_for": "منظره شهری شیکاگو"
   },
+  "cloak": {
+   "id": "cloak",
+   "en": "cloak",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "cloak__1.webp",
+    "cloak__2.webp"
+   ]
+  },
   "clock-wall": {
    "id": "clock-wall",
    "en": "clock wall",
@@ -1516,6 +1527,17 @@
     "یادبود"
    ],
    "fa_tags_for": "قبر"
+  },
+  "group-people": {
+   "id": "group-people",
+   "en": "group people",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "group-people__1.webp",
+    "group-people__2.webp"
+   ]
   },
   "half-cloak": {
    "id": "half-cloak",
