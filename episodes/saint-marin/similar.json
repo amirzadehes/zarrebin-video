@@ -16,7 +16,9 @@
   "two-brothers"
  ],
  "food": [
-  "roast-goose"
+  "roast-goose",
+  "burger",
+  "street-food-stall"
  ],
  "flag": [
   "banner"
@@ -35,10 +37,9 @@
   "compass"
  ],
  "star": [
-  "star-rating",
   "one-star",
   "two-stars",
   "three-stars",
-  "crescent-moon"
+  "star-rating"
  ]
 }

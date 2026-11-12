@@ -9,7 +9,14 @@
   "tire-company-logo"
  ],
  "map-folded": [
-  "red-guidebook"
+  "compass"
+ ],
+ "wrench": [
+  "hammer"
+ ],
+ "hotel-building": [
+  "city",
+  "cityscape-chicago"
  ],
  "restaurant": [
   "roadside-restaurant",
@@ -17,7 +24,20 @@
   "reservation-card"
  ],
  "car": [
-  "taxi-car"
+  "taxi-car",
+  "bus",
+  "train"
+ ],
+ "eiffel-tower": [
+  "city",
+  "cityscape-chicago"
+ ],
+ "two-brothers": [
+  "family",
+  "adult-male-human"
+ ],
+ "road": [
+  "roadside-restaurant"
  ],
  "one-star": [
   "star",
@@ -62,15 +82,21 @@
  ],
  "dinner-plate": [
   "food",
-  "silverware-set",
-  "street-food-stall"
+  "street-food-stall",
+  "restaurant",
+  "roadside-restaurant"
  ],
  "trophy": [
   "medal",
   "crown"
  ],
  "earth-globe": [
-  "planet-earth"
+  "planet-earth",
+  "city",
+  "cityscape-chicago",
+  "eiffel-tower",
+  "item-2",
+  "item-4"
  ],
  "video-play": [
   "item"
@@ -94,7 +120,8 @@
   "document",
   "book",
   "book-open",
-  "books-stack"
+  "books-stack",
+  "red-guidebook"
  ],
  "microphone": [
   "megaphone"

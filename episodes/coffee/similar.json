@@ -34,10 +34,9 @@
  ],
  "person-sleeping": [
   "eye-sleepy",
-  "eye-open",
   "person-thinking",
-  "person-happy",
   "person-worried",
+  "person-happy",
   "head-profile"
  ],
  "adenosine": [
@@ -83,26 +82,21 @@
  "hand-tremble": [
   "fist",
   "hand-stop",
-  "pointing-hand",
-  "thumbs-down",
-  "thumbs-up"
+  "pointing-hand"
  ],
  "anxiety": [
   "person-worried",
-  "person-thinking",
-  "eye-sleepy"
+  "person-thinking"
  ],
  "espresso-cup": [
   "coffee-cup",
   "tea-cup",
-  "moka-pot",
-  "coffee-beans",
-  "coffee-plant"
+  "moka-pot"
  ],
  "hourglass": [
-  "clock-wall",
   "stopwatch",
-  "alarm-clock"
+  "alarm-clock",
+  "clock-wall"
  ],
  "clock-wall": [
   "hourglass",
@@ -111,8 +105,7 @@
  ],
  "sleep-deep": [
   "eye-sleepy",
-  "crescent-moon",
-  "bed"
+  "crescent-moon"
  ],
  "brain-adaptation": [
   "brain-colorful",
