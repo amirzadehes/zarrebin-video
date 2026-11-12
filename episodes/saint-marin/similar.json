@@ -1,0 +1,18 @@
+{
+ "adult-male-human": [
+  "person-happy",
+  "person-thinking",
+  "person-worried",
+  "head-profile"
+ ],
+ "group-people": [
+  "people-standing-in-line",
+  "family"
+ ],
+ "star": [
+  "star-rating",
+  "one-star",
+  "two-stars",
+  "three-stars"
+ ]
+}

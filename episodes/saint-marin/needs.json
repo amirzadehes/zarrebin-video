@@ -1,0 +1,244 @@
+{
+ "episode": "saint-marin",
+ "src_h": "6d028f54cad8bfb9d58ccf96044d72cb",
+ "items": [
+  {
+   "id": "adult-male-human",
+   "en": "Roman soldier",
+   "fa": "سرباز رومی",
+   "why": "سرباز رومی در ابتدای داستان",
+   "tags": []
+  },
+  {
+   "id": "cloak",
+   "en": "Military cloak",
+   "fa": "شنل",
+   "why": "شنل سرباز رومی",
+   "tags": []
+  },
+  {
+   "id": "grave",
+   "en": "Grave marker",
+   "fa": "قبر",
+   "why": "مراسم خاکسپاری",
+   "tags": []
+  },
+  {
+   "id": "banknotes",
+   "en": "Tax money",
+   "fa": "مالیات",
+   "why": "مالیات در داستان",
+   "tags": []
+  },
+  {
+   "id": "goose",
+   "en": "Goose",
+   "fa": "غاز",
+   "why": "کباب غاز",
+   "tags": []
+  },
+  {
+   "id": "lantern",
+   "en": "Lantern held by children",
+   "fa": "فانوس",
+   "why": "فانوس‌های بچه‌ها",
+   "tags": []
+  },
+  {
+   "id": "banner",
+   "en": "Parade banner",
+   "fa": "پرچم رژه",
+   "why": "رژه‌ی فانوس",
+   "tags": []
+  },
+  {
+   "id": "group-people",
+   "en": "Group of children",
+   "fa": "بچه‌ها",
+   "why": "بچه‌ها در رژه",
+   "tags": []
+  },
+  {
+   "id": "sword",
+   "en": "Sword",
+   "fa": "شمشیر",
+   "why": "شمشیر که نصف می‌کند",
+   "tags": []
+  },
+  {
+   "id": "fire",
+   "en": "Bonfire",
+   "fa": "آتش بزرگ",
+   "why": "آتش بزرگ در پایان رژه",
+   "tags": []
+  },
+  {
+   "id": "church",
+   "en": "Church building",
+   "fa": "کلیسا",
+   "why": "کلیسا و تعمید مارتین",
+   "tags": []
+  },
+  {
+   "id": "calendar",
+   "en": "Calendar showing November 11",
+   "fa": "تقویم",
+   "why": "تاریخ ۱۱ نوامبر",
+   "tags": []
+  },
+  {
+   "id": "beggar",
+   "en": "Beggar figure",
+   "fa": "گدا",
+   "why": "گدا که نصف شنل می‌گیرد",
+   "tags": []
+  },
+  {
+   "id": "bishop",
+   "en": "Bishop's mitre",
+   "fa": "اسقف",
+   "why": "اوزخوف/اسقف شهر",
+   "tags": []
+  },
+  {
+   "id": "dinner-plate",
+   "en": "Plate",
+   "fa": "بشقاب",
+   "why": "بشقاب برای کباب غاز",
+   "tags": []
+  },
+  {
+   "id": "food",
+   "en": "Roasted goose on plate",
+   "fa": "غذای غاز کبابی",
+   "why": "کباب غاز روی بشقاب",
+   "tags": []
+  },
+  {
+   "id": "music-note",
+   "en": "Music note",
+   "fa": "نت موسیقی",
+   "why": "آهنگ رژه",
+   "tags": []
+  },
+  {
+   "id": "flag",
+   "en": "Flag",
+   "fa": "پرچم",
+   "why": "پرچم‌ها در رژه",
+   "tags": []
+  },
+  {
+   "id": "torch",
+   "en": "Torch",
+   "fa": "مشعل",
+   "why": "مشعل برای روشن کردن",
+   "tags": []
+  },
+  {
+   "id": "money-bag",
+   "en": "Bag of money",
+   "fa": "کیسه پول",
+   "why": "مالیات با پول",
+   "tags": []
+  },
+  {
+   "id": "money-coins",
+   "en": "Coins",
+   "fa": "سکه‌ها",
+   "why": "سکه‌های مالیات",
+   "tags": []
+  },
+  {
+   "id": "document",
+   "en": "Document (burial record)",
+   "fa": "سند",
+   "why": "سند خاکسپاری",
+   "tags": []
+  },
+  {
+   "id": "road",
+   "en": "Road",
+   "fa": "جاده",
+   "why": "مسیر رژه",
+   "tags": []
+  },
+  {
+   "id": "half-cloak",
+   "en": "Half of a cloak",
+   "fa": "نیمه‌شنل",
+   "why": "نیمه‌شنل که به گدا می‌دهند",
+   "tags": []
+  },
+  {
+   "id": "saint-martin",
+   "en": "Saint Martin figure",
+   "fa": "سنت مارتین",
+   "why": "شخصیت مارتین",
+   "tags": []
+  },
+  {
+   "id": "roast-goose",
+   "en": "Roasted goose",
+   "fa": "کباب غاز",
+   "why": "کباب غاز به عنوان غذا",
+   "tags": []
+  },
+  {
+   "id": "candle",
+   "en": "Candle",
+   "fa": "شمع",
+   "why": "شمع برای نور",
+   "tags": []
+  },
+  {
+   "id": "shield",
+   "en": "Shield (Roman style)",
+   "fa": "سپر",
+   "why": "سپر سرباز رومی",
+   "tags": []
+  },
+  {
+   "id": "roman-helmet",
+   "en": "Roman helmet",
+   "fa": "کلاه‌خود رومی",
+   "why": "کلاه‌خود سرباز رومی",
+   "tags": []
+  },
+  {
+   "id": "map-pin",
+   "en": "Map pin (location of Kand)",
+   "fa": "نشان‌گر مکان",
+   "why": "مکان روستای کَند",
+   "tags": []
+  },
+  {
+   "id": "hourglass",
+   "en": "Hourglass (time passing)",
+   "fa": "ساعت شنی",
+   "why": "زمان گذر",
+   "tags": []
+  },
+  {
+   "id": "star",
+   "en": "Star (night sky)",
+   "fa": "ستاره",
+   "why": "ستاره‌های شب",
+   "tags": []
+  },
+  {
+   "id": "wheat",
+   "en": "Wheat sheaf (agricultural season)",
+   "fa": "گندم",
+   "why": "پایان سال کشاورزی",
+   "tags": []
+  },
+  {
+   "id": "cross-mark",
+   "en": "Cross mark (death)",
+   "fa": "علامت صلیب",
+   "why": "نماد مرگ مارتین",
+   "tags": []
+  }
+ ]
+}
