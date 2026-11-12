@@ -48,7 +48,7 @@
     #log{height:150px;overflow:auto;background:#0e0f12;border-radius:6px;padding:6px;margin-top:7px;direction:ltr;text-align:left;font:11px/1.5 monospace;white-space:pre-wrap}
   </style>
   <div class="box" id="box">
-    <div class="hd"><span>🖼 ذره‌بین ← Flow</span><span id="min" style="cursor:pointer">▁</span></div>
+    <div class="hd"><span>🖼 ذره‌بین ← Flow v0.1.3</span><span id="min" style="cursor:pointer">▁</span></div>
     <label>توکن گیت‌هاب (فقط همین‌جا ذخیره می‌شود)</label>
     <input id="tok" type="password" placeholder="github_pat_...">
     <label>نام پوشه‌ی قسمت (مثلاً saint-marin)</label>
