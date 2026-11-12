@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ذره‌بین – ساخت خودکار تصویر در Google Flow
 // @namespace    https://github.com/amirzadehes/zarrebin-video
-// @version      0.1.0
+// @version      0.1.1
 // @description  تصویرهای کم‌داشته‌ی یک قسمت را در Flow می‌سازد (۴ تصویر برای هر پرامپت) و در inbox ریبو آپلود می‌کند
 // @match        https://flow.google.com/*
 // @match        https://labs.google/fx/*
@@ -175,9 +175,10 @@
     const before = new Set(gridImgs().map(i => i.src));
     await typePrompt(promptText);
     const btn = await waitFor(() => { const b = startBtn(); return b && !b.disabled && b.getAttribute('aria-disabled') !== 'true' ? b : null; }, 15000);
-    if (!btn) throw new Error('دکمه‌ی Start فعال نشد');
+    if (!btn) { dumpDiag('Start فعال نشد'); throw new Error('دکمه‌ی Start فعال نشد'); }
     btn.click();
     log('پرامپت فرستاده شد؛ منتظر تصویرها…');
+    let dumped = false;
 
     // منتظر ظهور تصویرهای تازه؛ وقتی تعداد ۵ ثانیه ثابت ماند تمام است
     let last = -1, since = Date.now(), fresh = [];
@@ -189,6 +190,7 @@
       if (fresh.length !== last) { last = fresh.length; since = Date.now(); }
       if (fresh.length >= 4 && Date.now() - since > 4000) break;
       if (fresh.length > 0 && Date.now() - since > 25000) break;
+      if (!dumped && Date.now() - t0 > 60000 && !fresh.length) { dumped = true; log('۶۰ ثانیه گذشت و تصویر تازه‌ای دیده نشد.'); dumpDiag('تصویر تازه پیدا نشد'); }
       await sleep(1000);
     }
     if (!fresh.length) throw new Error('تصویری ساخته نشد (زمان تمام شد)');
