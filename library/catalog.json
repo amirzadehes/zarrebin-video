@@ -781,13 +781,22 @@
   "cloak": {
    "id": "cloak",
    "en": "cloak",
-   "fa": "",
+   "fa": "کلاه‌خود",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "cloak__1.webp",
     "cloak__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کلاه",
+    "پوشش",
+    "لباس",
+    "سرباز",
+    "جنگ",
+    "تاریخی"
+   ],
+   "fa_tags_for": "کلاه‌خود"
   },
   "clock-wall": {
    "id": "clock-wall",
@@ -1537,24 +1546,42 @@
   "group-people": {
    "id": "group-people",
    "en": "group people",
-   "fa": "",
+   "fa": "گروه مردم",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "group-people__1.webp",
     "group-people__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "مردم",
+    "جمعیت",
+    "گروه",
+    "انسان",
+    "جامعه",
+    "افراد"
+   ],
+   "fa_tags_for": "گروه مردم"
   },
   "half-cloak": {
    "id": "half-cloak",
    "en": "half cloak",
-   "fa": "",
+   "fa": "کلاه‌خود نیمه",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "half-cloak__1.webp",
     "half-cloak__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کلاه",
+    "پوشش",
+    "لباس",
+    "نیمه",
+    "سرباز",
+    "تاریخی"
+   ],
+   "fa_tags_for": "کلاه‌خود نیمه"
   },
   "hammer": {
    "id": "hammer",
@@ -1978,14 +2005,23 @@
   "map-pin": {
    "id": "map-pin",
    "en": "map pin",
-   "fa": "",
+   "fa": "نشانگر نقشه",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "map-pin__1.webp",
     "map-pin__2.webp",
     "map-pin__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "نقشه",
+    "موقعیت",
+    "جغرافیا",
+    "نشانه",
+    "مکان",
+    "مسیر"
+   ],
+   "fa_tags_for": "نشانگر نقشه"
   },
   "medal": {
    "id": "medal",
@@ -2729,12 +2765,21 @@
   "roman-soldier": {
    "id": "roman-soldier",
    "en": "roman soldier",
-   "fa": "",
+   "fa": "سرباز رومی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "roman-soldier__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "سرباز",
+    "روم",
+    "جنگ",
+    "تاریخ",
+    "لشکر",
+    "قدیم"
+   ],
+   "fa_tags_for": "سرباز رومی"
   },
   "rubber-tire": {
    "id": "rubber-tire",
@@ -3583,13 +3628,22 @@
   "wheat": {
    "id": "wheat",
    "en": "wheat",
-   "fa": "",
+   "fa": "گندم",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "wheat__1.webp",
     "wheat__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "غله",
+    "کشاورزی",
+    "دانه",
+    "مزرعه",
+    "خوراک",
+    "طبیعت"
+   ],
+   "fa_tags_for": "گندم"
   },
   "wine-glass": {
    "id": "wine-glass",
