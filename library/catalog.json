@@ -1517,6 +1517,17 @@
    ],
    "fa_tags_for": "قبر"
   },
+  "half-cloak": {
+   "id": "half-cloak",
+   "en": "half cloak",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "half-cloak__1.webp",
+    "half-cloak__2.webp"
+   ]
+  },
   "hammer": {
    "id": "hammer",
    "en": "hammer",
