@@ -1,18 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-09 22:07:44 UTC",
-   "ok": [
-    {
-     "file": "item-3__mw9taims0q0.jpg",
-     "id": "item-3",
-     "saved": "item-3__1.webp",
-     "kb": 119
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-09 22:09:06 UTC",
    "ok": [
     {
@@ -1100,6 +1088,60 @@
      "id": "sword",
      "saved": "sword__4.webp",
      "kb": 60
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-12 09:56:00 UTC",
+   "ok": [
+    {
+     "file": "candle__mwddgs520xr.jpg",
+     "id": "candle",
+     "saved": "candle__1.webp",
+     "kb": 94
+    },
+    {
+     "file": "candle__mwddgs5b1eb.jpg",
+     "id": "candle",
+     "saved": "candle__2.webp",
+     "kb": 115
+    },
+    {
+     "file": "candle__mwddgs5s2q4.jpg",
+     "id": "candle",
+     "saved": "candle__3.webp",
+     "kb": 126
+    },
+    {
+     "file": "candle__mwddgs653jq.jpg",
+     "id": "candle",
+     "saved": "candle__4.webp",
+     "kb": 158
+    },
+    {
+     "file": "roast-goose__mwddfvga0t0.jpg",
+     "id": "roast-goose",
+     "saved": "roast-goose__1.webp",
+     "kb": 173
+    },
+    {
+     "file": "saint-martin__mwddg3oa0bi.jpg",
+     "id": "saint-martin",
+     "saved": "saint-martin__1.webp",
+     "kb": 177
+    },
+    {
+     "file": "saint-martin__mwddg3ok1ws.jpg",
+     "id": "saint-martin",
+     "saved": "saint-martin__2.webp",
+     "kb": 236
+    },
+    {
+     "file": "saint-martin__mwddg3ox267.jpg",
+     "id": "saint-martin",
+     "saved": "saint-martin__3.webp",
+     "kb": 251
     }
    ],
    "failed": []

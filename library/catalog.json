@@ -558,6 +558,19 @@
    ],
    "fa_tags_for": "تقویم"
   },
+  "candle": {
+   "id": "candle",
+   "en": "candle",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "candle__1.webp",
+    "candle__2.webp",
+    "candle__3.webp",
+    "candle__4.webp"
+   ]
+  },
   "car": {
    "id": "car",
    "en": "car",
@@ -2517,6 +2530,16 @@
    ],
    "fa_tags_for": "رستوران بین‌راهی"
   },
+  "roast-goose": {
+   "id": "roast-goose",
+   "en": "roast goose",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "roast-goose__1.webp"
+   ]
+  },
   "rocket": {
    "id": "rocket",
    "en": "rocket",
@@ -2574,6 +2597,18 @@
     "کار"
    ],
    "fa_tags_for": "عینک ایمنی"
+  },
+  "saint-martin": {
+   "id": "saint-martin",
+   "en": "saint martin",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "saint-martin__1.webp",
+    "saint-martin__2.webp",
+    "saint-martin__3.webp"
+   ]
   },
   "scales-justice": {
    "id": "scales-justice",
