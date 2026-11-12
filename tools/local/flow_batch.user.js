@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ذره‌بین – ساخت خودکار تصویر در Google Flow
 // @namespace    https://github.com/amirzadehes/zarrebin-video
-// @version      0.1.2
+// @version      0.1.3
 // @description  تصویرهای کم‌داشته‌ی یک قسمت را در Flow می‌سازد (۴ تصویر برای هر پرامپت) و در inbox ریبو آپلود می‌کند
 // @match        https://flow.google.com/*
 // @match        https://labs.google/fx/*
@@ -187,7 +187,7 @@
     log('وضعیت دکمه‌ی Start: ' + btnState());
     if (!btn) { dumpDiag('Start فعال نشد'); throw new Error('دکمه‌ی Start فعال نشد'); }
     const realClick = el => {
-      const r = el.getBoundingClientRect(), o = { bubbles: true, cancelable: true, composed: true, view: window, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, button: 0 };
+      const r = el.getBoundingClientRect(), o = { bubbles: true, cancelable: true, composed: true, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, button: 0 };
       for (const t of ['pointerover', 'pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click']) {
         el.dispatchEvent(t.startsWith('pointer') ? new PointerEvent(t, { ...o, pointerId: 1, pointerType: 'mouse', isPrimary: true }) : new MouseEvent(t, o));
       }
