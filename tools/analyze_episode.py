@@ -38,7 +38,8 @@ def main(ep, text=None):
         "Prefer these existing ids when they fit the meaning (reuse = no new drawing needed): " + ", ".join(sorted(known)) + ". "
         "Reuse an existing id only when it is the same kind of thing AND from the same era; a specific historical or period figure (e.g. a Roman soldier, a medieval bishop) must get its own new id, never a generic modern person or object id such as adult-male-human. "
         "For anything else invent a new kebab-case English id. "
-        'Return JSON only: {"items":[{"id":"kebab-id","en":"short English description for an image prompt, single object","fa":"نام فارسی کوتاه","why":"چند کلمه فارسی: کجای متن"}]}')
+        "For every item write \"en\" as a detailed English image description of 12 to 25 words: what the object is, its key visual details (material, colour, shape, typical parts) and, in parentheses at the very end, the era it belongs to in this episode's story, decided from the narration, for example (modern, today) or (ancient Rome, 4th century) or (medieval Europe). Say \"male\" or \"female\" for a specific person. The same object can need different eras in different episodes. "
+        'Return JSON only: {"items":[{"id":"kebab-id","en":"detailed English description ending with the era in parentheses","fa":"نام فارسی کوتاه","why":"چند کلمه فارسی: کجای متن"}]}')
     try: model = pick_model(key)
     except urllib.error.HTTPError as e: sys.exit('Groq error %s: %s' % (e.code, e.read()[:300]))
     print('model:', model)

@@ -4,14 +4,14 @@
  "items": [
   {
    "id": "roman-soldier",
-   "en": "ancient Roman soldier in armor with red cloak, standing",
+   "en": "male Roman legionary standing upright, bronze helmet, iron scale armor, red tunic, long red cloak over the shoulders, spear in one hand (ancient Rome, 4th century)",
    "fa": "سرباز رومی",
    "why": "سرباز رومی در ابتدای داستان",
    "tags": []
   },
   {
    "id": "cloak",
-   "en": "Military cloak",
+   "en": "long heavy red wool military cloak with a brass clasp at the shoulder, hanging in soft folds (ancient Rome, 4th century)",
    "fa": "شنل",
    "why": "شنل سرباز رومی",
    "tags": []
@@ -53,7 +53,7 @@
   },
   {
    "id": "group-people",
-   "en": "Group of children",
+   "en": "group of five children walking together, each holding a paper lantern on a stick, winter coats, hats and scarves, cheerful faces (modern, Germany today)",
    "fa": "بچه‌ها",
    "why": "بچه‌ها در رژه",
    "tags": []
@@ -88,7 +88,7 @@
   },
   {
    "id": "beggar",
-   "en": "Beggar figure",
+   "en": "male beggar sitting shivering, ragged thin tunic, bare feet, hands held out for help, hollow cheeks (Roman Gaul, 4th century, harsh winter)",
    "fa": "گدا",
    "why": "گدا که نصف شنل می‌گیرد",
    "tags": []
@@ -116,14 +116,14 @@
   },
   {
    "id": "music-note",
-   "en": "Music note",
+   "en": "two joined eighth notes with a small curling melody ribbon, simple and bold (timeless)",
    "fa": "نت موسیقی",
    "why": "آهنگ رژه",
    "tags": []
   },
   {
    "id": "flag",
-   "en": "Flag",
+   "en": "rectangular parade flag on a wooden pole, plain bright colours with a simple lantern emblem, waving (modern, Germany today)",
    "fa": "پرچم",
    "why": "پرچم‌ها در رژه",
    "tags": []
@@ -165,7 +165,7 @@
   },
   {
    "id": "half-cloak",
-   "en": "Half of a cloak",
+   "en": "red wool cloak cut cleanly in two, one torn-edged half shown folded, with a few loose threads at the cut (ancient Rome, 4th century)",
    "fa": "نیمه‌شنل",
    "why": "نیمه‌شنل که به گدا می‌دهند",
    "tags": []
@@ -207,7 +207,7 @@
   },
   {
    "id": "map-pin",
-   "en": "Map pin (location of Kand)",
+   "en": "classic map location pin with a round head and a small cross-shaped village church beside it (modern map symbol)",
    "fa": "نشان‌گر مکان",
    "why": "مکان روستای کَند",
    "tags": []
@@ -228,7 +228,7 @@
   },
   {
    "id": "wheat",
-   "en": "Wheat sheaf (agricultural season)",
+   "en": "bundle of golden wheat ears tied with twine, harvest sheaf (timeless, farming)",
    "fa": "گندم",
    "why": "پایان سال کشاورزی",
    "tags": []
