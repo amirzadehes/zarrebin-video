@@ -1,24 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-09 22:09:06 UTC",
-   "ok": [
-    {
-     "file": "thermometer__mw9tc9bt0tq.jpg",
-     "id": "thermometer",
-     "saved": "thermometer__1.webp",
-     "kb": 188
-    },
-    {
-     "file": "thermometer__mw9tc9c01pj.jpg",
-     "id": "thermometer",
-     "saved": "thermometer__2.webp",
-     "kb": 84
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-09 22:10:29 UTC",
    "ok": [
     {
@@ -1142,6 +1124,42 @@
      "id": "saint-martin",
      "saved": "saint-martin__3.webp",
      "kb": 251
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-12 09:59:00 UTC",
+   "ok": [
+    {
+     "file": "document__mwddk6v608d.jpg",
+     "id": "document",
+     "saved": "document__1.webp",
+     "kb": 254
+    },
+    {
+     "file": "document__mwddk6vj18m.jpg",
+     "id": "document",
+     "saved": "document__2.webp",
+     "kb": 260
+    },
+    {
+     "file": "document__mwddk6vu2l8.jpg",
+     "id": "document",
+     "saved": "document__3.webp",
+     "kb": 240
+    },
+    {
+     "file": "document__mwddk6w933u.jpg",
+     "id": "document",
+     "saved": "document__4.webp",
+     "kb": 339
+    },
+    {
+     "file": "roman-helmet__mwddjznx0sj.jpg",
+     "id": "roman-helmet",
+     "saved": "roman-helmet__1.webp",
+     "kb": 215
     }
    ],
    "failed": []

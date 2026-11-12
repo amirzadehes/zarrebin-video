@@ -1015,6 +1015,19 @@
    ],
    "fa_tags_for": "پزشک"
   },
+  "document": {
+   "id": "document",
+   "en": "document",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "document__1.webp",
+    "document__2.webp",
+    "document__3.webp",
+    "document__4.webp"
+   ]
+  },
   "earth-globe": {
    "id": "earth-globe",
    "en": "earth globe",
@@ -2558,6 +2571,16 @@
     "پیشرفت"
    ],
    "fa_tags_for": "روکت"
+  },
+  "roman-helmet": {
+   "id": "roman-helmet",
+   "en": "roman helmet",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "roman-helmet__1.webp"
+   ]
   },
   "rubber-tire": {
    "id": "rubber-tire",
