@@ -78,6 +78,7 @@ dialog::backdrop{background:transparent}
 /* ---------- upload tracker panel ---------- */
 #upl{position:fixed;inset-inline:12px;bottom:calc(78px + env(safe-area-inset-bottom));z-index:15;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px;box-shadow:0 8px 30px #000a;max-height:46vh;overflow:auto}
 #upl[hidden]{display:none}
+body.onlib #upl{display:none!important}
 #upl .uh{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px}
 #upl .ub{display:flex;align-items:center;gap:6px}
 #upl .uh button{min-height:32px;padding:0 10px;font-size:12px}
@@ -182,6 +183,32 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
   #toast{inset-inline:0;margin-inline:auto;width:min(480px,calc(100vw - 32px))}
   #upl{inset-inline:auto;left:24px;right:auto;bottom:24px;width:400px}
 }
+
+/* ---------- library tab: bulk upload ---------- */
+.luRow{border:1px solid var(--line);border-radius:14px;padding:10px;margin:10px 0;background:#17120f}
+.luRow.bad{border-color:var(--bad)}
+.luTop{display:flex;gap:8px;align-items:center}
+.luTop input{flex:1;min-width:0}
+.luTop .luX{flex:0 0 auto;min-height:44px;width:44px;padding:0}
+.luPick{display:grid;place-items:center;margin:8px 0 0;cursor:pointer}
+.luTh{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.luT{position:relative;width:64px;height:64px;border-radius:10px;overflow:hidden;background:#2a221c}
+.luT img{width:100%;height:100%;object-fit:cover}
+.luT button{position:absolute;top:2px;inset-inline-start:2px;min-height:22px;width:22px;padding:0;font-size:11px;line-height:1;border-radius:99px;background:#000b;color:#fff;border:0}
+#luProg{margin-top:14px;border-top:1px dashed var(--line);padding-top:10px}
+#luProg .lh{font-size:14px;font-weight:900;margin:12px 0 2px}
+#luProg .lh small{font-weight:400;color:var(--mut)}
+.ur .mb{height:5px;border-radius:99px;background:#2d241d;overflow:hidden;margin-top:4px}
+.ur .mb i{display:block;height:100%;width:0;background:var(--acc);transition:width .5s}
+.ur.s-done .mb i{background:var(--ok)}
+.ur.s-fail .mb i,.ur.s-lost .mb i{background:var(--bad)}
+/* ---------- scene key text: place + paper ---------- */
+.kpad{position:relative;margin:6px auto;border:1px dashed var(--line);border-radius:10px;background:#17120f;touch-action:none;cursor:crosshair;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:33.333% 33.333%}
+.kpad.v{width:132px;height:234px}.kpad.h{width:260px;height:146px}
+.kpad i{position:absolute;width:44px;height:22px;margin:-11px 0 0 -22px;border-radius:5px;background:var(--acc);box-shadow:0 2px 6px #000a;pointer-events:none}
+.kpad i.t{width:22px;height:44px;margin:-22px 0 0 -11px}
+.kfmt{display:flex;gap:6px;justify-content:center}
+.kfmt button.on{background:var(--acc);color:var(--acc-tx);border-color:var(--acc)}
 </style>
 </head>
 <body>
@@ -213,20 +240,29 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
     <p class="hint">وقتی بازبینی صحنه‌ها آماده شد یا ویدیو ساخته شد (یا ساخت خطا داد)، روی گوشی اعلان می‌آید. یک بار تنظیم کن: ۱) برنامه‌ی رایگان <b>ntfy</b> را از App Store یا Google Play نصب کن. ۲) داخلش «+» را بزن و این نام را عیناً وارد کن (سرور پیش‌فرض ntfy.sh). ۳) اعلان‌ها را برایش مجاز کن.</p>
     <input type="text" class="ltr" id="ntTopic" readonly style="width:100%">
     <div class="row"><button id="ntCopy">کپی نام</button><button id="ntTest">اعلان آزمایشی</button></div><div class="st" id="ntSt"></div></div>
-  <div class="row"><button id="btnLib">نمایش کتابخانه‌ی تصاویر</button></div>
-  <div id="lib" hidden style="margin-top:12px"></div>
 </section>
 
 <nav class="tabs">
   <button data-t="ep" class="on">ساخت ویدیو</button>
   <button data-t="want">مورد نیاز</button>
   <button data-t="gen">عمومی</button>
+  <button data-t="lib">کتابخانه</button>
 </nav>
 
 <main>
   <div id="ep"></div>
   <div id="want" hidden></div>
   <div id="gen" hidden></div>
+  <div id="lib" hidden>
+    <div class="card" id="libUp">
+      <div class="name">افزودن چند تصویر با هم</div>
+      <p class="hint">برای هر مورد یک فیلد باز کن، نام فارسی‌اش را بنویس و یک یا چند تصویر انتخاب کن. بعد «آپلود همه» را بزن؛ همه با هم ارسال می‌شوند. اگر نام از قبل در کتابخانه باشد، تصویرها به همان مورد اضافه می‌شوند و اگر نباشد، مورد تازه ساخته می‌شود.</p>
+      <div id="luRows"></div>
+      <div class="row"><button id="luAddRow">+ فیلد تازه</button><button class="pri" id="luGo">آپلود همه</button></div>
+      <div id="luProg" hidden></div>
+    </div>
+    <div class="card"><div class="name" id="libCount">کتابخانه‌ی تصاویر</div><p class="hint">روی هر تصویر بزن تا نامش را عوض کنی، تصویر اضافه کنی یا پاکش کنی.</p><div id="libGrid"></div></div>
+  </div>
 </main>
 
 <dialog id="dlg"><div id="dlgBody"></div><div class="row"><button onclick="dlg.close()">بستن</button></div></dialog>
@@ -647,6 +683,7 @@ const sceneHead=(s,i)=>{ const n=(s.items||[]).length, warn=!n&&s.tpl!=='stat'; 
 const wordAtT=(s,t)=>{ let b=null; sceneWords(s).forEach(w=>{ if(w.t0<=t+.08) b=w }); return b?b.w:'—' };
 const wordAt=(s,it)=>{ let b=null; sceneWords(s).forEach(w=>{ if(w.t0<=it.t+.08) b=w }); return b?b.w:'—' };
 const narr=s=>(RV.data.words||[]).filter(w=>w.t0>=s.t0-.02&&w.t0<s.t1-.02).map(w=>w.w).join(' ');
+const KPAPER=[['auto','خودکار (مطابق سبک ویدیو)'],['white','کاغذ سفید با خط دور'],['yellow','یادداشت زرد'],['cream','کاغذ کرم پاره'],['old','کاغذ کهنه'],['kraft','کاغذ کرافت'],['dark','کاغذ تیره (نوشته‌ی روشن)'],['none','بدون کاغذ (فقط نوشته)']];
 function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySelector('.body'), n=(s.items||[]).length;
   box.innerHTML=`<div class="row" style="margin-bottom:6px"><button class="pri bPv">▶ پیش‌نمایش</button><button class="bLay">✋ چیدمان</button></div><div class="row" style="margin-bottom:6px"><label style="display:flex;align-items:center;gap:6px;margin:0"><input type="checkbox" class="okv" ${okOf(s,'v')?'checked':''}> عمودی خوب است</label><label style="display:flex;align-items:center;gap:6px;margin:0"><input type="checkbox" class="okh" ${okOf(s,'h')?'checked':''}> افقی خوب است</label></div>
     <label>متنی که راوی در این صحنه می‌گوید</label><div class="narr" style="padding:8px 10px;border:1px dashed var(--line);border-radius:10px;color:var(--mut);font-size:14px;line-height:1.9">${narr(s)||'—'}</div>
@@ -654,7 +691,17 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
       <textarea class="subTx" rows="4" style="width:100%;direction:rtl;margin-top:6px"></textarea>
       <p class="hint">املای زیرنویس را درست کن و بیرون از کادر بزن؛ زمان‌بندی کلمه‌ها حفظ می‌شود. کلمه‌ی هایلایت‌شده بین ستاره است: *کلمه*.</p></details>
     <label class="chk"><input type="checkbox" class="keyOn"> 📝 متن کلیدی این صحنه روی صفحه نوشته شود</label>
-    <div class="keyBox" hidden><textarea class="keyTx" rows="2" style="width:100%;direction:rtl" placeholder="مثلاً: *انرژی* مغز"></textarea><p class="hint">بخش کلیدی سکانس؛ کلمه‌ی مهم را بین دو ستاره بگذار: *کلمه*. (برای قالب «عدد» همین‌جا برچسب زیر عدد است.)</p></div>
+    <div class="keyBox" hidden><textarea class="keyTx" rows="2" style="width:100%;direction:rtl" placeholder="مثلاً: *انرژی* مغز"></textarea><p class="hint">بخش کلیدی سکانس؛ کلمه‌ی مهم را بین دو ستاره بگذار: *کلمه*. (برای قالب «عدد» همین‌جا برچسب زیر عدد است.)</p>
+      <div class="kpos" style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)">
+        <label>جای متن روی صفحه (برای عمودی و افقی جدا ذخیره می‌شود)</label>
+        <div class="kfmt"><button class="kf" data-f="v">عمودی (اینستاگرام)</button><button class="kf" data-f="h">افقی (یوتیوب)</button></div>
+        <div class="kpad v"><i></i></div>
+        <p class="hint" style="text-align:center;margin:0">روی کادر بزن یا بکش تا مرکز متن همان‌جا برود. کم‌رنگ یعنی هنوز جای خودکار قالب است.</p>
+        <div class="row" style="justify-content:center"><button class="kauto">↺ جای خودکار</button></div>
+        <div class="pgrid"><div><label>کاغذ پشت متن</label><select class="sel kpaper">${KPAPER.map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}</select></div>
+          <div><label>اندازه‌ی متن</label><div class="sl2r"><input type="range" class="ksz" min="50" max="170" step="5"><span class="sv"></span></div></div></div>
+        <label class="chk"><input type="checkbox" class="kturn"> متن خوابیده (از پایین به بالا نوشته شود)</label>
+      </div></div>
     ${s.number!==undefined?`<label>عدد</label><input type="text" class="num" value="${s.number}">`:''}
     <label>تصویرها (به همین ترتیب نمایش داده می‌شوند). برای هر تصویر: ⏱ با کدام کلمه بیاید، ⏏ با کدام کلمه برود، ✨ افکت‌هایش</label>
     <div class="its">${(s.items||[]).map((it,k)=>`<div class="it"><div class="thumb"><img loading="lazy" src="${thumbUrl(it.src)}"></div><b style="position:absolute;top:54px;right:4px;background:#000a;border-radius:8px;padding:0 6px;font-size:12px">${fa(k+1)}</b><button class="x" data-k="${k}">✕</button><button class="ws" data-k="${k}" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏱ ${wordAt(s,it)}</button><button class="xs" data-k="${k}" title="چه زمانی این تصویر بیرون برود" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏏ ${it.out!=null?wordAtT(s,it.out):'تا آخر صحنه'}</button><button class="fxb" data-k="${k}" title="افکت‌های روی این تصویر" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${fxBtnTxt(it)}</button><button class="snb" data-k="${k}" title="صدایی که با این تصویر پخش شود (شروع، پایان و بلندی)" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${snBtnTxt(it)}</button><button class="bbb" data-k="${k}" title="حباب گفتگوی متصل به این تصویر" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${bbBtnTxt(it)}</button><div style="display:flex;gap:4px;margin-top:4px"><button class="mv" data-k="${k}" data-d="-1" style="min-height:30px;flex:1;padding:0" ${k===0?'disabled':''}>›</button><button class="mv" data-k="${k}" data-d="1" style="min-height:30px;flex:1;padding:0" ${k===n-1?'disabled':''}>‹</button></div></div>`).join('')||'<span class="hint">بدون تصویر</span>'}</div>
@@ -676,6 +723,18 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
   keyOn.checked=keyEff(); keyBox.hidden=!keyOn.checked; keyTx.value=s.text||'';
   keyOn.onchange=()=>{ s.keyOn=keyOn.checked; if(keyOn.checked&&!(s.text||'').trim()){ s.text=narr(s).split(' ').slice(0,6).join(' '); keyTx.value=s.text } keyBox.hidden=!keyOn.checked; clearOk(s); syncOk(i); d.querySelector('summary').innerHTML=sceneHead(s,i); rvSave(); pvRefresh(i) };
   keyTx.oninput=()=>{ s.text=keyTx.value; clearOk(s); syncOk(i); d.querySelector('summary').innerHTML=sceneHead(s,i); rvSave(); pvRefresh(i) };
+  { const pad=box.querySelector('.kpad'), dot=pad.querySelector('i'), kb=box.querySelectorAll('.kf'), sel=box.querySelector('.kpaper'), sz=box.querySelector('.ksz'), turn=box.querySelector('.kturn'); let kf=(typeof pvFmt!=='undefined'&&pvFmt==='h')?'h':'v';
+    const kchg=()=>{ clearOk(s); syncOk(i); rvSave(); pvRefresh(i) };
+    const kdraw=()=>{ pad.className='kpad '+kf; kb.forEach(b=>b.classList.toggle('on',b.dataset.f===kf)); dot.className=s.keyTurn?'t':''; const own=s.keyPos&&s.keyPos[kf], p=own||{x:.5,y:.14}; dot.style.left=p.x*100+'%'; dot.style.top=p.y*100+'%'; dot.style.opacity=own?1:.45 };
+    const kset=e=>{ const r=pad.getBoundingClientRect(); const x=Math.min(.95,Math.max(.05,(e.clientX-r.left)/r.width)), y=Math.min(.95,Math.max(.05,(e.clientY-r.top)/r.height)); s.keyPos=s.keyPos||{}; s.keyPos[kf]={x:+x.toFixed(3),y:+y.toFixed(3)}; kdraw(); kchg() };
+    pad.onpointerdown=e=>{ e.preventDefault(); try{ pad.setPointerCapture(e.pointerId) }catch(_){} kset(e); pad.onpointermove=kset };
+    pad.onpointerup=pad.onpointercancel=()=>{ pad.onpointermove=null };
+    kb.forEach(b=>b.onclick=()=>{ kf=b.dataset.f; kdraw() });
+    box.querySelector('.kauto').onclick=()=>{ if(s.keyPos){ delete s.keyPos[kf]; if(!Object.keys(s.keyPos).length) delete s.keyPos } kdraw(); kchg() };
+    sel.value=s.keyPaper||'auto'; sel.onchange=()=>{ if(sel.value==='auto') delete s.keyPaper; else s.keyPaper=sel.value; kchg() };
+    sz.value=Math.round((s.keySize||1)*100); sz.nextElementSibling.textContent=fa(sz.value)+'٪'; sz.oninput=()=>{ sz.nextElementSibling.textContent=fa(sz.value)+'٪'; if(+sz.value===100) delete s.keySize; else s.keySize=+sz.value/100; kchg() };
+    turn.checked=!!s.keyTurn; turn.onchange=()=>{ if(turn.checked) s.keyTurn=1; else delete s.keyTurn; kdraw(); kchg() };
+    kdraw(); }
   const fxp=box.querySelector('.fxpanel'), selIt=k=>box.querySelectorAll('.it .thumb').forEach((e,j)=>{ e.style.outline=j===k?'2px solid var(--acc)':'' }), fxDone=()=>{ clearOk(s); syncOk(i); rvSave(); pvRefresh(i) };
   box.querySelectorAll('.fxb').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, it=s.items[k]; if(!it) return; box.querySelector('.wpanel').hidden=true; fxp.hidden=false; selIt(k);
     fxp.querySelector('.fxh').textContent='افکت‌های تصویر '+fa(k+1)+': به خود تصویر وصل می‌شوند و با حرکتش می‌روند؛ چند افکت را می‌شود روی هم گذاشت.';
@@ -958,9 +1017,9 @@ async function sendEp(){
 }
 function renderLib(){
   const its = Object.values(S.catalog.items||{});
-  $('#btnLib').textContent = 'نمایش کتابخانه‌ی تصاویر ('+fa(its.length)+' مورد)';
-  $('#lib').innerHTML = its.length ? `<div class="grid">${its.map(i=>`<div class="tile" data-id="${i.id}"><div class="thumb"><img loading="lazy" src="${raw(i.variants[0])}"></div><small>${i.fa||i.en}</small><span class="badge">${fa(i.variants.length)}</span></div>`).join('')}</div>` : '<p class="hint">هنوز تصویری در کتابخانه نیست.</p>';
-  document.querySelectorAll('#lib .tile').forEach(t=>t.onclick=()=>{ const i=S.catalog.items[t.dataset.id]; $('#dlgBody').innerHTML=`<div class="name">${i.fa||i.en}</div><div class="en">${i.id}</div><div class="row"><button id="dlgEdit">ویرایش نام</button><label class="btn pri" style="display:grid;place-items:center;margin:0;color:var(--acc-tx)">افزودن تصویر<input type="file" accept="image/*" multiple hidden id="dlgAdd"></label></div><div class="st" id="dlgSt"></div>${i.has_text_in_image?'<p class="hint" style="color:var(--bad)">این تصویر متن دارد و برای نسخه‌ی چندزبانه مناسب نیست.</p>':''}<div class="vars">${i.variants.map(v=>`<div class="vwrap"><div class="thumb" style="width:100%;height:auto;aspect-ratio:1"><img src="${raw(v)}"></div><button class="vdel" data-v="${v}">🗑 پاک کردن</button></div>`).join('')}</div>`; dlg.showModal(); $('#dlgEdit').onclick=()=>{ dlg.close(); renameItem(i.id, i.fa||i.en, i.en) };
+  $('#libCount').textContent = 'کتابخانه‌ی تصاویر ('+fa(its.length)+' مورد)';
+  $('#libGrid').innerHTML = its.length ? `<div class="grid">${its.map(i=>`<div class="tile" data-id="${i.id}"><div class="thumb"><img loading="lazy" src="${raw(i.variants[0])}"></div><small>${i.fa||i.en}</small><span class="badge">${fa(i.variants.length)}</span></div>`).join('')}</div>` : '<p class="hint">هنوز تصویری در کتابخانه نیست.</p>';
+  document.querySelectorAll('#libGrid .tile').forEach(t=>t.onclick=()=>{ const i=S.catalog.items[t.dataset.id]; $('#dlgBody').innerHTML=`<div class="name">${i.fa||i.en}</div><div class="en">${i.id}</div><div class="row"><button id="dlgEdit">ویرایش نام</button><label class="btn pri" style="display:grid;place-items:center;margin:0;color:var(--acc-tx)">افزودن تصویر<input type="file" accept="image/*" multiple hidden id="dlgAdd"></label></div><div class="st" id="dlgSt"></div>${i.has_text_in_image?'<p class="hint" style="color:var(--bad)">این تصویر متن دارد و برای نسخه‌ی چندزبانه مناسب نیست.</p>':''}<div class="vars">${i.variants.map(v=>`<div class="vwrap"><div class="thumb" style="width:100%;height:auto;aspect-ratio:1"><img src="${raw(v)}"></div><button class="vdel" data-v="${v}">🗑 پاک کردن</button></div>`).join('')}</div>`; dlg.showModal(); $('#dlgEdit').onclick=()=>{ dlg.close(); renameItem(i.id, i.fa||i.en, i.en) };
     $('#dlgAdd').onchange=e=>{ const fl=[...e.target.files]; if(!fl.length) return; upload(i.id, fl, $('#dlgSt'), e.target); toast('ارسال شروع شد؛ وضعیت در پنل پایین صفحه است'); dlg.close() };
     document.querySelectorAll('#dlgBody .vdel').forEach(btn=>btn.onclick=()=>delVariant(i, btn.dataset.v, btn)) });
 }
@@ -992,7 +1051,7 @@ async function delFile(path, sha, msg){
 }
 let putChain = Promise.resolve();   // every write to the repo goes through one queue: GitHub rejects parallel commits to the same branch
 function putSerial(path, b64, msg){ const p = putChain.then(() => put(path, b64, msg)); putChain = p.then(() => sleep(900), () => sleep(900)); return p }
-async function upload(id, files, st, input){
+async function upload(id, files, st, input, onJob){
   if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; $('#settings').hidden=false; return; }
   if(!files.length) return;
   input.value='';   // the File objects stay valid; this lets the same pictures be chosen again
@@ -1002,7 +1061,7 @@ async function upload(id, files, st, input){
     if(f.size>25*1024*1024){ big++; return }
     const ext=(f.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
     const name=`${id}__${Date.now().toString(36)}${i}${Math.random().toString(36).slice(2,4)}.${ext}`;
-    const u={ name, id, fa:nm, t:Date.now(), st:'send' }; U.unshift(u); thumbs[name]=URL.createObjectURL(f); jobs.push([u,f]);
+    const u={ name, id, fa:nm, t:Date.now(), st:'send' }; U.unshift(u); thumbs[name]=URL.createObjectURL(f); jobs.push([u,f]); if(onJob) onJob(u,i);
   });
   if(big){ st.className='st bad'; st.textContent=`${fa(big)} فایل بزرگ‌تر از ۲۵ مگابایت بود و ارسال نشد`; }
   if(!jobs.length) return;
@@ -1016,6 +1075,7 @@ async function upload(id, files, st, input){
     renderU(); saveU();
   }
   pollUploads();
+  return jobs.map(j=>j[0]);
 }
 
 function renameItem(id, curFa, curEn){
@@ -1043,6 +1103,7 @@ U.forEach(u => { if(u.st==='send'){ u.st='lost'; u.reason='ارسال نیمه�
 const saveU = () => ls.set('upl', JSON.stringify(U.map(u => ({ name:u.name, id:u.id, fa:u.fa, t:u.t, st:u.st, saved:u.saved, reason:u.reason }))));
 const uPct = u => FIN.has(u.st) ? 100 : u.st==='proc' ? 25+70*(u.frac||0) : u.st==='queue' ? 25 : 8;
 function renderU(){
+  if(window.luRefresh) luRefresh();
   const box = $('#upl'); if(!box) return;
   if(!U.length){ box.hidden = true; return } box.hidden = false;
   const n = U.length, d = U.filter(u=>u.st==='done').length, f = U.filter(u=>['fail','lost','dup'].includes(u.st)).length, act = n-d-f;
@@ -1091,6 +1152,70 @@ async function pollUploads(){
 $('#uMin').onclick = () => { ls.set('uMin', ls.get('uMin','')==='1' ? '' : '1'); renderU() };
 $('#uClr').onclick = () => { U = U.filter(u => !FIN.has(u.st)); saveU(); renderU() };
 renderU(); if(U.some(u => !FIN.has(u.st))) pollUploads();
+
+/* ---------- library tab: several named pictures, uploaded in one go ---------- */
+let LU = [], luBusy = false;
+function luNewRow(focus){
+  const d = document.createElement('div'); d.className = 'luRow'; d._files = [];
+  d.innerHTML = `<div class="luTop"><input type="text" class="luName" placeholder="نام فارسی عکس، مثلاً: سطل زباله"><button class="luX" title="حذف این فیلد">✕</button></div><label class="btn luPick"><span>انتخاب عکس‌ها</span><input type="file" accept="image/*" multiple hidden class="luFile"></label><div class="luTh"></div>`;
+  const th = d.querySelector('.luTh'), lab = d.querySelector('.luPick span');
+  const draw = () => { th.innerHTML = d._files.map((f,i)=>`<div class="luT"><img src="${f.url}"><button data-i="${i}">✕</button></div>`).join(''); lab.textContent = d._files.length ? fa(d._files.length)+' عکس انتخاب شد · افزودن بیشتر' : 'انتخاب عکس‌ها';
+    th.querySelectorAll('button').forEach(b=>b.onclick=()=>{ const x = d._files.splice(+b.dataset.i,1)[0]; if(x) URL.revokeObjectURL(x.url); draw() }) };
+  d.querySelector('.luFile').onchange = e => { [...e.target.files].forEach(f=>{ if(!d._files.some(x=>x.f.name===f.name&&x.f.size===f.size&&x.f.lastModified===f.lastModified)) d._files.push({f, url:URL.createObjectURL(f)}) }); e.target.value=''; d.classList.remove('bad'); draw() };
+  d.querySelector('.luX').onclick = () => { if(luBusy) return; d._files.forEach(x=>URL.revokeObjectURL(x.url)); d.remove(); if(!document.querySelector('#luRows .luRow')) luNewRow() };
+  $('#luRows').appendChild(d); if(focus) d.querySelector('.luName').focus(); return d;
+}
+function luRender(){
+  const box = $('#luProg'); if(!box) return;
+  if(!LU.length){ box.hidden = true; box.innerHTML = ''; return } box.hidden = false;
+  const imgs = LU.flatMap(b=>b.files.map(x=>({b,x})));
+  const pct = (b,x) => x.u ? uPct(x.u) : b.phase==='fail' ? 100 : b.phase==='create' ? 3 : b.phase==='ready' ? 5 : b.phase==='send' ? 6 : 0;
+  const fin = (b,x) => x.u ? FIN.has(x.u.st) : b.phase==='fail';
+  const n = imgs.length, nd = imgs.filter(({b,x})=>fin(b,x)).length, ok = imgs.filter(({x})=>x.u&&['done','dup'].includes(x.u.st)).length, all = Math.round(imgs.reduce((a,{b,x})=>a+pct(b,x),0)/n);
+  const head = nd<n || luBusy ? `آپلود: ${fa(nd)} از ${fa(n)} تصویر تمام شد` : ok===n ? `✓ هر ${fa(n)} تصویر در کتابخانه ذخیره شد` : `${fa(ok)} ذخیره شد و ${fa(n-ok)} مشکل دارد`;
+  const phaseTx = { wait:'در صف', create:'مورد تازه در حال ساخت (حدود یک دقیقه)…', ready:'منتظر نوبت ارسال', send:'در حال ارسال…', fail:'' };
+  box.innerHTML = `<div class="prog"><div class="row" style="justify-content:space-between;margin:0"><b>${head}</b><b style="color:var(--acc)">${fa(all)}٪</b></div><div class="bar"><i style="width:${all}%"></i></div></div>` +
+    LU.map(b=>{ const d = b.files.filter(x=>x.u&&['done','dup'].includes(x.u.st)).length;
+      return `<div class="lh">${esc(b.fa)} <small>· ${fa(d)} از ${fa(b.files.length)}${b.existing?' · به مورد موجود اضافه می‌شود':''}</small></div>` + b.files.map(x=>{
+        const u = x.u, st = u ? u.st : (b.phase==='fail'?'fail':'send'), src = u && u.st==='done' && u.saved ? raw(u.saved) : x.url;
+        const txt = u ? ((u.st==='fail'||u.st==='dup'||u.st==='lost') ? (u.reason||UST[u.st]) : (u.st==='proc'&&u.label) ? u.label : UST[u.st]) : (b.phase==='fail' ? b.note : phaseTx[b.phase]);
+        return `<div class="ur s-${st}"><div class="uth"><img src="${src}"></div><div class="um"><div class="us">${esc(txt)}</div><div class="mb"><i style="width:${pct(b,x)}%"></i></div></div><div class="ui">${u?UICON[u.st]:(b.phase==='fail'?'❌':'⏳')}</div></div>` }).join('') }).join('') +
+    (nd===n && !luBusy ? '<div class="row"><button id="luClr">پاک کردن فهرست</button></div>' : '');
+  const c = $('#luClr'); if(c) c.onclick = () => { LU = []; luRender() };
+}
+window.luRefresh = () => { if(LU.length) luRender() };
+$('#luAddRow').onclick = () => luNewRow(true);
+$('#luGo').onclick = async () => {
+  if(luBusy) return;
+  if(!S.token){ $('#settings').hidden = false; return toast('اول توکن را در تنظیمات وارد کن') }
+  const rows = [...document.querySelectorAll('#luRows .luRow')], batch = []; let bad = 0, big = 0;
+  rows.forEach(r=>{ const name = r.querySelector('.luName').value.trim().replace(/\s+/g,' '); if(!name && !r._files.length) return;
+    const ok = r._files.filter(x=>x.f.size<=25*1024*1024); big += r._files.length-ok.length;
+    if(!name || !ok.length){ r.classList.add('bad'); bad++; return } r.classList.remove('bad');
+    batch.push({ row:r, fa:name, files:ok.map(x=>({f:x.f, url:x.url, u:null})), id:null, phase:'wait', existing:false, note:'' }) });
+  if(bad) return toast(fa(bad)+' فیلد ناقص است: هم نام لازم دارد هم حداقل یک عکس. کاملش کن یا حذفش کن.', 5000);
+  if(!batch.length) return toast('حداقل یک فیلد با نام و عکس لازم است');
+  if(big) toast(fa(big)+' عکس بزرگ‌تر از ۲۵ مگابایت کنار گذاشته شد', 5000);
+  luBusy = true; $('#luGo').disabled = true; LU = batch; luRender();
+  const findId = f => { const c = Object.values(S.catalog.items||{}).find(i=>(i.fa||'').trim()===f); if(c) return c.id; const w = (S.wanted||[]).find(w=>(w.fa||'').trim()===f); return w ? w.id : null };
+  try{
+    const need = [];
+    batch.forEach(b=>{ b.id = findId(b.fa); if(b.id){ b.phase = 'ready'; b.existing = true } else { b.phase = 'create'; if(!need.includes(b.fa)) need.push(b.fa) } });
+    luRender();
+    for(const f of need) await putSerial('renames/new__'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)+'.json', enc(JSON.stringify({new:true, fa:f, episode:''})), 'new item');
+    for(let k=0; k<45 && batch.some(b=>!b.id); k++){
+      await sleep(k ? 8000 : 4000); const wl = await readJson('wanted.json', []), cat = await readJson('library/catalog.json', {items:{}});
+      batch.forEach(b=>{ if(b.id) return; const it = wl.find(w=>(w.fa||'').trim()===b.fa && (w.tags||[]).includes('mine')) || Object.values(cat.items||{}).find(i=>(i.fa||'').trim()===b.fa); if(it){ b.id = it.id; b.phase = 'ready' } }); luRender() }
+    batch.forEach(b=>{ if(!b.id){ b.phase = 'fail'; b.note = 'مورد تازه ساخته نشد؛ کمی بعد دوباره امتحان کن' } });
+    await loadAll();
+    for(const b of batch){ if(!b.id) continue; b.phase = 'send'; luRender();
+      await upload(b.id, b.files.map(x=>x.f), document.createElement('div'), {}, (u,i)=>{ b.files[i].u = u }); b.phase = 'sent'; luRender() }
+    // form is cleared once everything has been handed over; progress stays below
+    const sent = batch.filter(b=>b.id).map(b=>b.row); sent.forEach(r=>r.remove()); if(!document.querySelector('#luRows .luRow')) luNewRow();
+  }catch(e){ toast('خطا: '+e.message, 6000); batch.forEach(b=>{ if(b.phase!=='sent' && !b.files.some(x=>x.u)){ b.phase = 'fail'; b.note = 'ارسال نشد: '+e.message } }) }
+  luBusy = false; $('#luGo').disabled = false; luRender();
+};
+luNewRow();
 /* ---------- settings / tabs ---------- */
 $('#btnSet').onclick=()=>{ $('#settings').hidden=!$('#settings').hidden; };
 $('#repo').value=S.repo; $('#token').value=S.token;
@@ -1129,8 +1254,7 @@ $('#ntCopy').onclick=async()=>{ try{ await navigator.clipboard.writeText(NT); to
 $('#ntTest').onclick=async()=>{ const st=$('#ntSt'); if(!NT){ st.className='st bad'; st.textContent='نام اعلان پیدا نشد'; return } try{
   await fetch('https://ntfy.sh',{method:'POST',body:JSON.stringify({topic:NT,title:'اعلان آزمایشی ✓',message:'اعلان‌ها درست کار می‌کنند.',click:location.href})}); st.className='st ok'; st.textContent='فرستاده شد؛ اگر روی گوشی نیامد، ntfy و نام بالا را بررسی کن.' }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message } };
 $('#btnSet').onclick=()=>{ $('#settings').hidden=!$('#settings').hidden; if(!$('#settings').hidden){ loadMusic(); loadSfx(); loadNotify(); } };
-$('#btnLib').onclick=()=>{ const l=$('#lib'); l.hidden=!l.hidden; };
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); ['want','ep','gen'].forEach(t=>$('#'+t).hidden=t!==b.dataset.t); });
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); document.body.classList.toggle('onlib',b.dataset.t==='lib'); ['want','ep','gen','lib'].forEach(t=>$('#'+t).hidden=t!==b.dataset.t); });
 if(!S.token) $('#settings').hidden=false;
 loadAll();
 </script>

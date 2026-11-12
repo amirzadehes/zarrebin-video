@@ -110,8 +110,8 @@ function drawText(text, cx, cy, size, maxW, o = {}) {
     const y = cy - tot / 2 + lh * (li + .5); let x = D.meta.rtl ? cx + ln.w / 2 : cx - ln.w / 2;
     ln.ws.forEach(k => { const p = o.reveal ? o.reveal(idx++) : 1; const w = k.w; if (D.meta.rtl) x -= w; const mx = x + w / 2;
       if (p > 0) { ctx.save(); ctx.translate(mx, y); ctx.scale(.6 + .4 * p, .6 + .4 * p); ctx.globalAlpha = clamp(p * 1.6);
-        if (VOX && k.hl) { const th = VT(); ctx.fillStyle = th.mark; ctx.save(); ctx.rotate(-.015); ctx.fillRect(-w / 2 - 10, -size * .42, (w + 20) * clamp(p * 1.3), size * .9); ctx.restore(); ctx.fillStyle = '#1c130b' } else if (k.hl) { ctx.fillStyle = o.hlBg || '#ff3b4a'; ctx.beginPath(); ctx.roundRect(-w / 2 - 14, -size * .6, w + 28, size * 1.2, 16); ctx.fill(); ctx.lineWidth = 6; ctx.strokeStyle = INK; ctx.stroke(); ctx.fillStyle = '#fff' } else ctx.fillStyle = VOX ? (o.color ? '#f3ead6' : '#1c130b') : (o.color || INK);
-        if (o.stroke && !VOX) { ctx.lineWidth = 12; ctx.strokeStyle = INK; ctx.lineJoin = 'round'; ctx.strokeText(k.txt, -w / 2, 4) }
+        if (VOX && k.hl) { const th = VT(); ctx.fillStyle = th.mark; ctx.save(); ctx.rotate(-.015); ctx.fillRect(-w / 2 - 10, -size * .42, (w + 20) * clamp(p * 1.3), size * .9); ctx.restore(); ctx.fillStyle = '#1c130b' } else if (k.hl) { ctx.fillStyle = o.hlBg || '#ff3b4a'; ctx.beginPath(); ctx.roundRect(-w / 2 - 14, -size * .6, w + 28, size * 1.2, 16); ctx.fill(); ctx.lineWidth = 6; ctx.strokeStyle = INK; ctx.stroke(); ctx.fillStyle = '#fff' } else ctx.fillStyle = o.ink || (VOX ? (o.color ? '#f3ead6' : '#1c130b') : (o.color || INK));
+        if ((o.stroke && !VOX) || o.outline) { ctx.lineWidth = 12; ctx.strokeStyle = VOX ? '#1c130b' : INK; ctx.lineJoin = 'round'; ctx.strokeText(k.txt, -w / 2, 4) }
         ctx.fillText(k.txt, -w / 2, 4); ctx.restore() }
       if (D.meta.rtl) x -= L.sp; else x += w + L.sp })
   }); ctx.restore(); return { h: tot, w: Math.max(...L.lines.map(l => l.w)), n: idx }
@@ -223,6 +223,28 @@ function its_corner(t, sc, c) { // items peek in from the corners around a text/
 }
 
 /* ---------- scene, wipe, camera ---------- */
+/* ---------- owner-placed key text: position per format (sc.keyPos.v / .h = {x,y} as fractions of the frame), paper style, size, turned text ---------- */
+const keyCustom = sc => !!(sc.text && tOn(sc) && ((sc.keyPos && sc.keyPos[FMT]) || (sc.keyPaper && sc.keyPaper !== 'auto') || sc.keyTurn || (sc.keySize && sc.keySize !== 1)));
+function keyPaperDraw(kind, w, h, seed) {   // paper centred on (0,0) in the current transform
+  ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowOffsetY = 9; ctx.shadowBlur = 16;
+  const tornP = fill => { torn(0, 0, w, h, seed, 7); ctx.fillStyle = fill; ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(80,55,25,.4)'; ctx.stroke() };
+  if (kind === 'white' || kind === 'yellow') { ctx.shadowOffsetX = 8; ctx.fillStyle = kind === 'white' ? '#fff' : '#ffe15a'; ctx.beginPath(); ctx.roundRect(-w / 2, -h / 2, w, h, 14); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 7; ctx.strokeStyle = INK; ctx.stroke() }
+  else if (kind === 'cream') tornP('#f6efe0'); else if (kind === 'old') tornP('#efe5cd'); else if (kind === 'kraft') tornP('#c9a26b'); else if (kind === 'dark') tornP('#2b2118');
+  ctx.restore()
+}
+function keyCard(t, sc) {
+  const e = spr(t, sc.t0 + .35, .5, 12); if (e <= 0) return;
+  const kp = sc.keyPos && sc.keyPos[FMT], x = (kp ? kp.x : .5) * W, y = (kp ? kp.y : .14) * H, turn = !!sc.keyTurn, k = sc.keySize || 1;
+  const size = B * (V ? .08 : .07) * k, maxW = Math.min(turn ? (V ? H * .45 : H * .7) : W * (V ? .8 : .5), W * .9 - 90);
+  const kind = (!sc.keyPaper || sc.keyPaper === 'auto') ? (VOX ? 'old' : 'yellow') : sc.keyPaper;
+  const L = wrapTokens(sc.text, `900 ${size}px Vz`, Math.max(maxW, size * 3)), hh = L.lines.length * size * 1.32 + 60, ww = Math.max(...L.lines.map(l => l.w), 160) + 90;
+  const ink = kind === 'dark' ? '#f3ead6' : kind === 'none' ? '#fff' : undefined;
+  ctx.save(); ctx.translate(x, y); ctx.rotate(turn ? -Math.PI / 2 : (kind === 'none' ? 0 : -.02)); ctx.scale(e, e);
+  if (kind !== 'none') keyPaperDraw(kind, ww, hh, Math.round(ww * 7 + hh) % 997);
+  else { ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 4 }
+  drawText(sc.text, 0, 0, size, Math.max(maxW, size * 3), { ink, outline: kind === 'none', hlBg: '#ff3b4a' });
+  ctx.restore()
+}
 function drawScene(t, sc) {
   CUR = sc; if (EDIT) for (const k in REC) delete REC[k]; const th = THEMES[sc.theme], lt = t - sc.t0, dur = sc.t1 - sc.t0, kc = sc.idx % 4, pc = ramp(lt, 0, dur + .6);
   // camera: each scene gets its own move (push in / pull out, with a slow pan) so consecutive scenes never feel identical
@@ -232,7 +254,7 @@ function drawScene(t, sc) {
   if (VOX) vbg(t, VT(sc), sc); else bg(t, th, W * (.3 + .4 * ((sc.idx * .37) % 1)), H * .55, .06 + .03 * (sc.idx % 3));
   if (window.FXL && sc.bg && sc.bg.src) FXL.bg(t, sc);   // optional background picture layer (engine/fx.js)
   if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, false);   // optional framed pictures pinned to the backdrop
-  decor(t, sc, th); (TPL[sc.tpl] || TPL.hero)(t, sc); if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, true); ctx.restore()   // pins marked 'top' (stamps, arrows) lie over the pictures
+  decor(t, sc, th); const KC = keyCustom(sc); (TPL[sc.tpl] || TPL.hero)(t, KC ? Object.assign(Object.create(sc), { keyOn: false }) : sc); if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, true); if (KC) keyCard(t, sc); ctx.restore()   // pins marked 'top' (stamps, arrows) lie over the pictures
 }
 function wipePath(style, p, k) {
   const e = eio(p); ctx.beginPath();
