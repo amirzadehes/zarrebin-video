@@ -4,119 +4,119 @@
  "items": [
   {
    "id": "roman-soldier",
-   "en": "male Roman legionary standing upright, bronze helmet, iron scale armor, red tunic, long red cloak over the shoulders, spear in one hand (ancient Rome, 4th century)",
+   "en": "young male Roman cavalry soldier about eighteen, standing alert, bronze crested helmet, iron scale armor over a red tunic, long red wool cloak, leather belt and sandals, spear in one hand (ancient Rome, 4th century)",
    "fa": "سرباز رومی",
    "why": "سرباز رومی در ابتدای داستان",
    "tags": []
   },
   {
    "id": "cloak",
-   "en": "long heavy red wool military cloak with a brass clasp at the shoulder, hanging in soft folds (ancient Rome, 4th century)",
+   "en": "long heavy red wool military cloak with a brass clasp at the shoulder, hanging in deep soft folds with a darker trim (ancient Rome, 4th century)",
    "fa": "شنل",
    "why": "شنل سرباز رومی",
    "tags": []
   },
   {
    "id": "grave",
-   "en": "Grave marker",
+   "en": "simple stone grave marker with a small carved cross on a low mound of earth, a few fallen autumn leaves around it (Roman Gaul, 4th century)",
    "fa": "قبر",
    "why": "مراسم خاکسپاری",
    "tags": []
   },
   {
    "id": "banknotes",
-   "en": "Tax money",
+   "en": "neat stack of paper banknotes tied with a paper band, one note slightly fanned out, representing tax payment (modern, today)",
    "fa": "مالیات",
    "why": "مالیات در داستان",
    "tags": []
   },
   {
    "id": "goose",
-   "en": "Goose",
+   "en": "plump live white goose standing proudly, orange beak and feet, ruffled wing feathers, as kept on a farm in late autumn (medieval Europe, old farm life)",
    "fa": "غاز",
    "why": "کباب غاز",
    "tags": []
   },
   {
    "id": "lantern",
-   "en": "lantern",
+   "en": "round paper lantern on a wooden stick glowing warm orange from inside, decorated with cut-out star and moon shapes, typical Saint Martin lantern (modern, Germany today)",
    "fa": "بچه ها و فانوس‌ها",
    "why": "فانوس‌های بچه‌ها",
    "tags": []
   },
   {
    "id": "banner",
-   "en": "Parade banner",
+   "en": "long cloth parade banner hanging from a wooden crossbar and two poles, deep red with a gold lantern emblem and tassels (modern, Germany today)",
    "fa": "پرچم رژه",
    "why": "رژه‌ی فانوس",
    "tags": []
   },
   {
    "id": "group-people",
-   "en": "group of five children walking together, each holding a paper lantern on a stick, winter coats, hats and scarves, cheerful faces (modern, Germany today)",
+   "en": "group of five children of mixed ages walking side by side on a November evening, warm winter coats, knitted hats, scarves and mittens, each holding a glowing Saint Martin paper lantern on a stick, cheerful faces (modern, Germany today)",
    "fa": "بچه‌ها",
    "why": "بچه‌ها در رژه",
    "tags": []
   },
   {
    "id": "sword",
-   "en": "Sword",
+   "en": "straight Roman cavalry sword with a short bronze hilt and a leather scabbard, polished blade catching the light (ancient Rome, 4th century)",
    "fa": "شمشیر",
    "why": "شمشیر که نصف می‌کند",
    "tags": []
   },
   {
    "id": "fire",
-   "en": "Bonfire",
+   "en": "large autumn bonfire with tall orange and yellow flames, a pile of logs and straw at its base, a few sparks rising (modern, Germany today, end of the lantern parade)",
    "fa": "آتش بزرگ",
    "why": "آتش بزرگ در پایان رژه",
    "tags": []
   },
   {
    "id": "church",
-   "en": "Church building",
+   "en": "small early Christian stone church with a short bell tower, arched wooden door and a cross on the roof (Roman Gaul, 4th century)",
    "fa": "کلیسا",
    "why": "کلیسا و تعمید مارتین",
    "tags": []
   },
   {
    "id": "calendar",
-   "en": "Calendar showing November 11",
+   "en": "paper wall calendar page for November with the number 11 circled in red marker and a small lantern drawing in the corner (modern, today)",
    "fa": "تقویم",
    "why": "تاریخ ۱۱ نوامبر",
    "tags": []
   },
   {
    "id": "beggar",
-   "en": "male beggar sitting shivering, ragged thin tunic, bare feet, hands held out for help, hollow cheeks (Roman Gaul, 4th century, harsh winter)",
+   "en": "male beggar sitting on the ground shivering in the cold, thin ragged tunic, almost bare, bare feet, arms hugging himself, hollow cheeks and pleading eyes (Roman Gaul, 4th century, harsh winter night)",
    "fa": "گدا",
    "why": "گدا که نصف شنل می‌گیرد",
    "tags": []
   },
   {
    "id": "bishop",
-   "en": "Bishop's mitre",
+   "en": "male bishop in long white robe with gold embroidery and a heavy cloak, tall pointed mitre, curved golden crozier staff in one hand, pectoral cross on his chest, kind serious face (Roman Gaul, 4th century)",
    "fa": "اسقف",
    "why": "اوزخوف/اسقف شهر",
    "tags": []
   },
   {
    "id": "dinner-plate",
-   "en": "Plate",
+   "en": "empty round white porcelain dinner plate with a thin gold rim, seen slightly from above (modern, today)",
    "fa": "بشقاب",
    "why": "بشقاب برای کباب غاز",
    "tags": []
   },
   {
    "id": "food",
-   "en": "Roasted goose on plate",
+   "en": "whole roasted goose with crispy golden-brown skin on a white oval plate, surrounded by red cabbage, potato dumplings and apple slices as side dishes, a sprig of herbs on top (modern, Germany today)",
    "fa": "غذای غاز کبابی",
    "why": "کباب غاز روی بشقاب",
    "tags": []
   },
   {
    "id": "music-note",
-   "en": "two joined eighth notes with a small curling melody ribbon, simple and bold (timeless)",
+   "en": "two joined eighth notes with a small curling melody ribbon, simple and bold, as in a children's lantern song (timeless)",
    "fa": "نت موسیقی",
    "why": "آهنگ رژه",
    "tags": []
@@ -130,112 +130,112 @@
   },
   {
    "id": "torch",
-   "en": "Torch",
+   "en": "hand-made torch of straw and a hollowed turnip on a wooden stick, burning flame and a little smoke (old European autumn harvest tradition)",
    "fa": "مشعل",
    "why": "مشعل برای روشن کردن",
    "tags": []
   },
   {
    "id": "money-bag",
-   "en": "Bag of money",
+   "en": "round leather coin pouch tied with a cord, bulging and heavy, a few coins spilling at the top (medieval Europe)",
    "fa": "کیسه پول",
    "why": "مالیات با پول",
    "tags": []
   },
   {
    "id": "money-coins",
-   "en": "Coins",
+   "en": "small stack and a few loose old silver coins with simply stamped faces, slightly worn (medieval Europe)",
    "fa": "سکه‌ها",
    "why": "سکه‌های مالیات",
    "tags": []
   },
   {
    "id": "document",
-   "en": "Document (burial record)",
+   "en": "rolled parchment scroll with hand-written lines and a red wax seal, representing a burial record (Roman Gaul, 4th century)",
    "fa": "سند",
    "why": "سند خاکسپاری",
    "tags": []
   },
   {
    "id": "road",
-   "en": "Road",
+   "en": "narrow cobblestone village street at dusk with warm lit windows on both sides and a few bare trees, the route of the lantern parade (modern, Germany today)",
    "fa": "جاده",
    "why": "مسیر رژه",
    "tags": []
   },
   {
    "id": "half-cloak",
-   "en": "red wool cloak cut cleanly in two, one torn-edged half shown folded, with a few loose threads at the cut (ancient Rome, 4th century)",
+   "en": "red wool cloak cut cleanly in two, one torn-edged half shown folded with a few loose threads at the cut (ancient Rome, 4th century)",
    "fa": "نیمه‌شنل",
    "why": "نیمه‌شنل که به گدا می‌دهند",
    "tags": []
   },
   {
    "id": "saint-martin",
-   "en": "Saint Martin figure",
+   "en": "young male Saint Martin as a Roman cavalry officer in armor sitting on a white horse, holding out half of his red cloak to give away, calm kind face (ancient Rome, 4th century)",
    "fa": "سنت مارتین",
    "why": "شخصیت مارتین",
    "tags": []
   },
   {
    "id": "roast-goose",
-   "en": "Roasted goose",
+   "en": "whole roasted goose, golden-brown glossy skin, on a rustic wooden board with rosemary and baked apples (modern, Germany today)",
    "fa": "کباب غاز",
    "why": "کباب غاز به عنوان غذا",
    "tags": []
   },
   {
    "id": "candle",
-   "en": "Candle",
+   "en": "tall cream candle in a small brass holder with a steady warm flame and a few wax drips (medieval Europe)",
    "fa": "شمع",
    "why": "شمع برای نور",
    "tags": []
   },
   {
    "id": "shield",
-   "en": "Shield (Roman style)",
+   "en": "oval Roman cavalry shield with a round metal boss in the center, painted red with a simple pattern and an iron-bound rim (ancient Rome, 4th century)",
    "fa": "سپر",
    "why": "سپر سرباز رومی",
    "tags": []
   },
   {
    "id": "roman-helmet",
-   "en": "Roman helmet",
+   "en": "Roman cavalry helmet of polished bronze with cheek guards, neck guard and a small crest (ancient Rome, 4th century)",
    "fa": "کلاه‌خود رومی",
    "why": "کلاه‌خود سرباز رومی",
    "tags": []
   },
   {
    "id": "map-pin",
-   "en": "classic map location pin with a round head and a small cross-shaped village church beside it (modern map symbol)",
+   "en": "classic map location pin with a round head and a small village church beside it (modern map symbol)",
    "fa": "نشان‌گر مکان",
    "why": "مکان روستای کَند",
    "tags": []
   },
   {
    "id": "hourglass",
-   "en": "Hourglass (time passing)",
+   "en": "wooden hourglass with golden sand halfway fallen and a brass-coloured frame, representing time passing (timeless)",
    "fa": "ساعت شنی",
    "why": "زمان گذر",
    "tags": []
   },
   {
    "id": "star",
-   "en": "Star (night sky)",
+   "en": "five-pointed golden star glowing softly with a few small sparkles around it, night sky motif (timeless)",
    "fa": "ستاره",
    "why": "ستاره‌های شب",
    "tags": []
   },
   {
    "id": "wheat",
-   "en": "bundle of golden wheat ears tied with twine, harvest sheaf (timeless, farming)",
+   "en": "bundle of golden wheat ears tied with twine, harvest sheaf at the end of the farming year (timeless, farming)",
    "fa": "گندم",
    "why": "پایان سال کشاورزی",
    "tags": []
   },
   {
    "id": "cross-mark",
-   "en": "Cross mark (death)",
+   "en": "plain dark wooden cross with a soft glow, slightly weathered, as a symbol of death (Christian, Roman Gaul, 4th century)",
    "fa": "علامت صلیب",
    "why": "نماد مرگ مارتین",
    "tags": []
