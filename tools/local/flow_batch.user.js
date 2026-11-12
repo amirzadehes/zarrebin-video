@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ذره‌بین – ساخت خودکار تصویر در Google Flow
 // @namespace    https://github.com/amirzadehes/zarrebin-video
-// @version      0.1.1
+// @version      0.1.2
 // @description  تصویرهای کم‌داشته‌ی یک قسمت را در Flow می‌سازد (۴ تصویر برای هر پرامپت) و در inbox ریبو آپلود می‌کند
 // @match        https://flow.google.com/*
 // @match        https://labs.google/fx/*
@@ -174,9 +174,31 @@
   async function generate(promptText) {
     const before = new Set(gridImgs().map(i => i.src));
     await typePrompt(promptText);
-    const btn = await waitFor(() => { const b = startBtn(); return b && !b.disabled && b.getAttribute('aria-disabled') !== 'true' ? b : null; }, 15000);
+    const tilesBefore = deepAll('flow-image-tile').length;
+    const startedNow = () => deepAll('flow-image-tile').length > tilesBefore || gridImgs().some(i => !before.has(i.src));
+    const btnState = () => { const b = startBtn(); return b ? `disabled=${b.disabled} aria-disabled=${b.getAttribute('aria-disabled')}` : 'دکمه پیدا نشد'; };
+    let btn = await waitFor(() => { const b = startBtn(); return b && !b.disabled && b.getAttribute('aria-disabled') !== 'true' ? b : null; }, 8000);
+    if (!btn) {
+      // تلاش دوباره برای بیدار کردن ویرایشگر
+      const box = promptBox(); box.focus();
+      document.execCommand('insertText', false, ' '); await sleep(200); document.execCommand('delete', false, null);
+      btn = await waitFor(() => { const b = startBtn(); return b && !b.disabled && b.getAttribute('aria-disabled') !== 'true' ? b : null; }, 6000);
+    }
+    log('وضعیت دکمه‌ی Start: ' + btnState());
     if (!btn) { dumpDiag('Start فعال نشد'); throw new Error('دکمه‌ی Start فعال نشد'); }
-    btn.click();
+    const realClick = el => {
+      const r = el.getBoundingClientRect(), o = { bubbles: true, cancelable: true, composed: true, view: window, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, button: 0 };
+      for (const t of ['pointerover', 'pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click']) {
+        el.dispatchEvent(t.startsWith('pointer') ? new PointerEvent(t, { ...o, pointerId: 1, pointerType: 'mouse', isPrimary: true }) : new MouseEvent(t, o));
+      }
+    };
+    realClick(btn);
+    if (!(await waitFor(startedNow, 7000, 500))) {
+      log('کلیک اثری نداشت؛ با Enter امتحان می‌کنم…');
+      const box = promptBox(); box.focus();
+      for (const t of ['keydown', 'keypress', 'keyup']) box.dispatchEvent(new KeyboardEvent(t, { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true, cancelable: true }));
+      if (!(await waitFor(startedNow, 7000, 500))) { dumpDiag('ارسال پرامپت اثری نداشت (' + btnState() + ')'); throw new Error('Flow پرامپت را نپذیرفت'); }
+    }
     log('پرامپت فرستاده شد؛ منتظر تصویرها…');
     let dumped = false;
 
