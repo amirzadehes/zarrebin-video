@@ -337,7 +337,7 @@ function cards(el, L, withAdd, head, ep){
   h += L.map(w=>{
     const v = (S.catalog.items[w.id]?.variants||[])[0];
     return `<div class="card item" data-id="${w.id}">
-      <div class="thumb">${v?`<img loading="lazy" src="${raw(v)}">`:'بدون تصویر'}</div>
+      <div class="thumb" ${v?'data-all="1" style="cursor:zoom-in"':''}>${v?`<img loading="lazy" src="${raw(v)}">`:'بدون تصویر'}</div>
       <div>
         <div class="name">${w.fa||w.en}<button class="bEdit" title="ویرایش نام" style="min-height:30px;padding:0 8px;margin-inline-start:8px">✎</button>${w.n?`<span class="badge ok">${fa(w.n)} تصویر</span>`:''}</div>
         <div class="en">${w.en}</div>
@@ -358,11 +358,13 @@ function cards(el, L, withAdd, head, ep){
   el.querySelectorAll('.item').forEach(c=>{
     const id=c.dataset.id, w=L.find(x=>x.id===id), st=c.querySelector('.st');
     c.querySelector('.bEdit').onclick = ()=>renameItem(id, w.fa||w.en, w.en);
+    const th=c.querySelector('.thumb[data-all]'); if(th) th.onclick=()=>showVariants(S.catalog.items[id]);
     c.querySelector('.bCopy').onclick = async()=>{ const ok = await copy(prompt(w.en)); st.className='st '+(ok?'ok':'bad'); st.textContent = ok?'پرامپت کپی شد؛ در Gemini بچسبان':'کپی نشد'; };
     c.querySelector('.bFile').onchange = e => upload(id, [...e.target.files], st, e.target);
   });
   el.querySelectorAll('.bSim').forEach(btn=>btn.onclick=()=>{ const c=btn.closest('.item'), id=c.dataset.id, w=L.find(x=>x.id===id), box=c.querySelector('.simBox'); box.hidden=!box.hidden; if(box.hidden||box.dataset.f) return; box.dataset.f=1;
-    box.innerHTML='<p class="hint">هر کدام را که می‌خواهی در ویدیو برای این مورد استفاده شود تیک بزن. اگر هیچ‌کدام خوب نیست، خودت یکی بساز و آپلود کن.</p><div class="grid">'+w.sim.map(sid=>{ const it=S.catalog.items[sid]; if(!it) return ''; return `<label class="tile" style="cursor:pointer"><div class="thumb"><img loading="lazy" src="${raw(it.variants[0])}"></div><small>${it.fa||it.en}</small><input type="checkbox" data-s="${sid}" ${(S.picks[id]||[]).includes(sid)?'checked':''}></label>` }).join('')+'</div>';
+    box.innerHTML='<p class="hint">هر کدام را که می‌خواهی در ویدیو برای این مورد استفاده شود تیک بزن. اگر هیچ‌کدام خوب نیست، خودت یکی بساز و آپلود کن.</p><div class="grid">'+w.sim.map(sid=>{ const it=S.catalog.items[sid]; if(!it) return ''; return `<label class="tile" style="cursor:pointer"><div class="thumb"><img loading="lazy" src="${raw(it.variants[0])}"></div><small>${it.fa||it.en}</small>${it.variants.length>1?`<button type="button" class="simAll" data-s="${sid}" style="min-height:30px;width:100%;padding:0 4px;font-size:12px">همه‌ی ${fa(it.variants.length)} تصویر</button>`:''}<input type="checkbox" data-s="${sid}" ${(S.picks[id]||[]).includes(sid)?'checked':''}></label>` }).join('')+'</div>';
+    box.querySelectorAll('.simAll').forEach(b=>b.onclick=e=>{ e.preventDefault(); e.stopPropagation(); showVariants(S.catalog.items[b.dataset.s]) });
     box.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.onchange=()=>{ const cur=new Set(S.picks[id]||[]); cb.checked?cur.add(cb.dataset.s):cur.delete(cb.dataset.s); S.picks[id]=[...cur]; if(!cur.size) delete S.picks[id]; btn.textContent=`مشابه در کتابخانه (${fa(w.sim.length)})`+(cur.size?` · ✓ ${fa(cur.size)} انتخاب‌شده`:''); savePicks(ep); }) });
   if(withAdd) el.querySelector('#btnAdd').onclick = ()=>addItem(el, ep||'');
 }
@@ -755,11 +757,13 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
   box.querySelectorAll('.mv').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, j=k+(+b.dataset.d), a=s.items[k], c=s.items[j]; if(!c) return; const ta=a.t; a.t=c.t; c.t=ta; s.items[k]=c; s.items[j]=a; rvChanged(i,d) });
   box.querySelector('.bAdd').onclick=()=>{ const pk=box.querySelector('.pick'); pk.hidden=!pk.hidden; if(pk.hidden||pk.dataset.f) return; pk.dataset.f=1;
     const its=Object.values(S.catalog.items).filter(x=>x.variants&&x.variants.length).sort((a,b)=>(a.fa||a.en).localeCompare(b.fa||b.en));
-    pk.innerHTML='<p class="hint" style="margin:0 0 8px">تصویری که انتخاب کنی آخر صحنه اضافه می‌شود.</p><input type="text" placeholder="جست‌وجو به فارسی… (مثلاً هواپیما، غذا، پول)" style="width:100%;margin-bottom:8px"><div class="grid">'+its.map(x=>`<div class="tile" data-id="${x.id}" data-q="${nz([x.fa,x.en,...(x.fa_tags||[]),...(x.tags||[])].join(' '))}"><div class="thumb"><img loading="lazy" src="${raw(x.variants[0])}"></div><small>${x.fa||x.en}</small></div>`).join('')+'</div>';
+    pk.innerHTML='<p class="hint" style="margin:0 0 8px">تصویری که انتخاب کنی آخر صحنه اضافه می‌شود.</p><input type="text" placeholder="جست‌وجو به فارسی… (مثلاً هواپیما، غذا، پول)" style="width:100%;margin-bottom:8px"><div class="grid">'+its.map(x=>`<div class="tile" data-id="${x.id}" data-q="${nz([x.fa,x.en,...(x.fa_tags||[]),...(x.tags||[])].join(' '))}"><div class="thumb"><img loading="lazy" src="${raw(x.variants[0])}"></div><small>${x.fa||x.en}</small>${x.variants.length>1?`<span class="badge">${fa(x.variants.length)}</span>`:''}</div>`).join('')+'</div>';
     pk.querySelector('input').oninput=e=>{ const qs=nz(e.target.value).split(' ').filter(Boolean); pk.querySelectorAll('.tile').forEach(t=>t.hidden=qs.length&&!qs.every(q=>t.dataset.q.includes(q))) };
-    pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const it=S.catalog.items[t.dataset.id]; if((s.items||[]).length>=6) return toast('حداکثر ۶ تصویر در هر صحنه');
+    const addPic=(it,v)=>{ if((s.items||[]).length>=6) return toast('حداکثر ۶ تصویر در هر صحنه');
       s.items=s.items||[]; const last=s.items.length?s.items[s.items.length-1].t:s.t0; const end=Math.max(s.t1-.5,s.t0+.3); const tt=s.items.length?last+Math.max(.35,(end-last)/2):s.t0+.45;
-      s.items.push({t:+tt.toFixed(3), src:'library/'+it.variants[0], en:'pop'}); toast('اضافه شد'); rvChanged(i,d) }) }
+      s.items.push({t:+tt.toFixed(3), src:'library/'+v, en:'pop'}); toast('اضافه شد'); rvChanged(i,d) };
+    pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const it=S.catalog.items[t.dataset.id]; if((s.items||[]).length>=6) return toast('حداکثر ۶ تصویر در هر صحنه');
+      if(it.variants.length>1) varStrip(pk,it,v=>addPic(it,v)); else addPic(it,it.variants[0]) }) }
   bgFxUI(box,s,i,d) }
 
 async function newForScene(i,d,faName,f,st){
@@ -866,15 +870,28 @@ function fxListUI(host,obj,done,mode){ const SND=mode==='sound';
   if(SND){ host.querySelector('.sndAdd').onclick=async()=>{ await loadSfxFiles(); list.push(fxNew('sound')); obj.fx=list; redraw(); done() };
     host.querySelector('.sndPv').onclick=()=>{ if(typeof pvI==='undefined'||!RV) return; const d=host.closest('details.sc'); const i=d?+d.dataset.i:-1; if(i>=0) openPreview(i,'play') }; return }
   host.querySelector('.fxAdd').onchange=e=>{ const v=e.target.value; if(!v) return; list.push(fxNew(v)); obj.fx=list; redraw(); done() } }
+/* an item with several pictures: show ALL of them so the exact one can be chosen (onVar gets the file name and its element) */
+function varStrip(pk,it,onVar,isOn,close){
+  let b=pk.querySelector(':scope > .vstrip'); if(!b){ b=document.createElement('div'); b.className='vstrip'; b.style.cssText='margin:0 0 10px;padding:8px;border:1px solid var(--acc);border-radius:12px'; const g=pk.querySelector('.grid'); pk.insertBefore(b,g) }
+  b.innerHTML=`<div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px"><b>${it.fa||it.en} · ${fa(it.variants.length)} تصویر</b><button class="vsX" style="min-height:32px;padding:0 10px">✕ بستن</button></div><div class="vars" style="margin:0">`+it.variants.map(v=>`<div class="vwrap" data-v="${v}" style="cursor:pointer;border-radius:10px;${isOn&&isOn(v)?'outline:3px solid var(--acc)':''}"><div class="thumb" style="width:100%;height:auto;aspect-ratio:1"><img src="${raw(v)}"></div></div>`).join('')+'</div>';
+  b.querySelector('.vsX').onclick=()=>{ b.remove(); if(close) close() };
+  b.querySelectorAll('.vwrap').forEach(w=>w.onclick=()=>onVar(w.dataset.v,w));
+  b.scrollIntoView({block:'nearest',behavior:'smooth'}) }
+const firstVar=(it,v)=>Object.assign({},it,{variants:[v,...it.variants.filter(x=>x!==v)]});
 function libPicker(pk,onPick,multi){ pk.hidden=!pk.hidden; if(pk.hidden||pk.dataset.f) return; pk.dataset.f=1;
   const its=Object.values(S.catalog.items).filter(x=>x.variants&&x.variants.length).sort((a,c)=>(a.fa||a.en).localeCompare(c.fa||c.en));
-  pk.innerHTML='<input type="text" placeholder="جست‌وجو به فارسی… (مثلاً ستاره، برگ، پول)" style="width:100%;margin-bottom:8px"><div class="grid">'+its.map(x=>`<div class="tile" data-id="${x.id}" data-q="${nz([x.fa,x.en,...(x.fa_tags||[]),...(x.tags||[])].join(' '))}"><div class="thumb"><img loading="lazy" src="${raw(x.variants[0])}"></div><small>${x.fa||x.en}</small></div>`).join('')+'</div>';
+  pk.innerHTML='<input type="text" placeholder="جست‌وجو به فارسی… (مثلاً ستاره، برگ، پول)" style="width:100%;margin-bottom:8px"><div class="grid">'+its.map(x=>`<div class="tile" data-id="${x.id}" data-q="${nz([x.fa,x.en,...(x.fa_tags||[]),...(x.tags||[])].join(' '))}"><div class="thumb"><img loading="lazy" src="${raw(x.variants[0])}"></div><small>${x.fa||x.en}</small>${x.variants.length>1?`<span class="badge">${fa(x.variants.length)}</span>`:''}</div>`).join('')+'</div>';
   pk.querySelector('input').oninput=e=>{ const qs=nz(e.target.value).split(' ').filter(Boolean); pk.querySelectorAll('.tile').forEach(t=>t.hidden=qs.length&&!qs.every(q=>t.dataset.q.includes(q))) };
-  if(!multi){ pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>onPick(S.catalog.items[t.dataset.id])); return }
+  if(!multi){ pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const it=S.catalog.items[t.dataset.id]; if(it.variants.length>1) varStrip(pk,it,v=>{ const st=pk.querySelector('.vstrip'); if(st) st.remove(); onPick(firstVar(it,v)) }); else onPick(it) }); return }
   const chosen=[], ok=document.createElement('button'); ok.className='pri'; ok.style.cssText='position:sticky;bottom:0;width:100%;margin-top:8px'; ok.hidden=true; pk.appendChild(ok);
-  const upd=()=>{ ok.hidden=!chosen.length; ok.textContent='✓ افزودن '+fa(chosen.length)+' عکس انتخاب‌شده' };
-  pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const id=t.dataset.id, k=chosen.indexOf(id); if(k<0){ chosen.push(id); t.style.outline='3px solid var(--acc)' } else { chosen.splice(k,1); t.style.outline='' } upd() });
-  ok.onclick=()=>{ const its=chosen.map(id=>S.catalog.items[id]); chosen.length=0; pk.querySelectorAll('.tile').forEach(t=>t.style.outline=''); upd(); pk.hidden=true; onPick(its) } }
+  const has=(id,v)=>chosen.some(c=>c.id===id&&c.v===v);
+  const mark=()=>pk.querySelectorAll('.tile').forEach(t=>t.style.outline=chosen.some(c=>c.id===t.dataset.id)?'3px solid var(--acc)':'');
+  const upd=()=>{ ok.hidden=!chosen.length; ok.textContent='✓ افزودن '+fa(chosen.length)+' عکس انتخاب‌شده'; mark() };
+  const tog=(id,v)=>{ const k=chosen.findIndex(c=>c.id===id&&c.v===v); if(k<0) chosen.push({id,v}); else chosen.splice(k,1); upd() };
+  pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const id=t.dataset.id, it=S.catalog.items[id];
+    if(it.variants.length>1) varStrip(pk,it,(v,w)=>{ tog(id,v); w.style.outline=has(id,v)?'3px solid var(--acc)':'' },v=>has(id,v));
+    else tog(id,it.variants[0]) });
+  ok.onclick=()=>{ const out=chosen.map(c=>firstVar(S.catalog.items[c.id],c.v)); chosen.length=0; const st=pk.querySelector('.vstrip'); if(st) st.remove(); upd(); pk.hidden=true; onPick(out) } }
 function bgFxUI(box,s,i,d){
   const done=()=>{ clearOk(s); syncOk(i); rvSave(); pvRefresh(i) }, again=()=>{ clearOk(s); rvSave(); fillScene(d); pvRefresh(i) };
   /* ----- 1) the picture behind the scene: its options live in a popup, opened by the "پس‌زمینه" button next to the add-picture buttons ----- */
@@ -1019,9 +1036,10 @@ function renderLib(){
   const its = Object.values(S.catalog.items||{});
   $('#libCount').textContent = 'کتابخانه‌ی تصاویر ('+fa(its.length)+' مورد)';
   $('#libGrid').innerHTML = its.length ? `<div class="grid">${its.map(i=>`<div class="tile" data-id="${i.id}"><div class="thumb"><img loading="lazy" src="${raw(i.variants[0])}"></div><small>${i.fa||i.en}</small><span class="badge">${fa(i.variants.length)}</span></div>`).join('')}</div>` : '<p class="hint">هنوز تصویری در کتابخانه نیست.</p>';
-  document.querySelectorAll('#libGrid .tile').forEach(t=>t.onclick=()=>{ const i=S.catalog.items[t.dataset.id]; $('#dlgBody').innerHTML=`<div class="name">${i.fa||i.en}</div><div class="en">${i.id}</div><div class="row"><button id="dlgEdit">ویرایش نام</button><label class="btn pri" style="display:grid;place-items:center;margin:0;color:var(--acc-tx)">افزودن تصویر<input type="file" accept="image/*" multiple hidden id="dlgAdd"></label></div><div class="st" id="dlgSt"></div>${i.has_text_in_image?'<p class="hint" style="color:var(--bad)">این تصویر متن دارد و برای نسخه‌ی چندزبانه مناسب نیست.</p>':''}<div class="vars">${i.variants.map(v=>`<div class="vwrap"><div class="thumb" style="width:100%;height:auto;aspect-ratio:1"><img src="${raw(v)}"></div><button class="vdel" data-v="${v}">🗑 پاک کردن</button></div>`).join('')}</div>`; dlg.showModal(); $('#dlgEdit').onclick=()=>{ dlg.close(); renameItem(i.id, i.fa||i.en, i.en) };
+  document.querySelectorAll('#libGrid .tile').forEach(t=>t.onclick=()=>{ const i=S.catalog.items[t.dataset.id]; $('#dlgBody').innerHTML=`<div class="name">${i.fa||i.en}</div><div class="en">${i.id}</div><div class="row"><button id="dlgEdit">ویرایش نام</button><label class="btn pri" style="display:grid;place-items:center;margin:0;color:var(--acc-tx)">افزودن تصویر<input type="file" accept="image/*" multiple hidden id="dlgAdd"></label></div><div class="st" id="dlgSt"></div>${i.has_text_in_image?'<p class="hint" style="color:var(--bad)">این تصویر متن دارد و برای نسخه‌ی چندزبانه مناسب نیست.</p>':''}<div class="vars">${i.variants.map(v=>`<div class="vwrap"><div class="thumb" style="width:100%;height:auto;aspect-ratio:1"><img src="${raw(v)}"></div>${i.variants.length>1?`<button class="vsplit" data-v="${v}" title="این عکس از این دسته بیرون می‌آید و یک دسته‌ی تازه می‌شود" style="width:100%;margin-top:6px;min-height:40px;padding:0 6px;font-size:13px">✂️ دسته‌ی جدید</button>`:''}<button class="vdel" data-v="${v}">🗑 پاک کردن</button></div>`).join('')}</div>`; dlg.showModal(); $('#dlgEdit').onclick=()=>{ dlg.close(); renameItem(i.id, i.fa||i.en, i.en) };
     $('#dlgAdd').onchange=e=>{ const fl=[...e.target.files]; if(!fl.length) return; upload(i.id, fl, $('#dlgSt'), e.target); toast('ارسال شروع شد؛ وضعیت در پنل پایین صفحه است'); dlg.close() };
-    document.querySelectorAll('#dlgBody .vdel').forEach(btn=>btn.onclick=()=>delVariant(i, btn.dataset.v, btn)) });
+    document.querySelectorAll('#dlgBody .vdel').forEach(btn=>btn.onclick=()=>delVariant(i, btn.dataset.v, btn));
+    document.querySelectorAll('#dlgBody .vsplit').forEach(btn=>btn.onclick=()=>splitVariant(i, btn.dataset.v)) });
 }
 async function delVariant(i, v, btn){
   if(!S.token){ toast('اول توکن را در تنظیمات وارد کن'); return }
@@ -1078,6 +1096,21 @@ async function upload(id, files, st, input, onJob){
   return jobs.map(j=>j[0]);
 }
 
+function showVariants(it){ if(!it) return;
+  $('#dlgBody').innerHTML=`<div class="name">${it.fa||it.en}</div><div class="en">${it.id} · ${fa(it.variants.length)} تصویر</div><div class="vars">${it.variants.map(v=>`<div class="vwrap"><div class="thumb" style="width:100%;height:auto;aspect-ratio:1"><img src="${raw(v)}"></div></div>`).join('')}</div>`; dlg.showModal() }
+/* take one picture out of its item and make a new item (new Persian name) out of it */
+function splitVariant(it, v){
+  $('#dlgBody').innerHTML=`<div class="name">دسته‌ی جدید از این عکس</div><div class="thumb" style="width:120px;height:120px;margin:8px auto"><img src="${raw(v)}"></div><label>نام فارسی دسته‌ی تازه (انگلیسی‌اش خودکار ترجمه می‌شود)</label><input type="text" id="spFa" placeholder="مثلاً: ساعت دیواری"><p class="hint">این عکس از «${it.fa||it.en}» بیرون می‌آید و به‌تنهایی یک دسته‌ی تازه می‌شود. بقیه‌ی عکس‌های «${it.fa||it.en}» سر جایشان می‌مانند. قسمت‌های ساخته‌شده خراب نمی‌شوند.</p><div class="row"><button class="pri" id="spGo">ساخت دسته</button></div><div class="st" id="spSt"></div>`;
+  dlg.showModal(); $('#spFa').focus();
+  $('#spGo').onclick=async()=>{ const fa2=$('#spFa').value.trim(), st=$('#spSt'); if(!fa2) return; if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return }
+    $('#spGo').disabled=true; st.className='st'; st.textContent='در حال ارسال…';
+    try{ await put('splits/'+Date.now().toString(36)+'.json', enc(JSON.stringify({file:v, fa:fa2})), 'split: '+v);
+      st.textContent='ارسال شد؛ ترجمه و ساخت دسته حدود یک دقیقه طول می‌کشد…';
+      for(let k=0;k<30;k++){ await sleep(6000); const c=await readJson('library/catalog.json', null); const o=c&&Object.values(c.items||{}).find(x=>(x.variants||[]).includes(v));
+        if(o&&o.id!==it.id){ S.catalog=c; renderLib(); dlg.close(); toast('✓ دسته‌ی «'+fa2+'» ساخته شد',5000); return } }
+      st.className='st bad'; st.textContent='هنوز انجام نشد؛ کمی بعد صفحه را تازه کن.'; $('#spGo').disabled=false;
+    }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message; $('#spGo').disabled=false } };
+}
 function renameItem(id, curFa, curEn){
   $('#dlgBody').innerHTML=`<div class="name">ویرایش نام</div><div class="en">${id}</div><label>نام فارسی جدید (انگلیسی‌اش خودکار ترجمه می‌شود و در پرامپت می‌آید)</label><input type="text" id="rnFa" value="${(curFa||'').replace(/"/g,'&quot;')}"><p class="hint">نام انگلیسی فعلی: <bdi>${curEn||''}</bdi></p><div class="row"><button class="pri" id="rnGo">ذخیره</button></div><div class="st" id="rnSt"></div>`;
   dlg.showModal(); $('#rnFa').focus();

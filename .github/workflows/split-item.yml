@@ -1,0 +1,31 @@
+name: Split library picture into a new item
+on:
+  push:
+    branches: [main]
+    paths: ['splits/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: split-item
+  cancel-in-progress: false
+jobs:
+  split:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Apply split requests and commit
+        env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for round in 1 2 3 4 5 6; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            python tools/split_item.py
+            git diff --quiet library/catalog.json || { python tools/make_fa_tags.py || true; python tools/find_similar.py || true; }
+            git add -A
+            if git diff --cached --quiet; then echo "nothing to do"; exit 0; fi
+            git commit -qm "library: split picture into a new item"
+            if git push -q origin main; then echo pushed; exit 0; fi; sleep 4
+          done; exit 1
