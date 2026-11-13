@@ -29,9 +29,14 @@ def main():
         os.remove(rp)
         if r.get('new') and fa:   # a brand-new item: Persian name typed in the app -> English name + id
             import re
-            en = translate(fa, ''); base = re.sub(r'[^a-z0-9]+', '-', en.lower()).strip('-') or 'item'; iid = base; k = 2
-            taken = set(cat['items']) | {w['id'] for w in wanted + pool}
-            while iid in taken: iid = f'{base}-{k}'; k += 1
+            en = translate(fa, '')
+            if re.fullmatch(r'u-[a-z0-9]{4,12}', r.get('id') or ''):   # id chosen by the app, so the picture was uploaded at the same time
+                iid = r['id']; wanted = [w for w in wanted if w['id'] != iid]
+                if iid in cat['items']: cat['items'][iid].update(fa=fa, en=en)   # the picture was processed first: just fix its names
+            else:
+                base = re.sub(r'[^a-z0-9]+', '-', en.lower()).strip('-') or 'item'; iid = base; k = 2
+                taken = set(cat['items']) | {w['id'] for w in wanted + pool}
+                while iid in taken: iid = f'{base}-{k}'; k += 1
             wanted.append({'id': iid, 'en': en, 'fa': fa, 'tags': ['mine']}); print('new item', iid, '|', fa, '->', en)
             ep = r.get('episode')
             if ep and os.path.exists(os.path.join(ROOT, 'episodes', ep, 'needs.json')):

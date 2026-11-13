@@ -773,15 +773,16 @@ async function newForScene(i,d,faName,f,st){
   const say=(t,c)=>{ st.className='st '+(c||''); st.textContent=t };
   try{
     let w=S.wanted.find(x=>x.fa===faName&&(x.tags||[]).includes('mine'))||Object.values(S.catalog.items).find(x=>x.fa===faName);
-    if(!w){ say('در حال ساخت نام انگلیسی…');
-      await put('renames/new__'+Date.now().toString(36)+'.json', enc(JSON.stringify({new:true,fa:faName})), 'new item');
-      for(let k=0;k<30&&!w;k++){ await sleep(8000); S.wanted=await readJson('wanted.json',[]); w=S.wanted.find(x=>x.fa===faName&&(x.tags||[]).includes('mine')) }
-      if(!w){ say('ساخت نام طول کشید؛ کمی بعد دوباره امتحان کن.','bad'); return } }
-    const id=w.id; const ext=(f.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
-    if(!(S.catalog.items[id]?.variants||[]).length){ say('در حال ارسال تصویر…'); await put('inbox/'+id+'__'+Date.now().toString(36)+'.'+ext, await toB64(f), 'inbox: '+id);
-      say('تصویر ارسال شد؛ پردازش و ذخیره در کتابخانه…'); let ok=false;
-      for(let k=0;k<40&&!ok;k++){ await sleep(10000); S.catalog=await readJson('library/catalog.json',{items:{}}); ok=(S.catalog.items[id]?.variants||[]).length>0;
-        if(!ok&&k>=3&&k%3===0){ const fl=await api('/contents/inbox/_failed').catch(()=>[]); if(Array.isArray(fl)&&fl.some(x=>x.name.startsWith(id+'__'))){ say('تصویر رد شد: زمینه‌ی سرخابی یک‌دست ندارد یا نامعتبر است. تصویر درست را دوباره بفرست.','bad'); return } } }
+    const ext=(f.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
+    let id; const fresh=!w;
+    if(fresh){ id='u-'+Date.now().toString(36);   // new name: the id is made here, so the picture and the English translation are processed at the same time (not one after the other)
+      say('در حال ارسال تصویر…'); await put('inbox/'+id+'__'+Date.now().toString(36)+'.'+ext, await toB64(f), 'inbox: '+id);
+      await put('renames/new__'+id+'.json', enc(JSON.stringify({new:true,id,fa:faName})), 'new item: '+id) }
+    else id=w.id;
+    if(fresh||!(S.catalog.items[id]?.variants||[]).length){ if(!fresh){ say('در حال ارسال تصویر…'); await put('inbox/'+id+'__'+Date.now().toString(36)+'.'+ext, await toB64(f), 'inbox: '+id) }
+      say('تصویر ارسال شد؛ بریدن زمینه و ذخیره در کتابخانه (معمولاً حدود یک دقیقه)…'); let ok=false;
+      for(let k=0;k<120&&!ok;k++){ await sleep(k<10?3000:5000); S.catalog=await readJson('library/catalog.json',{items:{}}); ok=(S.catalog.items[id]?.variants||[]).length>0;
+        if(!ok&&k>=6&&k%4===0){ const fl=await api('/contents/inbox/_failed').catch(()=>[]); if(Array.isArray(fl)&&fl.some(x=>x.name.startsWith(id+'__'))){ say('تصویر رد شد: زمینه‌ی سرخابی یک‌دست ندارد یا نامعتبر است. تصویر درست را دوباره بفرست.','bad'); return } } }
       if(!ok){ say('هنوز ذخیره نشد؛ کمی بعد در «+ افزودن از کتابخانه» دنبالش بگرد.','bad'); return } }
     const s=RV.data.scenes[i]; if((s.items||[]).length>=6){ say('در کتابخانه ذخیره شد ولی این صحنه ۶ تصویر دارد.','ok'); return }
     s.items=s.items||[]; const last=s.items.length?s.items[s.items.length-1].t:s.t0, end=Math.max(s.t1-.5,s.t0+.3), tt=s.items.length?last+Math.max(.35,(end-last)/2):s.t0+.45;
