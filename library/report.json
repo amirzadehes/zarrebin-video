@@ -1,36 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-10 07:53:55 UTC",
-   "ok": [
-    {
-     "file": "crown__mwae87bj003.jpg",
-     "id": "crown",
-     "saved": "crown__1.webp",
-     "kb": 148
-    },
-    {
-     "file": "crown__mwae87bu1nr.jpg",
-     "id": "crown",
-     "saved": "crown__2.webp",
-     "kb": 174
-    },
-    {
-     "file": "crown__mwae87c2277.jpg",
-     "id": "crown",
-     "saved": "crown__3.webp",
-     "kb": 141
-    },
-    {
-     "file": "crown__mwae87cc3p4.jpg",
-     "id": "crown",
-     "saved": "crown__4.webp",
-     "kb": 140
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-10 08:01:58 UTC",
    "ok": [
     {
@@ -1020,6 +990,18 @@
      "id": "money-coins",
      "saved": "money-coins__2.webp",
      "kb": 88
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-13 06:24:00 UTC",
+   "ok": [
+    {
+     "file": "document__mwelc9x10ro.jpg",
+     "id": "document",
+     "saved": "document__5.webp",
+     "kb": 303
     }
    ],
    "failed": []
