@@ -764,8 +764,27 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
       s.items.push({t:+tt.toFixed(3), src:'library/'+v, en:'pop'}); toast('اضافه شد'); rvChanged(i,d) };
     pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const it=S.catalog.items[t.dataset.id]; if((s.items||[]).length>=6) return toast('حداکثر ۶ تصویر در هر صحنه');
       if(it.variants.length>1) varStrip(pk,it,v=>addPic(it,v)); else addPic(it,it.variants[0]) }) }
-  bgFxUI(box,s,i,d) }
+  bgFxUI(box,s,i,d); tfUI(box,s,i,d) }
 
+/* ---------- time flip (scene.tf): whole background flips fast to one side while a year counter rolls; same speed for both ---------- */
+function tfUI(box,s,i,d){
+  const done=()=>{ clearOk(s); syncOk(i); rvSave(); pvRefresh(i) }, dur=Math.max(1,+(s.t1-s.t0).toFixed(1)), tf=s.tf||{}, on=!!tf.on, past=tf.dir!=='future';
+  const sec=document.createElement('div'); sec.className='fxs';
+  sec.innerHTML=`<label class="chk" style="font-weight:700"><input type="checkbox" class="tfOn" ${on?'checked':''}> ⏪ ورق‌زدن زمان روی پس‌زمینه</label>
+    <div class="tfBody" ${on?'':'hidden'}>
+      <div class="pgrid"><div><label>زمان شروع (ثانیه)</label><input type="number" class="tfS" min="0" max="${dur}" step="0.1" value="${tf.s!=null?tf.s:.3}"></div><div><label>زمان پایان (ثانیه)</label><input type="number" class="tfE" min="0.3" max="${dur+3}" step="0.1" value="${tf.e!=null?tf.e:Math.min(3,Math.max(1,dur-.4))}"></div></div>
+      <div class="row" style="margin-top:8px"><button class="tfPast ${past?'pri':''}">⏪ گذشته</button><button class="tfFut ${past?'':'pri'}">آینده ⏩</button></div>
+      <div class="pgrid" style="margin-top:8px"><div><label>تاریخ اول (سال)</label><input type="text" inputmode="numeric" class="tfY1" placeholder="مثلاً ۱۴۰۲" value="${tf.y1||''}"></div><div><label>تاریخ دوم (سال)</label><input type="text" inputmode="numeric" class="tfY2" placeholder="مثلاً ۱۳۷۰" value="${tf.y2||''}"></div></div>
+      <p class="hint">گذشته: پس‌زمینه از راست به چپ رد می‌شود و سال کم می‌شود. آینده: از چپ به راست و سال زیاد می‌شود. سرعت پس‌زمینه و شمارنده یکی است. اگر سال‌ها را خالی بگذاری فقط پس‌زمینه رد می‌شود.</p>
+    </div>`;
+  box.appendChild(sec);
+  const q=c=>sec.querySelector(c), save=()=>{ const st=Math.max(0,+q('.tfS').value||0), en=Math.max(st+.3,+q('.tfE').value||st+2);
+    s.tf={on:q('.tfOn').checked,s:+st.toFixed(2),e:+en.toFixed(2),dir:q('.tfPast').classList.contains('pri')?'past':'future',y1:q('.tfY1').value.trim(),y2:q('.tfY2').value.trim()}; done() };
+  q('.tfOn').onchange=()=>{ q('.tfBody').hidden=!q('.tfOn').checked; save() };
+  ['.tfS','.tfE','.tfY1','.tfY2'].forEach(c=>q(c).onchange=save);
+  q('.tfPast').onclick=()=>{ q('.tfPast').classList.add('pri'); q('.tfFut').classList.remove('pri'); save() };
+  q('.tfFut').onclick=()=>{ q('.tfFut').classList.add('pri'); q('.tfPast').classList.remove('pri'); save() };
+}
 async function newForScene(i,d,faName,f,st){
   if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return }
   if(!faName){ st.className='st bad'; st.textContent='اول نام فارسی را بنویس'; return }

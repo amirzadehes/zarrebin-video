@@ -245,16 +245,51 @@ function keyCard(t, sc) {
   drawText(sc.text, 0, 0, size, Math.max(maxW, size * 3), { ink, outline: kind === 'none', hlBg: '#ff3b4a' });
   ctx.restore()
 }
+/* ---------- time flip: the whole background is flipped fast to one side (like rewinding a tape) while a year counter rolls ----------
+   scene.tf = { on:true, s:2, e:4.5 (seconds after scene start), dir:'past' (right->left, year goes down) | 'future' (left->right, year goes up), y1:'1402', y2:'1370' }
+   The background and the counter use the SAME eased progress, so they always run at the same speed. Pure function of t. */
+const FAD = '۰۱۲۳۴۵۶۷۸۹';
+const tfYear = v => { const n = parseInt(String(v == null ? '' : v).replace(/[۰-۹]/g, d => FAD.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\D/g, ''), 10); return isFinite(n) ? n : null };
+function tfOf(sc) {
+  const f = sc.tf; if (!f || !f.on || EDIT) return null; const s = Math.max(0, +f.s || 0), e = Math.max(s + .3, +f.e || s + 2), past = f.dir !== 'future', a = tfYear(f.y1), b = tfYear(f.y2);
+  const has = a != null && b != null, hi = has ? Math.max(a, b) : 0, lo = has ? Math.min(a, b) : 0;
+  return { s, e, past, has, from: past ? hi : lo, to: past ? lo : hi, n: has ? Math.round(clamp(Math.abs(a - b) / 6, 4, 14)) : 6 }
+}
+function bgLayer(t, sc, th) { if (VOX) vbg(t, VT(sc), sc); else bg(t, th, W * (.3 + .4 * ((sc.idx * .37) % 1)), H * .55, .06 + .03 * (sc.idx % 3)) }
+function tfPage(t, sc, th, i, own) {
+  if (own) { bgLayer(t, sc, th); if (window.FXL && sc.bg && sc.bg.src) FXL.bg(t, sc); return }
+  const k = Math.abs(i), ps = Object.assign(Object.create(sc), { idx: sc.idx + 3 + k * 5, theme: (sc.theme || 0) + k, bg: null }); bgLayer(t, ps, THEMES[ps.theme % THEMES.length])
+}
+function tfBg(t, sc, th, f) {
+  const lt = t - sc.t0, p = ramp(lt, f.s, f.e); if (p <= 0 || p >= 1) { tfPage(t, sc, th, 0, true); return }
+  const sg = f.past ? 1 : -1, x = sg * f.n * eio(p), v = x - sg * f.n * eio(ramp(lt - 1 / 30, f.s, f.e)), sp = clamp(Math.abs(v) * 8), ns = 1 + Math.round(4 * sp), last = sg * f.n;
+  for (let j = 0; j < ns; j++) {   // motion blur: several copies a little apart, averaged
+    const xs = x - v * 1.8 * (j / Math.max(1, ns - 1)), a = Math.floor(xs);
+    for (let i = a; i <= a + 1; i++) { ctx.save(); ctx.globalAlpha = 1 / (j + 1); ctx.beginPath(); ctx.rect((i - xs) * W, 0, W + 1, H); ctx.clip(); ctx.translate((i - xs) * W, 0);
+      tfPage(t, sc, th, i, i === 0 || i === last); ctx.restore() }
+  }
+}
+function tfCounter(t, sc, f) {
+  if (!f.has) return; const lt = t - sc.t0, p = ramp(lt, f.s, f.e), a = ramp(lt, f.s - .15, f.s + .1) * (1 - ramp(lt, f.e + 1.2, f.e + 1.6)); if (a <= 0) return;
+  const v = lerp(f.from, f.to, eio(p)), L = Math.max(String(f.from).length, String(f.to).length), size = B * (V ? .2 : .17); ctx.save(); ctx.globalAlpha = a; ctx.font = `900 ${size}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+  const cw = ctx.measureText('۸').width * 1.08, cx0 = W / 2 - L * cw / 2, cy = H * (V ? .4 : .45), lh = size * 1.05, ink = VOX ? '#1c130b' : INK;
+  for (let k = 0; k < L; k++) {
+    const cx = cx0 + (L - 1 - k) * cw + cw / 2, dv = Math.floor(v / Math.pow(10, k)) % 10, fr = k === 0 ? v - Math.floor(v) : Math.max(0, (v / Math.pow(10, k - 1) % 10) - 9);
+    ctx.save(); ctx.beginPath(); ctx.rect(cx - cw / 2, cy - lh * .5, cw, lh); ctx.clip();
+    [[dv, -fr], [(dv + 1) % 10, 1 - fr]].forEach(([d, o]) => { const y = cy + o * lh * 1.15; ctx.lineWidth = size * .14; ctx.strokeStyle = ink; ctx.strokeText(FAD[d], cx, y); ctx.fillStyle = '#fff'; ctx.fillText(FAD[d], cx, y) }); ctx.restore()
+  }
+  ctx.restore()
+}
 function drawScene(t, sc) {
   CUR = sc; if (EDIT) for (const k in REC) delete REC[k]; const th = THEMES[sc.theme], lt = t - sc.t0, dur = sc.t1 - sc.t0, kc = sc.idx % 4, pc = ramp(lt, 0, dur + .6);
   // camera: each scene gets its own move (push in / pull out, with a slow pan) so consecutive scenes never feel identical
   const z = EDIT ? 1 : (kc % 2 ? lerp(1.08, 1.0, pc) : lerp(1.0, 1.08, pc)), px = EDIT ? 0 : [-1, 1, 0, 0][kc] * lerp(-16, 16, pc), py = EDIT ? 0 : [0, 0, -1, 1][kc] * lerp(-14, 14, pc);
   let shake = 0; sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .35) shake = Math.max(shake, 8 * (1 - d / .35)) }); if (EDIT) { shake = 0 }
   ctx.save(); ctx.translate(W / 2 + px + Math.sin(t * 90) * shake, H / 2 + py + Math.cos(t * 77) * shake); ctx.scale(z, z); ctx.translate(-W / 2, -H / 2 + (V ? 0 : 0));
-  if (VOX) vbg(t, VT(sc), sc); else bg(t, th, W * (.3 + .4 * ((sc.idx * .37) % 1)), H * .55, .06 + .03 * (sc.idx % 3));
-  if (window.FXL && sc.bg && sc.bg.src) FXL.bg(t, sc);   // optional background picture layer (engine/fx.js)
+  const TF = tfOf(sc);
+  if (TF) tfBg(t, sc, th, TF); else { bgLayer(t, sc, th); if (window.FXL && sc.bg && sc.bg.src) FXL.bg(t, sc) }   // optional background picture layer (engine/fx.js)
   if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, false);   // optional framed pictures pinned to the backdrop
-  decor(t, sc, th); const KC = keyCustom(sc); (TPL[sc.tpl] || TPL.hero)(t, KC ? Object.assign(Object.create(sc), { keyOn: false }) : sc); if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, true); if (KC) keyCard(t, sc); ctx.restore()   // pins marked 'top' (stamps, arrows) lie over the pictures
+  decor(t, sc, th); const KC = keyCustom(sc); (TPL[sc.tpl] || TPL.hero)(t, KC ? Object.assign(Object.create(sc), { keyOn: false }) : sc); if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, true); if (KC) keyCard(t, sc); ctx.restore(); if (TF) tfCounter(t, sc, TF)   // pins marked 'top' (stamps, arrows) lie over the pictures
 }
 function wipePath(style, p, k) {
   const e = eio(p); ctx.beginPath();
