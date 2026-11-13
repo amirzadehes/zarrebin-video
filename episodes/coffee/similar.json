@@ -5,120 +5,41 @@
   "coffee-beans",
   "coffee-plant"
  ],
- "tea-cup": [
-  "wine-glass"
- ],
  "battery-empty": [
   "battery-full",
-  "battery-power"
- ],
- "battery-full": [
-  "battery-empty",
   "battery-power"
  ],
  "light-bulb-idea": [
   "bulb"
  ],
- "caffeine-molecule": [
-  "purple-molecule",
-  "atom",
-  "dna-helix"
- ],
  "brain-hacker": [
-  "brain-colorful",
   "brain-gears",
-  "brain-pink",
-  "tired-brain",
-  "neuron"
- ],
- "person-sleeping": [
-  "eye-sleepy",
-  "person-thinking",
-  "person-worried",
-  "person-happy",
-  "head-profile"
- ],
- "adenosine": [
-  "caffeine-molecule",
-  "purple-molecule",
-  "atom",
-  "dna-helix"
- ],
- "receptor": [
-  "neuron",
   "brain-colorful",
-  "brain-gears",
   "brain-pink",
   "tired-brain"
  ],
- "brain-colorful": [
-  "brain-gears",
-  "brain-pink",
-  "tired-brain",
-  "neuron"
- ],
  "fatigue-brain": [
-  "brain-colorful",
-  "brain-gears",
-  "brain-pink",
-  "tired-brain",
-  "neuron"
+  "tired-brain"
  ],
  "key-fake": [
   "key",
   "old-key"
  ],
  "lock-closed": [
-  "lock-open",
   "padlock"
- ],
- "adrenaline": [
-  "caffeine-molecule",
-  "purple-molecule"
  ],
  "heart": [
   "broken-heart"
  ],
- "blood-vessel": [
-  "dna-helix",
-  "spine"
- ],
- "hand-tremble": [
-  "fist",
-  "pointing-hand",
-  "hand-stop"
- ],
- "anxiety": [
-  "person-worried",
-  "person-thinking"
- ],
  "espresso-cup": [
-  "coffee-cup",
-  "tea-cup",
-  "moka-pot"
- ],
- "hourglass": [
-  "stopwatch",
-  "alarm-clock",
-  "clock-wall"
+  "coffee-cup"
  ],
  "clock-wall": [
-  "hourglass",
-  "stopwatch",
   "alarm-clock"
- ],
- "sleep-deep": [
-  "eye-sleepy",
-  "crescent-moon"
  ],
  "brain-adaptation": [
   "brain-colorful",
   "brain-gears",
-  "brain-pink",
-  "tired-brain"
- ],
- "l-theanine": [
-  "caffeine-molecule",
-  "purple-molecule"
+  "brain-pink"
  ]
 }

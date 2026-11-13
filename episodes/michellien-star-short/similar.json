@@ -8,35 +8,14 @@
  "rubber-tire": [
   "tire-company-logo"
  ],
- "map-folded": [
-  "map-pin",
-  "compass"
- ],
- "wrench": [
-  "hammer"
- ],
- "hotel-building": [
-  "city",
-  "cityscape-chicago",
-  "factory"
- ],
  "restaurant": [
   "roadside-restaurant",
-  "street-food-stall",
-  "reservation-card"
+  "street-food-stall"
  ],
  "car": [
   "taxi-car",
   "bus",
   "train"
- ],
- "two-brothers": [
-  "family",
-  "group-people",
-  "people-standing-in-line"
- ],
- "road": [
-  "roadside-restaurant"
  ],
  "one-star": [
   "star",
@@ -56,20 +35,40 @@
   "one-star",
   "two-stars"
  ],
+ "compass": [
+  "map-folded",
+  "map-pin"
+ ],
+ "chart-up": [
+  "arrow-up",
+  "arrow-right",
+  "curved-arrow"
+ ],
  "money-bag": [
   "banknotes",
   "cash",
   "money-coins"
+ ],
+ "thief-mask": [
+  "cloak",
+  "half-cloak",
+  "secret-inspector"
+ ],
+ "reservation-card": [
+  "document",
+  "calendar"
  ],
  "chef-hat": [
   "chef"
  ],
  "dinner-plate": [
   "food",
-  "silverware-set"
+  "silverware-set",
+  "street-food-stall"
  ],
  "trophy": [
-  "medal"
+  "medal",
+  "crown"
  ],
  "earth-globe": [
   "planet-earth"

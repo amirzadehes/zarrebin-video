@@ -1,14 +1,6 @@
 {
- "roman-soldier": [
-  "roman-helmet"
- ],
  "cloak": [
   "half-cloak"
- ],
- "banknotes": [
-  "cash",
-  "money-bag",
-  "money-coins"
  ],
  "goose": [
   "roast-goose"
@@ -17,56 +9,41 @@
   "flag"
  ],
  "group-people": [
-  "people-standing-in-line",
-  "family",
-  "two-brothers"
- ],
- "fire": [
-  "torch"
+  "people-standing-in-line"
  ],
  "food": [
-  "roast-goose"
+  "roast-goose",
+  "burger",
+  "coffee-beans",
+  "coffee-cup",
+  "espresso-cup",
+  "tea-cup",
+  "wine-glass",
+  "restaurant",
+  "street-food-stall"
  ],
  "flag": [
   "banner"
  ],
+ "torch": [
+  "lantern"
+ ],
+ "money-bag": [
+  "money-coins"
+ ],
+ "money-coins": [
+  "money-bag"
+ ],
  "half-cloak": [
   "cloak"
  ],
- "saint-martin": [
-  "roman-soldier",
-  "cloak",
-  "half-cloak"
- ],
  "roast-goose": [
-  "goose",
-  "food"
- ],
- "candle": [
-  "fire"
- ],
- "shield": [
-  "shield-check"
- ],
- "roman-helmet": [
-  "roman-soldier"
- ],
- "map-pin": [
-  "map-folded",
-  "church"
- ],
- "hourglass": [
-  "clock-wall",
-  "stopwatch",
-  "alarm-clock"
+  "goose"
  ],
  "star": [
   "star-rating",
-  "one-star",
+  "three-stars",
   "two-stars",
-  "three-stars"
- ],
- "wheat": [
-  "leaf"
+  "one-star"
  ]
 }
