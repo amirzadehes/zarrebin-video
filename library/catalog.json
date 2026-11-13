@@ -2160,7 +2160,8 @@
    "variants": [
     "money-bag__1.webp",
     "money-bag__2.webp",
-    "money-bag__3.webp"
+    "money-bag__3.webp",
+    "money-bag__4.webp"
    ],
    "fa_tags": [
     "پول",
@@ -2179,7 +2180,8 @@
    "tags": [],
    "has_text_in_image": false,
    "variants": [
-    "money-coins__1.webp"
+    "money-coins__1.webp",
+    "money-coins__2.webp"
    ],
    "fa_tags": [
     "سکه",

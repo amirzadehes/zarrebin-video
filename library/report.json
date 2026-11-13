@@ -1,36 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-10 07:49:33 UTC",
-   "ok": [
-    {
-     "file": "medal__mwae2l7a0er.jpg",
-     "id": "medal",
-     "saved": "medal__1.webp",
-     "kb": 116
-    },
-    {
-     "file": "medal__mwae2l7m1fu.jpg",
-     "id": "medal",
-     "saved": "medal__2.webp",
-     "kb": 108
-    },
-    {
-     "file": "medal__mwae2l802gx.jpg",
-     "id": "medal",
-     "saved": "medal__3.webp",
-     "kb": 169
-    },
-    {
-     "file": "medal__mwae2l8e347.jpg",
-     "id": "medal",
-     "saved": "medal__4.webp",
-     "kb": 116
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-10 07:53:55 UTC",
    "ok": [
     {
@@ -1032,6 +1002,24 @@
      "id": "food",
      "saved": "food__3.webp",
      "kb": 250
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-13 06:22:54 UTC",
+   "ok": [
+    {
+     "file": "money-bag__mwelanvl0r5.jpg",
+     "id": "money-bag",
+     "saved": "money-bag__4.webp",
+     "kb": 219
+    },
+    {
+     "file": "money-coins__mwelb1ix0qi.jpg",
+     "id": "money-coins",
+     "saved": "money-coins__2.webp",
+     "kb": 88
     }
    ],
    "failed": []
