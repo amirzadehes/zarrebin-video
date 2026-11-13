@@ -1,35 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-09 23:17:10 UTC",
-   "ok": [
-    {
-     "file": "person-worried__mw9vroys03v.jpg",
-     "id": "person-worried",
-     "saved": "person-worried__1.webp",
-     "kb": 283
-    },
-    {
-     "file": "person-worried__mw9vrozb144.jpg",
-     "id": "person-worried",
-     "saved": "person-worried__2.webp",
-     "kb": 282
-    },
-    {
-     "file": "person-worried__mw9vrozh3va.jpg",
-     "id": "person-worried",
-     "saved": "person-worried__3.webp",
-     "kb": 295
-    }
-   ],
-   "failed": [
-    {
-     "file": "person-worried__mw9vrozg2xw.jpg",
-     "reason": "شیء از لبه‌ی کادر بیرون زده یا بریده شده"
-    }
-   ]
-  },
-  {
    "time": "2026-11-09 23:27:22 UTC",
    "ok": [
     {
@@ -1112,6 +1083,18 @@
      "id": "music-note",
      "saved": "music-note__3.webp",
      "kb": 113
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-13 06:18:51 UTC",
+   "ok": [
+    {
+     "file": "banknotes__mwel5pbr08u.jpg",
+     "id": "banknotes",
+     "saved": "banknotes__4.webp",
+     "kb": 195
     }
    ],
    "failed": []
