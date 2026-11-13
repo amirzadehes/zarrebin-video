@@ -2913,6 +2913,18 @@
    ],
    "fa_tags_for": "سنت مارتین"
   },
+  "saint-martin-2": {
+   "id": "saint-martin-2",
+   "en": "saint martin",
+   "fa": "رژه سنت مارتین",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "saint-martin-2__1.webp"
+   ]
+  },
   "scales-justice": {
    "id": "scales-justice",
    "en": "scales justice",
