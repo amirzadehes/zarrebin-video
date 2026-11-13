@@ -1,30 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-10 08:26:54 UTC",
-   "ok": [
-    {
-     "file": "fist__mwafengs007.jpg",
-     "id": "fist",
-     "saved": "fist__1.webp",
-     "kb": 170
-    },
-    {
-     "file": "fist__mwafenh31i1.jpg",
-     "id": "fist",
-     "saved": "fist__2.webp",
-     "kb": 137
-    },
-    {
-     "file": "fist__mwafenhk2yy.jpg",
-     "id": "fist",
-     "saved": "fist__3.webp",
-     "kb": 146
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-10 10:02:21 UTC",
    "ok": [
     {
@@ -952,6 +928,18 @@
      "id": "saint-martin-2",
      "saved": "saint-martin-2__1.webp",
      "kb": 289
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-13 10:26:56 UTC",
+   "ok": [
+    {
+     "file": "u-mweu0om7__mweu0om7.jpg",
+     "id": "u-mweu0om7",
+     "saved": "u-mweu0om7__1.webp",
+     "kb": 252
     }
    ],
    "failed": []
