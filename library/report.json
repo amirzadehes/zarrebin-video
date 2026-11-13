@@ -1,45 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-09 22:58:26 UTC",
-   "ok": [
-    {
-     "file": "muscle-arm__mw9v3pmu0xg.jpg",
-     "id": "muscle-arm",
-     "saved": "muscle-arm__1.webp",
-     "kb": 246
-    },
-    {
-     "file": "muscle-arm__mw9v3pn418q.jpg",
-     "id": "muscle-arm",
-     "saved": "muscle-arm__2.webp",
-     "kb": 197
-    },
-    {
-     "file": "muscle-arm__mw9v3pn52d9.jpg",
-     "id": "muscle-arm",
-     "saved": "muscle-arm__3.webp",
-     "kb": 161
-    },
-    {
-     "file": "thumbs-down__mw9v3gwf2lo.jpg",
-     "id": "thumbs-down",
-     "saved": "thumbs-down__1.webp",
-     "kb": 160
-    }
-   ],
-   "failed": [
-    {
-     "file": "thumbs-down__mw9v3gt60k1.jpg",
-     "reason": "شیء از لبه‌ی کادر بیرون زده یا بریده شده"
-    },
-    {
-     "file": "thumbs-down__mw9v3gtf1d0.jpg",
-     "reason": "زمینه یک‌دست نیست (سایه یا گرادیان دارد)"
-    }
-   ]
-  },
-  {
    "time": "2026-11-09 23:05:35 UTC",
    "ok": [
     {
@@ -1124,6 +1085,24 @@
      "id": "food",
      "saved": "food__2.webp",
      "kb": 211
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-13 06:17:53 UTC",
+   "ok": [
+    {
+     "file": "beggar__mwel49ox0v7.jpg",
+     "id": "beggar",
+     "saved": "beggar__1.webp",
+     "kb": 224
+    },
+    {
+     "file": "beggar__mwel49pb1s3.jpg",
+     "id": "beggar",
+     "saved": "beggar__2.webp",
+     "kb": 246
     }
    ],
    "failed": []

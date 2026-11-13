@@ -305,6 +305,17 @@
    ],
    "fa_tags_for": "تخت‌خواب"
   },
+  "beggar": {
+   "id": "beggar",
+   "en": "beggar",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "beggar__1.webp",
+    "beggar__2.webp"
+   ]
+  },
   "bell": {
    "id": "bell",
    "en": "bell",
