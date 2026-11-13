@@ -1340,6 +1340,16 @@
    ],
    "fa_tags_for": "مشت"
   },
+  "flag": {
+   "id": "flag",
+   "en": "flag",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "flag__1.webp"
+   ]
+  },
   "flask": {
    "id": "flask",
    "en": "flask",
@@ -2195,6 +2205,18 @@
     "قدرت"
    ],
    "fa_tags_for": "عضله بازو"
+  },
+  "music-note": {
+   "id": "music-note",
+   "en": "music note",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "music-note__1.webp",
+    "music-note__2.webp",
+    "music-note__3.webp"
+   ]
   },
   "neuron": {
    "id": "neuron",

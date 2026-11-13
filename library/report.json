@@ -1,27 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-09 23:05:35 UTC",
-   "ok": [
-    {
-     "file": "foot-footprint__mw9vcxjy0j8.jpg",
-     "id": "foot-footprint",
-     "saved": "foot-footprint__1.webp",
-     "kb": 283
-    }
-   ],
-   "failed": [
-    {
-     "file": "foot-footprint__mw9vcxk91x8.jpg",
-     "reason": "شیء از لبه‌ی کادر بیرون زده یا بریده شده"
-    },
-    {
-     "file": "foot-footprint__mw9vcxkb2mg.jpg",
-     "reason": "زمینه یک‌دست نیست (سایه یا گرادیان دارد)"
-    }
-   ]
-  },
-  {
    "time": "2026-11-09 23:17:10 UTC",
    "ok": [
     {
@@ -1103,6 +1082,36 @@
      "id": "beggar",
      "saved": "beggar__2.webp",
      "kb": 246
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-13 06:18:27 UTC",
+   "ok": [
+    {
+     "file": "flag__mwel582801u.jpg",
+     "id": "flag",
+     "saved": "flag__1.webp",
+     "kb": 101
+    },
+    {
+     "file": "music-note__mwel53kg0yj.jpg",
+     "id": "music-note",
+     "saved": "music-note__1.webp",
+     "kb": 114
+    },
+    {
+     "file": "music-note__mwel53kn18t.jpg",
+     "id": "music-note",
+     "saved": "music-note__2.webp",
+     "kb": 96
+    },
+    {
+     "file": "music-note__mwel53kx2i2.jpg",
+     "id": "music-note",
+     "saved": "music-note__3.webp",
+     "kb": 113
     }
    ],
    "failed": []
