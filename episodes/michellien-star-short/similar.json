@@ -1,21 +1,48 @@
 {
  "star": [
-  "star-rating",
   "one-star",
   "two-stars",
-  "three-stars"
+  "three-stars",
+  "star-rating",
+  "tire-company-logo"
  ],
  "rubber-tire": [
   "tire-company-logo"
  ],
+ "map-folded": [
+  "map-pin",
+  "compass"
+ ],
+ "wrench": [
+  "hammer"
+ ],
+ "hotel-building": [
+  "city",
+  "cityscape-chicago"
+ ],
  "restaurant": [
   "roadside-restaurant",
-  "street-food-stall"
+  "reservation-card",
+  "street-food-stall",
+  "chef",
+  "chef-hat"
  ],
  "car": [
   "taxi-car",
   "bus",
   "train"
+ ],
+ "eiffel-tower": [
+  "city",
+  "cityscape-chicago"
+ ],
+ "two-brothers": [
+  "family",
+  "group-people",
+  "people-standing-in-line"
+ ],
+ "road": [
+  "roadside-restaurant"
  ],
  "one-star": [
   "star",

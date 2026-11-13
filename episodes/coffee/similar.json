@@ -5,41 +5,124 @@
   "coffee-beans",
   "coffee-plant"
  ],
+ "tea-cup": [
+  "wine-glass",
+  "dinner-plate"
+ ],
  "battery-empty": [
   "battery-full",
+  "battery-power"
+ ],
+ "battery-full": [
+  "battery-empty",
   "battery-power"
  ],
  "light-bulb-idea": [
   "bulb"
  ],
+ "caffeine-molecule": [
+  "purple-molecule",
+  "atom"
+ ],
  "brain-hacker": [
-  "brain-gears",
   "brain-colorful",
+  "brain-gears",
+  "brain-pink",
+  "tired-brain",
+  "neuron"
+ ],
+ "person-sleeping": [
+  "eye-sleepy",
+  "person-thinking",
+  "person-worried",
+  "person-happy"
+ ],
+ "adenosine": [
+  "caffeine-molecule",
+  "purple-molecule",
+  "atom"
+ ],
+ "receptor": [
+  "neuron",
+  "brain-colorful",
+  "brain-gears",
   "brain-pink",
   "tired-brain"
  ],
+ "brain-colorful": [
+  "brain-gears",
+  "brain-pink",
+  "tired-brain",
+  "neuron"
+ ],
  "fatigue-brain": [
-  "tired-brain"
+  "tired-brain",
+  "brain-colorful",
+  "brain-gears",
+  "brain-pink",
+  "neuron"
  ],
  "key-fake": [
   "key",
   "old-key"
  ],
  "lock-closed": [
+  "lock-open",
   "padlock"
+ ],
+ "adrenaline": [
+  "caffeine-molecule",
+  "purple-molecule"
  ],
  "heart": [
   "broken-heart"
  ],
+ "blood-vessel": [
+  "spine"
+ ],
+ "hand-tremble": [
+  "fist",
+  "hand-stop",
+  "pointing-hand",
+  "thumbs-down",
+  "thumbs-up"
+ ],
+ "anxiety": [
+  "person-worried",
+  "person-thinking",
+  "person-happy"
+ ],
  "espresso-cup": [
-  "coffee-cup"
+  "coffee-cup",
+  "tea-cup",
+  "moka-pot",
+  "coffee-beans",
+  "coffee-plant"
+ ],
+ "hourglass": [
+  "clock-wall",
+  "stopwatch",
+  "alarm-clock"
  ],
  "clock-wall": [
+  "hourglass",
+  "stopwatch",
   "alarm-clock"
+ ],
+ "sleep-deep": [
+  "eye-sleepy",
+  "eye-open",
+  "crescent-moon",
+  "sun"
  ],
  "brain-adaptation": [
   "brain-colorful",
   "brain-gears",
-  "brain-pink"
+  "brain-pink",
+  "tired-brain"
+ ],
+ "l-theanine": [
+  "caffeine-molecule",
+  "purple-molecule"
  ]
 }
