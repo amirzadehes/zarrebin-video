@@ -1,36 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-10 08:04:41 UTC",
-   "ok": [
-    {
-     "file": "flask__mwaem80q0g7.jpg",
-     "id": "flask",
-     "saved": "flask__1.webp",
-     "kb": 184
-    },
-    {
-     "file": "flask__mwaem810141.jpg",
-     "id": "flask",
-     "saved": "flask__2.webp",
-     "kb": 126
-    },
-    {
-     "file": "flask__mwaem8182ql.jpg",
-     "id": "flask",
-     "saved": "flask__3.webp",
-     "kb": 94
-    },
-    {
-     "file": "flask__mwaem81g3f5.jpg",
-     "id": "flask",
-     "saved": "flask__4.webp",
-     "kb": 183
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-10 08:17:21 UTC",
    "ok": [
     {
@@ -1008,6 +978,18 @@
      "id": "shield",
      "saved": "shield__4.webp",
      "kb": 235
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-13 06:25:58 UTC",
+   "ok": [
+    {
+     "file": "hourglass__mweleq8l0l0.jpg",
+     "id": "hourglass",
+     "saved": "hourglass__5.webp",
+     "kb": 174
     }
    ],
    "failed": []
