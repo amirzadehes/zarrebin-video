@@ -2716,7 +2716,8 @@
    "has_text_in_image": false,
    "variants": [
     "road__1.webp",
-    "road__2.webp"
+    "road__2.webp",
+    "road__3.webp"
    ],
    "fa_tags": [
     "جاده",
@@ -2953,7 +2954,9 @@
    "has_text_in_image": false,
    "variants": [
     "shield__1.webp",
-    "shield__2.webp"
+    "shield__2.webp",
+    "shield__3.webp",
+    "shield__4.webp"
    ],
    "fa_tags": [
     "حفاظت",
