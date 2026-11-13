@@ -1,13 +1,8 @@
 {
+ "cloak": [
+  "half-cloak"
+ ],
  "saint-martin": [
   "saint-martin-2"
- ],
- "shield": [
-  "shield-check"
- ],
- "star": [
-  "star-rating",
-  "three-stars",
-  "two-stars"
  ]
 }

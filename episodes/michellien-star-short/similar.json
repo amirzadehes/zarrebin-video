@@ -5,39 +5,23 @@
   "three-stars",
   "one-star"
  ],
- "rubber-tire": [
-  "tire-company-logo"
- ],
- "map-folded": [
-  "map-pin"
- ],
- "restaurant": [
-  "reservation-card"
- ],
- "car": [
-  "bus",
-  "train"
- ],
- "road": [
-  "roadside-restaurant"
- ],
  "one-star": [
-  "star",
-  "star-rating",
   "two-stars",
-  "three-stars"
+  "three-stars",
+  "star",
+  "star-rating"
  ],
  "two-stars": [
-  "star",
-  "star-rating",
   "one-star",
-  "three-stars"
+  "three-stars",
+  "star",
+  "star-rating"
  ],
  "three-stars": [
-  "star",
-  "star-rating",
   "one-star",
-  "two-stars"
+  "two-stars",
+  "star",
+  "star-rating"
  ],
  "magnifier-search": [
   "magnifying-glass"

@@ -35,15 +35,14 @@
  "person-sleeping": [
   "eye-sleepy",
   "person-thinking",
-  "person-worried",
   "person-happy",
+  "person-worried",
   "head-profile"
  ],
  "adenosine": [
   "caffeine-molecule",
   "purple-molecule",
-  "atom",
-  "dna-helix"
+  "atom"
  ],
  "receptor": [
   "neuron",
@@ -59,63 +58,20 @@
   "neuron"
  ],
  "fatigue-brain": [
+  "tired-brain",
   "brain-colorful",
   "brain-gears",
   "brain-pink",
-  "tired-brain",
   "neuron"
  ],
  "key-fake": [
   "key",
   "old-key"
  ],
- "lock-closed": [
-  "lock-open",
-  "padlock"
- ],
- "adrenaline": [
-  "caffeine-molecule",
-  "purple-molecule"
- ],
  "heart": [
   "broken-heart"
  ],
  "hand-tremble": [
-  "fist",
-  "hand-stop",
-  "pointing-hand"
- ],
- "anxiety": [
-  "person-worried",
-  "person-thinking"
- ],
- "espresso-cup": [
-  "coffee-cup",
-  "tea-cup",
-  "moka-pot"
- ],
- "hourglass": [
-  "clock-wall",
-  "stopwatch",
-  "alarm-clock"
- ],
- "clock-wall": [
-  "hourglass",
-  "stopwatch",
-  "alarm-clock"
- ],
- "sleep-deep": [
-  "eye-sleepy",
-  "crescent-moon"
- ],
- "brain-adaptation": [
-  "brain-colorful",
-  "brain-gears",
-  "brain-pink",
-  "tired-brain"
- ],
- "l-theanine": [
-  "caffeine-molecule",
-  "purple-molecule"
+  "hand-stop"
  ]
 }
