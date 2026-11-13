@@ -1,42 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-10 08:17:21 UTC",
-   "ok": [
-    {
-     "file": "atom__mwaf2dnc0dt.jpg",
-     "id": "atom",
-     "saved": "atom__1.webp",
-     "kb": 142
-    },
-    {
-     "file": "atom__mwaf2dnr1mu.jpg",
-     "id": "atom",
-     "saved": "atom__2.webp",
-     "kb": 139
-    },
-    {
-     "file": "atom__mwaf2do12s4.jpg",
-     "id": "atom",
-     "saved": "atom__3.webp",
-     "kb": 160
-    },
-    {
-     "file": "atom__mwaf2doa3ex.jpg",
-     "id": "atom",
-     "saved": "atom__4.webp",
-     "kb": 140
-    },
-    {
-     "file": "atom__mwaf2doh4fn.jpg",
-     "id": "atom",
-     "saved": "atom__5.webp",
-     "kb": 153
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-10 08:18:43 UTC",
    "ok": [
     {
@@ -993,6 +957,16 @@
     }
    ],
    "failed": []
+  },
+  {
+   "time": "2026-11-13 07:43:04 UTC",
+   "ok": [],
+   "failed": [
+    {
+     "file": "banknotes__mweo5x1k0bk.jpg",
+     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: banknotes__4.webp)"
+    }
+   ]
   }
  ]
 }
