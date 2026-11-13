@@ -1,18 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-10 07:37:51 UTC",
-   "ok": [
-    {
-     "file": "critic__mwadnbe70wd.jpg",
-     "id": "critic",
-     "saved": "critic__1.webp",
-     "kb": 264
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-10 07:38:55 UTC",
    "ok": [
     {
@@ -1053,6 +1041,23 @@
     }
    ],
    "failed": []
+  },
+  {
+   "time": "2026-11-13 06:20:52 UTC",
+   "ok": [
+    {
+     "file": "calendar__mwel80op08c.jpg",
+     "id": "calendar",
+     "saved": "calendar__2.webp",
+     "kb": 163
+    }
+   ],
+   "failed": [
+    {
+     "file": "bishop__mwel7g3r2p4.jpg",
+     "reason": "تکراری بود (همین تصویر قبلاً ذخیره شده: bishop__8.webp)"
+    }
+   ]
   }
  ]
 }
