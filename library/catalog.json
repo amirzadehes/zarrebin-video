@@ -309,13 +309,22 @@
   "beggar": {
    "id": "beggar",
    "en": "beggar",
-   "fa": "",
+   "fa": "گدا",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "beggar__1.webp",
     "beggar__2.webp"
-   ]
+   ],
+   "fa_tags": [
+    "گدا",
+    "فقر",
+    "خیابان",
+    "کمک",
+    "بی‌خانمان",
+    "نیازمند"
+   ],
+   "fa_tags_for": "گدا"
   },
   "bell": {
    "id": "bell",
@@ -1349,12 +1358,22 @@
   "flag": {
    "id": "flag",
    "en": "flag",
-   "fa": "",
+   "fa": "پرچم",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "flag__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "پرچم",
+    "نماد",
+    "کشور",
+    "رنگ",
+    "نشان",
+    "ملی",
+    "رژه"
+   ],
+   "fa_tags_for": "پرچم"
   },
   "flask": {
    "id": "flask",
@@ -2219,14 +2238,24 @@
   "music-note": {
    "id": "music-note",
    "en": "music note",
-   "fa": "",
+   "fa": "نت",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "music-note__1.webp",
     "music-note__2.webp",
     "music-note__3.webp"
-   ]
+   ],
+   "fa_tags": [
+    "نت",
+    "موسیقی",
+    "صدا",
+    "نت‌نویسی",
+    "ساز",
+    "آهنگ",
+    "ملودی"
+   ],
+   "fa_tags_for": "نت"
   },
   "neuron": {
    "id": "neuron",

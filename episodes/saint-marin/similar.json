@@ -13,103 +13,25 @@
  "goose": [
   "roast-goose"
  ],
+ "banner": [
+  "flag"
+ ],
  "group-people": [
-  "family",
   "people-standing-in-line",
+  "family",
   "two-brothers"
  ],
- "beggar": [
-  "group-people",
-  "people-standing-in-line",
-  "person-worried"
- ],
- "bishop": [
-  "saint-martin",
-  "doctor",
-  "teacher",
-  "scientist",
-  "critic",
-  "chef",
-  "football-referee",
-  "secret-inspector"
- ],
- "dinner-plate": [
-  "food",
-  "street-food-stall",
-  "restaurant",
-  "roadside-restaurant"
+ "fire": [
+  "torch"
  ],
  "food": [
-  "burger",
-  "dinner-plate",
-  "street-food-stall",
-  "restaurant",
-  "roadside-restaurant",
-  "spice-jar",
-  "coffee-cup",
-  "espresso-cup",
-  "tea-cup",
-  "wine-glass",
-  "moka-pot",
-  "coffee-beans"
+  "roast-goose"
  ],
  "flag": [
-  "banner",
-  "trophy",
-  "medal",
-  "star",
-  "star-rating",
-  "one-star",
-  "two-stars",
-  "three-stars"
- ],
- "torch": [
-  "fire",
-  "candle",
-  "lantern",
-  "lightning-burst"
- ],
- "money-bag": [
-  "money-coins",
-  "banknotes",
-  "cash",
-  "price-tag"
- ],
- "money-coins": [
-  "money-bag",
-  "banknotes",
-  "cash",
-  "price-tag"
- ],
- "document": [
-  "book",
-  "book-open",
-  "books-stack",
-  "calendar",
-  "red-guidebook",
-  "reservation-card"
- ],
- "road": [
-  "city",
-  "cityscape-chicago",
-  "factory",
-  "hotel-building",
-  "church",
-  "eiffel-tower",
-  "gas-pump",
-  "taxi-car",
-  "bus",
-  "train",
-  "car",
-  "auto-repair-shop"
+  "banner"
  ],
  "half-cloak": [
-  "cloak",
-  "roman-helmet",
-  "roman-soldier",
-  "bishop",
-  "saint-martin",
-  "thief-mask"
+  "cloak"
  ],
  "saint-martin": [
   "roman-soldier",
@@ -135,7 +57,8 @@
  ],
  "hourglass": [
   "clock-wall",
-  "stopwatch"
+  "stopwatch",
+  "alarm-clock"
  ],
  "star": [
   "star-rating",

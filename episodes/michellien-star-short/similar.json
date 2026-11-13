@@ -12,18 +12,31 @@
   "map-pin",
   "compass"
  ],
+ "wrench": [
+  "hammer"
+ ],
+ "hotel-building": [
+  "city",
+  "cityscape-chicago",
+  "factory"
+ ],
  "restaurant": [
   "roadside-restaurant",
   "street-food-stall",
   "reservation-card"
  ],
  "car": [
-  "taxi-car"
+  "taxi-car",
+  "bus",
+  "train"
  ],
  "two-brothers": [
   "family",
   "group-people",
   "people-standing-in-line"
+ ],
+ "road": [
+  "roadside-restaurant"
  ],
  "one-star": [
   "star",
@@ -43,46 +56,23 @@
   "one-star",
   "two-stars"
  ],
- "compass": [
-  "map-folded",
-  "map-pin"
- ],
- "chart-up": [
-  "arrow-up",
-  "arrow-right",
-  "curved-arrow"
- ],
  "money-bag": [
   "banknotes",
   "cash",
   "money-coins"
- ],
- "thief-mask": [
-  "secret-inspector"
- ],
- "reservation-card": [
-  "document",
-  "calendar"
  ],
  "chef-hat": [
   "chef"
  ],
  "dinner-plate": [
   "food",
-  "silverware-set",
-  "street-food-stall"
+  "silverware-set"
  ],
  "trophy": [
-  "medal",
-  "crown"
+  "medal"
  ],
  "earth-globe": [
-  "planet-earth",
-  "city",
-  "cityscape-chicago",
-  "eiffel-tower",
-  "item-2",
-  "item-4"
+  "planet-earth"
  ],
  "video-play": [
   "item"
