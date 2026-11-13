@@ -1,45 +1,22 @@
 {
  "star": [
-  "one-star",
+  "star-rating",
   "two-stars",
   "three-stars",
-  "star-rating",
-  "tire-company-logo"
+  "one-star"
  ],
  "rubber-tire": [
   "tire-company-logo"
  ],
  "map-folded": [
-  "map-pin",
-  "compass"
- ],
- "wrench": [
-  "hammer"
- ],
- "hotel-building": [
-  "city",
-  "cityscape-chicago"
+  "map-pin"
  ],
  "restaurant": [
-  "roadside-restaurant",
-  "reservation-card",
-  "street-food-stall",
-  "chef",
-  "chef-hat"
+  "reservation-card"
  ],
  "car": [
-  "taxi-car",
   "bus",
   "train"
- ],
- "eiffel-tower": [
-  "city",
-  "cityscape-chicago"
- ],
- "two-brothers": [
-  "family",
-  "group-people",
-  "people-standing-in-line"
  ],
  "road": [
   "roadside-restaurant"
@@ -62,83 +39,10 @@
   "one-star",
   "two-stars"
  ],
- "compass": [
-  "map-folded",
-  "map-pin"
- ],
- "chart-up": [
-  "arrow-up",
-  "arrow-right",
-  "curved-arrow"
- ],
- "money-bag": [
-  "banknotes",
-  "cash",
-  "money-coins"
- ],
- "thief-mask": [
-  "cloak",
-  "half-cloak",
-  "secret-inspector"
- ],
- "reservation-card": [
-  "document",
-  "calendar"
- ],
- "chef-hat": [
-  "chef"
- ],
- "dinner-plate": [
-  "food",
-  "silverware-set",
-  "street-food-stall"
- ],
- "trophy": [
-  "medal",
-  "crown"
- ],
- "earth-globe": [
-  "planet-earth"
- ],
- "video-play": [
-  "item"
- ],
  "magnifier-search": [
   "magnifying-glass"
  ],
- "question-mark": [
-  "question-mark-2"
- ],
- "chart-down": [
-  "chart-up"
- ],
- "credit-card": [
-  "banknotes",
-  "cash",
-  "money-bag",
-  "money-coins"
- ],
- "newspaper": [
-  "document",
-  "book",
-  "book-open",
-  "books-stack"
- ],
- "microphone": [
-  "megaphone"
- ],
  "light-bulb-idea": [
   "bulb"
- ],
- "brain-colorful": [
-  "brain-gears",
-  "brain-pink",
-  "tired-brain"
- ],
- "star-rating": [
-  "one-star",
-  "two-stars",
-  "three-stars",
-  "star"
  ]
 }

@@ -3680,13 +3680,22 @@
   },
   "u-mweu0om7": {
    "id": "u-mweu0om7",
-   "en": "u mweu0om7",
-   "fa": "",
+   "en": "خاکسپاری",
+   "fa": "خاکسپاری",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "u-mweu0om7__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "دفن",
+    "مراسم",
+    "قبر",
+    "مرگ",
+    "یادبود",
+    "گورستان"
+   ],
+   "fa_tags_for": "خاکسپاری"
   },
   "warning-sign": {
    "id": "warning-sign",
