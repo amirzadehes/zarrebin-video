@@ -1,0 +1,37 @@
+name: Contact sheet
+# One picture of a whole episode (a frame every few seconds, scene number + template on each) and the retention check, to judge rhythm at a glance.
+# Reads only episodes/<ep>/scenes.json; writes nothing to the repo. Result: artifact "contact-sheet" (and the check in the run summary).
+on:
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: episode folder name
+        required: true
+      fmt:
+        description: v (vertical) or h (horizontal)
+        required: false
+        default: v
+permissions:
+  contents: read
+jobs:
+  sheet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install --no-audit --no-fund
+      - name: Quality check
+        continue-on-error: true
+        env: { EP: "${{ github.event.inputs.episode }}" }
+        run: python3 tools/qa_scenes.py "$EP" 2>&1 | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Render contact sheet
+        env: { CHROME_PATH: /usr/bin/google-chrome, EP: "${{ github.event.inputs.episode }}", FMT: "${{ github.event.inputs.fmt }}" }
+        run: |
+          fmt=v; [ "$FMT" = "h" ] && fmt=h
+          mkdir -p out && node engine/contact-sheet.js "$EP" "$fmt" "out/${EP}_${fmt}_contact.jpg"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: contact-sheet
+          path: out/*.jpg
+          retention-days: 7

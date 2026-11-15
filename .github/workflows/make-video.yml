@@ -67,6 +67,9 @@ jobs:
         run: |
           set -o pipefail
           python tools/check_voice.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
+      - name: Quality check (retention rules, report only)
+        continue-on-error: true
+        run: python tools/qa_scenes.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
       - name: Sound effects
         if: steps.mode.outputs.review != 'true'
         env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
@@ -88,7 +91,7 @@ jobs:
           ep="${{ steps.ep.outputs.ep }}"
           [ -f build.log ] && tail -c 6000 build.log > episodes/$ep/build.log
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          for f in narration.txt narration.meta voice.mp3 timing.json scenes.json director.json build.log; do [ -f episodes/$ep/$f ] && git add episodes/$ep/$f; done
+          for f in narration.txt narration.meta voice.mp3 timing.json scenes.json director.json qa.json build.log; do [ -f episodes/$ep/$f ] && git add episodes/$ep/$f; done
           for f in needs.json similar.json picks.json; do git add -A -- episodes/$ep/$f 2>/dev/null || true; done
           git diff --cached --quiet || { git commit -qm "episode $ep: narration, scenes, log"; for i in 1 2 3 4 5 6; do git pull -q --rebase --autostash origin main && git push -q origin main && break; sleep 5; done; }
       - name: Notify (review ready)

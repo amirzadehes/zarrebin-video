@@ -133,9 +133,9 @@ function ent(kind, t, t0, tx, ty) {
 }
 let EDIT = null; const REC = {};   // EDIT = {sel} while the owner arranges items in the in-app preview; REC = where each item of the current scene is drawn
 window.setEdit = v => { EDIT = v }; window.getRec = () => REC;
-function drawItem(it, t, tx, ty, size, k) {
+function drawItem(it, t, tx, ty, size, k, rx = 0) {
   const L = it.lay && it.lay[FMT], idx = CUR ? CUR.items.indexOf(it) : -1;   // owner's manual placement for this format (fractions of the canvas)
-  let rot0 = 0; if (L) { tx += (L.dx || 0) * W; ty += (L.dy || 0) * H; size *= (L.sz || 1); rot0 = L.rot || 0 }
+  let rot0 = rx; if (L) { tx += (L.dx || 0) * W; ty += (L.dy || 0) * H; size *= (L.sz || 1); rot0 += L.rot || 0 }
   const e = ent(it.en, t, it.t, tx, ty); if (!e) return;
   if (!EDIT && it.out != null && it.out > it.t + .3 && t >= it.out) { const q = ramp(t, it.out, it.out + .4); if (q >= 1) return; const g = eoq(q); e.a *= 1 - g; e.s *= 1 - .3 * g; e.y -= size * .12 * g }   // owner-set exit time: the picture shrinks and fades away
   const fl = EDIT ? 0 : Math.sin(t * 2 + k * 1.7), fr = EDIT ? 0 : Math.sin(t * 1.6 + k) * .03;
@@ -170,6 +170,24 @@ function impact(t, t0, x, y, R, seed) {
   ctx.restore()
 }
 
+/* ---------- rhythm (retention): composition variety + camera beats ----------
+   VARY : a hero scene with a single picture alternates the picture to the left / right of centre with a slight tilt, so a run of hero scenes never looks the same.
+          Off with meta.vary=false or ?vary=0.
+   BEATS: a short camera "punch" (a small spring zoom, ~3.5%) on the onset of an emphasised word (w.kw) and, when nothing new has appeared on screen for a while,
+          on the next word, so there is a visual event at least every ~3.5 s. Pure function of time (the parallel chunk rendering stays consistent).
+          Off with meta.punch=false or ?punch=0. Never inside the in-app layout editor. */
+let VARY = true, BEATS = [];
+function heroVary(sc, its) { if (!VARY || EDIT || its.length !== 1) return { dx: 0, rot: 0 }; const s = sc.idx % 2 ? 1 : -1, r = rng(sc.idx * 53 + 9); return { dx: s * W * (V ? .045 : .06), rot: s * (.025 + r() * .03) } }
+function buildBeats() {
+  BEATS = []; if (!D || D.meta.punch === false || Q.get('punch') === '0') return;
+  const ev = []; D.scenes.forEach(s => { ev.push({ t: s.t0, a: .15, b: .6 }); (s.items || []).forEach(i => ev.push({ t: i.t, a: .3, b: .4 })) });   // scene wipes and landing pictures are visual events already
+  const near = t => ev.some(e => t > e.t - e.a && t < e.t + e.b), lastEv = t => ev.reduce((m, e) => e.t <= t && e.t > m ? e.t : m, -9);
+  let last = -9;
+  (D.words || []).forEach(w => { if (w.t0 == null || w.t0 < .8 || near(w.t0)) return; const quiet = w.t0 - Math.max(last, lastEv(w.t0));
+    if ((w.kw && w.t0 - last >= 1.5) || quiet >= 3.4) { BEATS.push(w.t0); last = w.t0 } })
+}
+function beatZ(t) { if (EDIT || !BEATS.length) return 0; let b = -1; for (let i = 0; i < BEATS.length && BEATS[i] <= t; i++) b = BEATS[i]; return b < 0 || t - b > .9 ? 0 : bump(t, b, V ? .055 : .045) }
+
 /* ---------- layouts per format ---------- */
 const FL = (nx, ny) => V ? [W * nx, H * ny] : [W * nx, H * ny]; // fractions, kept for readability
 const CONTENT = () => V ? { x0: 0, y0: 200, x1: W, y1: 1370 } : { x0: 0, y0: 150, x1: W, y1: 860 };
@@ -178,7 +196,7 @@ const CONTENT = () => V ? { x0: 0, y0: 200, x1: W, y1: 1370 } : { x0: 0, y0: 150
 const TPL = {
   hero(t, sc) {
     const c = CONTENT(), cx = (c.x0 + c.x1) / 2, cy = (c.y0 + c.y1) / 2 + (V ? 10 : 0), th = THEMES[sc.theme], its = sc.items, hs = B * (V ? .8 : .72);
-    if (its[0]) { const e = ent(its[0].en, t, its[0].t, cx, cy); if (e && t < its[0].t + .9) ring(cx, cy, 80 + (t - its[0].t) * 900, clamp(1 - (t - its[0].t) / .6) * .9, '#fff'); drawItem(its[0], t, cx, cy, hs * (1 + .015 * Math.sin(t * 3)), 0); sparks(t, its[0].t + .1, cx, cy, 6, hs * .62, sc.idx + 3) }
+    if (its[0]) { const vo = heroVary(sc, its), hx = cx + vo.dx; const e = ent(its[0].en, t, its[0].t, hx, cy); if (e && t < its[0].t + .9) ring(hx, cy, 80 + (t - its[0].t) * 900, clamp(1 - (t - its[0].t) / .6) * .9, '#fff'); drawItem(its[0], t, hx, cy, hs * (1 + .015 * Math.sin(t * 3)), 0, vo.rot); sparks(t, its[0].t + .1, hx, cy, 6, hs * .62, sc.idx + 3) }
     const n = its.length - 1; its.slice(1).forEach((it, i) => { const a = -Math.PI / 2 + (i + .5) * TAU / Math.max(n, 1) + (n === 1 ? 2.2 : 0) + t * .06, rx = V ? W * .36 : W * .3, ry = V ? H * .2 : H * .27;
       drawItem(it, t, cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, B * .34, i + 1) });
     if (sc.text && tOn(sc)) { const e = spr(t, sc.t0 + .35, .5, 12); if (e > 0) { const yy = V ? c.y1 - 70 : c.y1 - 30; const th2 = sc.text.replace(/\*/g, ''); const w = measure(`900 ${Math.round(B * .07)}px Vz`, th2) + 70; card(cx, yy, Math.min(w, W * .9), B * .13, '#ffe15a', -.03, 1, e); ctx.save(); ctx.translate(cx, yy + 4); ctx.scale(e, e); ctx.rotate(-.03); drawText(sc.text, 0, 0, B * .07, W * .85, { hlBg: '#ff3b4a' }); ctx.restore() } }
@@ -283,7 +301,7 @@ function tfCounter(t, sc, f) {
 function drawScene(t, sc) {
   CUR = sc; if (EDIT) for (const k in REC) delete REC[k]; const th = THEMES[sc.theme], lt = t - sc.t0, dur = sc.t1 - sc.t0, kc = sc.idx % 4, pc = ramp(lt, 0, dur + .6);
   // camera: each scene gets its own move (push in / pull out, with a slow pan) so consecutive scenes never feel identical
-  const z = EDIT ? 1 : (kc % 2 ? lerp(1.08, 1.0, pc) : lerp(1.0, 1.08, pc)), px = EDIT ? 0 : [-1, 1, 0, 0][kc] * lerp(-16, 16, pc), py = EDIT ? 0 : [0, 0, -1, 1][kc] * lerp(-14, 14, pc);
+  const z = EDIT ? 1 : (kc % 2 ? lerp(1.08, 1.0, pc) : lerp(1.0, 1.08, pc)) * (1 + beatZ(t)), px = EDIT ? 0 : [-1, 1, 0, 0][kc] * lerp(-16, 16, pc), py = EDIT ? 0 : [0, 0, -1, 1][kc] * lerp(-14, 14, pc);
   let shake = 0; sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .35) shake = Math.max(shake, 8 * (1 - d / .35)) }); if (EDIT) { shake = 0 }
   ctx.save(); ctx.translate(W / 2 + px + Math.sin(t * 90) * shake, H / 2 + py + Math.cos(t * 77) * shake); ctx.scale(z, z); ctx.translate(-W / 2, -H / 2 + (V ? 0 : 0));
   const TF = tfOf(sc);
@@ -363,10 +381,10 @@ function draw(t) {
 window.frame = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0); if (MB) { draw(t + .6 / 30); octx.globalAlpha = .5; octx.drawImage(cv, 0, 0); octx.globalAlpha = 1 } };
 window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
 window.loadData = async (DD, only) => {   // shared by the renderer and the in-app preview (only = scene indices whose images are needed)
-  D = DD; VOX = (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
+  D = DD; VOX = (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; VARY = Q.get('vary') !== '0' && D.meta.vary !== false; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
   D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => { srcs.add(i.src); (i.fx || []).forEach(f => { if (f && f.type === 'bubble' && f.file) srcs.add(f.file) }) }); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
   await Promise.all([...[...srcs].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
   if (window.FXL) await FXL.prepare([...srcs]);
-  mkGrain(); mkPaper(); CH.length = 0; buildCaptions(); seek(0); return true
+  mkGrain(); mkPaper(); CH.length = 0; buildCaptions(); buildBeats(); seek(0); return true
 };
 window.ready = Q.get('inline') ? new Promise(() => {}) : (async () => loadData(await (await fetch('../episodes/' + EP + '/scenes.json?' + Date.now())).json()))();

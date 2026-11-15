@@ -140,6 +140,23 @@ def compile_scenes(ep, T, raw, lib, req):
                 if sc_: sc_ = sc_ - 4 * uses.get(iid, 0)
                 if sc_ > 0 and (best is None or sc_ > best[0]): best = (sc_, iid)
             if best: its.append({'id': best[1], 't': None})
+        # long scene with at most one picture: add up to two more library pictures whose (first-word) name is actually spoken later in the scene,
+        # timed to that word, so a picture lands at least every few seconds (retention). Exact word match only; opt out with "enrich": false in request.json
+        if req.get('enrich', True) and len(its) < 3 and tpl != 'stat' and t1 - t0 > (3.5 if SHORT else 5.5) and words:
+            first_t = min([x['t'] for x in its if x['t'] is not None] or [t0]); added = 0
+            for w in words:
+                if added >= 2 or len(its) >= 3 or w['t0'] < max(t0 + 2.2, first_t + 1.8): continue
+                if added and w['t0'] < last_t + 2.5: continue
+                nw = norm(w['w'])
+                if len(nw) < 3: continue
+                best = None
+                for iid, v in lib.items():
+                    if any(x['id'] == iid for x in its) or uses.get(iid, 0) >= 2: continue
+                    head = norm((v.get('fa') or '').replace('\u200c', ' ').split(' ')[0] if v.get('fa') else '')
+                    if len(head) >= 3 and head == nw and (best is None or uses.get(iid, 0) < uses.get(best, 0)): best = iid
+                if best:
+                    its.append({'id': best, 't': round(w['t0'], 3)}); last_t = w['t0']; added += 1
+                    print('enrich: scene %d +%s at "%s" (%.1fs)' % (k, best, w['w'], w['t0']))
         # fallback times: spread evenly
         for j, it in enumerate(its):
             if it['t'] is None: it['t'] = round(t0 + .45 + j * max(t1 - t0 - 1.3, .6) / max(len(its), 1), 3)
