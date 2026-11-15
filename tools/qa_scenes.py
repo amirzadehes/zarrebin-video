@@ -43,7 +43,7 @@ def main(ep):
         w = max(longs); add('long-scene', 'warn', w[2], '%d صحنه از %.1f ثانیه طولانی‌ترند؛ بلندترین: صحنه‌ی %d از ثانیه‌ی %.1f (%.1f ثانیه). این‌ها را کوتاه‌تر ببر یا تصویر/رویداد بیشتری بگذار.' % (len(longs), L['long'], w[1], w[2], w[0]))
     if shorts:
         w = min(shorts); add('short-scene', 'warn', w[2], '%d صحنه کوتاه‌تر از %.1f ثانیه‌اند (کوتاه‌ترین: صحنه‌ی %d، %.1f ثانیه) و خوانده نمی‌شوند.' % (len(shorts), L['short'], w[1], w[0]))
-    nop = sum(1 for s in sc if not (s.get('photo') or {}).get('src')) if poster else sum(1 for s in sc if not s.get('items'))
+    nop = sum(1 for s in sc if not (s.get('photo') or {}).get('src') and not s.get('bgc')) if poster else sum(1 for s in sc if not s.get('items'))
     if poster and nop: add('no-picture', 'warn', 0, '%d از %d صحنه هنوز عکس آپلودشده ندارند؛ با پس‌زمینه‌ی تیره ساخته می‌شوند.' % (nop, len(sc)))
     elif nop / len(sc) > .15: add('no-picture', 'warn', 0, '%d از %d صحنه تصویر ندارند (فقط زیرنویس)؛ ویدیو خشک می‌شود.' % (nop, len(sc)))
     # runs of the same template

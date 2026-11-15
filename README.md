@@ -56,3 +56,7 @@ The director may add up to 2 small separate objects per scene (`scene.props`: `f
 
 ### Poster mode: text layers, stamps, atmosphere, camera
 Per scene (all optional): `layers` = any number of `{kind:'text'|'stamp', text, t, out, x, y, size, col, bg, hl, rot}`; main headline style `tcol`, `tbg` (or `'none'`), `thl`, `tIn`, `tOut`; `atm` = `[{type:'snow'|'rain'|'lightning'|'fog'|'embers', amt}]`; `photo.drift` 0-3 (micro hand-held drift of the picture, default 1; `meta.drift` sets the default); `kick` = `both|punch|shake|none` (camera effect when a library picture enters).
+
+### سبک ثابت و پس‌زمینه‌ی رنگی (حالت پوستر)
+- سبک تصویر (Painterly retro poster) قفل است و با تأکید «ثابت، هرگز عوض نشود» به انتهای پرامپت عکس صحنه و پرامپت اشیای جدا اضافه می‌شود.
+- صحنه‌ای که عکس لازم ندارد می‌تواند `bgc` داشته باشد: `{c1, c2, fx: glow|rays|bokeh|stripes|dots|waves|none, amt, on?}`؛ گرادیان دو رنگ به‌علاوه‌ی افکت متحرک. `on:true` یعنی حتی با وجود عکس، رنگی نشان بده.

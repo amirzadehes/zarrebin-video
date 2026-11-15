@@ -250,10 +250,25 @@ function its_corner(t, sc, c) { // items peek in from the corners around a text/
 /* ---------- POSTER mode ---------- */
 const jit = (t, sd) => { const f = t * 11, i = Math.floor(f), u = f - i, a = hz(i * 1.3 + sd) - .5, b = hz((i + 1) * 1.3 + sd) - .5; return a + (b - a) * u * u * (3 - 2 * u) };
 const hz = n => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s) };
+const mixHex = (a, b, k) => { const f = h => { h = String(h || '#000').replace('#', ''); if (h.length === 3) h = h.replace(/./g, '$&$&'); const n = parseInt(h, 16) || 0; return [n >> 16 & 255, n >> 8 & 255, n & 255] }, x = f(a), y = f(b); return 'rgb(' + x.map((v, i) => Math.round(v + (y[i] - v) * k)).join(',') + ')' };
+function posterColor(t, sc) {   // a colour background instead of a picture: two-colour gradient + a slow, looping effect (pure function of time)
+  const c = sc.bgc || {}, c1 = c.c1 || '#c2410c', c2 = c.c2 || '#1c1917', fx = c.fx || 'glow', A = clamp(c.amt == null ? 1 : c.amt, 0, 2), lt = t - sc.t0, cx = W / 2, cy = H * .46, R = Math.hypot(W, H);
+  let g = ctx.createLinearGradient(0, 0, W * .35, H); g.addColorStop(0, c1); g.addColorStop(1, c2); ctx.fillStyle = g; ctx.fillRect(-300, -300, W + 600, H + 600);
+  ctx.save();
+  if (fx === 'glow') { const r = R * (.38 + .03 * Math.sin(lt * 1.1)); g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r); g.addColorStop(0, mixHex(c1, '#ffffff', .45)); g.addColorStop(1, 'rgba(255,255,255,0)'); ctx.globalAlpha = .55 * A; ctx.fillStyle = g; ctx.fillRect(0, 0, W, H) }
+  else if (fx === 'rays') { const n = 14; ctx.translate(cx, cy); ctx.rotate(lt * .06); ctx.globalAlpha = .16 * A; ctx.fillStyle = mixHex(c1, '#ffffff', .6); for (let i = 0; i < n; i++) { const a = i * TAU / n; ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, R, a, a + TAU / n / 2); ctx.closePath(); ctx.fill() } }
+  else if (fx === 'bokeh') { for (let i = 0; i < 16; i++) { const sp = .02 + hz(i + 3) * .03, x = ((hz(i) + lt * sp) % 1) * (W + 200) - 100, y = H - ((hz(i + 40) + lt * sp * 1.4) % 1) * (H + 200) + 100, r = B * (.05 + hz(i + 9) * .1); g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, mixHex(c1, '#ffffff', .55)); g.addColorStop(1, 'rgba(255,255,255,0)'); ctx.globalAlpha = (.22 + .2 * hz(i + 5)) * A * (.7 + .3 * Math.sin(lt * 1.3 + i)); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill() } }
+  else if (fx === 'stripes') { const w = B * .16, off = (lt * B * .03) % (w * 2); ctx.globalAlpha = .13 * A; ctx.fillStyle = '#000'; ctx.translate(cx, cy); ctx.rotate(-.45); for (let x = -R + off; x < R; x += w * 2) ctx.fillRect(x, -R, w, 2 * R) }
+  else if (fx === 'dots') { const st = B * .06, off = (lt * B * .012) % st; ctx.globalAlpha = .12 * A; ctx.fillStyle = '#000'; for (let y = -st + off; y < H + st; y += st) for (let x = -st; x < W + st; x += st) { const k = (y / H) * .9 + .1; ctx.beginPath(); ctx.arc(x + ((Math.round(y / st) & 1) ? st / 2 : 0), y, st * .32 * k, 0, TAU); ctx.fill() } }
+  else if (fx === 'waves') { ctx.fillStyle = mixHex(c1, '#000000', .35); ctx.globalAlpha = .25 * A; for (let k = 0; k < 4; k++) { ctx.beginPath(); ctx.moveTo(0, H); for (let x = 0; x <= W; x += 24) ctx.lineTo(x, H * (.5 + k * .1) + Math.sin(x / W * 5 + lt * (.5 + k * .15) + k) * B * .05); ctx.lineTo(W, H); ctx.closePath(); ctx.fill() } }
+  ctx.restore();
+  if (c.grain !== false) { ctx.save(); ctx.globalAlpha = .07 * A; const f = Math.floor(lt * 12); for (let i = 0; i < 260; i++) { ctx.fillStyle = hz(i * 3 + f) > .5 ? '#fff' : '#000'; ctx.fillRect(hz(i + f * 7) * W, hz(i * 2 + f * 5 + 1) * H, 2.2, 2.2) } ctx.restore() }
+}
 function posterBg(t, sc) {
   const p = sc.photo || {}, im = p.src && IM[p.src], lt = t - sc.t0, pc = clamp(lt / Math.max(.8, sc.t1 - sc.t0 + WD));
   ctx.fillStyle = '#14100e'; ctx.fillRect(-300, -300, W + 600, H + 600);
-  if (im) {
+  if (sc.bgc && (!im || sc.bgc.on)) posterColor(t, sc);
+  else if (im) {
     const mo = p.motion && p.motion !== 'auto' ? p.motion : ['in', 'out', 'left', 'right'][sc.idx % 4]; let z = 1.05, ox = 0;
     const dl = p.drift != null ? p.drift : D.meta.drift != null ? D.meta.drift : 1, DA = EDIT ? 0 : [0, 3, 6, 10][dl] || 0;   // micro hand-held drift of the whole picture (px)
     if (EDIT || mo === 'none') z = 1; else if (mo === 'in') z = lerp(1.04, 1.15, pc); else if (mo === 'out') z = lerp(1.15, 1.04, pc); else if (mo === 'left') { z = 1.1; ox = lerp(.03, -.03, pc) } else if (mo === 'right') { z = 1.1; ox = lerp(-.03, .03, pc) }
