@@ -1,36 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-10 21:08:33 UTC",
-   "ok": [
-    {
-     "file": "scientist__mwb6m14902u.jpg",
-     "id": "scientist",
-     "saved": "scientist__1.webp",
-     "kb": 134
-    },
-    {
-     "file": "scientist__mwb6m14j18o.jpg",
-     "id": "scientist",
-     "saved": "scientist__2.webp",
-     "kb": 152
-    },
-    {
-     "file": "scientist__mwb6m15628l.jpg",
-     "id": "scientist",
-     "saved": "scientist__3.webp",
-     "kb": 152
-    },
-    {
-     "file": "scientist__mwb6m15m35x.jpg",
-     "id": "scientist",
-     "saved": "scientist__4.webp",
-     "kb": 144
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-10 21:11:08 UTC",
    "ok": [
     {
@@ -893,6 +863,18 @@
      "id": "u-mwi82fu8",
      "saved": "u-mwi82fu8__1.webp",
      "kb": 88
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-15 19:55:09 UTC",
+   "ok": [
+    {
+     "file": "u-mwi96zu7__mwi96zu7.jpg",
+     "id": "u-mwi96zu7",
+     "saved": "u-mwi96zu7__1.webp",
+     "kb": 112
     }
    ],
    "failed": []
