@@ -1,24 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-10 10:02:21 UTC",
-   "ok": [
-    {
-     "file": "auto-repair-shop__mwaitfji0l0.jpg",
-     "id": "auto-repair-shop",
-     "saved": "auto-repair-shop__1.webp",
-     "kb": 159
-    },
-    {
-     "file": "auto-repair-shop__mwaitfjt1bt.jpg",
-     "id": "auto-repair-shop",
-     "saved": "auto-repair-shop__2.webp",
-     "kb": 208
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-10 10:02:57 UTC",
    "ok": [
     {
@@ -940,6 +922,18 @@
      "id": "u-mweu0om7",
      "saved": "u-mweu0om7__1.webp",
      "kb": 252
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-15 12:21:51 UTC",
+   "ok": [
+    {
+     "file": "u-mwht079b__mwht079b.jpg",
+     "id": "u-mwht079b",
+     "saved": "u-mwht079b__1.webp",
+     "kb": 150
     }
    ],
    "failed": []
