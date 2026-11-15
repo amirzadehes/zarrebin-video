@@ -324,8 +324,14 @@ function toast(t, ms=3200){ const e=$('#toast'); e.textContent=t; e.classList.ad
 async function api(path, opt={}){
   const h = { 'Accept':'application/vnd.github+json' }; if (S.token) h.Authorization = 'Bearer '+S.token;
   if (opt.body) h['Content-Type']='application/json';
-  const r = await fetch('https://api.github.com/repos/'+S.repo+path, { ...opt, headers:h, cache:'no-store' });
-  if (!r.ok) { let m=''; try{ m=(await r.json()).message }catch(e){} const err=new Error(m||('HTTP '+r.status)); err.status=r.status; throw err; }
+  let r;
+  for (let k=0;;k++) {
+    r = await fetch('https://api.github.com/repos/'+S.repo+path, { ...opt, headers:h, cache:'no-store' });
+    if (r.ok) break;
+    let m=''; try{ m=(await r.clone().json()).message }catch(e){}
+    if (k<2 && opt.method && opt.method!=='GET' && /timeout|timed out/i.test(m||'')) { await sleep(3000*(k+1)); continue; }   // GitHub sometimes times out while checking its rules for a commit: the same write usually works a moment later
+    const err=new Error(m||('HTTP '+r.status)); err.status=r.status; throw err;
+  }
   return r.status===204 ? null : r.json();
 }
 async function readJson(p, dflt){ try{ const j=await api('/contents/'+p); const b=atob(j.content.replace(/\n/g,'')); return JSON.parse(new TextDecoder().decode(Uint8Array.from(b,c=>c.charCodeAt(0)))); }catch(e){ return dflt } }
