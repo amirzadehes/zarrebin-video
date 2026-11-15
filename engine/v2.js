@@ -264,11 +264,23 @@ function posterColor(t, sc) {   // a colour background instead of a picture: two
   ctx.restore();
   if (c.grain !== false) { ctx.save(); ctx.globalAlpha = .07 * A; const f = Math.floor(lt * 12); for (let i = 0; i < 260; i++) { ctx.fillStyle = hz(i * 3 + f) > .5 ? '#fff' : '#000'; ctx.fillRect(hz(i + f * 7) * W, hz(i * 2 + f * 5 + 1) * H, 2.2, 2.2) } ctx.restore() }
 }
+function phReveal(e, kind, sw) {   // clip/alpha/scale for the background picture arriving (e: 0..1) over whatever lies beneath; sw: the effect is played backwards (leaving)
+  const k = 1 - Math.pow(1 - clamp(e), 3); ctx.beginPath();
+  if (kind === 'left') ctx.rect(sw ? W * (1 - k) : 0, 0, W * k, H); else if (kind === 'right') ctx.rect(sw ? 0 : W * (1 - k), 0, W * k, H);
+  else if (kind === 'up') ctx.rect(0, sw ? H * (1 - k) : 0, W, H * k); else if (kind === 'down') ctx.rect(0, sw ? 0 : H * (1 - k), W, H * k);
+  else if (kind === 'circle') ctx.arc(W / 2, H * .48, Math.hypot(W, H) * .56 * k, 0, TAU); else ctx.rect(-300, -300, W + 600, H + 600);
+  ctx.clip(); if (kind === 'zoom') { ctx.translate(W / 2, H / 2); ctx.scale(1 + .3 * (1 - k), 1 + .3 * (1 - k)); ctx.translate(-W / 2, -H / 2) } if (kind === 'fade' || kind === 'zoom') ctx.globalAlpha *= k
+}
 function posterBg(t, sc) {
-  const p = sc.photo || {}, im = p.src && IM[p.src], lt = t - sc.t0, pc = clamp(lt / Math.max(.8, sc.t1 - sc.t0 + WD));
+  const p = sc.photo || {}, im = p.src && IM[p.src], useCol = sc.bgc && (!im || sc.bgc.on), hasPic = im && !useCol;
   ctx.fillStyle = '#14100e'; ctx.fillRect(-300, -300, W + 600, H + 600);
-  if (sc.bgc && (!im || sc.bgc.on)) posterColor(t, sc);
-  else if (im) {
+  const gate = p.t != null || p.out != null, ps0 = p.t != null ? p.t : sc.t0, pe = p.out != null ? p.out : 1e9, ENT = .75, EXT = .55;
+  if (useCol) posterColor(t, sc);
+  else if (!hasPic || gate) { if (sc.bgc) posterColor(t, sc); else { const g0 = ctx.createLinearGradient(0, 0, W, H); g0.addColorStop(0, '#2b2118'); g0.addColorStop(1, '#14100e'); ctx.fillStyle = g0; ctx.fillRect(-300, -300, W + 600, H + 600) } }   // gradient (or the colour background) lies beneath until the picture arrives
+  if (hasPic && (EDIT || (t >= ps0 - 1e-6 && t < pe + EXT))) {
+    const ein = (t - ps0) / ENT, eout = t > pe ? 1 - (t - pe) / EXT : 1, kin = p.en || 'fade', kout = p.ex || 'fade'; ctx.save();
+    if (p.t != null && ein < 1 && !EDIT) phReveal(ein, kin, false); else if (p.out != null && t > pe && !EDIT) { if (kout === 'none') { ctx.restore(); ctx.save(); ctx.beginPath(); ctx.rect(0, 0, 0, 0); ctx.clip() } else phReveal(eout, kout, true) }
+    const lt = t - Math.max(ps0, sc.t0), pc = clamp(lt / Math.max(.8, sc.t1 - Math.max(ps0, sc.t0) + WD));
     const mo = p.motion && p.motion !== 'auto' ? p.motion : ['in', 'out', 'left', 'right'][sc.idx % 4]; let z = 1.05, ox = 0;
     const dl = p.drift != null ? p.drift : D.meta.drift != null ? D.meta.drift : 0, DA = EDIT ? 0 : [0, 3, 6, 10][dl] || 0;   // micro hand-held drift of the whole picture (px)
     if (EDIT || mo === 'none') z = 1; else if (mo === 'in') z = lerp(1.04, 1.15, pc); else if (mo === 'out') z = lerp(1.15, 1.04, pc); else if (mo === 'left') { z = 1.1; ox = lerp(.03, -.03, pc) } else if (mo === 'right') { z = 1.1; ox = lerp(-.03, .03, pc) }
@@ -276,8 +288,8 @@ function posterBg(t, sc) {
     const jx = DA ? DA * (2 * jit(t, 1) + .6 * Math.sin(t * .9)) : 0, jy = DA ? DA * (2 * jit(t, 7) + .6 * Math.cos(t * .7)) : 0;
     const fx = p.fx == null ? .5 : p.fx, fy = p.fy == null ? .5 : p.fy, k = Math.max(W / im.width, H / im.height) * z, dw = im.width * k, dh = im.height * k;
     const x = clamp((W - dw) * fx + ox * W + jx, Math.min(0, W - dw), 0), y = clamp((H - dh) * fy + jy, Math.min(0, H - dh), 0);
-    ctx.drawImage(im, x, y, dw, dh);
-  } else { const g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#2b2118'); g.addColorStop(1, '#14100e'); ctx.fillStyle = g; ctx.fillRect(-300, -300, W + 600, H + 600) }
+    ctx.drawImage(im, x, y, dw, dh); ctx.restore()
+  }
   let g = ctx.createLinearGradient(0, 0, 0, H * .3); g.addColorStop(0, 'rgba(10,6,2,.55)'); g.addColorStop(1, 'rgba(10,6,2,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H * .3);
   g = ctx.createLinearGradient(0, H * (V ? .62 : .6), 0, H); g.addColorStop(0, 'rgba(10,6,2,0)'); g.addColorStop(1, 'rgba(10,6,2,.72)'); ctx.fillStyle = g; ctx.fillRect(0, H * (V ? .62 : .6), W, H);
 }
