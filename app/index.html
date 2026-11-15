@@ -118,6 +118,8 @@ select.sel{width:100%;min-height:44px;font:inherit;background:#17120f;color:var(
 .cfgHead .chev{font-size:16px;color:var(--acc)}
 #epCfg.min #cfgBody{display:none}
 #epCfg.min .prog{margin-bottom:0}
+.nhead{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:34px}
+.nhead .chev{display:none;font-size:16px;color:var(--acc)}
 
 /* ---------- review panel: three buttons in one row, background popup, compact control grids ---------- */
 .row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
@@ -168,6 +170,14 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
   #epTextS{min-height:200px!important}
 
   /* needed and generic lists: several cards per row */
+  /* review mode: "new episode" card shrinks to a bar above the build panel; build panel gets full width */
+  #ep.rvmode:not([hidden]){grid-template-columns:minmax(0,1fr);grid-template-rows:none}
+  #ep.rvmode>.card,#ep.rvmode>#epBuild{grid-column:1;grid-row:auto}
+  #ep.rvmode .nhead{cursor:pointer;user-select:none}
+  #ep.rvmode .nhead .chev{display:inline}
+  #ep.rvmode.newmin #epNew>:not(.nhead),#ep.rvmode.newmin>#epPrev{display:none}
+  #ep.rvmode.newmin>#epNew{padding-top:10px;padding-bottom:10px}
+  #ep.rvmode.newmin #epNew .nhead{margin:0}
   #want:not([hidden]),#gen:not([hidden]){display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:14px;align-items:start}
   #want>*,#gen>*{margin:0}
   #want>:not(.item),#gen>:not(.item){grid-column:1/-1}
@@ -399,7 +409,7 @@ async function renderEp(){
   const el = $('#ep'); let eps=[];
   try{ eps = (await api('/contents/episodes')).filter(x=>x.type==='dir').map(x=>x.name) }catch(e){} S.eps=eps; await loadTitles(eps);
   const cur = ls.get('curEp','');
-  el.innerHTML = `<div class="card"><div class="name">قسمت جدید</div>
+  el.innerHTML = `<div class="card" id="epNew"><div class="name nhead" id="epNewHead" role="button" tabindex="0" aria-expanded="true"><span id="epNewT">قسمت جدید</span><span class="chev" id="epNewChev">▾</span></div>
     <label>نام قسمت به انگلیسی (مثلاً sleep-debt)</label><input type="text" class="ltr" id="epName" value="${cur}">
     <label>نام فارسی قسمت (در اپ به‌جای نام انگلیسی نمایش داده می‌شود)</label><div class="row"><input type="text" id="epFa" value="${(S.titles[cur]||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" placeholder="مثلاً: ستاره میشلین" style="flex:1;direction:rtl;text-align:right"><button id="epFaSave" style="flex:0 0 auto">ذخیره‌ی نام</button></div><div class="st" id="epFaSt"></div>
     <label>کدام نسخه الان ساخته شود؟</label>
@@ -409,7 +419,7 @@ async function renderEp(){
     <div id="boxS" hidden><label>متن نسخه‌ی کوتاه (اینستاگرام و تیک‌تاک، حدود ۶۰ ثانیه)</label><textarea id="epTextS" rows="5" style="width:100%;min-height:130px;direction:rtl;text-align:right;font-size:15px"></textarea>
     <p class="hint">نسخه‌ی کوتاه یک قسمت جدا به نام <b>نام‌قسمت-short</b> ساخته می‌شود. تصویرها و کتابخانه بین هر دو مشترک است. نسخه‌ی کوتاه با برش‌های سریع‌تر ساخته می‌شود (پیش‌فرض فقط عمودی؛ در «ساخت ویدیو» می‌توانی یوتیوب را هم تیک بزنی). صدای هر کدام را جدا در «ساخت ویدیو» همان قسمت آپلود کن.</p></div>
     <div class="row"><button class="pri" id="epSend">ارسال و تحلیل</button></div><div class="st" id="epSt"></div></div>
-    ${eps.length?`<div class="card"><label>قسمت‌های قبلی</label><div class="row" id="epList">${eps.map(e=>`<button data-e="${e}">${epTitle(e)}</button>`).join('')}</div></div>`:''}
+    ${eps.length?`<div class="card" id="epPrev"><label>قسمت‌های قبلی</label><div class="row" id="epList">${eps.map(e=>`<button data-e="${e}">${epTitle(e)}</button>`).join('')}</div></div>`:''}
     <div id="epBuild"><div class="card" id="epCfg"><div class="name cfgHead" id="cfgHead" role="button" tabindex="0" aria-expanded="true" title="کوچک یا بزرگ کردن"><span>ساخت ویدیو</span><span class="chev" id="cfgChev">▾</span></div>
       <div id="bProg" class="prog" hidden></div><div id="cfgBody">
       <label>طول تقریبی ویدیو (اگر صدای خودت را بدهی، طول ویدیو دقیقاً به اندازه‌ی صدای توست و این گزینه نادیده گرفته می‌شود)</label>
@@ -447,6 +457,7 @@ async function renderEp(){
   lastShort=null; $('#epName').addEventListener('input',shortDefaults); shortDefaults();
   const cfgApply=()=>{ const m=ls.get('cfgMin','')==='1'; $('#epCfg').classList.toggle('min',m); $('#cfgChev').textContent=m?'▴':'▾'; $('#cfgHead').setAttribute('aria-expanded',String(!m)) };
   const cfgToggle=()=>{ ls.set('cfgMin',ls.get('cfgMin','')==='1'?'':'1'); cfgApply() };
+  $('#epNewHead').onclick=epNewToggle; $('#epNewHead').onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); epNewToggle() } }; dockEp=null;
   $('#cfgHead').onclick=cfgToggle; $('#cfgHead').onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cfgToggle() } }; cfgApply();
   const tg=()=>{ $('#boxL').hidden=!$('#chL').checked; $('#boxS').hidden=!$('#chS').checked }; $('#chL').onchange=tg; $('#chS').onchange=tg; tg();
   $('#bGo').onclick = ()=>buildVideo('review'); $('#bGoDirect').onclick = ()=>buildVideo('direct'); loadVids(); if(cur) loadReview(cur,true);
@@ -527,7 +538,7 @@ async function buildVideo(mode){
     if(ownF){ try{ $('#bOwn').value=''; if($('#bSpoken')) $('#bSpoken').value='' }catch(_){} }
     S.eps=[...new Set([...(S.eps||[]),ep])]; try{ renderEpLabels() }catch(_){}
     setTimeout(buildStatus,6000); setTimeout(buildStatus,20000);
-    if(mode==='review'){ st.className='st ok'; st.textContent='صحنه‌ها در حال آماده شدن‌اند (۲ تا ۵ دقیقه)…'; let old=''; try{ old=(await api('/contents/episodes/'+ep+'/scenes.json')).sha }catch(e){}
+    if(mode==='review'){ epDock(ep); st.className='st ok'; st.textContent='صحنه‌ها در حال آماده شدن‌اند (۲ تا ۵ دقیقه)…'; let old=''; try{ old=(await api('/contents/episodes/'+ep+'/scenes.json')).sha }catch(e){}
       for(let k=0;k<60;k++){ await sleep(15000); let nw=''; try{ nw=(await api('/contents/episodes/'+ep+'/scenes.json')).sha }catch(e){}
         if(nw&&nw!==old){ await loadReview(ep,false); ls.set('curEp',ep); showNeeds(ep); $('#rvBox').open=true; st.textContent='صحنه‌ها آماده است؛ پایین بازبینی کن و بعد «ادامه» را بزن.'; $('#rvBox').scrollIntoView({behavior:'smooth'}); return }
         try{ const r=(await api('/actions/runs?per_page=3')).workflow_runs.find(x=>x.name==='Make video'); if(r&&r.status==='completed'&&r.conclusion==='failure'&&Date.now()-new Date(r.created_at)<20*60000){ st.className='st bad'; st.textContent='آماده‌سازی ناموفق بود؛ در «build.log» قسمت دلیلش هست.'; return } }catch(e){} }
@@ -540,6 +551,12 @@ async function buildVideo(mode){
   }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message }
 }
 
+/* ---------- حالت بازبینی: کارت «قسمت جدید» کوچک می‌شود و بالای «ساخت ویدیو» می‌ماند (فقط دسکتاپ) ---------- */
+let dockEp=null;
+function epNewApply(){ const ep=$('#ep'), h=$('#epNewHead'); if(!ep||!h) return; const m=ep.classList.contains('newmin'); $('#epNewChev').textContent=m?'▴':'▾'; h.setAttribute('aria-expanded',String(!m));
+  const cur=slug(($('#epName')||{}).value||''); $('#epNewT').textContent=(m&&cur&&matchMedia('(min-width:1024px)').matches)?'قسمت جدید — '+epTitle(cur):'قسمت جدید' }
+function epDock(epName){ const ep=$('#ep'); if(!ep||!$('#epNew')) return; ep.classList.add('rvmode'); if(dockEp!==epName){ dockEp=epName; ep.classList.add('newmin') } epNewApply() }
+function epNewToggle(){ const ep=$('#ep'); if(!ep||!ep.classList.contains('rvmode')) return; ep.classList.toggle('newmin'); epNewApply() }
 /* ---------- بازبینی صحنه‌ها ---------- */
 let RV=null, rvT=null;
 const mmss=t=>{ t=Math.round(t); return fa(Math.floor(t/60)+':'+String(t%60).padStart(2,'0')) };
@@ -549,7 +566,7 @@ async function loadReview(ep, quiet){ const body=$('#rvBody'); if(!body) return;
     if(!txt){ const r=await fetch(j.download_url); txt=await r.text() }
     RV={ep, sha:j.sha, data:JSON.parse(txt)}; renderReview() }catch(e){ if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
 function thumbUrl(src){ return /^decor\//.test(src)?'https://raw.githubusercontent.com/'+S.repo+'/main/'+src:raw(src.replace(/^library\//,'')) }
-function renderReview(){ const body=$('#rvBody'); if(!RV||!body) return; const sc=RV.data.scenes; const empty=sc.filter(s=>!(s.items||[]).length&&s.tpl!=='stat').length;
+function renderReview(){ const body=$('#rvBody'); if(!RV||!body) return; epDock(RV.ep); const sc=RV.data.scenes; const empty=sc.filter(s=>!(s.items||[]).length&&s.tpl!=='stat').length;
   body.innerHTML=`<p class="hint"><b>${epTitle(RV.ep)}</b>: ${fa(sc.length)} صحنه${empty?` · <span style="color:#e0733f">${fa(empty)} صحنه بدون تصویر (علامت ⚠️)</span>`:''}. هر صحنه را باز کن؛ با ✕ تصویر را حذف کن یا از کتابخانه اضافه کن. تغییرها خودکار ذخیره می‌شوند. <b id="rvOk"></b></p>`+
   sc.map((s,i)=>{ const n=(s.items||[]).length; const warn=!n&&s.tpl!=='stat';
     return `<details class="sc ${warn?'warn':''}" data-i="${i}"><summary>${sceneHead(s,i)}</summary><div class="body"></div></details>`}).join('')+
