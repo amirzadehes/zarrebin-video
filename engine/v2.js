@@ -279,12 +279,24 @@ function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's 
   const lt = t - Math.max(ps0, sc.t0), pc = clamp(lt / Math.max(.8, sc.t1 - Math.max(ps0, sc.t0) + WD));
   const mo = p.motion && p.motion !== 'auto' ? p.motion : ['in', 'out', 'left', 'right'][(sc.idx + (p.mi || 0)) % 4]; let z = 1.05, ox = 0;
   const dl = p.drift != null ? p.drift : D.meta.drift != null ? D.meta.drift : 0, DA = EDIT ? 0 : [0, 3, 6, 10][dl] || 0;   // micro hand-held drift of the whole picture (px)
+  const hl = p.haze != null ? p.haze : D.meta.haze != null ? D.meta.haze : 1, HA = EDIT ? 0 : [0, 1.4, 2.6, 4.2][hl] * (W / 1080) || 0;   // heat haze: the picture shimmers like the air above a fire (0 off, 1 low, 2 medium, 3 high; default low)
   if (EDIT || mo === 'none') z = 1; else if (mo === 'in') z = lerp(1.04, 1.15, pc); else if (mo === 'out') z = lerp(1.15, 1.04, pc); else if (mo === 'left') { z = 1.1; ox = lerp(.03, -.03, pc) } else if (mo === 'right') { z = 1.1; ox = lerp(-.03, .03, pc) }
   if (DA) z = Math.max(z, 1.02 + DA * .0015);
+  if (HA) z = Math.max(z, 1 + (2 * HA + 3) / W);   // a little extra size so the shimmer never shows an edge
   const jx = DA ? DA * (2 * jit(t, 1) + .6 * Math.sin(t * .9)) : 0, jy = DA ? DA * (2 * jit(t, 7) + .6 * Math.cos(t * .7)) : 0;
   const fx = p.fx == null ? .5 : p.fx, fy = p.fy == null ? .5 : p.fy, k = Math.max(W / im.width, H / im.height) * z, dw = im.width * k, dh = im.height * k;
   const x = clamp((W - dw) * fx + ox * W + jx, Math.min(0, W - dw), 0), y = clamp((H - dh) * fy + jy, Math.min(0, H - dh), 0);
-  ctx.drawImage(im, x, y, dw, dh); ctx.restore()
+  if (HA) hazeDraw(im, x, y, dw, dh, k, t, HA); else ctx.drawImage(im, x, y, dw, dh);
+  ctx.restore()
+}
+/* heat haze: the picture is drawn in thin horizontal strips, each pushed sideways by a slow wave that travels upward (a pure function of t, so parallel chunks stay frame-exact) */
+function hazeDraw(im, x, y, dw, dh, k, t, A) {
+  const S = 4, lo = Math.min(0, W - dw), y0 = Math.max(0, y), y1 = Math.min(H, y + dh);
+  for (let yd = y0; yd < y1; yd += S) {
+    const amp = A * (.7 + .3 * Math.sin(yd * .004 + t * .5)), dx = amp * (.62 * Math.sin(yd * .046 - t * 2.3) + .38 * Math.sin(yd * .0115 - t * 1.25 + 1.7));
+    const xs = Math.max(lo, Math.min(0, x + dx)), sy = (yd - y) / k, sh = Math.min((S + 1) / k, im.height - sy);
+    if (sh > 0) ctx.drawImage(im, 0, sy, im.width, sh, xs, yd, dw, Math.min(S + 1, y1 - yd + 1))
+  }
 }
 function posterBg(t, sc) {
   const p = sc.photo || {}, im = p.src && IM[p.src], useCol = sc.bgc && (!im || sc.bgc.on), hasPic = im && !useCol, extra = (sc.photos || []).filter(q => q && q.src && IM[q.src]);
@@ -545,7 +557,7 @@ function drawScene(t, sc) {
   // camera: each scene gets its own move (push in / pull out, with a slow pan) so consecutive scenes never feel identical
   const KK = sc.kick || 'both'; let punch = 0; if (POSTER && !EDIT && (KK === 'punch' || KK === 'both')) sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .5) punch = Math.max(punch, .045 * Math.exp(-d * 8)) });
   const z = EDIT ? 1 : POSTER ? 1 + punch : (kc % 2 ? lerp(1.08, 1.0, pc) : lerp(1.0, 1.08, pc)) * (1 + beatZ(t)), px = EDIT || POSTER ? 0 : [-1, 1, 0, 0][kc] * lerp(-16, 16, pc), py = EDIT || POSTER ? 0 : [0, 0, -1, 1][kc] * lerp(-14, 14, pc);
-  let shake = 0; sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .35) shake = Math.max(shake, 8 * (1 - d / .35)) }); if (EDIT || (POSTER && KK !== 'shake' && KK !== 'both')) { shake = 0 }
+  let shake = 0; sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .35) shake = Math.max(shake, 8 * (1 - d / .35)) }); if (EDIT || D.meta.shake === false || (KK !== 'shake' && KK !== 'both')) { shake = 0 }   // meta.shake === false switches the entry shake off for the whole episode
   ctx.save(); ctx.translate(W / 2 + px + Math.sin(t * 90) * shake, H / 2 + py + Math.cos(t * 77) * shake); ctx.scale(z, z); ctx.translate(-W / 2, -H / 2 + (V ? 0 : 0));
   const TF = POSTER ? null : tfOf(sc);
   if (POSTER) posterBg(t, sc); else if (TF) tfBg(t, sc, th, TF); else { bgLayer(t, sc, th); if (window.FXL && sc.bg && sc.bg.src) FXL.bg(t, sc) }   // optional background picture layer (engine/fx.js)

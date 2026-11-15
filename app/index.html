@@ -624,9 +624,9 @@ function renderReview(){ const body=$('#rvBody'); if(!RV||!body) return; epDock(
   body.innerHTML=`<p class="hint"><b>${epTitle(RV.ep)}</b>: ${fa(sc.length)} صحنه${empty?` · <span style="color:#e0733f">${fa(empty)} صحنه بدون تصویر (علامت ⚠️)</span>`:''}. هر صحنه را باز کن؛ با ✕ تصویر را حذف کن یا از کتابخانه اضافه کن. تغییرها خودکار ذخیره می‌شوند. <b id="rvOk"></b></p>`+dupBanner()+
   sc.map((s,i)=>{ const warn=noPic(s);
     return `<details class="sc ${warn?'warn':''}" data-i="${i}"><summary>${sceneHead(s,i)}</summary><div class="body"></div></details>`}).join('')+
-  `<div class="row" style="margin-top:12px"><button id="rvSubAll">✏️ ویرایش زیرنویس کل قسمت (املا)</button></div><details class="pSec" id="rvMus" style="margin-top:12px"><summary>🎵 موزیک این قسمت (Suno و بلندی صدا)</summary><div class="pSecB mpB"></div></details><div class="row" style="margin-top:12px"><button id="rvAll">▶ دیدن کل ویدیو (پیش‌نمایش با صدا و افکت‌ها، قبل از ساخت نهایی)</button></div><div class="row" style="margin-top:12px"><button class="pri" id="rvGo">۲. ادامه: ساخت ویدیو با همین صحنه‌ها</button></div><div class="st" id="rvSt"></div>`;
+  `<div class="row" style="margin-top:12px"><button id="rvSubAll">✏️ ویرایش زیرنویس کل قسمت (املا)</button></div><details class="pSec" id="rvMot" style="margin-top:12px" open><summary>🎛 حرکت و لرزش تصویرها (کل قسمت)</summary><div class="pSecB mtB"></div></details><details class="pSec" id="rvMus" style="margin-top:12px"><summary>🎵 موزیک این قسمت (Suno و بلندی صدا)</summary><div class="pSecB mpB"></div></details><div class="row" style="margin-top:12px"><button id="rvAll">▶ دیدن کل ویدیو (پیش‌نمایش با صدا و افکت‌ها، قبل از ساخت نهایی)</button></div><div class="row" style="margin-top:12px"><button class="pri" id="rvGo">۲. ادامه: ساخت ویدیو با همین صحنه‌ها</button></div><div class="st" id="rvSt"></div>`;
   updOk(); body.querySelectorAll('details.sc').forEach(d=>d.addEventListener('toggle',()=>{ if(d.open) fillScene(d) }));
-  musicUI(); $('#rvGo').onclick=rvContinue; if($('#dupGo')) $('#dupGo').onclick=dupFix; $('#rvSubAll').onclick=subAllDialog; $('#rvAll').onclick=()=>openPreview(0,'all'); body.toggleAttribute('data-poster',isPoster()); if(isPoster()&&window.posterBar) posterBar(body) }
+  motionUI(); musicUI(); $('#rvGo').onclick=rvContinue; if($('#dupGo')) $('#dupGo').onclick=dupFix; $('#rvSubAll').onclick=subAllDialog; $('#rvAll').onclick=()=>openPreview(0,'all'); body.toggleAttribute('data-poster',isPoster()); if(isPoster()&&window.posterBar) posterBar(body) }
 const nz=t=>String(t||'').toLowerCase().replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/[\u200c\u064b-\u065f]/g,'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\s+/g,' ').trim();
 
 const okOf=(s,f)=>!!(s.ok&&typeof s.ok==='object'?s.ok[f]:(f==='v'&&s.ok===true));
@@ -1464,6 +1464,18 @@ let MUS_URL={};
 async function pvMusicUrl(ep){ const L=await api('/contents/episodes/'+ep); const f=(L||[]).find(x=>x.type==='file'&&x.name==='music_own.mp3'); if(!f) return null; const c=MUS_URL[ep]; if(c&&c.sha===f.sha) return c.url;
   const r=await fetch('https://api.github.com/repos/'+S.repo+'/contents/episodes/'+ep+'/music_own.mp3?ref=main',{headers:Object.assign({Accept:'application/vnd.github.raw'},S.token?{Authorization:'Bearer '+S.token}:{}),cache:'no-store'}); if(!r.ok) return null;
   const url=URL.createObjectURL(new Blob([await r.arrayBuffer()],{type:'audio/mpeg'})); if(c) URL.revokeObjectURL(c.url); MUS_URL[ep]={sha:f.sha,url}; return url }
+/* ===== whole-episode motion switches: entry shake on/off, micro drift, heat haze (a scene's own value still wins for drift / haze) ===== */
+function motionUI(){ const B=document.querySelector('#rvMot .mtB'); if(!B||!RV) return; const M=RV.data.meta=RV.data.meta||{};
+  const lv='<option value="0">خاموش</option><option value="1">کم</option><option value="2">متوسط</option><option value="3">زیاد</option>';
+  B.innerHTML=`<label class="ck" style="display:flex;gap:8px;align-items:center;margin-top:0"><input type="checkbox" class="mtSh"> لرزش کوتاه دوربین هنگام ورود هر تصویر</label>
+    <div class="g2"><div><label>موج هوای گرم روی عکس پس‌زمینه (مثل بالای آتش)</label><select class="sel mtHz">${lv}</select></div><div><label>لرزش ریز دست‌گرفته روی عکس پس‌زمینه</label><select class="sel mtDr">${lv}</select></div></div>
+    <p class="hint">این سه مورد برای همه‌ی صحنه‌ها اعمال می‌شود. برای یک صحنه‌ی خاص، موج هوای گرم و لرزش ریز را در بخش «حرکت عکس» همان صحنه می‌توانی جدا عوض کنی. در پیش‌نمایش صحنه می‌بینی.</p>`;
+  const sh=B.querySelector('.mtSh'), hz=B.querySelector('.mtHz'), dr=B.querySelector('.mtDr');
+  sh.checked=M.shake!==false; hz.value=String(M.haze!=null?M.haze:1); dr.value=String(M.drift!=null?M.drift:0);
+  const go=()=>{ rvSave(); try{ if(!$('#pvModal').hidden) pvRefresh(pvI) }catch(e){} };
+  sh.onchange=()=>{ if(sh.checked) delete M.shake; else M.shake=false; go() };
+  hz.onchange=()=>{ M.haze=+hz.value; go() };
+  dr.onchange=()=>{ M.drift=+dr.value; go() } }
 async function musicUI(){ const B=document.querySelector('#rvMus .mpB'); if(!B||!RV) return; const M=(RV.data.meta||{}).music, vol=(RV.data.meta||{}).musicVol==null?100:(RV.data.meta||{}).musicVol;
   B.innerHTML=`${M?`<label style="margin-top:0">پرامپت Suno (فقط ساز، هم‌طول ویدیو: حدود ${fa(Math.floor(M.duration/60))}:${fa(String(M.duration%60).padStart(2,'0'))})</label><div class="hint" dir="ltr" style="text-align:left;white-space:pre-wrap;margin:4px 0 8px;max-height:210px;overflow:auto">${esc(M.full)}</div>
     <div class="row"><button class="pri mCf">کپی پرامپت کامل</button><button class="mCs">کپی فقط Style</button><button class="mCt">کپی عنوان</button></div><p class="hint">در Suno: Custom → Instrumental را روشن کن، Style را در فیلد Style of Music و عنوان را در Title بگذار. اگر آهنگ ساخته‌شده کوتاه‌تر بود تکرار و اگر بلندتر بود در انتها بریده و محو می‌شود.</p>`:'<p class="hint">پرامپت موزیک هنوز ساخته نشده؛ این قسمت را با «۱. آماده‌سازی صحنه‌ها» (زیر نام تازه) دوباره بساز تا کارگردان پرامپت موزیک هم بدهد.</p>'}
@@ -1635,10 +1647,12 @@ function fxUI(el,s,i,box){
   /* camera */
   const CB=q0('.camSecB'); CB.innerHTML=`<div class="g2"><div><label>حرکت عکس</label><select class="sel pMot"><option value="auto">خودکار</option><option value="in">زوم به داخل</option><option value="out">زوم به بیرون</option><option value="left">حرکت به چپ</option><option value="right">حرکت به راست</option><option value="none">ثابت</option></select></div>
     <div><label>لرزش ریز پس‌زمینه</label><select class="sel dr"><option value="0">خاموش</option><option value="1">کم</option><option value="2">متوسط</option><option value="3">زیاد</option></select></div></div>
+    <div class="g2"><div><label>موج هوای گرم پس‌زمینه</label><select class="sel hz"><option value="0">خاموش</option><option value="1">کم</option><option value="2">متوسط</option><option value="3">زیاد</option></select></div><div></div></div>
     <label>افکت دوربین هنگام ورود عکس</label><select class="sel kk"><option value="both">ضربه‌ی زوم + لرزش</option><option value="punch">فقط ضربه‌ی زوم</option><option value="shake">فقط لرزش</option><option value="none">هیچ</option></select>
     <details class="pSec" style="margin-top:8px"><summary>✏️ ویرایش متن پرامپت عکس</summary><div class="pSecB"><textarea class="pPrompt" dir="ltr"></textarea></div></details>`;
   const mo=CB.querySelector('.pMot'); mo.value=s.photo.motion||'auto'; mo.onchange=()=>{ if(mo.value==='auto') delete s.photo.motion; else s.photo.motion=mo.value; ch() };
   const dr=CB.querySelector('.dr'); dr.value=String(s.photo.drift!=null?s.photo.drift:0); dr.onchange=()=>{ s.photo.drift=+dr.value; ch() };
+  const hz=CB.querySelector('.hz'); hz.value=String(s.photo.haze!=null?s.photo.haze:((RV.data.meta||{}).haze!=null?RV.data.meta.haze:1)); hz.onchange=()=>{ s.photo.haze=+hz.value; ch() };
   const kk=CB.querySelector('.kk'); kk.value=s.kick||'both'; kk.onchange=()=>{ s.kick=kk.value; ch() };
   const pr=CB.querySelector('.pPrompt'); pr.value=s.photo.prompt||''; pr.oninput=()=>{ s.photo.prompt=pr.value; rvSave() };
 }

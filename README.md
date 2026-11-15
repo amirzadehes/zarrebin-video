@@ -51,6 +51,11 @@ A test style next to the classic one: **one full-bleed picture per scene** (made
 - Quality check is poster-aware (counts scenes without photo instead of without library pictures).
 
 
+### Poster mode: motion switches (whole episode, set in the review panel "🎛 حرکت و لرزش تصویرها")
+- `meta.haze` 0-3 (default 1 = low): **heat haze** on the full-bleed background photo, like the air above a fire. The picture is drawn in 4 px strips pushed sideways by a slow upward-travelling wave (`bgPic` / `hazeDraw` in `engine/v2.js`, a pure function of time). A scene's own `photo.haze` wins over the meta value. Off in the in-app layout editor.
+- `meta.shake: false` switches the short camera shake that happens when a library picture enters the scene (the `kick` of every scene follows it; the zoom punch is separate, `meta.punch: false`). Missing / true = on.
+- `meta.drift` 0-3 (default 0): the micro hand-held drift of the photo (a scene's `photo.drift` wins).
+
 ### Poster mode: separate props
 The director may add up to 2 small separate objects per scene (`scene.props`: `fa`, `t`, `prompt`). A prop whose Persian name already exists in the library is put on the scene as an item at the spoken word. Others show in the review panel with a detailed prompt (same style + magenta background); uploading one runs the normal library flow and adds it to the scene at `t`.
 
