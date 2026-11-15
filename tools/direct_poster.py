@@ -9,10 +9,11 @@ import groqlib
 import direct_scenes as ds
 
 SYSTEM = """تو کارگردان هنری یک ویدیوی توضیحی عمودی هستی. در این سبک هر صحنه فقط یک تصویر تمام‌صفحه دارد و روی آن چند خط نوشته می‌آید.
-روایت به جمله‌ها تقسیم شده است (شماره، زمان، متن). جمله‌های پشت‌سرهم را در «صحنه» گروه‌بندی کن؛ هر صحنه ۳ تا ۷ ثانیه (معمولاً ۱ تا ۲ جمله) و همه‌ی جمله‌ها را بدون فاصله و همپوشانی پوشش بده. صحنه‌ی بیش از ۸ ثانیه نساز.
+روایت به تکه‌های کوتاه تقسیم شده است (شماره، زمان، متن). تکه‌های پشت‌سرهم را در «صحنه» گروه‌بندی کن؛ هر صحنه @LO@ تا @HI@ ثانیه (معمولاً ۱ تا ۲ تکه، هرگز بیش از @MAX@ ثانیه) و همه‌ی تکه‌ها را بدون فاصله و همپوشانی پوشش بده. هر تکه باید در دقیقاً یک صحنه باشد؛ پس برای متن بلند صحنه‌های زیاد بساز، نه چند صحنه‌ی بلند.
 برای هر صحنه این‌ها را بنویس:
 - prompt: توضیح انگلیسیِ یک تصویر برای ابزار تصویرسازی (۲ تا ۴ جمله). یک صحنه‌ی واحد و روشن که همان چیزی را نشان بدهد که راوی می‌گوید: چه کسی یا چه چیزی، کجا، چه کاری می‌کند، نور و حال‌وهوا و زاویه‌ی دوربین. موضوع اصلی را در میانه‌ی کادر بگذار.
-  دوره‌ی زمانی را از خود داستان بردار: اگر ماجرا تاریخی است لباس و وسیله‌ها همان دوره باشند؛ هرگز «modern» یا «today» ننویس مگر داستان امروزی باشد. اگر یک شخصیت چند بار می‌آید، هر بار با همان مشخصات بنویس (سن، لباس، رنگ) تا تصویرها شبیه هم شوند.
+  خودِ موضوع و رویداد را نقاشی کن، نه گوینده را: هرگز راوی، گوینده، مجری یا «narrator» در تصویر نگذار و هیچ شخصیت یا چیزی از خودت اختراع نکن که در متن یا خلاصه‌ی داستان نیست. اگر جمله مقدمه‌ی گوینده است (مثل «امروز می‌خوام ... رو تعریف کنم»)، تصویر خودِ ماجرا یا نمادِ اصلی آن باشد.
+  دوره‌ی زمانی را از خود داستان بردار: اگر ماجرا تاریخی است لباس و وسیله‌ها همان دوره باشند؛ هرگز «modern» یا «today» ننویس مگر خودِ آن صحنه واقعاً امروزی باشد (دوره‌ی هر صحنه را از خلاصه‌ی داستان و متن همان صحنه بگیر). اگر یک شخصیت چند بار می‌آید، هر بار با همان مشخصات بنویس (سن، لباس، رنگ) تا تصویرها شبیه هم شوند.
   در تصویر هیچ نوشته، حرف، عدد یا لوگو نباشد.
 - kicker: برچسب کوتاه انگلیسی با حروف بزرگ، حداکثر ۴ کلمه، مثل «ROME · 4TH CENTURY» یا «THE SHAH · 1970s». اگر چیز مشخصی ندارد خالی بگذار.
 - text: تیتر کوتاه فارسی محاوره‌ای (حداکثر ۷ کلمه) و کلمه‌ی مهم را بین دو ستاره بگذار، مثل: برگه‌ی *بدون خریدار*. اگر صحنه نیازی به تیتر ندارد خالی بگذار. تیتر تکرار کلمه‌به‌کلمه‌ی جمله نباشد؛ خلاصه یا نکته‌ی اصلی باشد.
@@ -22,14 +23,80 @@ SYSTEM = """تو کارگردان هنری یک ویدیوی توضیحی عمو
 خروجی فقط JSON: {"scenes":[{"from":0,"to":1,"prompt":"...","kicker":"...","text":"...","number":"","kw":[]}]}"""
 
 
-def direct(T, short):
+PUNCT = tuple('.!?؟،,;؛…')
+
+
+def units(T, maxlen=6.5):
+    """short pieces of narration (the director's unit): break at a sentence change or a punctuation mark once >= ~2 s, and always before maxlen seconds"""
+    W = T['words']; out, cur = [], []
+    for w in W:
+        if cur and w['s'] != cur[-1]['s'] and cur[-1]['t1'] - cur[0]['t0'] >= 1.5: out.append(cur); cur = []
+        cur.append(w); d = w['t1'] - cur[0]['t0']
+        if d >= maxlen or (w['w'].rstrip('"»”)').endswith(PUNCT) and d >= 2.2): out.append(cur); cur = []
+    if cur: out.append(cur)
+    total = round(T['voice_seconds'] + 1.2, 2); U = []
+    for i, c in enumerate(out): U.append({'i': i, 't0': 0.0 if i == 0 else c[0]['t0'], 'text': ' '.join(x['w'] for x in c)})
+    for i, u in enumerate(U): u['t1'] = U[i + 1]['t0'] if i + 1 < len(U) else total
+    return U
+
+
+BIBLE = """متن یک ویدیوی توضیحی را می‌خوانی. برای تصویرسازها یک خلاصه‌ی انگلیسیِ کوتاه بنویس (حداکثر ۶ خط، متن ساده): موضوع اصلی، دوره‌ی زمانی و مکان (هر دوره‌ی مهم داستان)، شخصیت‌های اصلی با ظاهر ثابت (سن، لباس، رنگ‌ها) و حال‌وهوای تصویری. فقط از چیزهایی بگو که در متن هست."""
+
+
+def bible(U):
+    try: return groqlib.chat(BIBLE, ' '.join(u['text'] for u in U)[:7000], max_tokens=600, temperature=.2).strip()
+    except (Exception, SystemExit) as e: print('story brief skipped:', str(e)[:120]); return ''
+
+
+REPAIR = """یک صحنه‌ی بلند به چند قطعه‌ی پشت‌سرهم تقسیم شده است. برای هر قطعه یک تصویر جدا و متفاوت (لحظه یا زاویه‌ی دیگری از همان ماجرا) بنویس، مطابق چیزی که در متن همان قطعه گفته می‌شود. راوی را نشان نده و چیزی اختراع نکن.
+هر قطعه: prompt (انگلیسی، ۲ تا ۳ جمله، بدون نوشته در تصویر)، kicker (برچسب کوتاه انگلیسی با حروف بزرگ یا خالی)، text (تیتر فارسی ≤ ۷ کلمه با *کلمه‌ی مهم* یا خالی)، number (فقط اگر عدد/سال واقعاً در متن هست)، kw (≤ ۳ کلمه از متن).
+خروجی فقط JSON: {"parts":[{"prompt":"","kicker":"","text":"","number":"","kw":[]}]} به تعداد قطعه‌ها و به همان ترتیب."""
+
+
+def cover(raw, n):
+    raw = sorted([r for r in raw if isinstance(r.get('from'), int) and 0 <= r['from'] < n], key=lambda r: r['from']); cov, cur = [], 0
+    for r in raw:   # contiguous coverage of every unit
+        if r['from'] < cur: continue
+        if r['from'] > cur and cov: cov[-1]['to'] = r['from'] - 1
+        elif r['from'] > cur: r['from'] = 0
+        r['to'] = max(r['from'], min(int(r.get('to', r['from'])), n - 1)); cov.append(r); cur = r['to'] + 1
+    if not cov: cov = [{'from': 0, 'to': n - 1, 'prompt': ''}]
+    cov[-1]['to'] = n - 1; cov[0]['from'] = 0
+    return cov
+
+
+def split_long(raw, S, brief, ss):
+    """a scene longer than the limit is cut at unit boundaries into pieces of about `tgt` seconds; every piece gets its own image prompt"""
+    lim, tgt = ss * 1.4, ss; out = []
+    for r in cover(raw, len(S)):
+        if S[r['to']]['t1'] - S[r['from']]['t0'] <= lim or r['to'] == r['from']: out.append(r); continue
+        parts, a = [], r['from']
+        while a <= r['to']:
+            b = a
+            while b < r['to'] and S[b + 1]['t1'] - S[a]['t0'] <= tgt: b += 1
+            parts.append({'from': a, 'to': b}); a = b + 1
+        got = []
+        try:
+            user = 'خلاصه‌ی داستان:\n%s\n\nقطعه‌ها:\n%s' % (brief or '-', '\n'.join('%d | %s' % (k, ' '.join(S[j]['text'] for j in range(p['from'], p['to'] + 1))) for k, p in enumerate(parts)))
+            got = [o for o in groqlib.objects(groqlib.chat(REPAIR, user, max_tokens=2200, json_mode=True, temperature=.5), 'prompt') if isinstance(o, dict)]
+        except (Exception, SystemExit) as e: print('split repair fallback:', str(e)[:120])
+        print('split a %.0f s scene into %d pieces' % (S[r['to']]['t1'] - S[r['from']]['t0'], len(parts)))
+        for k, p in enumerate(parts):
+            o = got[k] if k < len(got) else {}
+            p.update({'prompt': o.get('prompt') or ((r.get('prompt') or '') + (' A different moment and angle of the same scene.' if k and r.get('prompt') else '')), 'kicker': o.get('kicker') or r.get('kicker') or '',
+                      'text': o.get('text') or '', 'number': o.get('number') or '', 'kw': o.get('kw') or r.get('kw') or []})
+            out.append(p)
+    return out
+
+
+def direct(T, ss, brief=''):
     S = T['sentences']; scenes = []; prev = ''
-    sys_p = SYSTEM.replace('۳ تا ۷ ثانیه', '۲ تا ۴ ثانیه').replace('بیش از ۸ ثانیه', 'بیش از ۵ ثانیه') if short else SYSTEM
-    B = 12
+    sys_p = SYSTEM.replace('@LO@', ds.fadig(str(max(2, round(ss * .7))))).replace('@HI@', ds.fadig(str(round(ss * 1.2)))).replace('@MAX@', ds.fadig(str(round(ss * 1.4))))
+    B = 14
     for b in range(0, len(S), B):
         chunk = S[b:b + B]
-        user = ('توصیف تصویرِ دو صحنه‌ی قبلی (برای یکدست ماندن شخصیت‌ها و دوره‌ی زمانی):\n%s\n\nجمله‌ها:\n%s' % (
-            prev or '-', '\n'.join(f"{s['i']} | {s['t0']:.1f}-{s['t1']:.1f}s | {s['text']}" for s in chunk)))
+        user = ('خلاصه‌ی کل داستان (برای دوره‌ی زمانی و ظاهر ثابت شخصیت‌ها):\n%s\n\nتوصیف تصویرِ دو صحنه‌ی قبلی:\n%s\n\nتکه‌ها:\n%s' % (
+            brief or '-', prev or '-', '\n'.join(f"{s['i']} | {s['t0']:.1f}-{s['t1']:.1f}s | {s['text']}" for s in chunk)))
         try:
             raw = groqlib.chat(sys_p, user, max_tokens=3200, json_mode=True, temperature=.5)
             got = [o for o in groqlib.objects(raw, 'from') if isinstance(o.get('from'), int)]
@@ -43,15 +110,7 @@ def direct(T, short):
 
 def compile_scenes(ep, T, raw, req, short):
     S, Wd = T['sentences'], T['words']; n = len(S); total = round(T['voice_seconds'] + 1.2, 2)
-    raw = sorted([r for r in raw if isinstance(r.get('from'), int) and 0 <= r['from'] < n], key=lambda r: r['from'])
-    cov, cur = [], 0
-    for r in raw:   # contiguous coverage of every sentence
-        if r['from'] < cur: continue
-        if r['from'] > cur and cov: cov[-1]['to'] = r['from'] - 1
-        elif r['from'] > cur: r['from'] = 0
-        r['to'] = max(r['from'], min(int(r.get('to', r['from'])), n - 1)); cov.append(r); cur = r['to'] + 1
-    if not cov: cov = [{'from': 0, 'to': n - 1, 'prompt': ''}]
-    cov[-1]['to'] = n - 1; cov[0]['from'] = 0
+    cov = cover(raw, n)
     for k, r in enumerate(cov):
         r['t0'] = 0.0 if k == 0 else S[r['from']]['t0']; r['t1'] = total if k == len(cov) - 1 else S[cov[k + 1]['from']]['t0']
     scenes = []; kwall = set(); THEME = [0, 3, 6, 1, 4, 7, 2, 5]
@@ -80,9 +139,10 @@ def main(ep):
         return ds.main(ep)
     T = ds.load(f'{d}/timing.json', None)
     if not T: sys.exit('timing.json missing; run narrate_tts.py first')
+    ss = min(max(float(req.get('scene_sec') or (3.5 if short else 6)), 2.5), 12.0); T = dict(T); T['sentences'] = units(T, min(ss + .5, 6.5)); print('narration units:', len(T['sentences']))
     raw = ds.load(f'{d}/director.json', None) if req.get('keep_direction') else None
     if raw is None:
-        raw = direct(T, short); json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
+        brief = bible(T['sentences']); raw = split_long(direct(T, ss, brief), T['sentences'], brief, ss); json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
     meta, scenes = compile_scenes(ep, T, raw, req, short)
     print('poster scenes', len(scenes), 'total', meta['total'], '| with prompt:', sum(1 for s in scenes if s['photo']['prompt']))
     ds.emit_plan(meta, req)
