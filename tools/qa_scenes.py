@@ -28,6 +28,7 @@ def main(ep):
     if not S: print('qa: scenes.json missing'); return
     req = load(f'{d}/request.json', {}); short = bool(req.get('short')) or ep.endswith('-short'); L = LIM_SHORT if short else LIM
     sc, W, total = S.get('scenes') or [], S.get('words') or [], (S.get('meta') or {}).get('total') or 0
+    poster = (S.get('meta') or {}).get('mode') == 'poster'   # poster mode: every scene is one full-bleed picture; pictures are the owner's uploads
     if not sc: print('qa: no scenes'); return
     out = []
 
@@ -42,12 +43,13 @@ def main(ep):
         w = max(longs); add('long-scene', 'warn', w[2], '%d صحنه از %.1f ثانیه طولانی‌ترند؛ بلندترین: صحنه‌ی %d از ثانیه‌ی %.1f (%.1f ثانیه). این‌ها را کوتاه‌تر ببر یا تصویر/رویداد بیشتری بگذار.' % (len(longs), L['long'], w[1], w[2], w[0]))
     if shorts:
         w = min(shorts); add('short-scene', 'warn', w[2], '%d صحنه کوتاه‌تر از %.1f ثانیه‌اند (کوتاه‌ترین: صحنه‌ی %d، %.1f ثانیه) و خوانده نمی‌شوند.' % (len(shorts), L['short'], w[1], w[0]))
-    nop = sum(1 for s in sc if not s.get('items'))
-    if nop / len(sc) > .15: add('no-picture', 'warn', 0, '%d از %d صحنه تصویر ندارند (فقط زیرنویس)؛ ویدیو خشک می‌شود.' % (nop, len(sc)))
+    nop = sum(1 for s in sc if not (s.get('photo') or {}).get('src')) if poster else sum(1 for s in sc if not s.get('items'))
+    if poster and nop: add('no-picture', 'warn', 0, '%d از %d صحنه هنوز عکس آپلودشده ندارند؛ با پس‌زمینه‌ی تیره ساخته می‌شوند.' % (nop, len(sc)))
+    elif nop / len(sc) > .15: add('no-picture', 'warn', 0, '%d از %d صحنه تصویر ندارند (فقط زیرنویس)؛ ویدیو خشک می‌شود.' % (nop, len(sc)))
     # runs of the same template
     run = 1
     for i in range(1, len(sc) + 1):
-        if i < len(sc) and sc[i]['tpl'] == sc[i - 1]['tpl']: run += 1; continue
+        if not poster and i < len(sc) and sc[i]['tpl'] == sc[i - 1]['tpl']: run += 1; continue
         if run >= L['run']: add('same-template', 'warn', sc[i - run]['t0'], '%d صحنه‌ی پشت‌سرهم با قالب «%s» از صحنه‌ی %d؛ تنوع کم است.' % (run, sc[i - 1]['tpl'], i - run))
         run = 1
     # stretches without a new visual event (scene change or a picture landing; the engine's camera beats come on top of this)
@@ -60,7 +62,7 @@ def main(ep):
     if mid: add('cut-mid-word', 'info', midl[0][1], '%d برش صحنه وسط یک کلمه شروع می‌شود (نمونه: صحنه‌ی %d در ثانیه‌ی %.1f).' % (mid, midl[0][0], midl[0][1]))
     # hook
     h = sc[0]; first = min([it['t'] for it in h.get('items', [])] or [99])
-    if h['t1'] - h['t0'] > L['hook_len'] or (h.get('items') and first > L['hook_pic']) or (not h.get('items') and not h.get('text')):
+    if h['t1'] - h['t0'] > L['hook_len'] or (not poster and h.get('items') and first > L['hook_pic']) or (not poster and not h.get('items') and not h.get('text')):
         add('hook', 'warn', 0, 'صحنه‌ی اول (قلاب) باید زود تصویر بیاورد (≤%.1f ثانیه) و از %.1f ثانیه بلندتر نباشد؛ الان: %.1f ثانیه، اولین تصویر در %s.' % (L['hook_pic'], L['hook_len'], h['t1'] - h['t0'], ('%.1f' % first) if first < 99 else 'هیچ'))
     # emphasised caption words
     if W:

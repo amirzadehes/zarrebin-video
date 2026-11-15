@@ -36,7 +36,7 @@ jobs:
           python3 - >> "$GITHUB_OUTPUT" <<'PY'
           import json
           q = json.load(open('episodes/${{ steps.ep.outputs.ep }}/request.json'))
-          print('review=' + str(bool(q.get('review'))).lower()); print('use_plan=' + str(bool(q.get('use_plan'))).lower())
+          print('review=' + str(bool(q.get('review'))).lower()); print('use_plan=' + str(bool(q.get('use_plan'))).lower()); print('poster=' + str(q.get('mode') == 'poster').lower())
           PY
       - run: pip install edge-tts numpy scipy
       - name: Install ffmpeg
@@ -52,6 +52,7 @@ jobs:
           rm -f build.log
           python tools/narrate_tts.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
       - name: Refresh the needed-images list for the current text
+        if: steps.mode.outputs.poster != 'true'
         continue-on-error: true
         env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
         run: |
@@ -62,7 +63,7 @@ jobs:
         env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
         run: |
           set -o pipefail
-          python tools/direct_scenes.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
+          if [ "${{ steps.mode.outputs.poster }}" = "true" ]; then python tools/direct_poster.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log; else python tools/direct_scenes.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log; fi
       - name: Check the voice matches the subtitles
         run: |
           set -o pipefail

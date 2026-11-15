@@ -23,6 +23,9 @@ const THEMES = [
 
 /* Vox-like editorial style: flat paper colours, soft shadows, marker highlights, calm motion (enabled with ?style=vox or meta.style) */
 let VOX = false;
+/* POSTER mode (meta.mode === 'poster'): one full-bleed picture per scene (the owner's own image, scene.photo.src) + text layers on top
+   (small label top-left, big number, headline chips with an orange highlighted word, word-by-word caption). Library pictures (items), pinned cards (pins), fx and sounds still work on top of it. */
+let POSTER = false; const ORG = '#ff5a1f';
 /* decorative symbols (arrow / plus / VS badge / burst ring / sparkle stars) are OFF by default; enable with ?symbols=1 or meta.symbols=true */
 let SYM = false;
 /* scene title cards (hero/duo/trio) are OFF: the caption itself sits on the paper. ?titles=1 / meta.titles brings them back. */
@@ -240,6 +243,76 @@ function its_corner(t, sc, c) { // items peek in from the corners around a text/
   sc.items.slice(0, 4).forEach((it, i) => drawItem(it, t, pos[i][0], pos[i][1], B * (V ? .36 : .38), i + 2))
 }
 
+
+/* ---------- POSTER mode ---------- */
+function posterBg(t, sc) {
+  const p = sc.photo || {}, im = p.src && IM[p.src], lt = t - sc.t0, pc = clamp(lt / Math.max(.8, sc.t1 - sc.t0 + WD));
+  ctx.fillStyle = '#14100e'; ctx.fillRect(-300, -300, W + 600, H + 600);
+  if (im) {
+    const mo = p.motion && p.motion !== 'auto' ? p.motion : ['in', 'out', 'left', 'right'][sc.idx % 4]; let z = 1.05, ox = 0;
+    if (EDIT || mo === 'none') z = 1; else if (mo === 'in') z = lerp(1.04, 1.15, pc); else if (mo === 'out') z = lerp(1.15, 1.04, pc); else if (mo === 'left') { z = 1.1; ox = lerp(.03, -.03, pc) } else if (mo === 'right') { z = 1.1; ox = lerp(-.03, .03, pc) }
+    const fx = p.fx == null ? .5 : p.fx, fy = p.fy == null ? .5 : p.fy, k = Math.max(W / im.width, H / im.height) * z, dw = im.width * k, dh = im.height * k;
+    const x = clamp((W - dw) * fx + ox * W, Math.min(0, W - dw), 0), y = clamp((H - dh) * fy, Math.min(0, H - dh), 0);
+    ctx.drawImage(im, x, y, dw, dh);
+  } else { const g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#2b2118'); g.addColorStop(1, '#14100e'); ctx.fillStyle = g; ctx.fillRect(-300, -300, W + 600, H + 600) }
+  let g = ctx.createLinearGradient(0, 0, 0, H * .3); g.addColorStop(0, 'rgba(10,6,2,.55)'); g.addColorStop(1, 'rgba(10,6,2,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H * .3);
+  g = ctx.createLinearGradient(0, H * (V ? .62 : .6), 0, H); g.addColorStop(0, 'rgba(10,6,2,0)'); g.addColorStop(1, 'rgba(10,6,2,.72)'); ctx.fillStyle = g; ctx.fillRect(0, H * (V ? .62 : .6), W, H);
+}
+TPL.poster = function (t, sc) {   // library pictures only (the owner places them with the usual tools); the layers of text are drawn by posterText
+  const its = sc.items || []; if (!its.length) return; const cx = W / 2, cy = H * (V ? .55 : .54), hs = B * (V ? .62 : .56);
+  const vo = heroVary(sc, its); drawItem(its[0], t, cx + vo.dx, cy, hs * (1 + .012 * Math.sin(t * 3)), 0, vo.rot);
+  const n = its.length - 1; its.slice(1).forEach((it, i) => { const a = -Math.PI / 2 + (i + .5) * TAU / Math.max(n, 1) + (n === 1 ? 2.2 : 0) + t * .05, rx = V ? W * .34 : W * .3, ry = V ? H * .17 : H * .24; drawItem(it, t, cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, B * .3, i + 1) })
+};
+function posterChips(text, size, maxW, cx, top, t, t0, align) {   // headline on dark chips, *word* on an orange chip; returns its height
+  const font = `900 ${size}px Vz`, L = wrapTokens(text, font, maxW), lh = size * 1.5, rtl = D.meta.rtl, padX = size * .38; let idx = 0;
+  ctx.save(); ctx.font = font; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.direction = rtl ? 'rtl' : 'ltr';
+  L.lines.forEach((ln, li) => {
+    const p = spr(t, t0 + li * .14, .55, 13); if (p <= 0) return; const y = top + lh * (li + .5), w = ln.w + 2 * padX;
+    const right = align === 'center' ? cx + w / 2 : align === 'right' ? cx : cx - w;   // box edge: right edge of the chip for 'right'
+    const x0 = align === 'center' ? cx - w / 2 : align === 'right' ? cx - w : cx;
+    ctx.save(); ctx.translate((x0 + w / 2), y); ctx.scale(.85 + .15 * Math.min(p, 1.1), .85 + .15 * Math.min(p, 1.1)); ctx.globalAlpha = clamp(p * 1.8);
+    ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 5; ctx.fillStyle = 'rgba(14,10,7,.84)'; ctx.beginPath(); ctx.roundRect(-w / 2, -lh * .46, w, lh * .92, size * .22); ctx.fill(); ctx.shadowColor = 'transparent';
+    let x = rtl ? w / 2 - padX : -w / 2 + padX;
+    ln.ws.forEach(k => { const kw = k.w; if (rtl) x -= kw;
+      if (k.hl) { ctx.fillStyle = ORG; ctx.beginPath(); ctx.roundRect(x - size * .22, -lh * .4, kw + size * .44, lh * .8, size * .18); ctx.fill() }
+      ctx.fillStyle = '#fff'; ctx.fillText(k.txt, x, 3); if (rtl) x -= L.sp; else x += kw + L.sp });
+    ctx.restore(); idx++ });
+  ctx.restore(); return L.lines.length * lh
+}
+function posterText(t, sc) {
+  const lt = t - sc.t0, m = V ? 70 : 90, rtl = D.meta.rtl, kp = sc.keyPos && sc.keyPos[FMT], k = sc.keySize || 1; let y = V ? 250 : 180;
+  const num = String(sc.number == null ? '' : sc.number).trim();
+  if (num) { const e = spr(t, sc.t0 + .15, .5, 12), size = B * (V ? .24 : .2); ctx.save(); ctx.font = `900 ${size}px Vz`; ctx.textBaseline = 'middle'; ctx.direction = 'ltr'; ctx.textAlign = rtl ? 'right' : 'left';
+    ctx.translate(rtl ? W - m : m, y + size * .55); ctx.scale(.7 + .3 * Math.min(e, 1.1), .7 + .3 * Math.min(e, 1.1)); ctx.globalAlpha = clamp(e * 1.6); ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 22; ctx.shadowOffsetY = 6; ctx.fillStyle = '#fff'; ctx.fillText(num, 0, 0); ctx.restore(); y += size * 1.12 }
+  if (sc.text && tOn(sc)) {
+    const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), t0 = sc.t0 + (num ? .5 : .3);
+    if (kp) { const L = wrapTokens(sc.text, `900 ${size}px Vz`, maxW), hh = L.lines.length * size * 1.5; posterChips(sc.text, size, maxW, kp.x * W, kp.y * H - hh / 2, t, t0, 'center') }
+    else posterChips(sc.text, size, maxW, rtl ? W - m : m, y, t, t0, rtl ? 'right' : 'left')
+  }
+}
+function uiPoster(t) {
+  const m = V ? 70 : 90, ty = V ? 98 : 70, bw = W - 2 * m, sc = D.scenes[sceneIndex(t)], rtl = D.meta.rtl; ctx.save();
+  ctx.fillStyle = '#fff'; ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 8; ctx.globalAlpha = .9; ctx.font = '700 28px Vz'; ctx.direction = 'ltr'; ctx.textAlign = rtl ? 'left' : 'right';
+  const lab = (sc && sc.kicker) || D.meta.topLabel || ''; ctx.fillText(lab, rtl ? m : W - m, ty);
+  const brand = D.meta.brand || 'ذره‌بین'; ctx.font = '900 30px Vz'; ctx.direction = 'rtl'; const bwid = ctx.measureText(brand).width + 36;
+  ctx.shadowColor = 'transparent'; ctx.globalAlpha = .95; ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.beginPath(); ctx.roundRect(rtl ? W - m - bwid : m, ty - 33, bwid, 56, 6); ctx.stroke();
+  ctx.textAlign = 'center'; ctx.fillText(brand, (rtl ? W - m - bwid : m) + bwid / 2, ty + 2);
+  const by = ty + 54; ctx.shadowColor = 'transparent'; ctx.fillStyle = '#fff'; ctx.globalAlpha = .2; ctx.fillRect(m, by, bw, 4); ctx.globalAlpha = .9; ctx.fillStyle = ORG; const pr = clamp(t / D.meta.total); ctx.fillRect(rtl ? m + bw * (1 - pr) : m, by, bw * pr, 4);
+  if (D.meta.footer) { ctx.globalAlpha = .55; ctx.fillStyle = '#fff'; ctx.font = '700 26px Vz'; ctx.direction = 'ltr'; ctx.textAlign = 'center'; ctx.fillText(D.meta.footer, W / 2, H - (V ? 64 : 34)) }
+  ctx.restore()
+}
+function subsPoster(t, c) {
+  const fs = V ? 62 : 54, a = clamp((t - c.t0) / .1) * clamp((c.t1 - t) / .12), rtl = D.meta.rtl, e = spr(t, c.t0, .5, 15), y = V ? 1500 : H - 130, k = .94 + .06 * Math.min(e, 1.1);
+  ctx.save(); ctx.font = `700 ${fs}px Vz`; const sp = ctx.measureText(' ').width, tot = c.words.reduce((q, w) => q + w.mw, 0) + sp * (c.words.length - 1); ctx.restore();
+  ctx.save(); ctx.translate(W / 2, y); ctx.scale(k, k); ctx.globalAlpha = a; ctx.font = `700 ${fs}px Vz`; ctx.direction = rtl ? 'rtl' : 'ltr'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; let x = rtl ? tot / 2 : -tot / 2;
+  c.words.forEach(w => { if (rtl) x -= w.mw; const on = t >= w.t0, act = on && t < w.t1 + .04, p = spr(t, w.t0, .5, 16);
+    ctx.save(); ctx.translate(x + w.mw / 2, 4);
+    if (w.kw && on) { const q = .85 + .15 * p; ctx.fillStyle = ORG; ctx.beginPath(); ctx.roundRect(-w.mw / 2 - 14, -fs * .56, (w.mw + 28), fs * 1.12, 10); ctx.fill(); ctx.fillStyle = '#fff'; ctx.scale(q, q) }
+    else { ctx.shadowColor = 'rgba(0,0,0,.85)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 3; ctx.fillStyle = act ? ORG : on ? '#fff' : 'rgba(255,255,255,.42)' }
+    ctx.fillText(w.txt, -w.mw / 2, 0); ctx.restore(); if (rtl) x -= sp; else x += w.mw + sp });
+  ctx.restore()
+}
+
 /* ---------- scene, wipe, camera ---------- */
 /* ---------- owner-placed key text: position per format (sc.keyPos.v / .h = {x,y} as fractions of the frame), paper style, size, turned text ---------- */
 const keyCustom = sc => !!(sc.text && tOn(sc) && ((sc.keyPos && sc.keyPos[FMT]) || (sc.keyPaper && sc.keyPaper !== 'auto') || sc.keyTurn || (sc.keySize && sc.keySize !== 1)));
@@ -316,13 +389,13 @@ function tfCounter(t, sc, f) {
 function drawScene(t, sc) {
   CUR = sc; if (EDIT) for (const k in REC) delete REC[k]; const th = THEMES[sc.theme], lt = t - sc.t0, dur = sc.t1 - sc.t0, kc = sc.idx % 4, pc = ramp(lt, 0, dur + .6);
   // camera: each scene gets its own move (push in / pull out, with a slow pan) so consecutive scenes never feel identical
-  const z = EDIT ? 1 : (kc % 2 ? lerp(1.08, 1.0, pc) : lerp(1.0, 1.08, pc)) * (1 + beatZ(t)), px = EDIT ? 0 : [-1, 1, 0, 0][kc] * lerp(-16, 16, pc), py = EDIT ? 0 : [0, 0, -1, 1][kc] * lerp(-14, 14, pc);
+  const z = EDIT ? 1 : POSTER ? 1 + beatZ(t) : (kc % 2 ? lerp(1.08, 1.0, pc) : lerp(1.0, 1.08, pc)) * (1 + beatZ(t)), px = EDIT || POSTER ? 0 : [-1, 1, 0, 0][kc] * lerp(-16, 16, pc), py = EDIT || POSTER ? 0 : [0, 0, -1, 1][kc] * lerp(-14, 14, pc);
   let shake = 0; sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .35) shake = Math.max(shake, 8 * (1 - d / .35)) }); if (EDIT) { shake = 0 }
   ctx.save(); ctx.translate(W / 2 + px + Math.sin(t * 90) * shake, H / 2 + py + Math.cos(t * 77) * shake); ctx.scale(z, z); ctx.translate(-W / 2, -H / 2 + (V ? 0 : 0));
-  const TF = tfOf(sc);
-  if (TF) tfBg(t, sc, th, TF); else { bgLayer(t, sc, th); if (window.FXL && sc.bg && sc.bg.src) FXL.bg(t, sc) }   // optional background picture layer (engine/fx.js)
+  const TF = POSTER ? null : tfOf(sc);
+  if (POSTER) posterBg(t, sc); else if (TF) tfBg(t, sc, th, TF); else { bgLayer(t, sc, th); if (window.FXL && sc.bg && sc.bg.src) FXL.bg(t, sc) }   // optional background picture layer (engine/fx.js)
   if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, false);   // optional framed pictures pinned to the backdrop
-  decor(t, sc, th); const KC = keyCustom(sc); (TPL[sc.tpl] || TPL.hero)(t, KC ? Object.assign(Object.create(sc), { keyOn: false }) : sc); if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, true); if (KC) keyCard(t, sc); ctx.restore(); if (TF) tfCounter(t, sc, TF)   // pins marked 'top' (stamps, arrows) lie over the pictures
+  decor(t, sc, th); const KC = POSTER ? false : keyCustom(sc); (POSTER ? TPL.poster : (TPL[sc.tpl] || TPL.hero))(t, KC ? Object.assign(Object.create(sc), { keyOn: false }) : sc); if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, true); if (KC) keyCard(t, sc); if (POSTER) posterText(t, sc); ctx.restore(); if (TF) tfCounter(t, sc, TF)   // pins marked 'top' (stamps, arrows) lie over the pictures
 }
 function wipePath(style, p, k) {
   const e = eio(p); ctx.beginPath();
@@ -353,7 +426,7 @@ function buildCaptions() {
 }
 function subs(t) {
   if (D.meta.subs === false) return;
-  const c = CH.find(c => t >= c.t0 && t < c.t1); if (!c) return; const fs = V ? 62 : 54, a = clamp((t - c.t0) / .1) * clamp((c.t1 - t) / .12), rtl = D.meta.rtl;
+  const c = CH.find(c => t >= c.t0 && t < c.t1); if (!c) return; if (POSTER) return subsPoster(t, c); const fs = V ? 62 : 54, a = clamp((t - c.t0) / .1) * clamp((c.t1 - t) / .12), rtl = D.meta.rtl;
   const e = spr(t, c.t0, .5, 15), y = V ? 1480 : H - 130, rot = (c.s % 2 ? 1 : -1) * .012, sc0 = .9 + .1 * Math.min(e, 1.1);
   ctx.save(); ctx.font = `700 ${fs}px Vz`; const sp = ctx.measureText(' ').width, tot = c.words.reduce((q, w) => q + w.mw, 0) + sp * (c.words.length - 1); ctx.restore();
   card(W / 2, y, tot + 120, fs * 1.85, '#fff', rot, a, sc0);   // the paper (vox: torn paper, comic: white card); the caption is the only text of a scene now
@@ -375,6 +448,7 @@ function uiVox(t) {
   const by = ty + 54; ctx.globalAlpha = .18; ctx.fillRect(m, by, bw, 4); ctx.globalAlpha = .8; const pr = clamp(t / D.meta.total); ctx.fillRect(D.meta.rtl ? m + bw * (1 - pr) : m, by, bw * pr, 4); ctx.restore()
 }
 function ui(t) {
+  if (POSTER) return uiPoster(t);
   if (VOX) return uiVox(t);
   const y0 = V ? 1380 : H - 230, g = ctx.createLinearGradient(0, y0, 0, H); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.62)'); ctx.fillStyle = g; ctx.fillRect(0, y0, W, H - y0);
   const m = V ? 70 : 90, ty = V ? 98 : 70, bw = W - 2 * m;
@@ -396,8 +470,8 @@ function draw(t) {
 window.frame = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0); if (MB) { draw(t + .6 / 30); octx.globalAlpha = .5; octx.drawImage(cv, 0, 0); octx.globalAlpha = 1 } };
 window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
 window.loadData = async (DD, only) => {   // shared by the renderer and the in-app preview (only = scene indices whose images are needed)
-  D = DD; VOX = (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; VARY = Q.get('vary') !== '0' && D.meta.vary !== false; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
-  D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => { srcs.add(i.src); (i.fx || []).forEach(f => { if (f && f.type === 'bubble' && f.file) srcs.add(f.file) }) }); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
+  D = DD; POSTER = D.meta.mode === 'poster'; VOX = POSTER || (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; VARY = Q.get('vary') !== '0' && D.meta.vary !== false; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
+  D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => { srcs.add(i.src); (i.fx || []).forEach(f => { if (f && f.type === 'bubble' && f.file) srcs.add(f.file) }) }); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); if (s.photo && s.photo.src) srcs.add(s.photo.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
   await Promise.all([...[...srcs].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
   if (window.FXL) await FXL.prepare([...srcs]);
   mkGrain(); mkPaper(); CH.length = 0; buildCaptions(); buildBeats(); seek(0); return true

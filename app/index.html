@@ -222,9 +222,24 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
 .kpad i.t{width:22px;height:44px;margin:-22px 0 0 -11px}
 .kfmt{display:flex;gap:6px;justify-content:center}
 .kfmt button.on{background:var(--acc);color:var(--acc-tx);border-color:var(--acc)}
+/* ---------- mode switch (classic / poster) + poster panels ---------- */
+.modesw{display:flex;gap:6px;padding:12px 0 0}
+.modesw button{flex:1;min-height:42px;font-size:14px;padding:0 8px}
+.modesw button.on{background:var(--acc);color:var(--acc-tx);border-color:var(--acc)}
+body[data-mode=poster] .modesw button.on{background:#ff5a1f;color:#fff;border-color:#ff5a1f}
+.pstBox{border:1px dashed #ff5a1f;border-radius:14px;padding:10px 12px;margin:0 0 12px;background:#1d1511}
+.pst{border:1px solid #6b3a22;border-radius:14px;padding:10px;margin-bottom:10px;background:#1d1511}
+.pst .ph{display:grid;grid-template-columns:84px 1fr;gap:10px;align-items:start}
+.pst .pimg{width:84px;aspect-ratio:9/16;border-radius:10px;border:1px solid var(--line);background:#17120f center/cover no-repeat;display:grid;place-items:center;color:var(--mut);font-size:12px;text-align:center}
+.pst textarea{min-height:96px}
+.pst .pst2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:560px){.pst .pst2{grid-template-columns:1fr;gap:0}}
+#rvBody[data-poster] .pgrid>div:first-child{display:none}
+.pbar{border:1px solid #6b3a22;border-radius:14px;padding:10px;margin:8px 0;background:#1d1511}
 </style>
 </head>
 <body>
+<div class="modesw" id="modeSw" role="group" aria-label="سبک ساخت ویدیو"><button data-m="classic">ذره‌بین (کتابخانه)</button><button data-m="poster">پوستر (عکس تمام‌صفحه)</button></div>
 <header>
   <h1>کتابخانه‌ی <span>ذره‌بین</span></h1>
   <button id="btnSet">تنظیمات</button>
@@ -301,6 +316,9 @@ const fa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let S = { repo: ls.get('repo','amirzadehes/zarrebin-video'), token: ls.get('token',''), style: ls.get('style','comic'), wanted: [], pool: [], genN: +ls.get('genN','30'), catalog: {items:{}}, report: {runs:[]}, pending: 0, custom: JSON.parse(ls.get('custom','[]')), picks: {} };
 
+S.mode = ls.get('mode','classic')==='poster' ? 'poster' : 'classic';
+const isPoster = () => !!(RV && RV.data && RV.data.meta && RV.data.meta.mode==='poster');
+const noPic = s => isPoster() ? !(s.photo && s.photo.src) : (!(s.items||[]).length && s.tpl!=='stat');
 function toast(t, ms=3200){ const e=$('#toast'); e.textContent=t; e.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>e.classList.remove('show'), ms); }
 async function api(path, opt={}){
   const h = { 'Accept':'application/vnd.github+json' }; if (S.token) h.Authorization = 'Bearer '+S.token;
@@ -425,6 +443,9 @@ async function renderEp(){
     ${eps.length?`<div class="card" id="epPrev"><label>قسمت‌های قبلی</label><div class="row" id="epList">${eps.map(e=>`<button data-e="${e}">${epTitle(e)}</button>`).join('')}</div></div>`:''}
     <div id="epBuild"><div class="card" id="epCfg"><div class="name cfgHead" id="cfgHead" role="button" tabindex="0" aria-expanded="true" title="کوچک یا بزرگ کردن"><span>ساخت ویدیو</span><span class="chev" id="cfgChev">▾</span></div>
       <div id="bProg" class="prog" hidden></div><div id="cfgBody">
+      <div class="pstBox" id="pstBox" hidden><div class="hint" style="margin:0 0 6px"><b>حالت پوستر:</b> هر صحنه یک عکس تمام‌صفحه دارد و فقط نوشته روی آن می‌آید. بعد از «۱. آماده‌سازی صحنه‌ها» برای هر صحنه یک پرامپت تصویر می‌گیری؛ آن را در موتور ساخت تصویر می‌زنی و عکس را همان‌جا در بازبینی آپلود می‌کنی. برای مقایسه‌ی عادلانه، متن را با یک نام انگلیسی دیگر (مثلاً با پسوند -poster) بفرست تا قسمت قبلی دست‌نخورده بماند.</div>
+        <label>سبک تصویر (به انتهای هر پرامپت چسبانده می‌شود؛ می‌توانی عوضش کنی)</label><textarea id="pstStyle" rows="5" dir="ltr" style="min-height:110px"></textarea><div class="row"><button id="pstStyleReset" type="button">برگرداندن به سبک پیش‌فرض</button></div>
+        <label>نوشته‌ی کوچک پایین ویدیو (اختیاری، مثلاً آدرس کانال)</label><input type="text" id="pstFooter" class="ltr" placeholder="Linktr.ee/..."></div>
       <label>طول تقریبی ویدیو (اگر صدای خودت را بدهی، طول ویدیو دقیقاً به اندازه‌ی صدای توست و این گزینه نادیده گرفته می‌شود)</label>
       <select id="bMin" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px"><option value="3">حدود ۳ دقیقه (آزمایشی)</option><option value="5">حدود ۵ دقیقه</option><option value="7" selected>حدود ۷ دقیقه</option><option value="8">حدود ۸ دقیقه</option></select>
       <label>صدای خودت (اختیاری): اگر فایل صدا انتخاب کنی، به‌جای صدای هوش مصنوعی همان استفاده می‌شود</label>
@@ -469,6 +490,7 @@ async function renderEp(){
   $('#epFaSave').onclick = async()=>{ const f=$('#epFaSt'), en=slug($('#epName').value), t=$('#epFa').value.trim(); if(!S.token){ f.className='st bad'; f.textContent='اول در تنظیمات توکن را وارد کن'; return } if(!en){ f.className='st bad'; f.textContent='اول نام انگلیسی قسمت را بنویس یا یک قسمت را انتخاب کن'; return } if(!t){ f.className='st bad'; f.textContent='نام فارسی را بنویس'; return }
     try{ await saveTitle(en,t); const sh=en.replace(/-short$/,'')+'-short'; if((S.eps||[]).includes(sh)&&!/-short$/.test(en)) await saveTitle(sh,t); f.className='st ok'; f.textContent='✓ ذخیره شد'; renderEpLabels() }catch(e){ f.className='st bad'; f.textContent='خطا: '+e.message } };
   if(cur){ readText(cur) } renderWant();
+  if(window.applyMode) applyMode();
 }
 async function readText(ep){ try{ const j=await api('/contents/episodes/'+ep+'/script.txt'); $('#epText').value=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))); }catch(e){} }
 const STEPFA=[[/Narration/,'نوشتن روایت و ساخت صدا'],[/Scene director/,'طراحی صحنه‌ها'],[/Sound effects/,'ساخت افکت‌های صوتی'],[/Background music/,'انتخاب موزیک'],[/Save narration/,'ذخیره‌ی نتایج'],[/Render chunk/,'رندر تصویر'],[/Join/,'ترکیب نهایی و بهینه‌سازی حجم'],[/Publish/,'انتشار ویدیو']];
@@ -511,13 +533,14 @@ async function delVid(row){
 function textOverlap(a,b){ const W=t=>new Set(nz(t).split(' ').filter(w=>w.length>2)); const A=W(a), B=W(b); if(!A.size||!B.size) return 1; let n=0; A.forEach(w=>{ if(B.has(w)) n++ }); return n/Math.min(A.size,B.size) }
 async function buildVideo(mode){
   const st=$('#bSt'), ep=slug($('#epName').value);
+  if(S.mode==='poster'&&mode==='direct'){ st.className='st bad'; st.textContent='در حالت پوستر اول باید عکس صحنه‌ها را آپلود کنی؛ از «۱. آماده‌سازی صحنه‌ها» شروع کن.'; return; }
   if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return; }
   if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس (همان که متن را با آن فرستادی)'; return; }
   const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
   /* an own-voice episode does not need a pasted script: the recording itself (Whisper) is the text. Only a computer-voice episode needs script.txt */
   if(!$('#bOwn').files[0]){ try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده؛ یا ویس خودت را انتخاب کن، یا متن را در بالا بنویس و «ارسال و تحلیل» را بزن.'; return; } }
   try{ const t=($('#epFa')?$('#epFa').value:'').trim(); if(t){ await saveTitle(ep, t); renderEpLabels() } }catch(_){}
-  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.sfx_vol=+$('#bSfxVol').value; body.subs=$('#bSubs').checked; if($('#bTitles')&&$('#bTitles').checked) body.titles=true; body.music=$('#bMusic').value; body.style=S.style; body.review=(mode==='review'); if(/-short$/.test(ep)) body.short=true; body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
+  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.sfx_vol=+$('#bSfxVol').value; body.subs=$('#bSubs').checked; if($('#bTitles')&&$('#bTitles').checked) body.titles=true; body.music=$('#bMusic').value; body.style=S.style; if(S.mode==='poster'){ body.mode='poster'; body.footer=(($('#pstFooter')||{}).value||'').trim() } body.review=(mode==='review'); if(/-short$/.test(ep)) body.short=true; body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
   st.className='st'; st.textContent='در حال شروع…';
   if(ownF){   /* a new episode typed into an old folder (same English name, only the Persian name changed) would be built on top of the old one and keep its needed-images list */
     let nt=($('#bSpoken')?$('#bSpoken').value:'').trim(); if(nt.length<20) nt=$('#epText').value.trim(); nt=cleanScript(nt); let prev='';
@@ -567,15 +590,15 @@ const srcId=s=>(s||'').split('/').pop().split('__')[0];
 async function loadReview(ep, quiet){ const body=$('#rvBody'); if(!body) return;
   try{ const j=await api('/contents/episodes/'+ep+'/scenes.json'); let txt=j.content&&j.content.replace(/\n/g,'')?new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))):null;
     if(!txt){ const r=await fetch(j.download_url); txt=await r.text() }
-    RV={ep, sha:j.sha, data:JSON.parse(txt)}; renderReview() }catch(e){ if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
+    RV={ep, sha:j.sha, data:JSON.parse(txt), req:(await readJson('episodes/'+ep+'/request.json',{}))||{}}; renderReview() }catch(e){ if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
 function thumbUrl(src){ return /^decor\//.test(src)?'https://raw.githubusercontent.com/'+S.repo+'/main/'+src:raw(src.replace(/^library\//,'')) }
-function renderReview(){ const body=$('#rvBody'); if(!RV||!body) return; epDock(RV.ep); const sc=RV.data.scenes; const empty=sc.filter(s=>!(s.items||[]).length&&s.tpl!=='stat').length;
+function renderReview(){ const body=$('#rvBody'); if(!RV||!body) return; epDock(RV.ep); const sc=RV.data.scenes; const empty=sc.filter(noPic).length;
   body.innerHTML=`<p class="hint"><b>${epTitle(RV.ep)}</b>: ${fa(sc.length)} صحنه${empty?` · <span style="color:#e0733f">${fa(empty)} صحنه بدون تصویر (علامت ⚠️)</span>`:''}. هر صحنه را باز کن؛ با ✕ تصویر را حذف کن یا از کتابخانه اضافه کن. تغییرها خودکار ذخیره می‌شوند. <b id="rvOk"></b></p>`+
-  sc.map((s,i)=>{ const n=(s.items||[]).length; const warn=!n&&s.tpl!=='stat';
+  sc.map((s,i)=>{ const warn=noPic(s);
     return `<details class="sc ${warn?'warn':''}" data-i="${i}"><summary>${sceneHead(s,i)}</summary><div class="body"></div></details>`}).join('')+
   `<div class="row" style="margin-top:12px"><button id="rvSubAll">✏️ ویرایش زیرنویس کل قسمت (املا)</button></div><div class="row" style="margin-top:12px"><button id="rvAll">▶ دیدن کل ویدیو (پیش‌نمایش با صدا و افکت‌ها، قبل از ساخت نهایی)</button></div><div class="row" style="margin-top:12px"><button class="pri" id="rvGo">۲. ادامه: ساخت ویدیو با همین صحنه‌ها</button></div><div class="st" id="rvSt"></div>`;
   updOk(); body.querySelectorAll('details.sc').forEach(d=>d.addEventListener('toggle',()=>{ if(d.open) fillScene(d) }));
-  $('#rvGo').onclick=rvContinue; $('#rvSubAll').onclick=subAllDialog; $('#rvAll').onclick=()=>openPreview(0,'all') }
+  $('#rvGo').onclick=rvContinue; $('#rvSubAll').onclick=subAllDialog; $('#rvAll').onclick=()=>openPreview(0,'all'); body.toggleAttribute('data-poster',isPoster()); if(isPoster()&&window.posterBar) posterBar(body) }
 const nz=t=>String(t||'').toLowerCase().replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/[\u200c\u064b-\u065f]/g,'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\s+/g,' ').trim();
 
 const okOf=(s,f)=>!!(s.ok&&typeof s.ok==='object'?s.ok[f]:(f==='v'&&s.ok===true));
@@ -701,7 +724,7 @@ function bubbleUI(host,obj,done){
   wireSliders(host,()=>f,done);
   const fl=host.querySelector('.bbFlip'); if(fl) fl.onchange=()=>{ f.flip=fl.checked; done() };
   host.querySelector('.bbAuto').onchange=e=>{ if(e.target.checked) delete f.anchor; else f.anchor=[.5,.1]; redraw(); done() } }
-const sceneHead=(s,i)=>{ const n=(s.items||[]).length, warn=!n&&s.tpl!=='stat'; return `${okOf(s,'v')&&okOf(s,'h')?'✅ ':(okOf(s,'v')||okOf(s,'h'))?'🔸 ':''}${warn?'⚠️ ':''}${s.bg&&s.bg.src?'🖼 ':''}<b>${fa(i+1)}</b> · ${(s.text||s.number||'').replace(/\*/g,'')||'—'} <span style="color:var(--mut)">(${fa(n)} تصویر)</span>` };
+const sceneHead=(s,i)=>{ const n=(s.items||[]).length, warn=noPic(s); return `${okOf(s,'v')&&okOf(s,'h')?'✅ ':(okOf(s,'v')||okOf(s,'h'))?'🔸 ':''}${warn?'⚠️ ':''}${isPoster()&&s.photo&&s.photo.src?'📷 ':''}${s.bg&&s.bg.src?'🖼 ':''}<b>${fa(i+1)}</b> · ${(s.text||s.number||'').replace(/\*/g,'')||'—'} <span style="color:var(--mut)">(${fa(n)} تصویر)</span>` };
 const wordAtT=(s,t)=>{ let b=null; sceneWords(s).forEach(w=>{ if(w.t0<=t+.08) b=w }); return b?b.w:'—' };
 const wordAt=(s,it)=>{ let b=null; sceneWords(s).forEach(w=>{ if(w.t0<=it.t+.08) b=w }); return b?b.w:'—' };
 const narr=s=>(RV.data.words||[]).filter(w=>w.t0>=s.t0-.02&&w.t0<s.t1-.02).map(w=>w.w).join(' ');
@@ -784,7 +807,7 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
       s.items.push({t:+tt.toFixed(3), src:'library/'+v, en:'pop'}); toast('اضافه شد'); rvChanged(i,d) };
     pk.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{ const it=S.catalog.items[t.dataset.id]; if((s.items||[]).length>=6) return toast('حداکثر ۶ تصویر در هر صحنه');
       if(it.variants.length>1) varStrip(pk,it,v=>addPic(it,v)); else addPic(it,it.variants[0]) }) }
-  bgFxUI(box,s,i,d); tfUI(box,s,i,d) }
+  bgFxUI(box,s,i,d); if(isPoster()){ if(window.posterBlock) posterBlock(box,s,i,d) } else tfUI(box,s,i,d) }
 
 /* ---------- time flip (scene.tf): whole background flips fast to one side while a year counter rolls; same speed for both ---------- */
 function tfUI(box,s,i,d){
@@ -1019,7 +1042,7 @@ async function rvPush(){ const st=$('#rvSt'); const path='/contents/episodes/'+R
   for(let k=0;k<4;k++){ try{ const r=await api(path,{method:'PUT',body:JSON.stringify({message:'review edits: '+RV.ep,content:enc(JSON.stringify(RV.data)),branch:'main',sha:RV.sha})}); RV.sha=r.content.sha; if(st){ st.className='st ok'; st.textContent='✓ ذخیره شد' } return true }
     catch(e){ try{ RV.sha=(await api(path)).sha }catch(_){} await sleep(1200) } }
   if(st){ st.className='st bad'; st.textContent='ذخیره نشد؛ دوباره تغییر بده' } return false }
-async function rvContinue(){ const st=$('#rvSt'); const rq=await readJson('episodes/'+RV.ep+'/request.json',null); const fm=(rq&&rq.formats)||['v','h']; const un=RV.data.scenes.filter(s=>fm.some(f=>!okOf(s,f))).length; if(un&&!confirm(fa(un)+' صحنه هنوز تأیید نشده است. با همین حال ویدیو ساخته شود؟')) return; if(!S.token){ st.className='st bad'; st.textContent='اول توکن را وارد کن'; return }
+async function rvContinue(){ const st=$('#rvSt'); const rq=await readJson('episodes/'+RV.ep+'/request.json',null); const fm=(rq&&rq.formats)||['v','h']; const un=RV.data.scenes.filter(s=>fm.some(f=>!okOf(s,f))).length; if(un&&!confirm(fa(un)+' صحنه هنوز تأیید نشده است. با همین حال ویدیو ساخته شود؟')) return; const np=isPoster()?RV.data.scenes.filter(noPic).length:0; if(np&&!confirm(fa(np)+' صحنه هنوز عکس ندارد و با پس‌زمینه‌ی تیره ساخته می‌شود. ادامه بدهم؟')) return; if(!S.token){ st.className='st bad'; st.textContent='اول توکن را وارد کن'; return }
   clearTimeout(rvT); st.className='st'; st.textContent='در حال ذخیره‌ی صحنه‌ها…'; if(!(await rvPush())) return;
   let req=await readJson('episodes/'+RV.ep+'/request.json',null); if(!req){ st.className='st bad'; st.textContent='درخواست ساخت پیدا نشد'; return }
   req.review=false; req.use_plan=true; req.ts=Date.now(); let sha; try{ sha=(await api('/contents/episodes/'+RV.ep+'/request.json')).sha }catch(e){}
@@ -1343,6 +1366,71 @@ loadAll();
   try{ const v=localStorage.getItem('sfxVol'); if(v!=null){ r.value=v; n.textContent=v } }catch(e){}
   r.oninput=()=>{ n.textContent=r.value; try{ localStorage.setItem('sfxVol',r.value) }catch(e){} };
   b.onclick=()=>sfxBeep(+r.value,0); })();
+</script>
+<script>
+/* ===== poster mode: switch, prompts, photo upload ===== */
+const POSTER_STYLE_DEFAULT = 'Painterly retro poster illustration with soft flat shapes, fine paper grain and a muted warm palette with one orange accent; cinematic light; one clear focal subject in the middle of the frame, with calm, uncluttered space in the top third and the bottom quarter so text can be placed over it. Only the drawing technique is vintage; the subjects, clothes and objects match the era of the story. No text, letters, numbers, logos or watermarks anywhere in the image.';
+const posterStyle = () => (ls.get('posterStyle','') || POSTER_STYLE_DEFAULT);
+function applyMode(){
+  document.body.dataset.mode = S.mode; const po = S.mode==='poster';
+  document.querySelectorAll('#modeSw button').forEach(b=>b.classList.toggle('on', b.dataset.m===S.mode));
+  const bx = $('#pstBox'); if(bx){ bx.hidden = !po; const ta=$('#pstStyle'); if(ta&&!ta.dataset.on){ ta.dataset.on=1; ta.value=posterStyle(); ta.oninput=()=>ls.set('posterStyle', ta.value.trim()===POSTER_STYLE_DEFAULT?'':ta.value.trim()); $('#pstStyleReset').onclick=()=>{ ls.set('posterStyle',''); ta.value=POSTER_STYLE_DEFAULT; toast('سبک پیش‌فرض برگشت') } }
+    const f=$('#pstFooter'); if(f&&!f.dataset.on){ f.dataset.on=1; f.value=ls.get('posterFooter',''); f.oninput=()=>ls.set('posterFooter',f.value.trim()) } }
+  /* the classic-only controls of the build card (image style, palette, key-text switch, direct build) are hidden in poster mode */
+  ['bStyle','bPal','bBaseOn','bTitles','bGoDirect'].forEach(id=>{ const e=document.getElementById(id); if(!e) return; const L=(e.tagName==='SELECT'&&e.previousElementSibling&&e.previousElementSibling.tagName==='LABEL')?e.previousElementSibling:null; const w=(id==='bBaseOn'||id==='bTitles')?e.closest('label'):e; if(w) w.hidden=po; if(L) L.hidden=po; });
+}
+document.querySelectorAll('#modeSw button').forEach(b=>b.onclick=()=>{ if(S.mode===b.dataset.m) return; S.mode=b.dataset.m; ls.set('mode',S.mode); applyMode();
+  toast(S.mode==='poster'?'حالت پوستر: ساخت‌های تازه با عکس تمام‌صفحه و پرامپت برای هر صحنه':'حالت ذره‌بین (کتابخانه‌ی تصاویر)', 4200) });
+applyMode();
+
+function posterFull(s){
+  const f=(RV&&RV.req&&RV.req.formats)||['v'], asp = f.length>1 ? 'Vertical 9:16 composition; the picture is also cropped to 16:9, so keep the subject centered.' : f[0]==='h' ? 'Horizontal 16:9 composition.' : 'Vertical 9:16 composition.';
+  return [((s.photo&&s.photo.prompt)||'').trim(), posterStyle(), asp].filter(Boolean).join(' ');
+}
+const rawRepo = path => 'https://raw.githubusercontent.com/'+S.repo+'/main/'+path;
+const photoTitle = i => 'عکس صحنه‌ی '+fa(i+1);
+async function resizeJpeg(file, maxSide=2400, q=.88){
+  const url=URL.createObjectURL(file);
+  try{ const img=await new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=()=>rej(new Error('این فایل تصویر نیست یا خوانده نشد')); im.src=url });
+    const k=Math.min(1,maxSide/Math.max(img.naturalWidth,img.naturalHeight)), w=Math.round(img.naturalWidth*k), h=Math.round(img.naturalHeight*k), c=document.createElement('canvas'); c.width=w; c.height=h; const g=c.getContext('2d'); g.fillStyle='#000'; g.fillRect(0,0,w,h); g.drawImage(img,0,0,w,h);
+    return await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error('تبدیل تصویر ناموفق بود')),'image/jpeg',q)); }
+  finally{ URL.revokeObjectURL(url) } }
+async function posterUpload(i, file){
+  const s=RV.data.scenes[i], blob=await resizeJpeg(file), b64=await toB64(blob), path='episodes/'+RV.ep+'/bg/'+String(i+1).padStart(2,'0')+'-'+Date.now().toString(36)+'.jpg', old=s.photo&&s.photo.src;
+  await putSerial(path,b64,'poster photo: '+RV.ep+' #'+(i+1));
+  s.photo=Object.assign({},s.photo||{},{src:path}); clearOk(s); rvSave();
+  if(old&&old!==path){ try{ const j=await api('/contents/'+old); await delFile(old,j.sha,'replace photo: '+old) }catch(_){} }
+  const d=document.querySelector('details.sc[data-i="'+i+'"]'); if(d){ d.querySelector('summary').innerHTML=sceneHead(s,i); d.classList.toggle('warn',noPic(s)) }
+  updOk(); pvRefresh(i); }
+function posterBlock(box,s,i,d){
+  s.photo=s.photo||{}; const el=document.createElement('div'); el.className='pst';
+  el.innerHTML=`<div class="ph"><div class="pimg">${s.photo.src?'':'بدون عکس'}</div><div><label style="margin-top:0">پرامپت عکس این صحنه (انگلیسی؛ می‌توانی ویرایش کنی)</label><textarea class="pPrompt" dir="ltr"></textarea></div></div>
+    <div class="row"><button class="pri pCopy">کپی پرامپت (همراه سبک)</button><label class="btn" style="display:grid;place-items:center;margin:0">${s.photo.src?'جایگزینی عکس':'آپلود عکس'}<input type="file" accept="image/*" hidden class="pFile"></label></div>
+    <div class="st pSt"></div>
+    <div class="pst2"><div><label>برچسب کوچک بالا (مثلاً ROME · 1970s)</label><input type="text" class="pKick ltr" maxlength="40"></div>
+      <div><label>حرکت عکس</label><select class="sel pMot"><option value="auto">خودکار</option><option value="in">زوم به داخل</option><option value="out">زوم به بیرون</option><option value="left">حرکت به چپ</option><option value="right">حرکت به راست</option><option value="none">ثابت</option></select></div></div>
+    <p class="hint" style="margin:8px 0 0">عنوان روی عکس همان «متن کلیدی» پایین است (کلمه‌ی مهم بین ستاره). عدد یا سال بزرگ را در کادر «عدد» بنویس. تصویرهای کتابخانه، کارت‌های چسبیده و افکت‌ها مثل قبل روی عکس کار می‌کنند.</p>`;
+  box.insertBefore(el, box.firstChild);
+  const img=el.querySelector('.pimg'); if(s.photo.src){ img.style.backgroundImage='url("'+rawRepo(s.photo.src)+'")' }
+  const pr=el.querySelector('.pPrompt'); pr.value=s.photo.prompt||''; pr.oninput=()=>{ s.photo.prompt=pr.value; rvSave() };
+  el.querySelector('.pCopy').onclick=async()=>{ const t=posterFull(s); if(!(s.photo.prompt||'').trim()) return toast('این صحنه پرامپت ندارد؛ اول یکی بنویس'); toast(await copy(t)?'پرامپت کپی شد؛ در موتور ساخت تصویر بزن':'کپی نشد؛ متن را دستی انتخاب کن') };
+  const kk=el.querySelector('.pKick'); kk.value=s.kicker||''; kk.oninput=()=>{ s.kicker=kk.value; rvSave(); pvRefresh(i) };
+  const mo=el.querySelector('.pMot'); mo.value=s.photo.motion||'auto'; mo.onchange=()=>{ if(mo.value==='auto') delete s.photo.motion; else s.photo.motion=mo.value; clearOk(s); rvSave(); pvRefresh(i) };
+  const st=el.querySelector('.pSt'); el.querySelector('.pFile').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; if(!S.token){ st.className='st pSt bad'; st.textContent='اول توکن را در تنظیمات وارد کن'; return }
+    st.className='st pSt'; st.textContent='در حال کوچک‌کردن و ارسال عکس…'; try{ await posterUpload(i,f); st.className='st pSt ok'; st.textContent='✓ عکس گذاشته شد'; img.textContent=''; img.style.backgroundImage='url("'+URL.createObjectURL(f)+'")' }catch(er){ st.className='st pSt bad'; st.textContent='خطا: '+er.message } } }
+function posterBar(body){
+  const sc=RV.data.scenes, bar=document.createElement('div'); bar.className='pbar';
+  bar.innerHTML=`<div class="hint" style="margin:0 0 6px"><b>حالت پوستر:</b> ${fa(sc.filter(s=>s.photo&&s.photo.src).length)} از ${fa(sc.length)} صحنه عکس دارند.</div>
+    <div class="row"><button class="pAll">کپی همه‌ی پرامپت‌ها (شماره‌دار)</button><label class="btn pri" style="display:grid;place-items:center;margin:0;color:var(--acc-tx)">آپلود چندتایی عکس<input type="file" accept="image/*" multiple hidden class="pMulti"></label></div>
+    <p class="hint" style="margin:6px 0 0">آپلود چندتایی: عکس‌ها به ترتیب نام فایل، از اولین صحنه‌ی بدون عکس چیده می‌شوند. اگر می‌خواهی ترتیبشان درست باشد، نام فایل‌ها را ۰۱، ۰۲، … بگذار.</p><div class="st pBst"></div>`;
+  body.insertBefore(bar, body.firstChild);
+  bar.querySelector('.pAll').onclick=async()=>{ const t=sc.map((s,i)=>(s.photo&&s.photo.prompt)?fa(i+1)+') '+posterFull(s):'').filter(Boolean).join('\n\n'); toast(await copy(t)?'همه‌ی پرامپت‌ها کپی شد':'کپی نشد') };
+  const st=bar.querySelector('.pBst'); bar.querySelector('.pMulti').onchange=async e=>{ const fs=[...e.target.files].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true})); e.target.value=''; if(!fs.length) return; if(!S.token){ st.className='st pBst bad'; st.textContent='اول توکن را در تنظیمات وارد کن'; return }
+    let i=Math.max(0,sc.findIndex(s=>!(s.photo&&s.photo.src))), n=0; if(i<0) i=0;
+    for(const f of fs){ if(i>=sc.length){ st.className='st pBst bad'; st.textContent=fa(fs.length-n)+' عکس اضافه ماند: صحنه‌ی خالی دیگری نیست.'; break }
+      st.className='st pBst'; st.textContent='در حال ارسال '+fa(n+1)+' از '+fa(fs.length)+' (برای صحنه‌ی '+fa(i+1)+')…';
+      try{ await posterUpload(i,f); n++; i++ }catch(er){ st.className='st pBst bad'; st.textContent='خطا در عکس '+fa(n+1)+': '+er.message; return } }
+    await rvPush(); renderReview(); toast('✓ '+fa(n)+' عکس گذاشته شد',4200) } }
 </script>
 </body>
 </html>
