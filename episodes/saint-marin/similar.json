@@ -42,9 +42,7 @@
   "cloak"
  ],
  "saint-martin": [
-  "saint-martin-2",
   "roman-soldier",
-  "roman-helmet",
   "cloak",
   "half-cloak"
  ],
@@ -56,22 +54,17 @@
   "fire"
  ],
  "shield": [
-  "shield-check",
-  "sword"
+  "shield-check"
  ],
  "roman-helmet": [
-  "roman-soldier",
-  "saint-martin",
-  "saint-martin-2"
+  "roman-soldier"
  ],
  "map-pin": [
-  "map-folded",
-  "church"
+  "map-folded"
  ],
  "hourglass": [
   "clock-wall",
-  "stopwatch",
-  "alarm-clock"
+  "stopwatch"
  ],
  "star": [
   "one-star",
@@ -81,10 +74,5 @@
  ],
  "wheat": [
   "leaf"
- ],
- "cross-mark": [
-  "church",
-  "saint-martin",
-  "saint-martin-2"
  ]
 }

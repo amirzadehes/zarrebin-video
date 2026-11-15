@@ -1,9 +1,9 @@
 {
  "star": [
+  "star-rating",
   "one-star",
   "two-stars",
-  "three-stars",
-  "star-rating"
+  "three-stars"
  ],
  "rubber-tire": [
   "tire-company-logo"
@@ -18,10 +18,6 @@
  ],
  "car": [
   "taxi-car"
- ],
- "two-brothers": [
-  "family",
-  "group-people"
  ],
  "one-star": [
   "star",
@@ -45,10 +41,6 @@
   "banknotes",
   "cash",
   "money-coins"
- ],
- "reservation-card": [
-  "document",
-  "red-guidebook"
  ],
  "chef-hat": [
   "chef"

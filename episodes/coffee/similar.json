@@ -41,13 +41,12 @@
  "adenosine": [
   "caffeine-molecule",
   "purple-molecule",
-  "atom",
-  "dna-helix"
+  "atom"
  ],
  "receptor": [
   "neuron",
-  "brain-colorful",
   "brain-gears",
+  "brain-colorful",
   "brain-pink",
   "tired-brain"
  ],
@@ -58,10 +57,10 @@
   "neuron"
  ],
  "fatigue-brain": [
+  "tired-brain",
   "brain-colorful",
   "brain-gears",
   "brain-pink",
-  "tired-brain",
   "neuron"
  ],
  "key-fake": [
@@ -74,32 +73,24 @@
  ],
  "adrenaline": [
   "caffeine-molecule",
-  "purple-molecule",
-  "atom",
-  "dna-helix"
+  "purple-molecule"
  ],
  "heart": [
   "broken-heart"
  ],
- "blood-vessel": [
-  "spine"
- ],
  "hand-tremble": [
   "fist",
-  "pointing-hand",
-  "hand-stop"
+  "hand-stop",
+  "pointing-hand"
  ],
  "anxiety": [
   "person-worried",
-  "person-thinking",
-  "person-happy"
+  "person-thinking"
  ],
  "espresso-cup": [
   "coffee-cup",
   "tea-cup",
-  "moka-pot",
-  "coffee-beans",
-  "coffee-plant"
+  "moka-pot"
  ],
  "hourglass": [
   "stopwatch",
@@ -107,15 +98,13 @@
   "clock-wall"
  ],
  "clock-wall": [
-  "hourglass",
+  "alarm-clock",
   "stopwatch",
-  "alarm-clock"
+  "hourglass"
  ],
  "sleep-deep": [
   "eye-sleepy",
-  "eye-open",
-  "crescent-moon",
-  "bed"
+  "crescent-moon"
  ],
  "brain-adaptation": [
   "brain-colorful",
