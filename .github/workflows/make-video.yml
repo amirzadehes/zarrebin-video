@@ -167,7 +167,8 @@ jobs:
           [ -n "$sfx" ] && { inputs="$inputs -i $sfx"; n=$((n+1)); mix="$mix[$n:a]"; w="$w 0.4"; }
           bgfx=$(find episode-data -name bgfx.wav | head -1)   # background-layer / image-effect sounds (volume is set per event in scenes.json)
           [ -n "$bgfx" ] && { inputs="$inputs -i $bgfx"; n=$((n+1)); mix="$mix[$n:a]"; w="$w 0.8"; }
-          if [ -n "$mus" ]; then inputs="$inputs -i $mus"; mi=$((n+1)); n=$((n+1)); mix="$mix[mduck]"; w="$w 1"
+          mv=$(python3 -c "import json,sys,glob; f=glob.glob('episode-data/**/scenes.json',recursive=True); print(float(json.load(open(f[0]))['meta'].get('musicVol',100))/100 if f else 1)" 2>/dev/null || echo 1)   # music level set in the app (percent, default 100)
+          if [ -n "$mus" ]; then inputs="$inputs -i $mus"; mi=$((n+1)); n=$((n+1)); mix="$mix[mduck]"; w="$w $mv"
             fc="[1:a]asplit=2[vo][key];[$mi:a][key]sidechaincompress=threshold=0.04:ratio=3:attack=30:release=600:makeup=1[mduck];"
           else fc="[1:a]anull[vo];"; fi
           fc="$fc${mix}amix=inputs=$(echo $w | wc -w):duration=first:weights=$w:normalize=0,$fade[a]"

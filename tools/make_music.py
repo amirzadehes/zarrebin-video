@@ -96,6 +96,11 @@ def main(ep):
     req = json.load(open(f'episodes/{ep}/request.json')) if os.path.exists(f'episodes/{ep}/request.json') else {}
     if req.get('music') in ('none', False): print('music off'); return
     T = json.load(open(f'episodes/{ep}/timing.json')); total = T['voice_seconds'] + 1.2
+    own = f'episodes/{ep}/music_own.mp3'   # the owner's own track (e.g. made in Suno from the prompt in the app): looped or cut to the video length, faded out at the end
+    if os.path.exists(own):
+        import subprocess; print('own music:', own, '| seconds', round(total))
+        subprocess.check_call(['ffmpeg', '-loglevel', 'error', '-y', '-stream_loop', '-1', '-i', own, '-t', str(total), '-ac', '2', '-ar', str(SR),
+            '-af', f'loudnorm=I=-24:TP=-3:LRA=7,afade=t=in:d=1.5,afade=t=out:st={max(total - 3.5, 0)}:d=3.5', f'episodes/{ep}/music.wav']); return
     if req.get('music') == 'synth':
         mood = pick_mood(ep, {**req, 'music': 'auto'}); print('synth music mood:', mood)
         y = render(mood, total); pcm = (np.clip(y, -1, 1) * 32767).astype('<i2').T.copy()

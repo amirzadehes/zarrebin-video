@@ -57,7 +57,7 @@ CAST_P = """متن یک ویدیوی توضیحی را می‌خوانی. فهر
 - outfits: لباس و سن در هر دوره‌ی داستان به‌صورت کوتاه و انگلیسی (مثلاً «as a young recruit: red wool cloak over bronze-studded leather tunic; as an old bishop: plain white robe and tall mitre»).
 فقط از چیزهایی بگو که در متن هست، چیزی اختراع نکن.
 خروجی فقط JSON: {"characters":[{"fa":"نام فارسی","en":"English name","base":"...","outfits":"..."}]}"""
-CAST = []
+CAST = []; BRIEF = ''
 
 
 def make_cast(U):
@@ -214,6 +214,28 @@ def add_more(sc, r, Wd, S, n):
     if out: sc['photos'] = out
 
 
+MUSIC_P = """تو آهنگساز و کارگردان موسیقی یک ویدیوی پادکستی-انیمیشنی هستی. خلاصه‌ی داستان و فهرست صحنه‌ها با زمانشان داده می‌شود. یک پرامپت برای ساخت موزیک در Suno بنویس، به انگلیسی، فقط ساز (بدون خواننده)، که با موضوع، دوره‌ی تاریخی، حال‌وهوا و فرازونشیب داستان بخورد و زیر صدای راوی بنشیند (بدون ملودی پرسروصدا، بدون ریتم شلوغ که با صحبت درگیر شود).
+خروجی فقط JSON: {"title":"عنوان کوتاه انگلیسی","style":"یک خط ≤ 190 حرف برای فیلد Style of Music در Suno: ژانر، حال‌وهوا، سازها، تمپو (BPM)، instrumental, no vocals","structure":[{"at":"0:00","note":"چه حالی و چه سازهایی (یک جمله‌ی انگلیسی)"}],"avoid":"چیزهایی که نباید باشد (کوتاه)"}
+structure حداکثر ۶ بخش و زمان‌ها با mm:ss و در محدوده‌ی طول ویدیو باشد؛ بخش آخر پایان نرم موزیک (ending/fade out) در لحظه‌ی پایان ویدیو باشد."""
+
+
+def mmss(x): x = int(round(x)); return '%d:%02d' % (x // 60, x % 60)
+
+
+def music_brief(T, brief, scenes, total):
+    """a ready-to-paste Suno prompt: instrumental, sits under the voice, follows the story arc and ends with the video"""
+    try:
+        sl = '\n'.join('%s | %s' % (mmss(sc['t0']), (sc.get('text') or ' '.join(str((sc.get('photo') or {}).get('prompt', '')).split()[:14]))) for sc in scenes)
+        raw = groqlib.chat(MUSIC_P, 'مدت ویدیو: %s (%d ثانیه)\n\nخلاصه‌ی داستان:\n%s\n\nصحنه‌ها:\n%s' % (mmss(total), round(total), brief or '-', sl[:4500]), max_tokens=900, json_mode=True, temperature=.5)
+        o = (groqlib.objects(raw, 'style') or [{}])[0]
+        style = re.sub(r'\s+', ' ', str(o.get('style') or '')).strip()[:200]
+        if not style: return None
+        st = [x for x in (o.get('structure') or []) if isinstance(x, dict) and x.get('note')][:6]
+        full = 'Title: %s\nStyle of Music: %s\nInstrumental, no vocals. Target length: about %s (the video is %s long).\nStructure:\n%s%s' % (o.get('title') or 'Untitled', style, mmss(total), mmss(total), '\n'.join('%s  %s' % (x.get('at') or '', x['note']) for x in st), ('\nAvoid: ' + str(o['avoid'])) if o.get('avoid') else '')
+        return {'title': str(o.get('title') or '')[:60], 'style': style, 'duration': round(total), 'full': full}
+    except (Exception, SystemExit) as e: print('music brief skipped:', str(e)[:120]); return None
+
+
 def compile_scenes(ep, T, raw, req, short):
     S, Wd = T['sentences'], T['words']; n = len(S); total = round(T['voice_seconds'] + 1.2, 2)
     cov = cover(raw, n)
@@ -236,6 +258,8 @@ def compile_scenes(ep, T, raw, req, short):
     for w in Wd: w['kw'] = bool(ds.norm(w['w'])) and any(len(q) > 1 and q in ds.norm(w['w']) for q in kwall)
     meta = {'total': total, 'rtl': T.get('lang', 'fa') == 'fa', 'topLabel': req.get('label') or ds.title_of(ep) or ep.upper().replace('-', ' '), 'lang': T.get('lang', 'fa'), 'episode': ep,
             'style': 'poster', 'mode': 'poster', 'subs': req.get('subs', True), 'footer': req.get('footer', '')}
+    mb = music_brief(T, BRIEF, scenes, total)
+    if mb: meta['music'] = mb
     json.dump({'meta': meta, 'words': Wd, 'scenes': scenes}, open(f'episodes/{ep}/scenes.json', 'w', encoding='utf8'), ensure_ascii=False)
     return meta, scenes
 
@@ -251,7 +275,7 @@ def main(ep):
     ss = MAX_SCENE; T = dict(T); T['sentences'] = units(T, 7.0); print('narration units:', len(T['sentences']))
     raw = ds.load(f'{d}/director.json', None) if req.get('keep_direction') else None
     if raw is None:
-        brief = bible(T['sentences']); _c = make_cast(T['sentences']); brief = (brief + ('\nCAST (fixed look of recurring characters; copy this description inside every prompt where the character appears):\n' + _c if _c else '')).strip(); raw = split_long(direct(T, ss, brief), T['sentences'], brief, ss); json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
+        brief = bible(T['sentences']); _c = make_cast(T['sentences']); brief = (brief + ('\nCAST (fixed look of recurring characters; copy this description inside every prompt where the character appears):\n' + _c if _c else '')).strip(); globals()['BRIEF'] = brief; raw = split_long(direct(T, ss, brief), T['sentences'], brief, ss); json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
     meta, scenes = compile_scenes(ep, T, raw, req, short)
     print('poster scenes', len(scenes), 'total', meta['total'], '| with prompt:', sum(1 for s in scenes if s['photo']['prompt']))
     ds.emit_plan(meta, req)
