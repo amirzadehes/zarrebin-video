@@ -161,7 +161,11 @@ def own_voice(ep, req):
 
 async def run(ep):
     d = f'episodes/{ep}'; req = load(f'{d}/request.json', {}); lang = req.get('lang', 'fa')
-    if req.get('own_voice'): return own_voice(ep, req)
+    if req.get('own_voice'):
+        old = load(f'{d}/timing.json', {})
+        if req.get('use_transcript') and old.get('voice') == 'own' and old.get('words') and os.path.exists(f'{d}/voice.mp3'):   # transcribed earlier (tools/transcribe_voice.py) and maybe corrected in the app: keep it
+            print('reusing the saved transcript (own voice): words', len(old['words'])); return
+        return own_voice(ep, req)
     text = narrate(ep, req); engine = req.get('tts') or ('gemini' if os.environ.get('GEMINI_API_KEY') else 'edge')
     voice = req.get('voice') or (os.environ.get('GEMINI_VOICE', 'Algieba') if engine == 'gemini' else VOICES[lang]); rate = req.get('rate', '+0%')
     vkey = hashlib.md5((text + engine + voice + rate).encode()).hexdigest()

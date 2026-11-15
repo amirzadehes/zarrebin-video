@@ -230,6 +230,9 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
 body[data-mode=poster] .modesw button.on{background:#ff5a1f;color:#fff;border-color:#ff5a1f}
 .pal{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.pal .sw{width:38px;height:38px;border-radius:10px;border:2px solid #3a2e26;padding:0;cursor:pointer}.pal .sw:active{transform:scale(.94)}.bgSecB input[type=color]{width:100%;height:40px;padding:2px;border-radius:10px;background:#1d1511;border:1px solid #3a2e26}
 .bpG{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px;margin:6px 0 10px}.bpI{position:relative;background:repeating-conic-gradient(#2a211b 0 25%,#1d1511 0 50%) 0 0/16px 16px;border-radius:10px;border:1px solid #3a2e26;aspect-ratio:4/3}.bpA{all:unset;display:grid;place-items:center;width:100%;height:100%;cursor:pointer}.bpA img{max-width:92%;max-height:92%}.bpX{position:absolute;top:2px;left:2px;width:22px;height:22px;min-height:0;padding:0;border-radius:50%;background:#7a1d17;color:#fff;font-size:11px}
+.trbox{line-height:2.5;font-size:16px;padding:8px 4px;max-height:62vh;overflow:auto;border:1px solid var(--line);border-radius:12px;background:#17120f;margin-top:6px}
+.trw{display:inline-block;padding:0 6px;margin:0 1px;border-radius:8px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}.trw:hover{background:#2a211b}.trw.cut{background:#ff5a1f;color:#fff}
+.trbox.ed .trw{outline:1px dashed #6b5b4d}.trsc{display:flex;align-items:center;gap:10px;margin:10px 0 2px;padding:4px 10px;border-radius:10px;background:#2b1d14;color:#ffb58a;font-size:13px;line-height:1.8}.trsc .bad{color:var(--bad)}.trsc button{min-height:30px;padding:0 10px;margin-inline-start:auto}
 .pstBox{border:1px dashed #ff5a1f;border-radius:14px;padding:10px 12px;margin:0 0 12px;background:#1d1511}
 .pst{border:1px solid #6b3a22;border-radius:14px;padding:10px;margin-bottom:10px;background:#1d1511}
 .pst .ph{display:grid;grid-template-columns:84px 1fr;gap:10px;align-items:start}
@@ -488,12 +491,17 @@ async function renderEp(){
       <label><input type="checkbox" id="bH" checked> یوتیوب (افقی)</label>
       <p class="hint" id="bShortNote" hidden>قسمت کوتاه: برش‌ها سریع‌تر است. پیش‌فرض فقط اینستاگرام/تیک‌تاک (عمودی) تیک خورده؛ اگر نسخه‌ی یوتیوب (افقی) هم می‌خواهی، تیکش را بزن.</p>
       <p class="hint" id="bCover"></p></div></div>
+    <div class="card" id="epTr" hidden><div class="name">رونویسی صدا و برش صحنه‌ها (اختیاری)</div>
+      <p class="hint">۱) در کادر «صدای خودت» بالا فایل صدا را انتخاب کن و «رونویسی» را بزن؛ Whisper متن و زمان هر کلمه را می‌نویسد. ۲) روی کلمه‌ای که می‌خواهی صحنه‌ی تازه از آن شروع شود بزن (دوباره بزنی برش برداشته می‌شود). ۳) برش‌ها را ذخیره کن و «آماده‌سازی صحنه‌ها» را بزن؛ کارگردان فقط پرامپت عکس هر صحنه را بر اساس برش‌های تو می‌نویسد.</p>
+      <div class="row"><button class="pri" id="trGo">۱. رونویسی صدا</button><button id="trOpen" hidden>✂️ برش صحنه‌ها</button></div><div class="st" id="trSt"></div>
+      <label id="trUseL" hidden><input type="checkbox" id="bUseCuts"> با رونویسی و برش‌های ذخیره‌شده بساز (صدا دوباره رونویسی نمی‌شود)</label>
+      <div id="trEd" hidden></div></div>
     <div class="card" id="epRun"><div class="row"><button class="pri" id="bGo">۱. آماده‌سازی صحنه‌ها برای بازبینی</button><button id="bGoDirect">ساخت مستقیم (بدون بازبینی)</button></div><div class="st" id="bSt"></div>
       <details id="rvBox" class="rv" style="margin-top:12px"><summary class="btn" style="display:block;text-align:center;cursor:pointer">بازبینی صحنه‌ها و تصویرها</summary><div id="rvBody"><p class="hint">بعد از «آماده‌سازی صحنه‌ها» (حدود ۲ تا ۵ دقیقه) اینجا می‌بینی هر صحنه چه نوشته‌ای و چه تصویرهایی دارد؛ می‌توانی تصویر کم یا از کتابخانه اضافه کنی و بعد ویدیو را بسازی.</p></div></details>
       <p class="hint">ساخت نهایی حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد. می‌توانی اپ را ببندی؛ ویدیوی آماده در لیست زیر می‌آید.</p>
       <div id="vids"></div></div></div>
     `;
-  fillPal(); $('#bPal').value=ls.get('pal_'+S.style,''); $('#bPal').onchange=()=>ls.set('pal_'+S.style,$('#bPal').value);
+  trInit(); fillPal(); $('#bPal').value=ls.get('pal_'+S.style,''); $('#bPal').onchange=()=>ls.set('pal_'+S.style,$('#bPal').value);
   $('#bStyle').value=S.style; $('#bStyle').onchange=()=>setStyle($('#bStyle').value);
   lastShort=null; $('#epName').addEventListener('input',shortDefaults); shortDefaults();
   const cfgApply=()=>{ const m=ls.get('cfgMin','')==='1'; $('#epCfg').classList.toggle('min',m); $('#cfgChev').textContent=m?'▴':'▾'; $('#cfgHead').setAttribute('aria-expanded',String(!m)) };
@@ -548,6 +556,69 @@ async function delVid(row){
 }
 /* word overlap of two texts (0..1, relative to the shorter one): tells "same episode, small edits" from "a different episode typed into an old folder" */
 function textOverlap(a,b){ const W=t=>new Set(nz(t).split(' ').filter(w=>w.length>2)); const A=W(a), B=W(b); if(!A.size||!B.size) return 1; let n=0; A.forEach(w=>{ if(B.has(w)) n++ }); return n/Math.min(A.size,B.size) }
+/* ===== رونویسی (Whisper) و برش صحنه‌ها توسط مالک: transcribe.json -> timing.json، سپس cuts.json = کلمه‌ی شروع هر صحنه ===== */
+let TR=null;   /* {ep,T,cuts:Set(word numbers),tsha,csha,edit,dirty,url} */
+const encBig=t=>{ const b=new TextEncoder().encode(t); let x=''; for(let i=0;i<b.length;i+=8192) x+=String.fromCharCode.apply(null,b.subarray(i,i+8192)); return btoa(x) };
+const trMM=t=>{ t=Math.max(0,t); return fa(Math.floor(t/60))+':'+fa(String(Math.floor(t%60)).padStart(2,'0')) };
+function trInit(){ const g=$('#trGo'); if(!g) return; g.onclick=trStart; $('#trOpen').onclick=()=>{ const ep=slug($('#epName').value); if(TR&&TR.ep===ep){ $('#trEd').hidden=!$('#trEd').hidden } else trLoad(ep) }; $('#epName').addEventListener('change',()=>{ try{ trProbe() }catch(_){} }); trProbe() }
+async function trProbe(){ const card=$('#epTr'); if(!card) return; const ep=slug(($('#epName')||{}).value||''), st=$('#trSt'); TR=null; $('#trEd').hidden=true; $('#trEd').innerHTML=''; $('#trOpen').hidden=true; $('#trUseL').hidden=true; st.textContent=''; if(!ep) return;
+  try{ const L=await api('/contents/episodes/'+ep), nm=(L||[]).filter(x=>x.type==='file').map(x=>x.name);
+    if(nm.includes('timing.json')&&nm.some(n=>/^voice_user\./.test(n))){ const hc=nm.includes('cuts.json'); $('#trOpen').hidden=false; $('#trUseL').hidden=false; $('#bUseCuts').checked=hc; st.className='st ok'; st.textContent=hc?'✓ رونویسی و برش‌ها موجود است؛ برای تغییر «برش صحنه‌ها» را بزن.':'✓ رونویسی موجود است؛ «برش صحنه‌ها» را بزن و برش‌ها را تعیین کن.' } }catch(e){} }
+async function trStart(){ const st=$('#trSt'), ep=slug($('#epName').value), f=$('#bOwn').files[0], go=$('#trGo');
+  if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return }
+  if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس'; return }
+  let have=false; try{ have=((await api('/contents/episodes/'+ep))||[]).some(x=>x.type==='file'&&/^voice_user\./.test(x.name)) }catch(e){}
+  if(!f&&!have){ st.className='st bad'; st.textContent='اول در کادر «صدای خودت» بالا فایل صدا را انتخاب کن'; return }
+  if(TR&&TR.cuts.size&&!confirm('رونویسی دوباره، برش‌های فعلی را پاک می‌کند (کلمه‌ها عوض می‌شوند). ادامه بدهم؟')) return;
+  go.disabled=true; st.className='st'; st.textContent=f?'در حال آپلود صدا…':'در حال شروع…';
+  try{
+    if(f){ const ext=(f.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,''), b64=await toB64(f); let osha; try{ osha=(await api('/contents/episodes/'+ep+'/voice_user.'+ext)).sha }catch(e){}
+      await api('/contents/episodes/'+ep+'/voice_user.'+ext,{method:'PUT',body:JSON.stringify({message:'own voice: '+ep,content:b64,branch:'main',sha:osha})});
+      const L=await api('/contents/episodes/'+ep); for(const x of L.filter(x=>x.type==='file'&&/^voice_user\./.test(x.name)&&x.name!=='voice_user.'+ext)){ await delFile('episodes/'+ep+'/'+x.name,x.sha,'remove old voice: '+x.name) }
+      try{ $('#bOwn').value='' }catch(_){} }
+    let old=''; try{ old=(await api('/contents/episodes/'+ep+'/transcribe.log')).sha }catch(e){}
+    let sha; try{ sha=(await api('/contents/episodes/'+ep+'/transcribe.json')).sha }catch(e){}
+    await api('/contents/episodes/'+ep+'/transcribe.json',{method:'PUT',body:JSON.stringify({message:'transcribe: '+ep,content:enc(JSON.stringify({lang:'fa',ts:Date.now()})),branch:'main',sha})});
+    S.eps=[...new Set([...(S.eps||[]),ep])]; try{ renderEpLabels() }catch(_){}
+    st.textContent='رونویسی شروع شد (معمولاً ۱ تا ۴ دقیقه)…';
+    for(let k=0;k<60;k++){ await sleep(10000); let lg=null; try{ lg=await api('/contents/episodes/'+ep+'/transcribe.log') }catch(e){}
+      if(lg&&lg.sha!==old){ const txt=decB64(lg); if(/FAILED|Traceback|Whisper could not|no voice_user|GROQ_API_KEY/i.test(txt)){ st.className='st bad'; st.textContent='رونویسی ناموفق بود: '+txt.trim().split('\n').slice(-3).join(' ').slice(0,220); return }
+        await trLoad(ep); st.className='st ok'; st.textContent='✓ رونویسی آماده است؛ حالا روی کلمه‌ها بزن و برش‌ها را بگذار.'; return }
+      try{ const r=(await api('/actions/runs?per_page=5')).workflow_runs.find(x=>x.name==='Transcribe voice'); if(r&&r.status==='completed'&&r.conclusion==='failure'&&Date.now()-new Date(r.created_at)<20*60000){ st.className='st bad'; st.textContent='رونویسی ناموفق بود؛ در تب Actions گیت‌هاب دلیلش هست.'; return } }catch(e){} }
+    st.className='st bad'; st.textContent='هنوز آماده نشد؛ کمی بعد «برش صحنه‌ها» را بزن.'; $('#trOpen').hidden=false;
+  }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message }finally{ go.disabled=false } }
+async function trLoad(ep){ const st=$('#trSt'); try{ const tj=await api('/contents/episodes/'+ep+'/timing.json'), T=JSON.parse(decB64(tj)), W=T.words||[]; if(!W.length) throw new Error('رونویسی خالی است');
+    const cuts=new Set(); let csha; try{ const cj=await api('/contents/episodes/'+ep+'/cuts.json'); csha=cj.sha; (JSON.parse(decB64(cj)).cuts||[]).forEach(x=>{ let k=x.w; if(!(Number.isInteger(k)&&k>0&&k<W.length&&(x.t==null||Math.abs(W[k].t0-x.t)<.35))){ if(x.t==null) return; k=0; let bd=1e9; W.forEach((w,j)=>{ const d=Math.abs(w.t0-x.t); if(d<bd){ bd=d; k=j } }) } if(k>0) cuts.add(k) }) }catch(e){}
+    TR={ep,T,cuts,tsha:tj.sha,csha,edit:false,dirty:false}; $('#trOpen').hidden=false; $('#trUseL').hidden=false; $('#bUseCuts').checked=true; trRender() }
+  catch(e){ st.className='st bad'; st.textContent='خواندن رونویسی نشد: '+e.message } }
+function trAuto(){ const W=TR.T.words; TR.cuts.clear(); let last=0; for(let k=1;k<W.length;k++){ if(W[k].s!==W[k-1].s&&W[k].t0-last>=6){ TR.cuts.add(k); last=W[k].t0 } } trHeads() }
+function trHeads(){ const box=$('#trEd .trbox'); if(!box||!TR) return; const W=TR.T.words, total=TR.T.voice_seconds||W[W.length-1].t1; box.querySelectorAll('.trsc').forEach(e=>e.remove());
+  const st=[0,...[...TR.cuts].sort((a,b)=>a-b)]; let longest=0;
+  st.forEach((k,i)=>{ const end=i+1<st.length?W[st[i+1]].t0:total, dur=end-W[k].t0; longest=Math.max(longest,dur); const h=document.createElement('div'); h.className='trsc'; h.innerHTML=`<b>صحنه ${fa(i+1)}</b><span>از ${trMM(W[k].t0)}</span><span>${fa(Math.round(dur))} ثانیه${dur>14?' <span class="bad">(بلند)</span>':''}</span><button type="button" data-p="${W[k].t0}" data-e="${end}">▶</button>`; box.insertBefore(h,box.querySelector('.trw[data-k="'+k+'"]')) });
+  box.querySelectorAll('.trw').forEach(e=>e.classList.toggle('cut',TR.cuts.has(+e.dataset.k)));
+  const sm=$('#trSum'); if(sm) sm.textContent=fa(st.length)+' صحنه · طولانی‌ترین '+fa(Math.round(longest))+' ثانیه' }
+function trRender(){ const box=$('#trEd'); if(!TR){ box.hidden=true; return } const W=TR.T.words; box.hidden=false;
+  box.innerHTML=`<div class="row" style="margin:8px 0"><button id="trAuto">پیشنهاد خودکار</button><button id="trClr">پاک کردن برش‌ها</button><button id="trEdit"></button></div><div class="hint" id="trSum"></div>
+    <div class="trbox" dir="rtl">${W.map((w,k)=>`<span class="trw" data-k="${k}">${esc(w.w)}</span> `).join('')}</div>
+    <div class="row" style="margin-top:8px"><button class="pri" id="trSave">ذخیره‌ی برش‌ها</button></div><p class="hint">روی یک کلمه بزن تا صحنه‌ی تازه از همان کلمه شروع شود. با ▶ همان صحنه را می‌شنوی. هر چه ذخیره کنی، دکمه‌ی «آماده‌سازی صحنه‌ها» از همین برش‌ها استفاده می‌کند.</p>`;
+  const bx=box.querySelector('.trbox'), eb=$('#trEdit'), lab=()=>{ eb.textContent='✏️ ویرایش متن: '+(TR.edit?'روشن':'خاموش'); eb.classList.toggle('pri',TR.edit); bx.classList.toggle('ed',TR.edit) }; lab();
+  bx.onclick=e=>{ const pl=e.target.closest('.trsc button'); if(pl){ trPlay(+pl.dataset.p,+pl.dataset.e); return }
+    const w=e.target.closest('.trw'); if(!w) return; const k=+w.dataset.k;
+    if(TR.edit){ const nv=prompt('املای این کلمه:',W[k].w); if(nv!=null&&nv.trim()&&nv.trim()!==W[k].w){ W[k].w=nv.trim(); w.textContent=W[k].w; TR.dirty=true } return }
+    if(k===0) return; if(TR.cuts.has(k)) TR.cuts.delete(k); else TR.cuts.add(k); trHeads() };
+  eb.onclick=()=>{ TR.edit=!TR.edit; lab() }; $('#trAuto').onclick=()=>{ trAuto(); toast('برش‌های پیشنهادی گذاشته شد؛ هر کدام را می‌توانی عوض کنی') }; $('#trClr').onclick=()=>{ TR.cuts.clear(); trHeads() }; $('#trSave').onclick=trSave; trHeads() }
+async function trPlay(a,b){ if(!TR) return; try{ if(!TR.url){ const r=await fetch('https://api.github.com/repos/'+S.repo+'/contents/episodes/'+TR.ep+'/voice.mp3?ref=main',{headers:Object.assign({Accept:'application/vnd.github.raw'},S.token?{Authorization:'Bearer '+S.token}:{}),cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status); TR.url=URL.createObjectURL(new Blob([await r.arrayBuffer()],{type:'audio/mpeg'})) }
+    if(!TR.au){ TR.au=new Audio(TR.url) } const au=TR.au; au.pause(); au.currentTime=Math.max(0,a-.05); au.ontimeupdate=()=>{ if(au.currentTime>=b){ au.pause() } }; await au.play() }catch(e){ toast('پخش نشد: '+e.message) } }
+async function trSave(){ const st=$('#trSt'); if(!TR) return; if(!S.token){ st.className='st bad'; st.textContent='برای ذخیره توکن لازم است'; return }
+  const {ep,T,cuts}=TR, W=T.words, arr=[...cuts].sort((a,b)=>a-b).map(k=>({w:k,t:+W[k].t0.toFixed(3)})); st.className='st'; st.textContent='در حال ذخیره…';
+  try{
+    if(TR.dirty){ T.sentences.forEach(x=>{ x.text=W.filter(w=>w.s===x.i).map(w=>w.w).join(' ') }); const r=await api('/contents/episodes/'+ep+'/timing.json',{method:'PUT',body:JSON.stringify({message:'transcript text edits: '+ep,content:encBig(JSON.stringify(T)),branch:'main',sha:TR.tsha})}); TR.tsha=r.content.sha;
+      let nsha; try{ nsha=(await api('/contents/episodes/'+ep+'/narration.txt')).sha }catch(_){}
+      await api('/contents/episodes/'+ep+'/narration.txt',{method:'PUT',body:JSON.stringify({message:'narration text: '+ep,content:encBig(T.sentences.map(x=>x.text).join('\n')),branch:'main',sha:nsha})}); TR.dirty=false }
+    if(arr.length){ const r=await api('/contents/episodes/'+ep+'/cuts.json',{method:'PUT',body:JSON.stringify({message:'scene cuts: '+ep,content:enc(JSON.stringify({v:1,words:W.length,cuts:arr,ts:Date.now()})),branch:'main',sha:TR.csha})}); TR.csha=r.content.sha }
+    else if(TR.csha){ await delFile('episodes/'+ep+'/cuts.json',TR.csha,'scene cuts removed: '+ep); TR.csha=undefined }
+    $('#bUseCuts').checked=arr.length>0; st.className='st ok'; st.textContent=arr.length?'✓ ذخیره شد: '+fa(arr.length+1)+' صحنه. حالا «۱. آماده‌سازی صحنه‌ها برای بازبینی» را بزن.':'✓ ذخیره شد (بدون برش؛ کارگردان خودش صحنه‌ها را جدا می‌کند).'
+  }catch(e){ st.className='st bad'; st.textContent='ذخیره نشد: '+e.message } }
 async function buildVideo(mode){
   const st=$('#bSt'), ep=slug($('#epName').value);
   if(S.mode==='poster'&&mode==='direct'){ st.className='st bad'; st.textContent='در حالت پوستر اول باید عکس صحنه‌ها را آپلود کنی؛ از «۱. آماده‌سازی صحنه‌ها» شروع کن.'; return; }
@@ -555,9 +626,10 @@ async function buildVideo(mode){
   if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس (همان که متن را با آن فرستادی)'; return; }
   const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
   /* an own-voice episode does not need a pasted script: the recording itself (Whisper) is the text. Only a computer-voice episode needs script.txt */
-  if(!$('#bOwn').files[0]){ try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده؛ یا ویس خودت را انتخاب کن، یا متن را در بالا بنویس و «ارسال و تحلیل» را بزن.'; return; } }
+  const useTr=!$('#bOwn').files[0]&&S.mode==='poster'&&!!$('#bUseCuts')&&$('#bUseCuts').checked&&!$('#bUseCuts').closest('[hidden]');   // saved transcript (+ the owner's cuts) of this episode
+  if(!$('#bOwn').files[0]&&!useTr){ try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده؛ یا ویس خودت را انتخاب کن، یا متن را در بالا بنویس و «ارسال و تحلیل» را بزن.'; return; } }
   try{ const t=($('#epFa')?$('#epFa').value:'').trim(); if(t){ await saveTitle(ep, t); renderEpLabels() } }catch(_){}
-  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; body.sfx=$('#bSfx').checked; body.sfx_vol=+$('#bSfxVol').value; body.subs=$('#bSubs').checked; if($('#bTitles')&&$('#bTitles').checked) body.titles=true; body.music=$('#bMusic').value; body.style=S.style; if(S.mode==='poster'){ body.mode='poster'; body.footer=(($('#pstFooter')||{}).value||'').trim() } body.review=(mode==='review'); if(/-short$/.test(ep)) body.short=true; body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
+  const ownF=$('#bOwn').files[0]; const body={formats, minutes:+$('#bMin').value, lang:'fa', tts:'gemini', voice:$('#bVoice').value, ts:Date.now()}; if(ownF) body.own_voice=true; if(useTr){ body.own_voice=true; body.use_transcript=true; body.use_cuts=true } body.sfx=$('#bSfx').checked; body.sfx_vol=+$('#bSfxVol').value; body.subs=$('#bSubs').checked; if($('#bTitles')&&$('#bTitles').checked) body.titles=true; body.music=$('#bMusic').value; body.style=S.style; if(S.mode==='poster'){ body.mode='poster'; body.footer=(($('#pstFooter')||{}).value||'').trim() } body.review=(mode==='review'); if(/-short$/.test(ep)) body.short=true; body.palette=$('#bPal').value; if($('#bBaseOn').checked) body.base=$('#bBase').value;
   st.className='st'; st.textContent='در حال شروع…';
   if(ownF){   /* a new episode typed into an old folder (same English name, only the Persian name changed) would be built on top of the old one and keep its needed-images list */
     let nt=($('#bSpoken')?$('#bSpoken').value:'').trim(); if(nt.length<20) nt=$('#epText').value.trim(); nt=cleanScript(nt); let prev='';
@@ -569,8 +641,9 @@ async function buildVideo(mode){
       await api('/contents/episodes/'+ep+'/voice_user.'+ext,{method:'PUT',body:JSON.stringify({message:'own voice: '+ep,content:b64,branch:'main',sha:osha})});
       /* the engine takes the first voice_user.* it finds, so an old file with another extension (mp3 vs m4a) would win over the new one: remove every other one */
       try{ const L=await api('/contents/episodes/'+ep); for(const f of L.filter(x=>x.type==='file'&&/^voice_user\./.test(x.name)&&x.name!=='voice_user.'+ext)){ await delFile('episodes/'+ep+'/'+f.name,f.sha,'remove old voice: '+f.name) } }
-      catch(e){ st.className='st bad'; st.textContent='ویس قبلی پاک نشد، ساخت متوقف شد: '+e.message; return } }
-    else { /* no new voice chosen: an own voice uploaded earlier must not stay around (the list of voices for this episode is emptied) */
+      catch(e){ st.className='st bad'; st.textContent='ویس قبلی پاک نشد، ساخت متوقف شد: '+e.message; return }
+      try{ const cj=await api('/contents/episodes/'+ep+'/cuts.json'); await delFile('episodes/'+ep+'/cuts.json',cj.sha,'old cuts (new recording)') }catch(_){} }
+    else if(!useTr){ /* no new voice chosen: an own voice uploaded earlier must not stay around (the list of voices for this episode is emptied) */
       try{ const L=await api('/contents/episodes/'+ep); for(const f of L.filter(x=>x.type==='file'&&(/^voice_user\./.test(x.name)||x.name==='spoken.txt'))){ await delFile('episodes/'+ep+'/'+f.name,f.sha,'remove old voice: '+f.name) } }
       catch(e){ if(!/404/.test(e.message)){ st.className='st bad'; st.textContent='ویس قبلی پاک نشد، ساخت متوقف شد: '+e.message; return } } }
     if(ownF){ let txt=($('#bSpoken')?$('#bSpoken').value:'').trim(); if(txt.length<20) txt=$('#epText').value.trim(); if(txt.length<20){ try{ const j=await api('/contents/episodes/'+ep+'/script.txt'); txt=new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))).trim() }catch(e){} }
@@ -1087,7 +1160,7 @@ function bindEpHead(){ const s=$('#needEp'); if(s) s.onchange=()=>{ if(s.value) 
 let lastShort=null;   // both checkboxes stay free to change; a short episode only gets a different starting choice (vertical only), and only when the name switches between short and long
 function shortDefaults(){ const n=$('#epName'); if(!n||!$('#bH')) return; const sh=/-short$/.test(slug(n.value)); $('#bShortNote').hidden=!sh; if(sh===lastShort) return; const was=lastShort; lastShort=sh; if(sh){ $('#bV').checked=true; $('#bH').checked=false } else if(was===true){ $('#bH').checked=true } }
 function renderEpLabels(){ document.querySelectorAll('#epList button').forEach(b=>b.textContent=epTitle(b.dataset.e)); const rb=document.querySelector('#rvBody p.hint b'); if(rb&&RV) rb.textContent=epTitle(RV.ep); const ne=$('#needEp'); if(ne){ const cur=ne.value; ne.innerHTML=epSelOptions(cur) } }
-function setEpisode(e){ ls.set('curEp',e); const n=$('#epName'); if(n) n.value=e; const fa_=$('#epFa'); if(fa_) fa_.value=S.titles[e]||''; readText(e); showNeeds(e); shortDefaults() }
+function setEpisode(e){ ls.set('curEp',e); const n=$('#epName'); if(n) n.value=e; try{ trProbe() }catch(_){} const fa_=$('#epFa'); if(fa_) fa_.value=S.titles[e]||''; readText(e); showNeeds(e); shortDefaults() }
 let NEED_SEQ=0;   /* showNeeds is started from several places (page load, renderAll, the episode list, the dropdown) and each run waits on the network: only the newest run may draw, otherwise a slow answer for the remembered episode lands last and replaces the one the owner just picked */
 async function showNeeds(ep){
   const my=++NEED_SEQ, stale=()=>my!==NEED_SEQ;
@@ -1407,6 +1480,7 @@ const posterStyle = () => POSTER_STYLE;
 function applyMode(){
   document.body.dataset.mode = S.mode; const po = S.mode==='poster';
   document.querySelectorAll('#modeSw button').forEach(b=>b.classList.toggle('on', b.dataset.m===S.mode));
+  const trc = $('#epTr'); if(trc) trc.hidden = !po;
   const bx = $('#pstBox'); if(bx){ bx.hidden = !po; try{ ls.set('posterStyle','') }catch(_){}
     const f=$('#pstFooter'); if(f&&!f.dataset.on){ f.dataset.on=1; f.value=ls.get('posterFooter',''); f.oninput=()=>ls.set('posterFooter',f.value.trim()) } }
   /* the classic-only controls of the build card (image style, palette, key-text switch, direct build) are hidden in poster mode */
@@ -1467,7 +1541,7 @@ async function pvMusicUrl(ep){ const L=await api('/contents/episodes/'+ep); cons
 /* ===== whole-episode motion switches: entry shake on/off, micro drift, heat haze (a scene's own value still wins for drift / haze) ===== */
 function motionUI(){ const B=document.querySelector('#rvMot .mtB'); if(!B||!RV) return; const M=RV.data.meta=RV.data.meta||{};
   const lv='<option value="0">خاموش</option><option value="1">کم</option><option value="2">متوسط</option><option value="3">زیاد</option>';
-  B.innerHTML=`<label class="ck" style="display:flex;gap:8px;align-items:center;margin-top:0"><input type="checkbox" class="mtSh"> لرزش کوتاه دوربین هنگام ورود هر تصویر</label>
+  B.innerHTML=`<label><input type="checkbox" class="mtSh" style="width:auto;min-height:0"> لرزش کوتاه دوربین هنگام ورود هر تصویر</label>
     <div class="g2"><div><label>موج هوای گرم روی عکس پس‌زمینه (مثل بالای آتش)</label><select class="sel mtHz">${lv}</select></div><div><label>لرزش ریز دست‌گرفته روی عکس پس‌زمینه</label><select class="sel mtDr">${lv}</select></div></div>
     <p class="hint">این سه مورد برای همه‌ی صحنه‌ها اعمال می‌شود. برای یک صحنه‌ی خاص، موج هوای گرم و لرزش ریز را در بخش «حرکت عکس» همان صحنه می‌توانی جدا عوض کنی. در پیش‌نمایش صحنه می‌بینی.</p>`;
   const sh=B.querySelector('.mtSh'), hz=B.querySelector('.mtHz'), dr=B.querySelector('.mtDr');

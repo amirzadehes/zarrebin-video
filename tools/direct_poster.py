@@ -31,18 +31,43 @@ MAX_SCENE = 14.0   # hard cap only; the scene boundaries follow the story line (
 PUNCT = tuple('.!?؟،,;؛…')
 
 
-def units(T, maxlen=6.5):
-    """short pieces of narration (the director's unit): break at a sentence change or a punctuation mark once >= ~2 s, and always before maxlen seconds"""
-    W = T['words']; out, cur = [], []
-    for w in W:
-        if cur and w['s'] != cur[-1]['s'] and cur[-1]['t1'] - cur[0]['t0'] >= 1.5: out.append(cur); cur = []
+def units(T, maxlen=6.5, force=None):
+    """short pieces of narration (the director's unit): break at a sentence change or a punctuation mark once >= ~2 s, and always before maxlen seconds.
+    force = word numbers where the owner wants a new scene (cuts.json): a unit never spans such a word. Every unit carries w0 = number of its first word."""
+    W = T['words']; force = force or set(); out, starts, cur, k0 = [], [], [], 0
+    for k, w in enumerate(W):
+        if cur and k in force: out.append(cur); starts.append(k0); cur = []
+        if cur and w['s'] != cur[-1]['s'] and cur[-1]['t1'] - cur[0]['t0'] >= 1.5: out.append(cur); starts.append(k0); cur = []
+        if not cur: k0 = k
         cur.append(w); d = w['t1'] - cur[0]['t0']
-        if d >= maxlen or (w['w'].rstrip('"»”)').endswith(PUNCT) and d >= 2.2): out.append(cur); cur = []
-    if cur: out.append(cur)
+        if d >= maxlen or (w['w'].rstrip('"»”)').endswith(PUNCT) and d >= 2.2): out.append(cur); starts.append(k0); cur = []
+    if cur: out.append(cur); starts.append(k0)
     total = round(T['voice_seconds'] + 1.2, 2); U = []
-    for i, c in enumerate(out): U.append({'i': i, 't0': 0.0 if i == 0 else c[0]['t0'], 'text': ' '.join(x['w'] for x in c)})
+    for i, c in enumerate(out): U.append({'i': i, 't0': 0.0 if i == 0 else c[0]['t0'], 'text': ' '.join(x['w'] for x in c), 'w0': starts[i]})
     for i, u in enumerate(U): u['t1'] = U[i + 1]['t0'] if i + 1 < len(U) else total
     return U
+
+
+def cut_force(d, T):
+    """the owner's scene starts (episodes/<ep>/cuts.json, written by the app's cut page) as a set of word numbers; None when there are none.
+    A cut is {w: number of the first word of the new scene, t: its start time}; if the number no longer fits the transcript (text re-made), the time decides."""
+    c = ds.load(f'{d}/cuts.json', None)
+    if not isinstance(c, dict) or not c.get('cuts'): return None
+    W = T['words']; n = len(W); out = set()
+    for x in c['cuts']:
+        if not isinstance(x, dict): continue
+        k, t = x.get('w'), x.get('t')
+        if not (isinstance(k, int) and 0 < k < n and (t is None or abs(W[k]['t0'] - float(t)) < .35)):
+            if t is None: continue
+            k = min(range(n), key=lambda j: abs(W[j]['t0'] - float(t)))
+        if 0 < k < n: out.add(k)
+    return out or None
+
+
+def cut_groups(U, force):
+    """unit index ranges [(first, last)] of the owner's scenes"""
+    st = [i for i, u in enumerate(U) if i == 0 or u['w0'] in force]
+    return [(a, (st[k + 1] - 1) if k + 1 < len(st) else len(U) - 1) for k, a in enumerate(st)]
 
 
 BIBLE = """متن یک ویدیوی توضیحی را می‌خوانی. برای تصویرسازها یک خلاصه‌ی انگلیسیِ کوتاه بنویس (حداکثر ۶ خط، متن ساده): موضوع اصلی، دوره‌ی زمانی و مکان (هر دوره‌ی مهم داستان)، شخصیت‌های اصلی با ظاهر ثابت (سن، لباس، رنگ‌ها) و حال‌وهوای تصویری. فقط از چیزهایی بگو که در متن هست."""
@@ -248,6 +273,33 @@ def direct(T, ss, brief=''):
     return scenes
 
 
+FIXED_NOTE = """نکته‌ی مهم این بار: مرز صحنه‌ها را خودِ مالک ویدیو تعیین کرده است. تکه‌ها با خطِ «=== صحنه N ===» به گروه جدا شده‌اند. برای هر گروه دقیقاً یک صحنه بساز (نه بیشتر و نه کمتر؛ هرگز دو گروه را یکی نکن و یک گروه را نشکن)؛ from و to هر صحنه باید شماره‌ی اولین و آخرین تکه‌ی همان گروه باشد. بقیه‌ی قواعد بالا (elements، prompt، more، props، kicker، text، number، kw) برای هر صحنه همان‌طور که نوشته شده است.
+
+"""
+
+
+def direct_fixed(T, groups, brief=''):
+    """scene boundaries come from the owner (cuts.json): the AI only writes what each scene shows (prompt, label, headline, props ...); from/to are forced to the owner's groups"""
+    S = T['sentences']; scenes = []; sys_p = FIXED_NOTE + SYSTEM.replace('@MAX@', ds.fadig(str(round(MAX_SCENE))))
+    B = 6
+    for b in range(0, len(groups), B):
+        chunk = groups[b:b + B]
+        user = 'خلاصه‌ی کل داستان (برای دوره‌ی زمانی و ظاهر ثابت شخصیت‌ها):\n%s\n\nتکه‌ها:\n%s' % (brief or '-', '\n'.join(
+            '=== صحنه %d ===\n%s' % (b + g, '\n'.join('%d | %.1f-%.1fs | %s' % (S[j]['i'], S[j]['t0'], S[j]['t1'], S[j]['text']) for j in range(a, z + 1))) for g, (a, z) in enumerate(chunk)))
+        try:
+            raw = groqlib.chat(sys_p, user, max_tokens=3600, json_mode=True, temperature=.5)
+            got = [o for o in groqlib.objects(raw, 'from') if isinstance(o.get('from'), int)]
+        except (Exception, SystemExit) as e:   # Groq down: the owner's scenes stay, prompts are filled in later (fix_raw / the app)
+            print('poster director fallback for scenes %d-%d (no AI):' % (b, b + len(chunk) - 1), str(e)[:160]); got = []
+        res = []
+        for a, z in chunk:
+            o = next((x for x in sorted(got, key=lambda x: x['from']) if a <= x['from'] <= z), None) or {'prompt': '', 'text': ' '.join(S[a]['text'].split()[:6])}
+            o = dict(o); o['from'], o['to'] = a, z; res.append(o)
+        res = props_pass(res, S, brief); res = verify(res, S, brief)
+        scenes += res
+    return scenes
+
+
 def add_props(sc, props, Wd, lib):
     """small separate objects: one that already exists in the library (same Persian name) goes straight onto the scene at the spoken word; the others wait in scene.props for the owner to build (prompt) and upload"""
     need = []
@@ -336,10 +388,14 @@ def main(ep):
         return ds.main(ep)
     T = ds.load(f'{d}/timing.json', None)
     if not T: sys.exit('timing.json missing; run narrate_tts.py first')
-    ss = MAX_SCENE; T = dict(T); T['sentences'] = units(T, 7.0); print('narration units:', len(T['sentences']))
-    raw = ds.load(f'{d}/director.json', None) if req.get('keep_direction') else None
+    ss = MAX_SCENE; T = dict(T); force = cut_force(d, T) if req.get('use_cuts') else None
+    if req.get('use_cuts') and not force: print('use_cuts asked but cuts.json is missing or empty: the director chooses the scene boundaries')
+    T['sentences'] = units(T, 7.0, force); print('narration units:', len(T['sentences']))
+    groups = cut_groups(T['sentences'], force) if force else None
+    if groups: print("the owner's cuts: %d scenes (the director only writes what each scene shows)" % len(groups))
+    raw = ds.load(f'{d}/director.json', None) if req.get('keep_direction') and not groups else None
     if raw is None:
-        brief = bible(T['sentences']); _c = make_cast(T['sentences']); brief = (brief + ('\nCAST (fixed look of recurring characters; copy this description inside every prompt where the character appears):\n' + _c if _c else '')).strip(); globals()['BRIEF'] = brief; raw = split_long(direct(T, ss, brief), T['sentences'], brief, ss); raw = fix_raw(raw, T['sentences'], brief); json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
+        brief = bible(T['sentences']); _c = make_cast(T['sentences']); brief = (brief + ('\nCAST (fixed look of recurring characters; copy this description inside every prompt where the character appears):\n' + _c if _c else '')).strip(); globals()['BRIEF'] = brief; raw = direct_fixed(T, groups, brief) if groups else split_long(direct(T, ss, brief), T['sentences'], brief, ss); raw = fix_raw(raw, T['sentences'], brief); json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
     meta, scenes = compile_scenes(ep, T, raw, req, short)
     print('poster scenes', len(scenes), 'total', meta['total'], '| with prompt:', sum(1 for s in scenes if s['photo']['prompt']))
     ds.emit_plan(meta, req)
