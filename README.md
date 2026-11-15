@@ -53,3 +53,6 @@ A test style next to the classic one: **one full-bleed picture per scene** (made
 
 ### Poster mode: separate props
 The director may add up to 2 small separate objects per scene (`scene.props`: `fa`, `t`, `prompt`). A prop whose Persian name already exists in the library is put on the scene as an item at the spoken word. Others show in the review panel with a detailed prompt (same style + magenta background); uploading one runs the normal library flow and adds it to the scene at `t`.
+
+### Poster mode: text layers, stamps, atmosphere, camera
+Per scene (all optional): `layers` = any number of `{kind:'text'|'stamp', text, t, out, x, y, size, col, bg, hl, rot}`; main headline style `tcol`, `tbg` (or `'none'`), `thl`, `tIn`, `tOut`; `atm` = `[{type:'snow'|'rain'|'lightning'|'fog'|'embers', amt}]`; `photo.drift` 0-3 (micro hand-held drift of the picture, default 1; `meta.drift` sets the default); `kick` = `both|punch|shake|none` (camera effect when a library picture enters).

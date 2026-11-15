@@ -245,14 +245,19 @@ function its_corner(t, sc, c) { // items peek in from the corners around a text/
 
 
 /* ---------- POSTER mode ---------- */
+const jit = (t, sd) => { const f = t * 11, i = Math.floor(f), u = f - i, a = hz(i * 1.3 + sd) - .5, b = hz((i + 1) * 1.3 + sd) - .5; return a + (b - a) * u * u * (3 - 2 * u) };
+const hz = n => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s) };
 function posterBg(t, sc) {
   const p = sc.photo || {}, im = p.src && IM[p.src], lt = t - sc.t0, pc = clamp(lt / Math.max(.8, sc.t1 - sc.t0 + WD));
   ctx.fillStyle = '#14100e'; ctx.fillRect(-300, -300, W + 600, H + 600);
   if (im) {
     const mo = p.motion && p.motion !== 'auto' ? p.motion : ['in', 'out', 'left', 'right'][sc.idx % 4]; let z = 1.05, ox = 0;
+    const dl = p.drift != null ? p.drift : D.meta.drift != null ? D.meta.drift : 1, DA = EDIT ? 0 : [0, 3, 6, 10][dl] || 0;   // micro hand-held drift of the whole picture (px)
     if (EDIT || mo === 'none') z = 1; else if (mo === 'in') z = lerp(1.04, 1.15, pc); else if (mo === 'out') z = lerp(1.15, 1.04, pc); else if (mo === 'left') { z = 1.1; ox = lerp(.03, -.03, pc) } else if (mo === 'right') { z = 1.1; ox = lerp(-.03, .03, pc) }
+    if (DA) z = Math.max(z, 1.02 + DA * .0015);
+    const jx = DA ? DA * (2 * jit(t, 1) + .6 * Math.sin(t * .9)) : 0, jy = DA ? DA * (2 * jit(t, 7) + .6 * Math.cos(t * .7)) : 0;
     const fx = p.fx == null ? .5 : p.fx, fy = p.fy == null ? .5 : p.fy, k = Math.max(W / im.width, H / im.height) * z, dw = im.width * k, dh = im.height * k;
-    const x = clamp((W - dw) * fx + ox * W, Math.min(0, W - dw), 0), y = clamp((H - dh) * fy, Math.min(0, H - dh), 0);
+    const x = clamp((W - dw) * fx + ox * W + jx, Math.min(0, W - dw), 0), y = clamp((H - dh) * fy + jy, Math.min(0, H - dh), 0);
     ctx.drawImage(im, x, y, dw, dh);
   } else { const g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#2b2118'); g.addColorStop(1, '#14100e'); ctx.fillStyle = g; ctx.fillRect(-300, -300, W + 600, H + 600) }
   let g = ctx.createLinearGradient(0, 0, 0, H * .3); g.addColorStop(0, 'rgba(10,6,2,.55)'); g.addColorStop(1, 'rgba(10,6,2,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H * .3);
@@ -263,19 +268,21 @@ TPL.poster = function (t, sc) {   // library pictures only (the owner places the
   const vo = heroVary(sc, its); drawItem(its[0], t, cx + vo.dx, cy, hs * (1 + .012 * Math.sin(t * 3)), 0, vo.rot);
   const n = its.length - 1; its.slice(1).forEach((it, i) => { const a = -Math.PI / 2 + (i + .5) * TAU / Math.max(n, 1) + (n === 1 ? 2.2 : 0) + t * .05, rx = V ? W * .34 : W * .3, ry = V ? H * .17 : H * .24; drawItem(it, t, cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, B * .3, i + 1) })
 };
-function posterChips(text, size, maxW, cx, top, t, t0, align) {   // headline on dark chips, *word* on an orange chip; returns its height
+function posterChips(text, size, maxW, cx, top, t, t0, align, o) {   // o: {col: text colour, bg: chip colour or 'none', hl: highlight chip colour}
+  o = o || {}; const ga = ctx.globalAlpha, tcol = o.col || '#fff', hcol = o.hl || ORG, chip = o.bg === 'none' ? null : (o.bg || 'rgba(14,10,7,.84)');   // headline on dark chips, *word* on an orange chip; returns its height
   const font = `900 ${size}px Vz`, L = wrapTokens(text, font, maxW), lh = size * 1.5, rtl = D.meta.rtl, padX = size * .38; let idx = 0;
   ctx.save(); ctx.font = font; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.direction = rtl ? 'rtl' : 'ltr';
   L.lines.forEach((ln, li) => {
     const p = spr(t, t0 + li * .14, .55, 13); if (p <= 0) return; const y = top + lh * (li + .5), w = ln.w + 2 * padX;
     const right = align === 'center' ? cx + w / 2 : align === 'right' ? cx : cx - w;   // box edge: right edge of the chip for 'right'
     const x0 = align === 'center' ? cx - w / 2 : align === 'right' ? cx - w : cx;
-    ctx.save(); ctx.translate((x0 + w / 2), y); ctx.scale(.85 + .15 * Math.min(p, 1.1), .85 + .15 * Math.min(p, 1.1)); ctx.globalAlpha = clamp(p * 1.8);
-    ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 5; ctx.fillStyle = 'rgba(14,10,7,.84)'; ctx.beginPath(); ctx.roundRect(-w / 2, -lh * .46, w, lh * .92, size * .22); ctx.fill(); ctx.shadowColor = 'transparent';
+    ctx.save(); ctx.translate((x0 + w / 2), y); ctx.scale(.85 + .15 * Math.min(p, 1.1), .85 + .15 * Math.min(p, 1.1)); ctx.globalAlpha = ga * clamp(p * 1.8);
+    if (chip) { ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 5; ctx.fillStyle = chip; ctx.beginPath(); ctx.roundRect(-w / 2, -lh * .46, w, lh * .92, size * .22); ctx.fill(); ctx.shadowColor = 'transparent' }
     let x = rtl ? w / 2 - padX : -w / 2 + padX;
     ln.ws.forEach(k => { const kw = k.w; if (rtl) x -= kw;
-      if (k.hl) { ctx.fillStyle = ORG; ctx.beginPath(); ctx.roundRect(x - size * .22, -lh * .4, kw + size * .44, lh * .8, size * .18); ctx.fill() }
-      ctx.fillStyle = '#fff'; ctx.fillText(k.txt, x, 3); if (rtl) x -= L.sp; else x += kw + L.sp });
+      if (k.hl) { ctx.fillStyle = hcol; ctx.beginPath(); ctx.roundRect(x - size * .22, -lh * .4, kw + size * .44, lh * .8, size * .18); ctx.fill() }
+      if (!chip) { ctx.shadowColor = 'rgba(0,0,0,.8)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 3 }
+      ctx.fillStyle = tcol; ctx.fillText(k.txt, x, 3); ctx.shadowColor = 'transparent'; if (rtl) x -= L.sp; else x += kw + L.sp });
     ctx.restore(); idx++ });
   ctx.restore(); return L.lines.length * lh
 }
@@ -284,11 +291,64 @@ function posterText(t, sc) {
   const num = String(sc.number == null ? '' : sc.number).trim();
   if (num) { const e = spr(t, sc.t0 + .15, .5, 12), size = B * (V ? .24 : .2); ctx.save(); ctx.font = `900 ${size}px Vz`; ctx.textBaseline = 'middle'; ctx.direction = 'ltr'; ctx.textAlign = rtl ? 'right' : 'left';
     ctx.translate(rtl ? W - m : m, y + size * .55); ctx.scale(.7 + .3 * Math.min(e, 1.1), .7 + .3 * Math.min(e, 1.1)); ctx.globalAlpha = clamp(e * 1.6); ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 22; ctx.shadowOffsetY = 6; ctx.fillStyle = '#fff'; ctx.fillText(num, 0, 0); ctx.restore(); y += size * 1.12 }
-  if (sc.text && tOn(sc)) {
-    const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), t0 = sc.t0 + (num ? .5 : .3);
-    if (kp) { const L = wrapTokens(sc.text, `900 ${size}px Vz`, maxW), hh = L.lines.length * size * 1.5; posterChips(sc.text, size, maxW, kp.x * W, kp.y * H - hh / 2, t, t0, 'center') }
-    else posterChips(sc.text, size, maxW, rtl ? W - m : m, y, t, t0, rtl ? 'right' : 'left')
+  if (sc.text && tOn(sc) && (sc.tOut == null || t < sc.tOut + .25)) {
+    const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), t0 = sc.tIn != null ? sc.tIn : sc.t0 + (num ? .5 : .3), st = { col: sc.tcol, bg: sc.tbg, hl: sc.thl };
+    ctx.save(); if (sc.tOut != null) ctx.globalAlpha = clamp((sc.tOut + .25 - t) / .25);
+    if (kp) { const L = wrapTokens(sc.text, `900 ${size}px Vz`, maxW), hh = L.lines.length * size * 1.5; posterChips(sc.text, size, maxW, kp.x * W, kp.y * H - hh / 2, t, t0, 'center', st) }
+    else posterChips(sc.text, size, maxW, rtl ? W - m : m, y, t, t0, rtl ? 'right' : 'left', st)
+    ctx.restore()
   }
+  posterLayers(t, sc)
+}
+/* extra layers (any number per scene): {kind:'text'|'stamp', text, t, out, x, y (centre, fractions of the frame), size (multiplier), col, bg ('none' = no chip), hl, rot (deg, stamps)} */
+const STAMPC = {};
+function stampSprite(text, size, col, rtl) {
+  const key = text + '|' + size + '|' + col + '|' + rtl; if (STAMPC[key]) return STAMPC[key];
+  const cv = document.createElement('canvas'), c = cv.getContext('2d'), font = `900 ${size}px Vz`; c.font = font; const tw = c.measureText(text).width, padX = size * .6, padY = size * .42, pad = size * .2;
+  const w = Math.ceil(tw + padX * 2 + pad * 2), h = Math.ceil(size * 1 + padY * 2 + pad * 2); cv.width = w; cv.height = h; c.font = font; c.direction = rtl ? 'rtl' : 'ltr'; c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.strokeStyle = col; c.fillStyle = col; c.lineWidth = size * .09; c.beginPath(); c.roundRect(pad, pad, w - 2 * pad, h - 2 * pad, size * .16); c.stroke();
+  c.lineWidth = size * .03; c.beginPath(); c.roundRect(pad + size * .15, pad + size * .15, w - 2 * pad - size * .3, h - 2 * pad - size * .3, size * .1); c.stroke(); c.fillText(text, w / 2, h / 2 + size * .04);
+  c.globalCompositeOperation = 'destination-out';   // worn ink: random specks and a few scratches punched out (fixed seed, so every frame is identical)
+  for (let j = 0; j < 140; j++) { c.globalAlpha = .35 + .6 * hz(j * 3.3); c.beginPath(); c.arc(hz(j * 1.7) * w, hz(j * 2.9 + 5) * h, 1 + hz(j * 4.3) * size * .045, 0, TAU); c.fill() }
+  c.globalAlpha = .55; c.lineWidth = 2; for (let j = 0; j < 7; j++) { c.beginPath(); const x = hz(j * 8.1) * w, y = hz(j * 6.2) * h; c.moveTo(x, y); c.lineTo(x + (hz(j * 9) - .5) * size * 1.6, y + (hz(j * 7) - .5) * size * .5); c.stroke() }
+  return STAMPC[key] = { cv, w, h }
+}
+function posterLayers(t, sc) {
+  (sc.layers || []).forEach(L => {
+    if (!L || !String(L.text || '').trim()) return; const t0 = L.t != null ? L.t : sc.t0 + .3, out = L.out != null ? L.out : 1e9, P = (L.pos && L.pos[FMT]) || L; if (t < t0 || t > out + .25) return;
+    const al = clamp((out + .25 - t) / .25), k = L.size || 1, rtl = D.meta.rtl, d = t - t0, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? (L.kind === 'stamp' ? .38 : .5) : P.y) * H;
+    if (L.kind === 'stamp') {
+      const sp = stampSprite(String(L.text).trim(), Math.round(B * .1 * k), L.col || '#e0352b', rtl), q = d < .16 ? lerp(2.4, 1, eio(d / .16)) : 1 + .05 * Math.exp(-(d - .16) * 11) * Math.cos((d - .16) * 38), sh = d >= .16 && d < .42 ? Math.sin(d * 150) * 7 * (1 - (d - .16) / .26) : 0;
+      ctx.save(); ctx.translate(cx + sh, cy + sh * .6); ctx.rotate((L.rot == null ? -8 : L.rot) * Math.PI / 180); ctx.scale(q, q); ctx.globalAlpha = al * clamp(d / .06) * .94; ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 10; ctx.drawImage(sp.cv, -sp.w / 2, -sp.h / 2); ctx.restore(); return
+    }
+    const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), Lw = wrapTokens(L.text, `900 ${size}px Vz`, maxW), hh = Lw.lines.length * size * 1.5;
+    ctx.save(); ctx.globalAlpha = al; posterChips(L.text, size, maxW, cx, cy - hh / 2, t, t0, 'center', { col: L.col, bg: L.bg, hl: L.hl }); ctx.restore()
+  })
+}
+/* atmosphere on a scene: sc.atm = [{type:'snow'|'rain'|'lightning'|'fog'|'embers', amt (0.3..2), t (start, optional)}]; every particle is a pure function of time */
+function posterAtm(t, sc) {
+  const list = sc.atm; if (!list || !list.length) return;
+  list.forEach((a, ai) => {
+    const amt = a.amt == null ? 1 : a.amt, s0 = a.t != null ? a.t : sc.t0, f = clamp((t - s0) / .5) * clamp((sc.t1 + WD - t) / .5); if (f <= 0) return; const sd = ai * 1000;
+    ctx.save(); ctx.globalAlpha = f;
+    if (a.type === 'snow') { const n = Math.round(110 * amt * (V ? 1 : 1.4)); ctx.fillStyle = '#fff';
+      for (let i = 0; i < n; i++) { const r = 2.5 + hz(i * 7.7 + sd) * 6, sp = 55 + hz(i * 3.1 + sd) * 120 * (r / 6), y = (hz(i * 5.3 + sd) * (H + 80) + t * sp) % (H + 80) - 40, x = hz(i + sd) * W + Math.sin(t * (.5 + hz(i * 2.2)) + i) * 34;
+        ctx.globalAlpha = f * (.5 + .45 * hz(i * 9 + sd)); ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill() } }
+    else if (a.type === 'rain') { const n = Math.round(170 * amt * (V ? 1 : 1.5)); ctx.fillStyle = 'rgba(20,35,70,.14)'; ctx.globalAlpha = f * Math.min(amt, 1.2); ctx.fillRect(0, 0, W, H); ctx.strokeStyle = 'rgba(205,225,255,.5)'; ctx.lineCap = 'round';
+      for (let i = 0; i < n; i++) { const len = 40 + hz(i * 4.1 + sd) * 60, sp = 1500 + hz(i * 3.7 + sd) * 900, y = (hz(i * 5.9 + sd) * (H + 200) + t * sp) % (H + 200) - 100, x = ((hz(i * 1.9 + sd) * (W + 300) - y * .2) % (W + 300) + W + 300) % (W + 300) - 100;
+        ctx.globalAlpha = f * (.25 + .4 * hz(i * 8.3)); ctx.lineWidth = 1.5 + hz(i * 6.1) * 1.8; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - len * .2, y + len); ctx.stroke() } }
+    else if (a.type === 'lightning') { const P = 2.4 + hz(ai + 3) * 1.4;
+      for (let k = Math.floor((t - s0) / P) - 1; k <= Math.floor((t - s0) / P); k++) { if (k < 0) continue; const te = s0 + (k + .25 + .45 * hz(k * 3.7 + sd)) * P, d = t - te; if (d < 0 || d > 1) continue;
+        const env = d < .07 ? d / .07 : d < .15 ? 1 - (d - .07) / .08 * .65 : d < .23 ? .35 + (d - .15) / .08 * .65 : Math.exp(-(d - .23) * 6);
+        ctx.globalAlpha = f * Math.min(.8, .5 * env * Math.min(amt, 1.6)); ctx.fillStyle = '#e6eeff'; ctx.fillRect(0, 0, W, H);
+        if (d < .3) { ctx.globalAlpha = f * Math.min(1, env * 1.3); ctx.strokeStyle = '#f4f8ff'; ctx.shadowColor = '#9db9ff'; ctx.shadowBlur = 28; ctx.lineJoin = 'round'; ctx.lineWidth = 7;
+          let x = W * (.2 + .6 * hz(k * 5.1 + sd)), y = 0; ctx.beginPath(); ctx.moveTo(x, y); for (let j = 0; j < 11; j++) { x += (hz(k * 17 + j) - .5) * 150; y += H * .06; ctx.lineTo(x, y) } ctx.stroke() } } }
+    else if (a.type === 'fog') { for (let i = 0; i < 6; i++) { const cx = ((hz(i + sd) * W * 1.6 + t * (14 + 10 * hz(i + 3))) % (W * 1.7)) - W * .35, cy = H * (.4 + .5 * hz(i * 3 + sd)), r = B * (.75 + .6 * hz(i * 5 + sd)), g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+        g.addColorStop(0, `rgba(225,230,240,${.26 * Math.min(amt, 1.6)})`); g.addColorStop(1, 'rgba(225,230,240,0)'); ctx.fillStyle = g; ctx.fillRect(cx - r, cy - r, 2 * r, 2 * r) } }
+    else if (a.type === 'embers') { const n = Math.round(60 * amt); for (let i = 0; i < n; i++) { const sp = 70 + hz(i * 3.3 + sd) * 140, y = H - ((hz(i * 5.1 + sd) * (H + 60) + t * sp) % (H + 60)) + 30, x = hz(i * 1.3 + sd) * W + Math.sin(t * (1 + hz(i)) + i) * 40, r = 2 + hz(i * 7 + sd) * 4, fl = .55 + .45 * Math.sin(t * 9 + i * 2.3);
+        ctx.globalAlpha = f * fl * (1 - y / (H + 60) * .6); ctx.fillStyle = '#ffb347'; ctx.shadowColor = '#ff6a1f'; ctx.shadowBlur = 14; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill() } }
+    ctx.restore()
+  })
 }
 function uiPoster(t) {
   const m = V ? 70 : 90, ty = V ? 98 : 70, bw = W - 2 * m, sc = D.scenes[sceneIndex(t)], rtl = D.meta.rtl; ctx.save();
@@ -389,13 +449,14 @@ function tfCounter(t, sc, f) {
 function drawScene(t, sc) {
   CUR = sc; if (EDIT) for (const k in REC) delete REC[k]; const th = THEMES[sc.theme], lt = t - sc.t0, dur = sc.t1 - sc.t0, kc = sc.idx % 4, pc = ramp(lt, 0, dur + .6);
   // camera: each scene gets its own move (push in / pull out, with a slow pan) so consecutive scenes never feel identical
-  const z = EDIT ? 1 : POSTER ? 1 + beatZ(t) : (kc % 2 ? lerp(1.08, 1.0, pc) : lerp(1.0, 1.08, pc)) * (1 + beatZ(t)), px = EDIT || POSTER ? 0 : [-1, 1, 0, 0][kc] * lerp(-16, 16, pc), py = EDIT || POSTER ? 0 : [0, 0, -1, 1][kc] * lerp(-14, 14, pc);
-  let shake = 0; sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .35) shake = Math.max(shake, 8 * (1 - d / .35)) }); if (EDIT) { shake = 0 }
+  const KK = sc.kick || 'both'; let punch = 0; if (POSTER && !EDIT && (KK === 'punch' || KK === 'both')) sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .5) punch = Math.max(punch, .045 * Math.exp(-d * 8)) });
+  const z = EDIT ? 1 : POSTER ? 1 + punch : (kc % 2 ? lerp(1.08, 1.0, pc) : lerp(1.0, 1.08, pc)) * (1 + beatZ(t)), px = EDIT || POSTER ? 0 : [-1, 1, 0, 0][kc] * lerp(-16, 16, pc), py = EDIT || POSTER ? 0 : [0, 0, -1, 1][kc] * lerp(-14, 14, pc);
+  let shake = 0; sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .35) shake = Math.max(shake, 8 * (1 - d / .35)) }); if (EDIT || (POSTER && KK !== 'shake' && KK !== 'both')) { shake = 0 }
   ctx.save(); ctx.translate(W / 2 + px + Math.sin(t * 90) * shake, H / 2 + py + Math.cos(t * 77) * shake); ctx.scale(z, z); ctx.translate(-W / 2, -H / 2 + (V ? 0 : 0));
   const TF = POSTER ? null : tfOf(sc);
   if (POSTER) posterBg(t, sc); else if (TF) tfBg(t, sc, th, TF); else { bgLayer(t, sc, th); if (window.FXL && sc.bg && sc.bg.src) FXL.bg(t, sc) }   // optional background picture layer (engine/fx.js)
   if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, false);   // optional framed pictures pinned to the backdrop
-  decor(t, sc, th); const KC = POSTER ? false : keyCustom(sc); (POSTER ? TPL.poster : (TPL[sc.tpl] || TPL.hero))(t, KC ? Object.assign(Object.create(sc), { keyOn: false }) : sc); if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, true); if (KC) keyCard(t, sc); if (POSTER) posterText(t, sc); ctx.restore(); if (TF) tfCounter(t, sc, TF)   // pins marked 'top' (stamps, arrows) lie over the pictures
+  decor(t, sc, th); const KC = POSTER ? false : keyCustom(sc); (POSTER ? TPL.poster : (TPL[sc.tpl] || TPL.hero))(t, KC ? Object.assign(Object.create(sc), { keyOn: false }) : sc); if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, true); if (KC) keyCard(t, sc); if (POSTER) { posterAtm(t, sc); posterText(t, sc) } ctx.restore(); if (TF) tfCounter(t, sc, TF)   // pins marked 'top' (stamps, arrows) lie over the pictures
 }
 function wipePath(style, p, k) {
   const e = eio(p); ctx.beginPath();
