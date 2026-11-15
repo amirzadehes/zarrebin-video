@@ -1409,12 +1409,26 @@ async function posterUpload(i, file){
   if(old&&old!==path){ try{ const j=await api('/contents/'+old); await delFile(old,j.sha,'replace photo: '+old) }catch(_){} }
   const d=document.querySelector('details.sc[data-i="'+i+'"]'); if(d){ d.querySelector('summary').innerHTML=sceneHead(s,i); d.classList.toggle('warn',noPic(s)) }
   updOk(); pvRefresh(i); }
+const POSTER_PROP = 'Single isolated object, centered with some margin, on a perfectly flat solid magenta (#FF00FF) background with nothing else in the frame and no shadow on the background; clean edges so it can be cut out. No text, letters or logos.';
+const propFull = p => [(p.prompt||'').trim(), posterStyle(), POSTER_PROP].filter(Boolean).join(' ');
+function propsUI(el,s,i,d){
+  const box=el.querySelector('.pProps'); if(!box) return; const list=s.props||[]; box.hidden=!list.length; box.innerHTML='';
+  list.forEach((p,k)=>{ const r=document.createElement('div'); r.className='pst2'; r.style.cssText='display:block;border-top:1px solid var(--line);margin-top:8px;padding-top:6px';
+    r.innerHTML=`<label style="margin-top:0">شیء جدا: <b class="pn"></b> (در کتابخانه نیست؛ با همین سبک بساز)</label><textarea class="ppr" dir="ltr" rows="4"></textarea>
+      <div class="row"><button class="pri ppc">کپی پرامپت شیء</button><label class="btn" style="display:grid;place-items:center;margin:0">آپلود شیء<input type="file" accept="image/*" hidden class="ppf"></label><button class="ppx">حذف</button></div><div class="st ppst"></div>`;
+    r.querySelector('.pn').textContent=p.fa; const ta=r.querySelector('.ppr'); ta.value=p.prompt||''; ta.oninput=()=>{ p.prompt=ta.value; rvSave() };
+    r.querySelector('.ppc').onclick=async()=>toast(await copy(propFull(p))?'پرامپت شیء کپی شد؛ زمینه‌ی سرخابی می‌گیرد':'کپی نشد');
+    r.querySelector('.ppx').onclick=()=>{ s.props.splice(k,1); if(!s.props.length) delete s.props; rvSave(); propsUI(el,s,i,d) };
+    r.querySelector('.ppf').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; const st=r.querySelector('.ppst'), n=(s.items||[]).length; await newForScene(i,d,p.fa,f,st);
+      if((s.items||[]).length>n){ s.items[s.items.length-1].t=+Math.min(Math.max(p.t||s.t0+.45,s.t0+.1),s.t1-.3).toFixed(3); s.props.splice(k,1); if(!s.props.length) delete s.props; rvSave(); propsUI(el,s,i,d) } };
+    box.appendChild(r) }) }
 function posterBlock(box,s,i,d){
   s.photo=s.photo||{}; const el=document.createElement('div'); el.className='pst';
   el.innerHTML=`<div class="ph"><div class="pimg">${s.photo.src?'':'بدون عکس'}</div><div><label style="margin-top:0">توصیف این صحنه (انگلیسی؛ می‌توانی ویرایش کنی)</label><textarea class="pPrompt" dir="ltr"></textarea></div></div>
     <div class="row"><button class="pri pCopy">کپی پرامپت کامل</button><label class="btn" style="display:grid;place-items:center;margin:0">${s.photo.src?'جایگزینی عکس':'آپلود عکس'}<input type="file" accept="image/*" hidden class="pFile"></label></div>
     <div class="st pSt"></div>
     <details class="pFull" open style="margin-top:6px"><summary class="btn" style="display:block;text-align:center;cursor:pointer;min-height:38px;line-height:38px;font-size:13px">پرامپت کامل (توصیف صحنه + سبک + تمام‌صفحه) که کپی می‌شود</summary><div class="pFullTx" dir="ltr" style="white-space:pre-wrap;font-size:12px;font-weight:500;color:var(--mut);padding:8px;text-align:left"></div></details>
+    <div class="pProps" hidden></div>
     <div class="pst2"><div><label>برچسب کوچک بالا (مثلاً ROME · 1970s)</label><input type="text" class="pKick ltr" maxlength="40"></div>
       <div><label>حرکت عکس</label><select class="sel pMot"><option value="auto">خودکار</option><option value="in">زوم به داخل</option><option value="out">زوم به بیرون</option><option value="left">حرکت به چپ</option><option value="right">حرکت به راست</option><option value="none">ثابت</option></select></div></div>
     <p class="hint" style="margin:8px 0 0">عنوان روی عکس همان «متن کلیدی» پایین است (کلمه‌ی مهم بین ستاره). عدد یا سال بزرگ را در کادر «عدد» بنویس. تصویرهای کتابخانه، کارت‌های چسبیده و افکت‌ها مثل قبل روی عکس کار می‌کنند.</p>`;
@@ -1422,6 +1436,7 @@ function posterBlock(box,s,i,d){
   const img=el.querySelector('.pimg'); if(s.photo.src){ img.style.backgroundImage='url("'+rawRepo(s.photo.src)+'")' }
   const pr=el.querySelector('.pPrompt'), pf=el.querySelector('.pFullTx'), pfill=()=>{ pf.textContent=posterFull(s) }; pr.value=s.photo.prompt||''; pfill(); pr.oninput=()=>{ s.photo.prompt=pr.value; pfill(); rvSave() };
   el.querySelector('.pCopy').onclick=async()=>{ const t=posterFull(s); if(!(s.photo.prompt||'').trim()) return toast('این صحنه پرامپت ندارد؛ اول یکی بنویس'); toast(await copy(t)?'پرامپت کپی شد؛ در موتور ساخت تصویر بزن':'کپی نشد؛ متن را دستی انتخاب کن') };
+  propsUI(el,s,i,d);
   const kk=el.querySelector('.pKick'); kk.value=s.kicker||''; kk.oninput=()=>{ s.kicker=kk.value; rvSave(); pvRefresh(i) };
   const mo=el.querySelector('.pMot'); mo.value=s.photo.motion||'auto'; mo.onchange=()=>{ if(mo.value==='auto') delete s.photo.motion; else s.photo.motion=mo.value; clearOk(s); rvSave(); pvRefresh(i) };
   const st=el.querySelector('.pSt'); el.querySelector('.pFile').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; if(!S.token){ st.className='st pSt bad'; st.textContent='اول توکن را در تنظیمات وارد کن'; return }

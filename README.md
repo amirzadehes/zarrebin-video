@@ -49,3 +49,7 @@ A test style next to the classic one: **one full-bleed picture per scene** (made
 - Review panel (poster episodes): per scene the prompt (copy button adds the editable style + aspect), photo upload (resized to max 2400 px JPEG, stored as `episodes/<ep>/bg/NN-<id>.jpg`), bulk upload in file-name order, kicker, photo motion. All the classic review tools still work on top: library pictures (enter/exit on a spoken word, layout drag, effects, sounds), pinned cards, background layers, key-text position/size.
 - Engine (`engine/v2.js`, `POSTER`): `scene.photo = {src, prompt, motion: auto|in|out|left|right|none, fx, fy}` drawn cover-fit with a slow zoom/pan + top/bottom shading; text layers in `posterText`, caption in `subsPoster`, top bar in `uiPoster`. Scenes without a photo render on a dark background.
 - Quality check is poster-aware (counts scenes without photo instead of without library pictures).
+
+
+### Poster mode: separate props
+The director may add up to 2 small separate objects per scene (`scene.props`: `fa`, `t`, `prompt`). A prop whose Persian name already exists in the library is put on the scene as an item at the spoken word. Others show in the review panel with a detailed prompt (same style + magenta background); uploading one runs the normal library flow and adds it to the scene at `t`.
