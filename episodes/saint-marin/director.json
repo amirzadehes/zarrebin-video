@@ -1,58 +1,645 @@
 [
  {
   "from": 0,
-  "to": 7,
-  "prompt": "A modern narrator stands in a street at night, holding a lantern, with Roman soldiers marching in the background. Soft streetlights illuminate the scene, camera centered on the narrator’s face.",
-  "kicker": "",
-  "text": "می‌خوایم *رژه* رو ببینیم؟",
+  "to": 1,
+  "prompt": "Autumn twilight on a German street, children in simple folk clothes carry handmade orange‑glowing lanterns, walking behind a lone Roman soldier in a red cloak, warm lantern light flickering, camera at street level centered on the lantern procession",
+  "kicker": "GERMANY · LANTERNS",
+  "text": "چرا رژهٔ مارتین جذابه؟",
   "number": "",
   "kw": [
    "رژه",
-   "سنت مارتین"
+   "فانوس",
+   "سرباز"
+  ]
+ },
+ {
+  "from": 2,
+  "to": 3,
+  "prompt": "A bustling medieval village square at twilight, families gathered around long wooden tables laden with a roasted goose, steam rising, warm golden lanterns hanging from nearby stalls, villagers laughing and serving the feast.",
+  "kicker": "FEAST",
+  "text": "*جوجه* کبابی در شبی گرم",
+  "number": "",
+  "kw": [
+   "goose",
+   "lanterns",
+   "feast"
+  ]
+ },
+ {
+  "from": 4,
+  "to": 4,
+  "prompt": "A solemn outdoor burial scene at dusk, a half‑cut red cloak draped over a stone tomb, a Roman soldier in armor standing beside a grieving crowd, a ledger of taxes placed on a wooden crate nearby.",
+  "kicker": "CLOAK",
+  "text": "*شنل* در مراسم خاکسپاری",
+  "number": "",
+  "kw": [
+   "cloak",
+   "burial",
+   "taxes"
+  ]
+ },
+ {
+  "from": 5,
+  "to": 5,
+  "prompt": "Early morning in a 4th‑century Hungarian village, a modest wooden house with thatched roof, a newborn baby wrapped in cloth being held by a Roman officer in armor, the father’s stern face and the infant’s tiny hand visible, soft sunrise glow",
+  "kicker": "HUNGARY · 316 AD",
+  "text": "پسرکی به اسم مارتین متولد شد",
+  "number": "",
+  "kw": [
+   "مارتین",
+   "316",
+   "مجارستان"
+  ]
+ },
+ {
+  "from": 6,
+  "to": 6,
+  "prompt": "A young boy in a simple tunic stands beside his father, a Roman officer in full legionary gear, the father points toward a marching legion camp, dusty road and low hills behind, midday light",
+  "kicker": "",
+  "text": "مجبور شد سرباز شود",
+  "number": "",
+  "kw": [
+   "سرباز",
+   "پدر",
+   "رومی"
   ]
  },
  {
   "from": 7,
-  "to": 10,
-  "prompt": "Children in 2020s clothing run beside the Roman soldiers, laughing as they carry a tray of grilled goose kebabs. Warm afternoon light, low angle shot.",
+  "to": 8,
+  "prompt": "Cold night in Amiens, a nearly naked beggar shivers beside a small fire, Saint Martin in a Roman cloak watches from the doorway, faint street lamps glow orange, misty air",
   "kicker": "",
-  "text": "شام *کباب غاز*؟",
+  "text": "شب سرد، گدای لخت",
   "number": "",
   "kw": [
-   "کباب",
-   "غاز"
+   "گدا",
+   "شب",
+   "سرد"
   ]
  },
  {
-  "from": 10,
-  "to": 16,
-  "prompt": "A close‑up of a wooden table with a Roman soldier’s cloak, a burial shroud, and a tax ledger spread out. Dim candlelight creates dramatic shadows.",
+  "from": 9,
+  "to": 10,
+  "prompt": "Saint Martin draws a glinting sword to slice his bright red cloak in half, the torn piece is offered to the beggar, warm lantern light reflects on the metal, close‑up on the hands exchanging the fabric",
   "kicker": "",
-  "text": "مواد *لازم* برای داستان",
+  "text": "شنل را نصف کرد",
   "number": "",
   "kw": [
-   "سرباز رومی",
+   "شنل",
+   "شمشیر",
+   "تقسیم"
+  ]
+ },
+ {
+  "from": 11,
+  "to": 11,
+  "prompt": "A dreamlike scene with a luminous figure of Christ wearing half of a red cloak, hovering above a sleeping Martin, soft golden aura, ethereal clouds, night sky background",
+  "kicker": "",
+  "text": "خواب مسیح",
+  "number": "",
+  "kw": [
+   "خواب",
+   "مسیح",
    "شنل"
   ]
  },
  {
   "from": 12,
+  "to": 12,
+  "prompt": "Martin, now in simple monk robes, steps out of Roman armor, standing waist‑deep in baptismal water, a priest blesses him, sunrise light breaking through trees",
+  "kicker": "",
+  "text": "به راهب شد",
+  "number": "",
+  "kw": [
+   "راهب",
+   "تعمید",
+   "آزاد"
+  ]
+ },
+ {
+  "from": 13,
+  "to": 13,
+  "prompt": "Saint Martin as bishop of Tours, seated on a wooden throne in a modest stone church, holding a bishop's staff, golden light filtering through stained glass, autumn leaves visible through a window",
+  "kicker": "TOURS · 372 AD",
+  "text": "به اسقف تور شد",
+  "number": "",
+  "kw": [
+   "اسقف",
+   "تور",
+   "372"
+  ]
+ },
+ {
+  "from": 14,
+  "to": 14,
+  "prompt": "A quiet village street in western France, a modest stone church with a simple wooden cross, villagers gathered outside, hopeful faces looking toward the church doorway",
+  "kicker": "DESIRE",
+  "text": "خواستن مارتین اسقفشون بشه",
+  "number": "",
+  "kw": [
+   "western France",
+   "bishop"
+  ]
+ },
+ {
+  "from": 15,
+  "to": 15,
+  "prompt": "A medieval town square with a tall bell tower, a cleric in simple robes standing on a raised platform, addressing townspeople",
+  "kicker": "LEADER",
+  "text": "اوزخوف یعنی رهبر مذهبی یه شهر مسیحی",
+  "number": "",
+  "kw": [
+   "religious leader",
+   "city"
+  ]
+ },
+ {
+  "from": 16,
+  "to": 16,
+  "prompt": "Saint Martin in Roman soldier armor, half of his red cloak cut away, looking thoughtful and uneasy, standing alone in a dimly lit hallway",
+  "kicker": "RELUCTANT",
+  "text": "مارتین فکر می‌کرد که این مقام واسش خیلی زیاده دیگه",
+  "number": "",
+  "kw": [
+   "cloaked",
+   "reluctance"
+  ]
+ },
+ {
+  "from": 17,
+  "to": 17,
+  "prompt": "A rustic barn filled with geese, the birds crowded together, a lone figure hiding among them, shadows cast by lantern light",
+  "kicker": "HIDE",
+  "text": "رفت تو طویله‌ی غازها قایم شد",
+  "number": "",
+  "kw": [
+   "geese",
+   "barn"
+  ]
+ },
+ {
+  "from": 18,
+  "to": 18,
+  "prompt": "Geese flapping wildly, feathers flying, the barn door swinging open as the birds cause a chaotic scene, lanterns shaking",
+  "kicker": "CHAOS",
+  "text": "غازه‌ها اون‌قدر شلوغ کردن که لوش دادن",
+  "number": "",
+  "kw": [
+   "geese",
+   "chaos"
+  ]
+ },
+ {
+  "from": 19,
+  "to": 19,
+  "prompt": "A solemn ceremony inside a stone cathedral, Saint Martin being elevated to bishop, clergy placing a mitre on his head, golden light streaming through stained glass",
+  "kicker": "ELEVATION",
+  "text": "شد اسقف شهر و بعد از مرگش قدیس",
+  "number": "",
+  "kw": [
+   "bishop",
+   "saint"
+  ]
+ },
+ {
+  "from": 20,
+  "to": 20,
+  "prompt": "A roasted goose on a wooden table, surrounded by autumn leaves and candles, villagers gathered around sharing the feast",
+  "kicker": "FEAST",
+  "text": "کباب غاز تو این شب به خاطر همین موضوع باشه",
+  "number": "",
+  "kw": [
+   "roast goose",
+   "feast"
+  ]
+ },
+ {
+  "from": 21,
+  "to": 21,
+  "prompt": "A calendar page turning to November 11, a candle flickering beside it, soft twilight outside a small chapel",
+  "kicker": "DATE",
+  "text": "سر خود یازده نوامبر",
+  "number": "11",
+  "kw": [
+   "November",
+   "date"
+  ]
+ },
+ {
+  "from": 22,
+  "to": 22,
+  "prompt": "A somber procession of villagers carrying black banners, a stone monument marking a saint's death, clouds gathering overhead",
+  "kicker": "MORTAL",
+  "text": "روز مرگ یه قدیس",
+  "number": "",
+  "kw": [
+   "death",
+   "saint"
+  ]
+ },
+ {
+  "from": 23,
   "to": 23,
-  "prompt": ""
+  "prompt": "A puzzled child looking at a calendar, pointing to November 11, while an elder explains the tradition, warm indoor lighting",
+  "kicker": "EXPECTATION",
+  "text": "انتظار داری یازده نوامبر روز مرگ مارتین باشه",
+  "number": "11",
+  "kw": [
+   "expectation",
+   "date"
+  ]
  },
  {
   "from": 24,
+  "to": 24,
+  "prompt": "A serene autumn landscape near a small village, a modest wooden cross marking a grave, the date carved as 8 November 666 AD, mist rising",
+  "kicker": "DEATH",
+  "text": "مارتین هشت نوامبر سال ۶۶۶ AD مرد",
+  "number": "8",
+  "kw": [
+   "8 November",
+   "666 AD"
+  ]
+ },
+ {
+  "from": 25,
+  "to": 26,
+  "prompt": "The village of Kand, modest stone houses, a modest grave marker with Saint Martin's name, distant view of Tours' cathedral on a hill",
+  "kicker": "BURIAL",
+  "text": "در روستای کَند مرد",
+  "number": "",
+  "kw": [
+   "Kand",
+   "burial"
+  ]
+ },
+ {
+  "from": 27,
+  "to": 27,
+  "prompt": "Two groups of villagers from Kand and Tours standing on opposite sides of a grave, arguing, hands raised, autumn leaves swirling",
+  "kicker": "DISPUTE",
+  "text": "مردم کَند و مردم تور سر محل خاکسپاریش دعوا کردند",
+  "number": "",
+  "kw": [
+   "dispute",
+   "burial site"
+  ]
+ },
+ {
+  "from": 28,
+  "to": 29,
+  "prompt": "A twilight street in ancient Tours, stone buildings and narrow lanes, mourners in simple Roman‑era clothing carry a wrapped body on a wooden stretcher, lanterns casting warm orange light, the scene viewed from a low angle focusing on the procession.",
+  "kicker": "TOURS · 316 AD",
+  "text": "مردم تور چرا بدنش رو برداشتن؟",
+  "number": "",
+  "kw": [
+   "بدن",
+   "مردم",
+   "تور"
+  ]
+ },
+ {
+  "from": 30,
+  "to": 30,
+  "prompt": "An open burial ground outside Tours in early November, autumn leaves covering the ground, a modest grave marked with a wooden cross, a few lanterns flickering nearby, soft golden light of sunset bathing the scene.",
+  "kicker": "TOURS · NOV 11",
+  "text": "روز خاکسپاری چه‌جوری بود",
+  "number": "",
+  "kw": [
+   "خاکسپاری",
+   "نوامبر"
+  ]
+ },
+ {
+  "from": 31,
+  "to": 31,
+  "prompt": "Inside a modest early‑Christian cathedral, clergy in simple robes gather around an altar, solemn faces, dim candlelight highlighting the sacred atmosphere, the focus on the empty seat reserved for the saint.",
+  "kicker": "",
+  "text": "چرا این روز خاصه",
+  "number": "",
+  "kw": [
+   "اسقف‌ها",
+   "مهم"
+  ]
+ },
+ {
+  "from": 32,
+  "to": 33,
+  "prompt": "A 16th‑century German town square, a young man in modest Reformation clothing holds an open Bible, surrounding townsfolk listen, timber‑framed houses and a distant church tower under a gray sky.",
+  "kicker": "MARTIN LUTHER",
+  "text": "مارتین لوتر کیست",
+  "number": "",
+  "kw": [
+   "مارتین",
+   "لوتر",
+   "پروتستان"
+  ]
+ },
+ {
+  "from": 34,
   "to": 35,
-  "prompt": ""
+  "prompt": "A medieval tavern interior with a massive roasted goose on a long wooden table, rustic benches filled with villagers in simple folk dress, candle and lantern light creating a warm, festive glow.",
+  "kicker": "",
+  "text": "افسانه کباب غاز",
+  "number": "",
+  "kw": [
+   "کباب",
+   "غاز",
+   "داستان"
+  ]
  },
  {
   "from": 36,
+  "to": 36,
+  "prompt": "A scholarly study with a candlelit desk, an elderly historian examines ancient parchment scrolls, a skeptical expression as he points to a marginal note about the goose legend, shelves of old books in the background.",
+  "kicker": "",
+  "text": "تاریخ‌نویس‌ها چه می‌گویند",
+  "number": "",
+  "kw": [
+   "تاریخ‌نویس",
+   "غاز",
+   "رابطه"
+  ]
+ },
+ {
+  "from": 37,
+  "to": 37,
+  "prompt": "A close‑up of an illuminated medieval calendar page showing November 11, with tiny icons of a goose, a tax ledger, and a church cross, all highlighted in gold ink.",
+  "kicker": "",
+  "text": "یک روز، چند داستان",
+  "number": "",
+  "kw": [
+   "تاریخ",
+   "همزمان"
+  ]
+ },
+ {
+  "from": 38,
+  "to": 38,
+  "prompt": "Autumn farmland near a village, farmers in rough garments hand a plump goose to a stern tax collector beside a haystack, golden fields stretching under a low sun.",
+  "kicker": "",
+  "text": "روز پرداخت اجاره",
+  "number": "",
+  "kw": [
+   "اجاره",
+   "غاز",
+   "کشاورزی"
+  ]
+ },
+ {
+  "from": 39,
+  "to": 39,
+  "prompt": "A bustling barn interior filled with fat, glossy geese, a farmer proudly presents one to an official holding a ledger, warm light filtering through wooden slats.",
+  "kicker": "",
+  "text": "غذا برای مالیات",
+  "number": "",
+  "kw": [
+   "غاز",
+   "مالیات",
+   "چاق"
+  ]
+ },
+ {
+  "from": 40,
+  "to": 40,
+  "prompt": "Inside a stone church, a wooden sign reading \"No meat\" hangs above the altar, congregants glance at empty tables, candles flicker, creating a solemn yet hopeful atmosphere as Christmas approaches.",
+  "kicker": "",
+  "text": "قوانین قبل کریسمس",
+  "number": "",
+  "kw": [
+   "کریسمس",
+   "گوشت",
+   "ممنوع"
+  ]
+ },
+ {
+  "from": 41,
+  "to": 41,
+  "prompt": "A lively night feast in a village hall, lanterns and torches illuminate a crowd carving a golden‑brown roasted goose, children laughing, warm autumn colors dominate the scene.",
+  "kicker": "",
+  "text": "شب قبل همه می‌خورن",
+  "number": "",
+  "kw": [
+   "شب",
+   "غاز",
+   "جشن"
+  ]
+ },
+ {
+  "from": 42,
+  "to": 42,
+  "prompt": "A rustic medieval village hall at twilight, a golden roasted goose on a long wooden table, villagers gathered around, warm autumn light from torches and candles, the atmosphere solemn yet hopeful as the end of harvest meets the start of a fast.",
+  "kicker": "",
+  "text": "چرا تاریخ مارتین با *روزهای* سرما یک شد؟",
+  "number": "",
+  "kw": [
+   "سنت",
+   "مارتین",
+   "سرما"
+  ]
+ },
+ {
+  "from": 43,
+  "to": 44,
+  "prompt": "Children in simple folk costumes clutch handmade straw lanterns that glow orange, standing beside a massive roasted goose on a banquet table, the hall illuminated by flickering lanterns and a cozy fire, capturing the festive night.",
+  "kicker": "",
+  "text": "چرا *غاز* تو این شب میاد؟",
+  "number": "",
+  "kw": [
+   "غاز",
+   "شب",
+   "فانوس"
+  ]
+ },
+ {
+  "from": 45,
+  "to": 45,
+  "prompt": "A group of elderly villagers seated on wooden benches in a dimly lit stone chapel, discussing traditions, their faces illuminated by candlelight, conveying a sense of oral history passing down.",
+  "kicker": "",
+  "text": "سوالات *فانوس* کجا می‌رن؟",
+  "number": "",
+  "kw": [
+   "فانوس",
+   "سوالات",
+   "سنت"
+  ]
+ },
+ {
+  "from": 46,
+  "to": 46,
+  "prompt": "A solemn procession scene showing a small crowd carrying lanterns through a misty autumn evening, a faint silhouette of a burial mound in the background, evoking a funeral rite linked to Saint Martin.",
+  "kicker": "",
+  "text": "فانوس‌ها با *مراسم* خاکسپاری؟",
+  "number": "",
+  "kw": [
+   "فانوس",
+   "مراسم",
+   "خاکسپاری"
+  ]
+ },
+ {
+  "from": 47,
   "to": 47,
-  "prompt": ""
+  "prompt": "Farm fields at dusk with haystacks and a small fire burning, children gathering straw and turnips to craft lanterns, the warm glow contrasting with the cool evening sky.",
+  "kicker": "",
+  "text": "آتش *مزرعه* و ساخت فانوس!",
+  "number": "",
+  "kw": [
+   "آتش",
+   "مزرعه",
+   "فانوس"
+  ]
  },
  {
   "from": 48,
+  "to": 49,
+  "prompt": "Children in the village square assembling lanterns from reeds and turnips, their faces lit by the soft orange light, while nearby a modest parade of lanterns begins, hinting at a nascent tradition.",
+  "kicker": "",
+  "text": "رژهٔ *فانوس* نوپا!",
+  "number": "",
+  "kw": [
+   "رژه",
+   "فانوس",
+   "نوپا"
+  ]
+ },
+ {
+  "from": 50,
   "to": 50,
-  "prompt": ""
+  "prompt": "A historic 1880s German Rhineland town square at night, organized lantern procession with rows of glowing lanterns carried by villagers, illuminated by gas lamps, showcasing the early modern parade.",
+  "kicker": "RHEINLAND · 1887",
+  "text": "اولین رژهٔ *فانوس* در راین‌لند",
+  "number": "",
+  "kw": [
+   "رژه",
+   "فانوس",
+   "راین‌لند"
+  ]
+ },
+ {
+  "from": 51,
+  "to": 52,
+  "prompt": "Map-like illustration showing the spread of lantern processions from Germany to neighboring regions around 1900, with arrows and small icons of lanterns moving outward, set on aged parchment.",
+  "kicker": "",
+  "text": "از 1900 همه‌جا *پخش* شد",
+  "number": "",
+  "kw": [
+   "پخش",
+   "فانوس",
+   "1900"
+  ]
+ },
+ {
+  "from": 53,
+  "to": 54,
+  "prompt": "A timeline graphic juxtaposing the 1600‑year history of Saint Martin with the 150‑year history of lantern parades, each segment highlighted with appropriate medieval and 19th‑century motifs.",
+  "kicker": "",
+  "text": "سنت مارتین 1600 ساله، رژه 150 ساله",
+  "number": "",
+  "kw": [
+   "سنت",
+   "مارتین",
+   "رژه"
+  ]
+ },
+ {
+  "from": 55,
+  "to": 55,
+  "prompt": "A lone figure dressed in a Roman soldier's armor, riding a wooden horse toy leading a modern lantern parade, the background filled with glowing lanterns and autumn trees.",
+  "kicker": "",
+  "text": "سرباز رومی در رژهٔ *امروزی*",
+  "number": "",
+  "kw": [
+   "سرباز",
+   "رومی",
+   "رژه"
+  ]
+ },
+ {
+  "from": 56,
+  "to": 56,
+  "prompt": "A young Saint Martin in Roman soldier attire stands on a quiet street at twilight. Behind him, children in simple folk clothes walk forward holding handmade orange‑glowing lanterns, singing softly.",
+  "kicker": "CHORUS",
+  "text": "*مارتین* و نور",
+  "number": "",
+  "kw": [
+   "Saint Martin",
+   "children",
+   "lanterns"
+  ]
+ },
+ {
+  "from": 57,
+  "to": 57,
+  "prompt": "In the middle of a path, Saint Martin draws his sword and slices his red cloak in half. He offers one half of the torn cloak to a ragged beggar standing nearby, the scene bathed in warm autumn light.",
+  "kicker": "SHARE",
+  "text": "*شنل* تقسیم شده",
+  "number": "",
+  "kw": [
+   "cloak",
+   "beggar",
+   "sword"
+  ]
+ },
+ {
+  "from": 58,
+  "to": 59,
+  "prompt": "A large bonfire roars in an open autumn clearing, flames licking the night sky. Surrounding lanterns and trees are illuminated by the warm orange glow, creating a festive yet reverent atmosphere.",
+  "kicker": "BIG FIRE",
+  "text": "آتش *بزرگ* روشن",
+  "number": "",
+  "kw": [
+   "آتش"
+  ]
+ },
+ {
+  "from": 60,
+  "to": 60,
+  "prompt": "Children in simple folk clothing walking at warm autumn twilight, each holding a handmade straw lantern that glows orange, the scene bathed in golden light, no text",
+  "kicker": "SHARING",
+  "text": "*فانوس* یادگیری تقسیم کردن",
+  "number": "",
+  "kw": [
+   "children",
+   "lanterns",
+   "sharing"
+  ]
+ },
+ {
+  "from": 61,
+  "to": 61,
+  "prompt": "Young Roman soldier in a leather armor uniform, holding a sword and cutting his red cloak in half, the split fabric fluttering, set against a dimly lit evening backdrop, no text",
+  "kicker": "CLOAK",
+  "text": "*شنل* نصف شده",
+  "number": "",
+  "kw": [
+   "soldier",
+   "cloak",
+   "cut"
+  ]
+ },
+ {
+  "from": 62,
+  "to": 62,
+  "prompt": "A medieval village square at twilight, a large roasted goose on a spit over a fire, a stern tax collector holding a ledger beside fasting townspeople watching, warm golden lantern light casting long shadows.",
+  "kicker": "TAX",
+  "text": "*کباب* غاز و مالیات",
+  "number": "",
+  "kw": [
+   "goose",
+   "tax"
+  ]
+ },
+ {
+  "from": 63,
+  "to": 63,
+  "prompt": "A close-up of a hand holding a magnifying glass, focusing on a parchment map of a lantern procession route, with tiny lantern icons illuminated, inviting the viewer to choose the next scene.",
+  "kicker": "GOOSE ROAST",
+  "text": "",
+  "number": "",
+  "kw": [
+   "magnifying glass",
+   "lanterns"
+  ]
  }
 ]
