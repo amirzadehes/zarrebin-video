@@ -3700,53 +3700,61 @@
   },
   "u-mwht079b": {
    "id": "u-mwht079b",
-   "en": "u mwht079b",
-   "fa": "کتابخانه عمومی",
+   "en": "baby boy",
+   "fa": "نوزاد پسر",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "u-mwht079b__1.webp"
    ],
    "fa_tags": [
-    "کتاب",
-    "کتابخانه",
-    "مطالعه",
-    "ادبیات",
-    "دانش",
-    "اطلاعات",
-    "منابع"
+    "نوزاد",
+    "پسر",
+    "بچه",
+    "کودک",
+    "خردسال",
+    "بچه‌پسر"
    ],
-   "fa_tags_for": "کتابخانه عمومی"
+   "fa_tags_for": "نوزاد پسر"
   },
   "u-mwht9mkh": {
    "id": "u-mwht9mkh",
-   "en": "u mwht9mkh",
-   "fa": "کتابخانه عمومی",
+   "en": "snow",
+   "fa": "برف",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "u-mwht9mkh__1.webp"
    ],
    "fa_tags": [
-    "کتاب",
-    "کتابخانه",
-    "مطالعه",
-    "ادبیات",
-    "دانش",
-    "اطلاعات",
-    "منابع"
+    "برف",
+    "یخ",
+    "زمستان",
+    "سرما",
+    "مه‌برف",
+    "طبیعت"
    ],
-   "fa_tags_for": "کتابخانه عمومی"
+   "fa_tags_for": "برف"
   },
   "u-mwhtnxi2": {
    "id": "u-mwhtnxi2",
-   "en": "u mwhtnxi2",
-   "fa": "",
+   "en": "old town",
+   "fa": "شهر قدیمی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "u-mwhtnxi2__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "شهر",
+    "قدیمی",
+    "تاریخی",
+    "خیابان",
+    "معماری",
+    "کوچه",
+    "کهنه"
+   ],
+   "fa_tags_for": "شهر قدیمی"
   },
   "warning-sign": {
    "id": "warning-sign",
