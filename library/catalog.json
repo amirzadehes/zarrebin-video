@@ -3759,22 +3759,40 @@
   "u-mwi82fu8": {
    "id": "u-mwi82fu8",
    "en": "u mwi82fu8",
-   "fa": "",
+   "fa": "کد شناسایی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "u-mwi82fu8__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کد",
+    "شناسه",
+    "نشان",
+    "رمز",
+    "توکن",
+    "معرفی"
+   ],
+   "fa_tags_for": "کد شناسایی"
   },
   "u-mwi96zu7": {
    "id": "u-mwi96zu7",
    "en": "u mwi96zu7",
-   "fa": "",
+   "fa": "کد شناسایی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "u-mwi96zu7__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کد",
+    "شناسه",
+    "نشان",
+    "رمز",
+    "توکن",
+    "معرفی"
+   ],
+   "fa_tags_for": "کد شناسایی"
   },
   "warning-sign": {
    "id": "warning-sign",
