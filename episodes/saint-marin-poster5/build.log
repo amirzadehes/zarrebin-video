@@ -1,0 +1,39 @@
+model: openai/gpt-oss-120b
+cleanup skipped: line count mismatch 66 85
+own voice: seconds 259.9 sentences 85 words 696
+narration units: 75
+model: openai/gpt-oss-120b
+rate limited, waiting 16s
+model openai/gpt-oss-120b is rate limited for a long time (62s): switching model
+model: qwen/qwen3.8-27b
+rate limited, waiting 9s
+rate limited, waiting 16s
+rate limited, waiting 11s
+model qwen/qwen3.8-27b is rate limited for a long time (62s): switching model
+model: openai/gpt-oss-20b
+rate limited, waiting 13s
+rate limited, waiting 9s
+rate limited, waiting 12s
+model openai/gpt-oss-20b is rate limited for a long time (1082s): switching model
+poster director fallback for sentences 42-55 (no AI): Groq: every model has hit its rate limit; try again later
+props pass skipped: Groq: every model has hit its rate limit; try again later
+verify skipped: Groq: every model has hit its rate limit; try again later
+poster director fallback for sentences 56-69 (no AI): Groq: every model has hit its rate limit; try again later
+props pass skipped: Groq: every model has hit its rate limit; try again later
+verify skipped: Groq: every model has hit its rate limit; try again later
+poster director fallback for sentences 70-74 (no AI): Groq: every model has hit its rate limit; try again later
+props pass skipped: Groq: every model has hit its rate limit; try again later
+verify skipped: Groq: every model has hit its rate limit; try again later
+split repair fallback: Groq: every model has hit its rate limit; try again later
+split a 52 s scene into 8 pieces
+split repair fallback: Groq: every model has hit its rate limit; try again later
+split a 54 s scene into 10 pieces
+music brief skipped: Groq: every model has hit its rate limit; try again later
+poster scenes 42 total 261.08 | with prompt: 25
+voice check ok: voice.mp3 259.9s, timing 259.9s
+QA saint-marin-poster5: 42 صحنه، میانگین 6.2 ثانیه، بیشترین سکون تصویری 12.2 ثانیه | هشدار: 4، نکته: 1
+ - ⚠ 42 از 42 صحنه هنوز عکس آپلودشده ندارند؛ با پس‌زمینه‌ی تیره ساخته می‌شوند.
+ - ⚠ صحنه‌ی اول (قلاب) باید زود تصویر بیاورد (≤1.0 ثانیه) و از 6.5 ثانیه بلندتر نباشد؛ الان: 10.5 ثانیه، اولین تصویر در 8.8.
+ - ⚠ 5 صحنه از 9.5 ثانیه طولانی‌ترند؛ بلندترین: صحنه‌ی 30 از ثانیه‌ی 189.1 (12.2 ثانیه). این‌ها را کوتاه‌تر ببر یا تصویر/رویداد بیشتری بگذار.
+ - ⚠ 21 بازه‌ی بیشتر از 6.0 ثانیه بدون رویداد تصویری تازه (عکس یا تغییر صحنه) داریم؛ بدترین‌ها: 189 تا 201، 16 تا 28، 165 تا 175. بین این‌ها فقط ضربه‌ی دوربین می‌آید؛ بهتر است تصویر دوم یا تغییر صحنه اضافه شود.
+ - ℹ 25 برش صحنه وسط یک کلمه شروع می‌شود (نمونه: صحنه‌ی 4 در ثانیه‌ی 35.9).

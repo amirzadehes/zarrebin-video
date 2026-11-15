@@ -1,0 +1,427 @@
+[
+ {
+  "from": 0,
+  "to": 1,
+  "elements": [
+   "children carrying lanterns",
+   "Roman soldier",
+   "Germany in November"
+  ],
+  "props": [
+   {
+    "fa": "فانوس دست‌ساز",
+    "word": "فانوس",
+    "prompt": "A handmade winter lantern crafted from a hollowed-out orange turnip and a woven straw frame, glowing with a warm, soft amber light from within, featuring intricate cut-out patterns on the vegetable skin and a rustic wooden handle, isolated against a void."
+   },
+   {
+    "fa": "غاز کبابی",
+    "word": "قاز",
+    "prompt": "A whole roasted goose with crispy, golden-brown skin glistening with juices, plump and perfectly cooked, presented on a small, simple wooden serving board with a sprig of fresh rosemary and a slice of lemon, isolated against a void."
+   }
+  ],
+  "more": [],
+  "prompt": "A vertical cinematic shot of a dark, cobblestone street in Germany during a cold November twilight. A group of children in warm winter coats and caps walk in a line, each holding a glowing handmade straw lantern. Behind them walks an adult man dressed in a replica Roman soldier uniform with a helmet and shield. The atmosphere is festive yet chilly, with the warm light of the lanterns contrasting against the blue dusk.",
+  "kicker": "GERMANY · NOVEMBER",
+  "text": "رژه‌ی *فانوس‌های* مارتین",
+  "number": "",
+  "kw": [
+   "رجه",
+   "فانوس",
+   "آلمان"
+  ]
+ },
+ {
+  "from": 2,
+  "to": 3,
+  "elements": [
+   "Roman soldier",
+   "cape",
+   "funeral",
+   "tax"
+  ],
+  "props": [
+   {
+    "fa": "شنل رومی",
+    "word": "شنل",
+    "prompt": "A heavy, deep red Roman military cloak made of thick wool, draped in a way that shows its texture and weight, with a visible metallic clasp at the shoulder, isolated against a void."
+   }
+  ],
+  "more": [],
+  "prompt": "A still life composition on a dark wooden surface featuring a small silver coin representing tax and a simple white shroud representing a funeral. The lighting is dramatic and moody, highlighting the textures of the metal and fabric and the solemn nature of the objects.",
+  "kicker": "THE LEGEND'S ITEMS",
+  "text": "مواد لازمِ *داستان*",
+  "number": "",
+  "kw": [
+   "سرباز",
+   "شنل",
+   "مالیات"
+  ]
+ },
+ {
+  "from": 4,
+  "to": 5,
+  "elements": [
+   "Martin",
+   "Roman soldier (father)",
+   "Hungary in 316"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A 4th-century Hungarian town square at dawn. A young boy, Martin, with light skin, short dark hair, average build, neutral expression, wearing a simple peasant tunic, stands beside his father. The father is a muscular adult male with light skin, short cropped hair, stern face, wearing a bronze-studded leather cuirass and a red cloak. They look out over the modest stone buildings of the town, capturing the moment of Martin's birth and early life.",
+  "kicker": "HUNGARY · 316 AD",
+  "text": "تولد *مارتین* در مجارستان",
+  "number": "316",
+  "kw": [
+   "مارتین",
+   "مجارستان",
+   "افسر"
+  ]
+ },
+ {
+  "from": 6,
+  "to": 7,
+  "elements": [
+   "Martin",
+   "France",
+   "cold night"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A dark, snowy street in France at night. A young Roman soldier, Martin, with light skin, short dark hair, average build, neutral expression, wearing a short Roman cloak and leather armor, walks alone. His breath is visible in the freezing air. The street is dimly lit by distant torches, emphasizing the cold and isolation of the scene.",
+  "kicker": "FRANCE · COLD NIGHT",
+  "text": "شبِ سردِ *آمین*",
+  "number": "",
+  "kw": [
+   "سرد",
+   "آمین",
+   "فرانسه"
+  ]
+ },
+ {
+  "from": 8,
+  "to": 9,
+  "elements": [
+   "Martin",
+   "Beggar"
+  ],
+  "props": [
+   {
+    "fa": "شمشیر رومی",
+    "word": "شمشیر",
+    "prompt": "A short Roman gladius sword with a straight double-edged blade, a simple bronze crossguard, and a leather-wrapped hilt, lying flat and isolated against a void, showing the metallic sheen of the steel."
+   }
+  ],
+  "more": [],
+  "prompt": "A dramatic close-up on a dark street. Martin, the young Roman soldier with light skin, short dark hair, average build, neutral expression, wearing a short Roman cloak and leather armor, kneels before a gaunt, tanned beggar with hollow eyes, unshaven face, bare feet, and a tattered ragged cloak. Martin holds one piece of his red-brown cloak out to the shivering beggar. The scene is lit by a single torch, highlighting the act of charity.",
+  "kicker": "THE CHARITY",
+  "text": "نصفِ شنلِ *ارتشی*",
+  "number": "",
+  "kw": [
+   "گدا",
+   "نصف",
+   "شمشیر"
+  ]
+ },
+ {
+  "from": 10,
+  "to": 11,
+  "elements": [
+   "Martin",
+   "Jesus Christ"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A dreamlike, ethereal scene. Jesus Christ, depicted with a gentle expression and long hair, stands in a field of light wearing the other half of the red-brown Roman cloak. The background is a soft, glowing white and gold, symbolizing the divine vision Martin had after the act of charity.",
+  "kicker": "THE VISION",
+  "text": "خوابِ *مسیح*",
+  "number": "",
+  "kw": [
+   "خواب",
+   "مسیح",
+   "شنل"
+  ]
+ },
+ {
+  "from": 12,
+  "to": 13,
+  "elements": [
+   "Martin",
+   "Tours, France"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A bustling medieval town square in Tours, France, in the year 372. A crowd of people in 4th-century clothing looks towards a man in white clerical vestments, Martin, who stands with a calm, authoritative presence. The architecture is stone and wood, typical of early medieval Europe, with a warm, community-focused atmosphere.",
+  "kicker": "TOURS · 372 AD",
+  "text": "مردمِ *تور* او را خواستند",
+  "number": "372",
+  "kw": [
+   "تور",
+   "فرانسه",
+   "مردم"
+  ]
+ },
+ {
+  "from": 14,
+  "to": 15,
+  "prompt": "Martin as ozkhof in 372 France, wearing white clerical vestments, standing in a medieval city square of Tours, surrounded by townsfolk in winter clothing, twilight, cold atmosphere, subtle street lamps casting a soft glow",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 16,
+  "to": 16,
+  "prompt": "Martin as ozkhof in 372 France, wearing white clerical vestments, standing in a medieval city square of Tours, surrounded by townsfolk in winter clothing, twilight, cold atmosphere, subtle street lamps casting a soft glow Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 17,
+  "to": 17,
+  "prompt": "Martin as ozkhof in 372 France, wearing white clerical vestments, standing in a medieval city square of Tours, surrounded by townsfolk in winter clothing, twilight, cold atmosphere, subtle street lamps casting a soft glow Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 18,
+  "to": 19,
+  "prompt": "Martin as ozkhof in 372 France, wearing white clerical vestments, standing in a medieval city square of Tours, surrounded by townsfolk in winter clothing, twilight, cold atmosphere, subtle street lamps casting a soft glow Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 20,
+  "to": 21,
+  "prompt": "Martin as ozkhof in 372 France, wearing white clerical vestments, standing in a medieval city square of Tours, surrounded by townsfolk in winter clothing, twilight, cold atmosphere, subtle street lamps casting a soft glow Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 22,
+  "to": 23,
+  "prompt": "Martin as ozkhof in 372 France, wearing white clerical vestments, standing in a medieval city square of Tours, surrounded by townsfolk in winter clothing, twilight, cold atmosphere, subtle street lamps casting a soft glow Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 24,
+  "to": 25,
+  "prompt": "Martin as ozkhof in 372 France, wearing white clerical vestments, standing in a medieval city square of Tours, surrounded by townsfolk in winter clothing, twilight, cold atmosphere, subtle street lamps casting a soft glow Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 26,
+  "to": 27,
+  "prompt": "Martin as ozkhof in 372 France, wearing white clerical vestments, standing in a medieval city square of Tours, surrounded by townsfolk in winter clothing, twilight, cold atmosphere, subtle street lamps casting a soft glow Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 28,
+  "to": 29,
+  "prompt": "A twilight winter street in Tours, France, with a stone tomb marked for Saint Martin. A shrouded figure of Martin lies on a simple slab, his burial cloth draped over him, surrounded by a few mourners in modest winter garments. The scene is cold and quiet, with the faint glow of distant lanterns hinting at the upcoming St. Martin’s Day celebrations. No additional objects or animals are shown.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 30,
+  "to": 30,
+  "prompt": "A twilight winter street in Tours, France, with a stone tomb marked for Saint Martin. A shrouded figure of Martin lies on a simple slab, his burial cloth draped over him, surrounded by a few mourners in modest winter garments. The scene is cold and quiet, with the faint glow of distant lanterns hinting at the upcoming St. Martin’s Day celebrations. No additional objects or animals are shown. Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 31,
+  "to": 31,
+  "prompt": "A twilight winter street in Tours, France, with a stone tomb marked for Saint Martin. A shrouded figure of Martin lies on a simple slab, his burial cloth draped over him, surrounded by a few mourners in modest winter garments. The scene is cold and quiet, with the faint glow of distant lanterns hinting at the upcoming St. Martin’s Day celebrations. No additional objects or animals are shown. Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 32,
+  "to": 32,
+  "prompt": "A twilight winter street in Tours, France, with a stone tomb marked for Saint Martin. A shrouded figure of Martin lies on a simple slab, his burial cloth draped over him, surrounded by a few mourners in modest winter garments. The scene is cold and quiet, with the faint glow of distant lanterns hinting at the upcoming St. Martin’s Day celebrations. No additional objects or animals are shown. Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 33,
+  "to": 33,
+  "prompt": "A twilight winter street in Tours, France, with a stone tomb marked for Saint Martin. A shrouded figure of Martin lies on a simple slab, his burial cloth draped over him, surrounded by a few mourners in modest winter garments. The scene is cold and quiet, with the faint glow of distant lanterns hinting at the upcoming St. Martin’s Day celebrations. No additional objects or animals are shown. Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 34,
+  "to": 34,
+  "prompt": "A twilight winter street in Tours, France, with a stone tomb marked for Saint Martin. A shrouded figure of Martin lies on a simple slab, his burial cloth draped over him, surrounded by a few mourners in modest winter garments. The scene is cold and quiet, with the faint glow of distant lanterns hinting at the upcoming St. Martin’s Day celebrations. No additional objects or animals are shown. Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 35,
+  "to": 36,
+  "prompt": "A twilight winter street in Tours, France, with a stone tomb marked for Saint Martin. A shrouded figure of Martin lies on a simple slab, his burial cloth draped over him, surrounded by a few mourners in modest winter garments. The scene is cold and quiet, with the faint glow of distant lanterns hinting at the upcoming St. Martin’s Day celebrations. No additional objects or animals are shown. Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 37,
+  "to": 38,
+  "prompt": "A twilight winter street in Tours, France, with a stone tomb marked for Saint Martin. A shrouded figure of Martin lies on a simple slab, his burial cloth draped over him, surrounded by a few mourners in modest winter garments. The scene is cold and quiet, with the faint glow of distant lanterns hinting at the upcoming St. Martin’s Day celebrations. No additional objects or animals are shown. Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 39,
+  "to": 40,
+  "prompt": "A twilight winter street in Tours, France, with a stone tomb marked for Saint Martin. A shrouded figure of Martin lies on a simple slab, his burial cloth draped over him, surrounded by a few mourners in modest winter garments. The scene is cold and quiet, with the faint glow of distant lanterns hinting at the upcoming St. Martin’s Day celebrations. No additional objects or animals are shown. Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 41,
+  "to": 41,
+  "prompt": "A twilight winter street in Tours, France, with a stone tomb marked for Saint Martin. A shrouded figure of Martin lies on a simple slab, his burial cloth draped over him, surrounded by a few mourners in modest winter garments. The scene is cold and quiet, with the faint glow of distant lanterns hinting at the upcoming St. Martin’s Day celebrations. No additional objects or animals are shown. Shown from a different camera angle at a different moment.",
+  "kicker": "",
+  "text": "",
+  "number": "",
+  "kw": []
+ },
+ {
+  "from": 42,
+  "to": 43,
+  "prompt": "",
+  "text": "خوردن گوشت ممنوع بود پس"
+ },
+ {
+  "from": 44,
+  "to": 45,
+  "prompt": "",
+  "text": "یعنی تاریخ سنت مارتین تصادفاً با"
+ },
+ {
+  "from": 46,
+  "to": 47,
+  "prompt": "",
+  "text": "خالا موضوع بعدی فانوسه که"
+ },
+ {
+  "from": 48,
+  "to": 49,
+  "prompt": "",
+  "text": "یکی جواب مشخص نداره و"
+ },
+ {
+  "from": 50,
+  "to": 51,
+  "prompt": "",
+  "text": "این که میگن روز مراسم خاک"
+ },
+ {
+  "from": 52,
+  "to": 53,
+  "prompt": "",
+  "text": "دیگه جشن پایان برداشت و پاییز"
+ },
+ {
+  "from": 54,
+  "to": 55,
+  "prompt": "",
+  "text": "اولین رجعه های سازمانی آفته تو"
+ },
+ {
+  "from": 56,
+  "to": 57,
+  "prompt": "",
+  "text": "از حدود 1900 همه جا پخش"
+ },
+ {
+  "from": 58,
+  "to": 59,
+  "prompt": "",
+  "text": "رجعه فانوس فقط حدود 150 ساله"
+ },
+ {
+  "from": 60,
+  "to": 61,
+  "prompt": "",
+  "text": "تو رژه یه نفر لباس سرباز"
+ },
+ {
+  "from": 62,
+  "to": 63,
+  "prompt": "",
+  "text": "خود مارتینه بچه"
+ },
+ {
+  "from": 64,
+  "to": 65,
+  "prompt": "",
+  "text": "وسط راه سوار شمشیر میکشه شنل"
+ },
+ {
+  "from": 66,
+  "to": 67,
+  "prompt": "",
+  "text": "هم یه آتیش بزرگ روشن میکنن"
+ },
+ {
+  "from": 68,
+  "to": 69,
+  "prompt": "",
+  "text": "بلکه دنبال مارتین میرن و خودشون"
+ },
+ {
+  "from": 70,
+  "to": 71,
+  "prompt": "",
+  "text": "پس جهانبندی یه"
+ },
+ {
+  "from": 72,
+  "to": 73,
+  "prompt": "",
+  "text": "کباب غاز یادگار یه تداخل تاریخیه"
+ },
+ {
+  "from": 74,
+  "to": 74,
+  "prompt": "",
+  "text": "شما بگین بعدیو کجا بذاریم"
+ }
+]
