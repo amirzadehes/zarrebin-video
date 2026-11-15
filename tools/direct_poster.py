@@ -122,10 +122,67 @@ def split_long(raw, S, brief, ss):
         print('split a %.0f s scene into %d pieces' % (S[r['to']]['t1'] - S[r['from']]['t0'], len(parts)))
         for k, p in enumerate(parts):
             o = got[k] if k < len(got) else {}
-            p.update({'prompt': o.get('prompt') or ((r.get('prompt') or '') + (' Shown from a different camera angle at a different moment.' if k and r.get('prompt') else '')), 'kicker': o.get('kicker') or r.get('kicker') or '',
+            p.update({'prompt': o.get('prompt') or (r.get('prompt') or '' if k == 0 else ''), 'kicker': o.get('kicker') or r.get('kicker') or '',
                       'text': o.get('text') or '', 'number': o.get('number') or '', 'kw': o.get('kw') or r.get('kw') or []})
             out.append(p)
     return out
+
+
+FIXP = """برای هر صحنه‌ی ویدیو فقط متن راوی همان صحنه داده می‌شود و باید یک توصیف تصویر انگلیسی بنویسی (۲ تا ۴ جمله، بدون نوشته در تصویر، بدون نشان‌دادن راوی). این صحنه‌ها با هم و با صحنه‌های دیگر فرق دارند: هر توصیف باید دقیقاً چیزی را نشان بدهد که در متن همان صحنه گفته می‌شود (آدم‌ها، مکان، دوره، فصل، اشیای بزرگ، عمل)، پس توصیف‌ها نباید شبیه هم یا شبیه فهرست «قبلاً استفاده‌شده» باشند: هر صحنه صحنه‌ی، زاویه‌ی و ترکیب خودش را داشته باشد. اگر متن چیز عینی ندارد (توضیح، عدد، مالیات، تاریخ)، یک تصویر نمادین و تصویری بساز که با همان مفهوم بخواند (مثلاً مزرعه‌ی پاییزی، اسناد و سکه، فانوس). هر توصیف مستقل باشد و به صحنه‌ی دیگر ارجاع ندهد؛ هر شخصیت را کامل (طبق CAST در خلاصه) و با لباس و سن همان دوره بنویس. چیزی که در متن نیست اختراع نکن.
+خروجی فقط JSON: {"scenes":[{"i":0,"prompt":""}]} به همان ترتیب و تعداد."""
+
+
+def _body(p): return re.sub(r'\s+', ' ', str(p or '').split(' Character look')[0]).strip()
+
+
+def _wset(p): return set(w for w in re.findall(r'[a-z]{4,}', _body(p).lower()))
+
+
+def bad_prompts(prompts, thr=.62):
+    """indexes whose prompt is empty or (nearly) the same as an earlier one: the image engine would draw the same picture again"""
+    kept, bad = [], []
+    for i, p in enumerate(prompts):
+        w = _wset(p)
+        if len(w) < 6: bad.append(i); continue
+        if any(len(w & v) / max(1, len(w | v)) > thr for v in kept): bad.append(i); continue
+        kept.append(w)
+    return bad
+
+
+def fix_prompts(texts, olds, brief, rounds=4):
+    """new prompt for every index in `texts` ({i: narration}); waits out Groq rate limits (each model has its own quota) instead of giving up; returns {i: prompt}"""
+    import time
+    res, todo = {}, list(texts)
+    used = [_body(p)[:80] for p in olds if _body(p)]
+    for rd in range(rounds):
+        for a in range(0, len(todo), 5):
+            ids = todo[a:a + 5]
+            if all(i in res for i in ids): continue
+            user = 'خلاصه‌ی داستان:\n%s\n\nقبلاً استفاده‌شده (تکرار نکن):\n%s\n\nصحنه‌ها:\n%s' % (brief or '-', '\n'.join('- ' + u for u in used[-40:]) or '-', '\n'.join('%d | %s' % (k, texts[i]) for k, i in enumerate(ids)))
+            try:
+                got = [o for o in groqlib.objects(groqlib.chat(FIXP, user, max_tokens=2200, json_mode=True, temperature=.7), 'prompt') if isinstance(o, dict)]
+                for o in got:
+                    k = o.get('i')
+                    if isinstance(k, int) and 0 <= k < len(ids) and len(str(o.get('prompt', ''))) > 30: res[ids[k]] = re.sub(r'\s+', ' ', str(o['prompt'])).strip(); used.append(res[ids[k]][:80])
+            except (Exception, SystemExit) as e:
+                print('prompt repair waiting (%s):' % str(e)[:100]); groqlib._bad.clear(); groqlib._model = None; time.sleep(70)
+        todo = [i for i in todo if i not in res]
+        if not todo: break
+    return res
+
+
+def fix_dupes(prompts, texts, brief):
+    """returns prompts where empty/duplicate ones are rewritten from their own narration; one that still cannot be written is left EMPTY (never a copy)"""
+    prompts = list(prompts); bad = bad_prompts(prompts)
+    if not bad: return prompts
+    print('prompts empty or repeated in %d of %d scenes: rewriting from their own text' % (len(bad), len(prompts)))
+    got = fix_prompts({i: texts[i] for i in bad}, prompts, brief)
+    for i in bad: prompts[i] = got.get(i, '')
+    left = [i for i in bad_prompts(prompts, .85) if prompts[i]]
+    for i in left: prompts[i] = ''
+    miss = [i for i in range(len(prompts)) if not prompts[i]]
+    if miss: print('WARNING: %d scenes have no prompt (Groq unavailable); use "بازسازی پرامپت" in the app later' % len(miss))
+    return prompts
 
 
 VERIFY = """برای هر صحنه، متن راوی و توصیف تصویر داده می‌شود. بررسی کن توصیف همه‌ی چیزهای عینیِ متن را نشان می‌دهد (آدم‌ها، اشیا، غذا، مکان، فصل، کشور) و چیزی که در متن نیست (مثل پسربچه با لباس سرباز، شمشیر، شخصیت ساختگی) در آن نیست. اگر درست نیست، توصیف را دوباره بنویس (انگلیسی، ۲ تا ۴ جمله، بدون نوشته در تصویر، بدون راوی)؛ اگر درست است همان را برگردان. هر توصیف باید مستقل باشد: اگر به صحنه‌ی دیگر ارجاع دارد (previous، same، again، before) یا شخصیتی را بدون توصیف کامل آورده، دوباره بنویس و FIXED LOOK همان شخصیت را از فهرست CAST در خلاصه‌ی داستان کلمه‌به‌کلمه داخلش بگذار و لباس و سنش را مطابق دوره‌ی همان صحنه کامل بنویس. اشیای کوچک جدا (غذا، ابزار) در توصیف صحنه نیایند؛ جدا ساخته می‌شوند. اگر متن فقط مقدمه‌ی گوینده است، چیزهایی را که در همان جمله نام برده شده نشان بده.
@@ -162,6 +219,13 @@ def verify(got, S, brief):
             if by.get(k) and len(str(by[k])) > 20: o['prompt'] = by[k]
     except (Exception, SystemExit) as e: print('verify skipped:', str(e)[:120])
     return got
+
+
+def fix_raw(raw, S, brief):
+    raw = cover(raw, len(S)); n = len(S)
+    texts = [' '.join(S[j]['text'] for j in range(r['from'], min(r.get('to', r['from']), n - 1) + 1)) for r in raw]
+    for r, p in zip(raw, fix_dupes([r.get('prompt') for r in raw], texts, brief)): r['prompt'] = p
+    return raw
 
 
 def direct(T, ss, brief=''):
@@ -275,7 +339,7 @@ def main(ep):
     ss = MAX_SCENE; T = dict(T); T['sentences'] = units(T, 7.0); print('narration units:', len(T['sentences']))
     raw = ds.load(f'{d}/director.json', None) if req.get('keep_direction') else None
     if raw is None:
-        brief = bible(T['sentences']); _c = make_cast(T['sentences']); brief = (brief + ('\nCAST (fixed look of recurring characters; copy this description inside every prompt where the character appears):\n' + _c if _c else '')).strip(); globals()['BRIEF'] = brief; raw = split_long(direct(T, ss, brief), T['sentences'], brief, ss); json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
+        brief = bible(T['sentences']); _c = make_cast(T['sentences']); brief = (brief + ('\nCAST (fixed look of recurring characters; copy this description inside every prompt where the character appears):\n' + _c if _c else '')).strip(); globals()['BRIEF'] = brief; raw = split_long(direct(T, ss, brief), T['sentences'], brief, ss); raw = fix_raw(raw, T['sentences'], brief); json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
     meta, scenes = compile_scenes(ep, T, raw, req, short)
     print('poster scenes', len(scenes), 'total', meta['total'], '| with prompt:', sum(1 for s in scenes if s['photo']['prompt']))
     ds.emit_plan(meta, req)

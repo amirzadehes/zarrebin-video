@@ -609,13 +609,24 @@ async function loadReview(ep, quiet){ const body=$('#rvBody'); if(!body) return;
     if(!txt){ const r=await fetch(j.download_url); txt=await r.text() }
     RV={ep, sha:j.sha, data:JSON.parse(txt), req:(await readJson('episodes/'+ep+'/request.json',{}))||{}}; renderReview() }catch(e){ if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
 function thumbUrl(src){ return /^decor\//.test(src)?'https://raw.githubusercontent.com/'+S.repo+'/main/'+src:raw(src.replace(/^library\//,'')) }
+const pWords=p=>new Set(String(p||'').split(' Character look')[0].toLowerCase().match(/[a-z]{4,}/g)||[]);
+function badPrompts(sc){ const kept=[], bad=[]; sc.forEach((s,i)=>{ const w=pWords((s.photo||{}).prompt); if(w.size<6){ bad.push(i); return }
+  for(const v of kept){ let n=0; w.forEach(x=>{ if(v.has(x)) n++ }); if(n/(w.size+v.size-n)>.62){ bad.push(i); return } } kept.push(w) }); return bad }
+function dupBanner(){ if(!isPoster()) return ''; const b=badPrompts(RV.data.scenes); if(!b.length) return '';
+  return `<div class="hint" id="dupBn" style="border:1px solid #e0733f;border-radius:10px;padding:10px;margin:8px 0"><b>${fa(b.length)} صحنه پرامپت خالی یا تکراری دارد</b> (شماره‌ی ${b.slice(0,8).map(i=>fa(i+1)).join('، ')}${b.length>8?' و …':''}). با دکمه‌ی زیر برای همین صحنه‌ها از روی متن راوی خودش پرامپت تازه نوشته می‌شود؛ بقیه‌ی صحنه‌ها و عکس‌هایی که گذاشته‌ای دست نمی‌خورند.<div class="row" style="margin-top:8px"><button id="dupGo">🔁 بازسازی پرامپت این صحنه‌ها</button> <span id="dupSt"></span></div></div>` }
+async function dupFix(){ const b=badPrompts(RV.data.scenes), st=$('#dupSt'), btn=$('#dupGo'); if(!b.length) return; btn.disabled=true; clearTimeout(rvT); RV.fixing=true;
+  try{ st.textContent='در حال ذخیره…'; if(!(await rvPush())) throw 0; const sig=b.map(i=>(RV.data.scenes[i].photo||{}).prompt||'').join('|');
+    await put('fixprompts/'+RV.ep+'.json', enc(JSON.stringify({idx:b})), 'fix prompts: '+RV.ep); st.textContent='در حال نوشتن پرامپت‌ها؛ چند دقیقه صبر کن و چیزی را ویرایش نکن…';
+    for(let k=0;k<30;k++){ await sleep(12000); let j; try{ j=await api('/contents/episodes/'+RV.ep+'/scenes.json') }catch(e){ continue } if(j.sha===RV.sha) continue;
+      const d=JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0)))); if(b.map(i=>((d.scenes[i]||{}).photo||{}).prompt||'').join('|')!==sig){ RV.fixing=false; toast('پرامپت‌ها بازسازی شد'); return loadReview(RV.ep) } }
+    throw 1 }catch(e){ RV.fixing=false; btn.disabled=false; st.textContent=e===1?'هنوز تمام نشد (شاید محدودیت Groq)؛ چند دقیقه بعد دوباره امتحان کن.':'ذخیره نشد؛ دوباره امتحان کن' } }
 function renderReview(){ const body=$('#rvBody'); if(!RV||!body) return; epDock(RV.ep); const sc=RV.data.scenes; const empty=sc.filter(noPic).length;
-  body.innerHTML=`<p class="hint"><b>${epTitle(RV.ep)}</b>: ${fa(sc.length)} صحنه${empty?` · <span style="color:#e0733f">${fa(empty)} صحنه بدون تصویر (علامت ⚠️)</span>`:''}. هر صحنه را باز کن؛ با ✕ تصویر را حذف کن یا از کتابخانه اضافه کن. تغییرها خودکار ذخیره می‌شوند. <b id="rvOk"></b></p>`+
+  body.innerHTML=`<p class="hint"><b>${epTitle(RV.ep)}</b>: ${fa(sc.length)} صحنه${empty?` · <span style="color:#e0733f">${fa(empty)} صحنه بدون تصویر (علامت ⚠️)</span>`:''}. هر صحنه را باز کن؛ با ✕ تصویر را حذف کن یا از کتابخانه اضافه کن. تغییرها خودکار ذخیره می‌شوند. <b id="rvOk"></b></p>`+dupBanner()+
   sc.map((s,i)=>{ const warn=noPic(s);
     return `<details class="sc ${warn?'warn':''}" data-i="${i}"><summary>${sceneHead(s,i)}</summary><div class="body"></div></details>`}).join('')+
   `<div class="row" style="margin-top:12px"><button id="rvSubAll">✏️ ویرایش زیرنویس کل قسمت (املا)</button></div><details class="pSec" id="rvMus" style="margin-top:12px"><summary>🎵 موزیک این قسمت (Suno و بلندی صدا)</summary><div class="pSecB mpB"></div></details><div class="row" style="margin-top:12px"><button id="rvAll">▶ دیدن کل ویدیو (پیش‌نمایش با صدا و افکت‌ها، قبل از ساخت نهایی)</button></div><div class="row" style="margin-top:12px"><button class="pri" id="rvGo">۲. ادامه: ساخت ویدیو با همین صحنه‌ها</button></div><div class="st" id="rvSt"></div>`;
   updOk(); body.querySelectorAll('details.sc').forEach(d=>d.addEventListener('toggle',()=>{ if(d.open) fillScene(d) }));
-  musicUI(); $('#rvGo').onclick=rvContinue; $('#rvSubAll').onclick=subAllDialog; $('#rvAll').onclick=()=>openPreview(0,'all'); body.toggleAttribute('data-poster',isPoster()); if(isPoster()&&window.posterBar) posterBar(body) }
+  musicUI(); $('#rvGo').onclick=rvContinue; if($('#dupGo')) $('#dupGo').onclick=dupFix; $('#rvSubAll').onclick=subAllDialog; $('#rvAll').onclick=()=>openPreview(0,'all'); body.toggleAttribute('data-poster',isPoster()); if(isPoster()&&window.posterBar) posterBar(body) }
 const nz=t=>String(t||'').toLowerCase().replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/[\u200c\u064b-\u065f]/g,'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\s+/g,' ').trim();
 
 const okOf=(s,f)=>!!(s.ok&&typeof s.ok==='object'?s.ok[f]:(f==='v'&&s.ok===true));
@@ -1057,7 +1068,7 @@ function rvChanged(i,d,byTime){ const s=RV.data.scenes[i]; clearOk(s); updOk();
   if(s.tpl==='statement'&&!(s.text||'').trim()){ s.text=narr(s).split(' ').slice(0,7).join(' ') }
   const warn=!n&&s.tpl!=='stat'; d.classList.toggle('warn',warn); d.querySelector('summary').innerHTML=sceneHead(s,i);
   fillScene(d); rvSave() }
-function rvSave(){ clearTimeout(rvT); const st=$('#rvSt'); if(st){ st.className='st'; st.textContent='در حال ذخیره…' } rvT=setTimeout(async()=>{ await rvPush(); },1200) }
+function rvSave(){ if(RV&&RV.fixing) return; clearTimeout(rvT); const st=$('#rvSt'); if(st){ st.className='st'; st.textContent='در حال ذخیره…' } rvT=setTimeout(async()=>{ await rvPush(); },1200) }
 async function rvPush(){ const st=$('#rvSt'); const path='/contents/episodes/'+RV.ep+'/scenes.json';
   for(let k=0;k<4;k++){ try{ const r=await api(path,{method:'PUT',body:JSON.stringify({message:'review edits: '+RV.ep,content:enc(JSON.stringify(RV.data,(k,v)=>k==='_open'?undefined:v)),branch:'main',sha:RV.sha})}); RV.sha=r.content.sha; if(st){ st.className='st ok'; st.textContent='✓ ذخیره شد' } return true }
     catch(e){ try{ RV.sha=(await api(path)).sha }catch(_){} await sleep(1200) } }
