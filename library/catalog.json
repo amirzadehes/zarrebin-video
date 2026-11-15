@@ -2638,27 +2638,6 @@
    ],
    "fa_tags_for": "علامت سؤال"
   },
-  "question-mark-2": {
-   "id": "question-mark-2",
-   "en": "question mark",
-   "fa": "علامت سوال",
-   "tags": [
-    "mine"
-   ],
-   "has_text_in_image": false,
-   "variants": [
-    "question-mark-2__1.webp"
-   ],
-   "fa_tags": [
-    "پرسش",
-    "علامت",
-    "نشانه",
-    "نوشتار",
-    "نماد",
-    "سوال"
-   ],
-   "fa_tags_for": "علامت سوال"
-  },
   "rain-cloud": {
    "id": "rain-cloud",
    "en": "rain cloud",
