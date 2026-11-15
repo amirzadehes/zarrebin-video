@@ -15,7 +15,7 @@ SYSTEM = """تو کارگردان هنری یک ویدیوی توضیحی عمو
 - elements: فهرست انگلیسیِ چیزهای عینی و دیدنیِ بومِ صحنه که در متن نام برده شده (آدم‌ها، گروه‌ها، مکان، فصل/ماه، کشور) — بدون اشیای کوچک جدا که در props می‌آیند. حتماً از همان متن بردار، نه از حدس خودت؛ مثلاً ["children carrying lanterns", "Roman soldier", "roast goose dinner", "Germany in November"].
 - prompt: توضیح انگلیسیِ یک تصویر برای ابزار تصویرسازی (۲ تا ۴ جمله). یک صحنه‌ی واحد و روشن که همه‌ی elements را به‌صورت عینی و همان‌طور که در متن آمده نشان بدهد (اگر متن چند چیز را نام می‌برد، همه را در همان تصویر بیاور؛ یک آدم تنها با لباس ترکیبی نساز): چه کسی یا چه چیزی، کجا، چه کاری می‌کند، نور و حال‌وهوا و زاویه‌ی دوربین. موضوع اصلی را در میانه‌ی کادر بگذار.
   خودِ موضوع و رویداد را نقاشی کن، نه گوینده را: هرگز راوی، گوینده، مجری یا «narrator» در تصویر نگذار و هیچ شخصیت یا چیزی از خودت اختراع نکن که در متن یا خلاصه‌ی داستان نیست. اگر جمله مقدمه‌ی گوینده است (مثل «امروز می‌خوام ... رو تعریف کنم»)، تصویر خودِ ماجرا یا نمادِ اصلی آن باشد.
-  دوره‌ی زمانی را از خود داستان بردار: اگر ماجرا تاریخی است لباس و وسیله‌ها همان دوره باشند؛ هرگز «modern» یا «today» ننویس مگر خودِ آن صحنه واقعاً امروزی باشد (دوره‌ی هر صحنه را از خلاصه‌ی داستان و متن همان صحنه بگیر). اگر یک شخصیت چند بار می‌آید، هر بار با همان مشخصات بنویس (سن، لباس، رنگ) تا تصویرها شبیه هم شوند.
+  دوره‌ی زمانی را از خود داستان بردار: اگر ماجرا تاریخی است لباس و وسیله‌ها همان دوره باشند؛ هرگز «modern» یا «today» ننویس مگر خودِ آن صحنه واقعاً امروزی باشد (دوره‌ی هر صحنه را از خلاصه‌ی داستان و متن همان صحنه بگیر). هر prompt باید کاملاً مستقل و خودکفا باشد: ابزار تصویرسازی هیچ‌کدام از صحنه‌های دیگر را نمی‌بیند. پس هرگز ارجاع نده («the previous scene»، «same as before»، «the same soldier»، «again»، «continuing»). هر شخصیتی که در تصویر هست را هر بار از نو و کامل توصیف کن: همان توصیفِ ثابت فهرست شخصیت‌ها (CAST) در خلاصه‌ی داستان را کلمه‌به‌کلمه در همان prompt بنویس (سن، قیافه، مو، لباس با رنگ، وسایل) تا ظاهرش در همه‌ی تصویرها یکی باشد.
   در تصویر هیچ نوشته، حرف، عدد یا لوگو نباشد.
 - props: حداکثر ۲ شیء کوچک و مستقل که در متن همین صحنه نام برده شده و بهتر است جدا ساخته و روی عکس گذاشته شوند (غذا، ابزار، حیوان، شیء نمادین؛ نه آدم و نه مکان). اشیای props را در prompt صحنه نیاور. هر کدام: {"fa":"نام فارسی کوتاه و مشخص مثل غاز کبابی","word":"کلمه‌ای دقیقاً از متن همین صحنه که با گفتنش شیء ظاهر می‌شود","prompt":"توصیف انگلیسی کامل و پرجزئیات فقط همان شیء"}. توصیف prop باید غنی و جذاب باشد: جنس و رنگ‌ها، بافت، حالت و جزئیات ریز خود شیء (مثلاً غاز کبابی طلایی و براق روی یک سینی چوبی کوچک با کلم قرمز و سیب پخته)، نه فقط نام شیء؛ ولی هرگز میز، زمین، اتاق، دیوار یا پس‌زمینه را توصیف نکن و چند شیء جدا (مثل سکه و قلم و طومار) را در یک prop نیاور. اگر شیء کوچکی نیست props را خالی بگذار.
 - kicker: برچسب کوتاه انگلیسی با حروف بزرگ، حداکثر ۴ کلمه، مثل «ROME · 4TH CENTURY» یا «THE SHAH · 1970s». اگر چیز مشخصی ندارد خالی بگذار.
@@ -51,8 +51,38 @@ def bible(U):
     try: return groqlib.chat(BIBLE, ' '.join(u['text'] for u in U)[:7000], max_tokens=600, temperature=.2).strip()
     except (Exception, SystemExit) as e: print('story brief skipped:', str(e)[:120]); return ''
 
+CAST_P = """متن یک ویدیوی توضیحی را می‌خوانی. فهرست شخصیت‌ها یا موجودات تکرارشونده‌ی داستان را بنویس (آدم یا حیوان که در بیش از یک جا می‌آید؛ حداکثر ۶). برای هرکدام یک توصیف ظاهری انگلیسیِ کامل و ثابت بنویس که تنهایی و بدون هیچ ارجاعی به جای دیگر برای یک ابزار تصویرسازی کافی باشد: سن تقریبی، جنسیت، قیافه و مو، قد و هیکل، لباس با رنگ و جنس، وسایل همراه، متناسب با دوره‌ی تاریخی داستان. فقط از چیزهایی بگو که در متن هست، چیزی اختراع نکن.
+خروجی فقط JSON: {"characters":[{"fa":"نام فارسی","en":"English name","desc":"a full self-contained visual description"}]}"""
+CAST = []
 
-REPAIR = """یک صحنه‌ی بلند به چند قطعه‌ی پشت‌سرهم تقسیم شده است. برای هر قطعه یک تصویر جدا و متفاوت (لحظه یا زاویه‌ی دیگری از همان ماجرا) بنویس، مطابق چیزی که در متن همان قطعه گفته می‌شود. راوی را نشان نده و چیزی اختراع نکن.
+
+def make_cast(U):
+    global CAST
+    try:
+        raw = groqlib.chat(CAST_P, ' '.join(u['text'] for u in U)[:7000], max_tokens=900, json_mode=True, temperature=.2)
+        CAST = [o for o in groqlib.objects(raw, 'desc') if isinstance(o, dict) and str(o.get('desc', '')).strip() and (o.get('fa') or o.get('en'))][:6]
+    except (Exception, SystemExit) as e: print('cast skipped:', str(e)[:120]); CAST = []
+    return '\n'.join('- %s (%s): %s' % (o.get('en') or '', o.get('fa') or '', re.sub(r'\s+', ' ', str(o['desc'])).strip()) for o in CAST)
+
+
+BAD_REF = re.compile(r'\b(?:in|from|as in|like in|same as|as seen in|continuing from|continues from)\s+(?:the\s+)?(?:previous|last|earlier|preceding|prior|same)\s+(?:scene|image|picture|shot|frame)s?\b[^.,;]*|\b(?:the\s+)?same\s+(?:scene|character|man|woman|boy|girl|soldier|person|figure)s?\s+(?:as before|again)\b|\b(?:as before|once again|again)\b|\bsame (?:scene|moment)\b', re.I)
+
+
+def selfcontain(prompt, text):
+    """every prompt must stand alone (the image engine never sees the other prompts): strip references to other scenes and add the full description of each recurring character that appears but is not described"""
+    pr = BAD_REF.sub('', str(prompt or '')); pr = re.sub(r'\s{2,}', ' ', pr).replace(' .', '.').replace(' ,', ',').strip(); pr = re.sub(r',\s*,', ',', pr); pr = re.sub(r'([.!?])\s+([a-z])', lambda m: m.group(1) + ' ' + m.group(2).upper(), pr)
+    if not pr: return pr
+    low, tn = pr.lower(), ds.norm(text or ''); add = []
+    for o in CAST:
+        en, fa_, d = str(o.get('en') or '').strip(), str(o.get('fa') or '').strip(), re.sub(r'\s+', ' ', str(o['desc'])).strip()
+        named = bool(en) and en.lower() in low   # only when the picture itself names the character
+        fp = ' '.join(d.lower().split()[:4])
+        if named and fp not in low: add.append('%s: %s' % (en or fa_, d.rstrip('.')))
+    if add: pr = pr.rstrip() + ' Character details (keep exactly as written): ' + '; '.join(add) + '.'
+    return pr
+
+
+REPAIR = """یک صحنه‌ی بلند به چند قطعه‌ی پشت‌سرهم تقسیم شده است. برای هر قطعه یک تصویر جدا و متفاوت (لحظه یا زاویه‌ی دیگری از همان ماجرا) بنویس؛ هر prompt کاملاً مستقل باشد و هیچ ارجاعی به قطعه‌ی دیگر نداشته باشد، و هر شخصیتی که در آن هست را کامل (طبق فهرست CAST در خلاصه) توصیف کن، مطابق چیزی که در متن همان قطعه گفته می‌شود. راوی را نشان نده و چیزی اختراع نکن.
 هر قطعه: prompt (انگلیسی، ۲ تا ۳ جمله، بدون نوشته در تصویر)، kicker (برچسب کوتاه انگلیسی با حروف بزرگ یا خالی)، text (تیتر فارسی ≤ ۷ کلمه با *کلمه‌ی مهم* یا خالی)، number (فقط اگر عدد/سال واقعاً در متن هست)، kw (≤ ۳ کلمه از متن).
 خروجی فقط JSON: {"parts":[{"prompt":"","kicker":"","text":"","number":"","kw":[]}]} به تعداد قطعه‌ها و به همان ترتیب."""
 
@@ -87,13 +117,13 @@ def split_long(raw, S, brief, ss):
         print('split a %.0f s scene into %d pieces' % (S[r['to']]['t1'] - S[r['from']]['t0'], len(parts)))
         for k, p in enumerate(parts):
             o = got[k] if k < len(got) else {}
-            p.update({'prompt': o.get('prompt') or ((r.get('prompt') or '') + (' A different moment and angle of the same scene.' if k and r.get('prompt') else '')), 'kicker': o.get('kicker') or r.get('kicker') or '',
+            p.update({'prompt': o.get('prompt') or ((r.get('prompt') or '') + (' Shown from a different camera angle at a different moment.' if k and r.get('prompt') else '')), 'kicker': o.get('kicker') or r.get('kicker') or '',
                       'text': o.get('text') or '', 'number': o.get('number') or '', 'kw': o.get('kw') or r.get('kw') or []})
             out.append(p)
     return out
 
 
-VERIFY = """برای هر صحنه، متن راوی و توصیف تصویر داده می‌شود. بررسی کن توصیف همه‌ی چیزهای عینیِ متن را نشان می‌دهد (آدم‌ها، اشیا، غذا، مکان، فصل، کشور) و چیزی که در متن نیست (مثل پسربچه با لباس سرباز، شمشیر، شخصیت ساختگی) در آن نیست. اگر درست نیست، توصیف را دوباره بنویس (انگلیسی، ۲ تا ۴ جمله، بدون نوشته در تصویر، بدون راوی)؛ اگر درست است همان را برگردان. اشیای کوچک جدا (غذا، ابزار) در توصیف صحنه نیایند؛ جدا ساخته می‌شوند. اگر متن فقط مقدمه‌ی گوینده است، چیزهایی را که در همان جمله نام برده شده نشان بده.
+VERIFY = """برای هر صحنه، متن راوی و توصیف تصویر داده می‌شود. بررسی کن توصیف همه‌ی چیزهای عینیِ متن را نشان می‌دهد (آدم‌ها، اشیا، غذا، مکان، فصل، کشور) و چیزی که در متن نیست (مثل پسربچه با لباس سرباز، شمشیر، شخصیت ساختگی) در آن نیست. اگر درست نیست، توصیف را دوباره بنویس (انگلیسی، ۲ تا ۴ جمله، بدون نوشته در تصویر، بدون راوی)؛ اگر درست است همان را برگردان. هر توصیف باید مستقل باشد: اگر به صحنه‌ی دیگر ارجاع دارد (previous، same، again، before) یا شخصیتی را بدون توصیف کامل آورده، دوباره بنویس و توصیف کامل همان شخصیت را از فهرست CAST در خلاصه‌ی داستان کلمه‌به‌کلمه داخلش بگذار. اشیای کوچک جدا (غذا، ابزار) در توصیف صحنه نیایند؛ جدا ساخته می‌شوند. اگر متن فقط مقدمه‌ی گوینده است، چیزهایی را که در همان جمله نام برده شده نشان بده.
 خروجی فقط JSON: {"scenes":[{"i":0,"prompt":"..."}]} به همان ترتیب و تعداد."""
 
 
@@ -135,8 +165,8 @@ def direct(T, ss, brief=''):
     B = 14
     for b in range(0, len(S), B):
         chunk = S[b:b + B]
-        user = ('خلاصه‌ی کل داستان (برای دوره‌ی زمانی و ظاهر ثابت شخصیت‌ها):\n%s\n\nتوصیف تصویرِ دو صحنه‌ی قبلی:\n%s\n\nتکه‌ها:\n%s' % (
-            brief or '-', prev or '-', '\n'.join(f"{s['i']} | {s['t0']:.1f}-{s['t1']:.1f}s | {s['text']}" for s in chunk)))
+        user = ('خلاصه‌ی کل داستان (برای دوره‌ی زمانی و ظاهر ثابت شخصیت‌ها):\n%s\n\nتکه‌ها:\n%s' % (
+            brief or '-', '\n'.join(f"{s['i']} | {s['t0']:.1f}-{s['t1']:.1f}s | {s['text']}" for s in chunk)))
         try:
             raw = groqlib.chat(sys_p, user, max_tokens=3200, json_mode=True, temperature=.5)
             got = [o for o in groqlib.objects(raw, 'from') if isinstance(o.get('from'), int)]
@@ -177,7 +207,7 @@ def compile_scenes(ep, T, raw, req, short):
         if len(text.split()) > 10: text = ' '.join(text.split()[:10])
         if T.get('lang', 'fa') == 'fa': text = ds.fadig(text)
         sc = {'t0': round(r['t0'], 3), 't1': round(r['t1'], 3), 'tpl': 'poster', 'theme': THEME[k % 8], 'wipe': (k * 5) % 6, 'items': [], 'text': text, 'number': number,
-              'kicker': re.sub(r'\s+', ' ', str(r.get('kicker') or '')).strip()[:40], 'keyOn': bool(text), 'photo': {'prompt': re.sub(r'\s+', ' ', str(r.get('prompt') or '')).strip()}}
+              'kicker': re.sub(r'\s+', ' ', str(r.get('kicker') or '')).strip()[:40], 'keyOn': bool(text), 'photo': {'prompt': selfcontain(re.sub(r'\s+', ' ', str(r.get('prompt') or '')).strip(), ' '.join(S[j]['text'] for j in range(r['from'], min(r.get('to', r['from']), n - 1) + 1)))}}
         add_props(sc, r.get('props'), Wd, lib)
         for kwd in (r.get('kw') or []): kwall.add(ds.norm(str(kwd)))
         scenes.append(sc)
@@ -201,7 +231,7 @@ def main(ep):
     ss = MAX_SCENE; T = dict(T); T['sentences'] = units(T, 7.0); print('narration units:', len(T['sentences']))
     raw = ds.load(f'{d}/director.json', None) if req.get('keep_direction') else None
     if raw is None:
-        brief = bible(T['sentences']); raw = split_long(direct(T, ss, brief), T['sentences'], brief, ss); json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
+        brief = bible(T['sentences']); _c = make_cast(T['sentences']); brief = (brief + ('\nCAST (fixed look of recurring characters; copy this description inside every prompt where the character appears):\n' + _c if _c else '')).strip(); raw = split_long(direct(T, ss, brief), T['sentences'], brief, ss); json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
     meta, scenes = compile_scenes(ep, T, raw, req, short)
     print('poster scenes', len(scenes), 'total', meta['total'], '| with prompt:', sum(1 for s in scenes if s['photo']['prompt']))
     ds.emit_plan(meta, req)
