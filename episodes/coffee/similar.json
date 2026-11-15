@@ -6,18 +6,17 @@
   "battery-full",
   "battery-power"
  ],
- "battery-full": [
-  "battery-empty",
-  "battery-power"
- ],
  "light-bulb-idea": [
   "bulb"
  ],
  "brain-hacker": [
-  "brain-colorful",
   "brain-gears",
   "brain-pink",
-  "tired-brain"
+  "brain-colorful"
+ ],
+ "brain-colorful": [
+  "brain-gears",
+  "brain-pink"
  ],
  "fatigue-brain": [
   "tired-brain"
@@ -27,26 +26,29 @@
   "old-key"
  ],
  "lock-closed": [
+  "lock-open",
   "padlock"
+ ],
+ "adrenaline": [
+  "caffeine-molecule",
+  "purple-molecule"
  ],
  "heart": [
   "broken-heart"
  ],
  "hand-tremble": [
-  "hand-stop"
+  "hand-stop",
+  "pointing-hand"
  ],
  "espresso-cup": [
-  "coffee-cup"
+  "coffee-cup",
+  "moka-pot"
  ],
  "hourglass": [
-  "stopwatch"
+  "clock-wall"
  ],
  "clock-wall": [
-  "alarm-clock"
- ],
- "brain-adaptation": [
-  "brain-colorful",
-  "brain-gears",
-  "brain-pink"
+  "alarm-clock",
+  "hourglass"
  ]
 }

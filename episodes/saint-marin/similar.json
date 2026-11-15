@@ -1,15 +1,6 @@
 {
- "roman-soldier": [
-  "roman-helmet"
- ],
  "cloak": [
   "half-cloak"
- ],
- "banknotes": [
-  "money-bag",
-  "money-coins",
-  "cash",
-  "euro-sign"
  ],
  "goose": [
   "roast-goose"
@@ -21,57 +12,11 @@
   "people-standing-in-line",
   "family"
  ],
- "beggar": [
-  "adult-male-human",
-  "person-happy",
-  "person-thinking",
-  "person-worried",
-  "doctor",
-  "chef",
-  "teacher"
- ],
- "food": [
-  "burger",
-  "roast-goose",
-  "goose",
-  "coffee-beans",
-  "coffee-cup",
-  "espresso-cup",
-  "moka-pot",
-  "tea-cup",
-  "wine-glass",
-  "silverware-set"
- ],
- "flag": [
-  "banner"
- ],
- "torch": [
-  "lantern"
- ],
- "money-bag": [
-  "money-coins",
-  "cash",
-  "banknotes",
-  "euro-sign"
- ],
- "money-coins": [
-  "money-bag",
-  "cash",
-  "banknotes",
-  "euro-sign"
- ],
- "half-cloak": [
-  "cloak"
- ],
  "saint-martin": [
-  "saint-martin-2",
-  "roman-soldier"
+  "saint-martin-2"
  ],
  "roast-goose": [
   "goose"
- ],
- "shield": [
-  "shield-check"
  ],
  "roman-helmet": [
   "roman-soldier"
@@ -82,7 +27,7 @@
  "star": [
   "star-rating",
   "one-star",
-  "two-stars",
-  "three-stars"
+  "three-stars",
+  "two-stars"
  ]
 }

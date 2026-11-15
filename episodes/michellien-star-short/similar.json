@@ -1,20 +1,73 @@
 {
  "star": [
-  "star-rating"
+  "star-rating",
+  "one-star",
+  "two-stars",
+  "three-stars"
+ ],
+ "rubber-tire": [
+  "tire-company-logo"
+ ],
+ "map-folded": [
+  "map-pin"
  ],
  "restaurant": [
   "roadside-restaurant",
-  "street-food-stall"
+  "street-food-stall",
+  "reservation-card"
  ],
  "car": [
-  "taxi-car",
-  "bus"
+  "taxi-car"
+ ],
+ "two-brothers": [
+  "family",
+  "group-people",
+  "people-standing-in-line"
+ ],
+ "one-star": [
+  "star",
+  "star-rating",
+  "two-stars",
+  "three-stars"
+ ],
+ "two-stars": [
+  "star",
+  "star-rating",
+  "one-star",
+  "three-stars"
+ ],
+ "three-stars": [
+  "star",
+  "star-rating",
+  "one-star",
+  "two-stars"
+ ],
+ "money-bag": [
+  "banknotes",
+  "cash",
+  "money-coins"
+ ],
+ "chef-hat": [
+  "chef"
+ ],
+ "dinner-plate": [
+  "food",
+  "silverware-set",
+  "street-food-stall",
+  "restaurant",
+  "roadside-restaurant"
+ ],
+ "trophy": [
+  "medal"
+ ],
+ "earth-globe": [
+  "planet-earth"
+ ],
+ "video-play": [
+  "item"
  ],
  "magnifier-search": [
   "magnifying-glass"
- ],
- "clock-wall": [
-  "alarm-clock"
  ],
  "chart-down": [
   "chart-up"
@@ -24,16 +77,30 @@
   "cash",
   "money-bag",
   "money-coins",
-  "euro-sign"
+  "tax"
+ ],
+ "newspaper": [
+  "document",
+  "book",
+  "book-open",
+  "books-stack",
+  "red-guidebook"
+ ],
+ "microphone": [
+  "megaphone"
  ],
  "light-bulb-idea": [
   "bulb"
  ],
  "brain-colorful": [
   "brain-gears",
-  "brain-pink"
+  "brain-pink",
+  "tired-brain"
  ],
  "star-rating": [
+  "one-star",
+  "two-stars",
+  "three-stars",
   "star"
  ]
 }

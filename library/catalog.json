@@ -3701,22 +3701,42 @@
   "u-mwht079b": {
    "id": "u-mwht079b",
    "en": "u mwht079b",
-   "fa": "",
+   "fa": "کتابخانه عمومی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "u-mwht079b__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کتاب",
+    "کتابخانه",
+    "مطالعه",
+    "ادبیات",
+    "دانش",
+    "اطلاعات",
+    "منابع"
+   ],
+   "fa_tags_for": "کتابخانه عمومی"
   },
   "u-mwht9mkh": {
    "id": "u-mwht9mkh",
    "en": "u mwht9mkh",
-   "fa": "",
+   "fa": "کتابخانه عمومی",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "u-mwht9mkh__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کتاب",
+    "کتابخانه",
+    "مطالعه",
+    "ادبیات",
+    "دانش",
+    "اطلاعات",
+    "منابع"
+   ],
+   "fa_tags_for": "کتابخانه عمومی"
   },
   "warning-sign": {
    "id": "warning-sign",
