@@ -151,10 +151,13 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
 /* ---------- desktop (screen at least 1024px wide): wide layout, two columns ---------- */
 @media (min-width:1024px){
   /* scene preview docked in the free space on the right instead of a full-screen popup */
-  #pvModal:not([hidden]){inset:var(--tabsB,0px) 0 0 auto;width:min(480px,36vw);background:var(--card);border-left:1px solid var(--line);z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;padding:14px 12px;box-shadow:-8px 0 30px #0008}
-  body.pvdock{max-width:none;margin:0 auto 0 0;width:calc(100% - min(480px,36vw))}
+  #pvModal:not([hidden]){inset:var(--tabsB,0px) 0 0 auto;width:60vw;background:var(--card);border-left:1px solid var(--line);z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;padding:14px 12px;box-shadow:-8px 0 30px #0008}
+  body.pvdock{max-width:none;margin:0 auto 0 0;width:40vw;padding-inline:20px;box-sizing:border-box}
   #pvFrame{flex:0 0 auto}
-  @media (max-width:1700px){ body.pvdock #ep:not([hidden]){grid-template-columns:minmax(0,1fr)} body.pvdock #ep>#epBuild{grid-column:1;grid-row:auto} }
+  body.pvdock .tabs{flex-wrap:wrap}
+  body.pvdock .tabs button{flex:1 1 120px}
+  body.pvdock{overflow-x:hidden}
+  @media (min-width:1024px){ body.pvdock #ep:not([hidden]){grid-template-columns:minmax(0,1fr)} body.pvdock #ep>#epBuild{grid-column:1;grid-row:auto} }
   body{max-width:1320px;padding:0 40px 56px}
   header{padding:26px 0 14px}
   h1{font-size:26px}
