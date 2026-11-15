@@ -288,14 +288,29 @@ function tfBg(t, sc, th, f) {
   }
 }
 function tfCounter(t, sc, f) {
-  if (!f.has) return; const lt = t - sc.t0, p = ramp(lt, f.s, f.e), a = ramp(lt, f.s - .15, f.s + .1) * (1 - ramp(lt, f.e + 1.2, f.e + 1.6)); if (a <= 0) return;
-  const v = lerp(f.from, f.to, eio(p)), L = Math.max(String(f.from).length, String(f.to).length), size = B * (V ? .2 : .17); ctx.save(); ctx.globalAlpha = a; ctx.font = `900 ${size}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
-  const cw = ctx.measureText('۸').width * 1.08, cx0 = W / 2 - L * cw / 2, cy = H * (V ? .4 : .45), lh = size * 1.05, ink = VOX ? '#1c130b' : INK;
-  for (let k = 0; k < L; k++) {
-    const cx = cx0 + (L - 1 - k) * cw + cw / 2, dv = Math.floor(v / Math.pow(10, k)) % 10, fr = k === 0 ? v - Math.floor(v) : Math.max(0, (v / Math.pow(10, k - 1) % 10) - 9);
-    ctx.save(); ctx.beginPath(); ctx.rect(cx - cw / 2, cy - lh * .5, cw, lh); ctx.clip();
-    [[dv, -fr], [(dv + 1) % 10, 1 - fr]].forEach(([d, o]) => { const y = cy + o * lh * 1.15; ctx.lineWidth = size * .14; ctx.strokeStyle = ink; ctx.strokeText(FAD[d], cx, y); ctx.fillStyle = '#fff'; ctx.fillText(FAD[d], cx, y) }); ctx.restore()
-  }
+  if (!f.has) return; const lt = t - sc.t0, a = ramp(lt, f.s - .15, f.s + .1) * (1 - ramp(lt, f.e + 1.2, f.e + 1.6)); if (a <= 0) return;
+  const L = Math.max(String(f.from).length, String(f.to).length), size = B * (V ? .2 : .17), sw = size * .14;
+  ctx.save(); ctx.font = `900 ${size}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic'; ctx.direction = 'ltr'; ctx.lineJoin = 'round';
+  // true ink box of a digit (+ outline), so nothing is cut at the top/bottom and the digit sits exactly in the middle of its cell
+  const m = ctx.measureText('۸'), asc = m.actualBoundingBoxAscent || size * .72, desc = m.actualBoundingBoxDescent || 0;
+  const clipH = asc + desc + sw + size * .1, pitch = clipH + size * .12, dy = (asc - desc) / 2, cw = m.width * 1.08, cy = H * (V ? .4 : .45), ink = VOX ? '#1c130b' : INK;
+  const e = tt => eio(ramp(tt - sc.t0, f.s, f.e)), val = tt => lerp(f.from, f.to, e(tt));
+  // every column is a continuous wheel that stays close to the real value, and lands exactly on a digit at both ends
+  const wheel = (k, tt) => { const q = Math.pow(10, k), ee = e(tt); return val(tt) / q + (Math.floor(f.from / q) - f.from / q) * (1 - ee) + (Math.floor(f.to / q) - f.to / q) * ee };
+  const draw = (tt, al) => {
+    const v = val(tt), cnt = [1]; let Le = 1;   // leading columns fade out instead of showing a "0" (316, not 0316)
+    for (let k = 1; k < L; k++) { const q = Math.pow(10, k), c = clamp((v - .8 * q) / (.2 * q)); cnt.push(c * c * (3 - 2 * c)); Le += cnt[k] }
+    const right = W / 2 + Le * cw / 2;
+    for (let k = 0; k < L; k++) {
+      if (cnt[k] <= 0) continue; const cx = right - (k + .5) * cw, pk = wheel(k, tt), n0 = Math.floor(pk), fr = pk - n0;
+      ctx.save(); ctx.globalAlpha = al * cnt[k]; ctx.beginPath(); ctx.rect(cx - cw / 2 - sw, cy - clipH / 2, cw + 2 * sw, clipH); ctx.clip();
+      for (let r = -1; r <= 2; r++) { const d = (((n0 + r) % 10) + 10) % 10, y = cy + (r - fr) * pitch + dy; ctx.lineWidth = sw; ctx.strokeStyle = ink; ctx.strokeText(FAD[d], cx, y); ctx.fillStyle = '#fff'; ctx.fillText(FAD[d], cx, y) }
+      ctx.restore()
+    }
+  };
+  // motion blur: when the wheels spin fast, average several moments inside one frame so the motion looks smooth, not jumpy
+  const sp = Math.abs(wheel(0, t) - wheel(0, t - 1 / 60)) * 60, sh = Math.min(.8 / 30, 1.1 / Math.max(sp, 1e-6)), ns = clamp(Math.round(sp * sh / .35), 0, 6) + 1;   // blur never smears more than about one digit
+  for (let j = 0; j < ns; j++) draw(t - (ns > 1 ? sh * j / (ns - 1) : 0), a / (j + 1));
   ctx.restore()
 }
 function drawScene(t, sc) {
