@@ -1,12 +1,10 @@
 {
  "star": [
-  "star-rating",
-  "three-stars",
-  "two-stars",
-  "one-star"
+  "star-rating"
  ],
  "restaurant": [
-  "roadside-restaurant"
+  "roadside-restaurant",
+  "street-food-stall"
  ],
  "car": [
   "taxi-car",
@@ -15,8 +13,18 @@
  "magnifier-search": [
   "magnifying-glass"
  ],
- "question-mark": [
-  "question-mark-2"
+ "clock-wall": [
+  "alarm-clock"
+ ],
+ "chart-down": [
+  "chart-up"
+ ],
+ "credit-card": [
+  "banknotes",
+  "cash",
+  "money-bag",
+  "money-coins",
+  "euro-sign"
  ],
  "light-bulb-idea": [
   "bulb"

@@ -912,20 +912,22 @@
   "compass": {
    "id": "compass",
    "en": "compass",
-   "fa": "نقشه‌بردار",
+   "fa": "قطب نما",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "compass__1.webp"
    ],
    "fa_tags": [
+    "جهت",
+    "ناوبری",
     "نقشه",
-    "جهت‌نما",
-    "مسیر",
-    "کارت",
-    "گردش"
+    "قطب‌نمایی",
+    "جغرافیا",
+    "مسیریابی",
+    "ابزار"
    ],
-   "fa_tags_for": "نقشه‌بردار"
+   "fa_tags_for": "قطب نما"
   },
   "crescent-moon": {
    "id": "crescent-moon",
@@ -1376,7 +1378,7 @@
   "flask": {
    "id": "flask",
    "en": "flask",
-   "fa": "فلاسک",
+   "fa": "بشر آزمایشگاه",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -1386,14 +1388,15 @@
     "flask__4.webp"
    ],
    "fa_tags": [
+    "آزمایش",
+    "شیشه",
     "آزمایشگاه",
-    "ظرف",
-    "شیشه‌ای",
-    "محفظه",
+    "علم",
     "شیمی",
-    "تجربه"
+    "ابزار",
+    "شیشه‌دار"
    ],
-   "fa_tags_for": "فلاسک"
+   "fa_tags_for": "بشر آزمایشگاه"
   },
   "food": {
    "id": "food",
@@ -1986,7 +1989,7 @@
   "magnet": {
    "id": "magnet",
    "en": "magnet",
-   "fa": "مغناطیس",
+   "fa": "آهن ربا",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -1995,14 +1998,14 @@
     "magnet__3.webp"
    ],
    "fa_tags": [
+    "آهنربا",
     "مغناطیس",
-    "آهن",
-    "آهنک",
-    "مغناطیسی",
-    "جاذبه",
-    "مغناطیسی‌ساز"
+    "جذب",
+    "فلز",
+    "الکترومغناطیس",
+    "ابزار"
    ],
-   "fa_tags_for": "مغناطیس"
+   "fa_tags_for": "آهن ربا"
   },
   "magnifying-glass": {
    "id": "magnifying-glass",
@@ -2093,8 +2096,8 @@
   },
   "megaphone": {
    "id": "megaphone",
-   "en": "megaphone",
-   "fa": "مگافون",
+   "en": "loudspeaker",
+   "fa": "بلندگو",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
@@ -2102,14 +2105,14 @@
    ],
    "fa_tags": [
     "صدا",
-    "بلندگو",
+    "تقویت‌کننده",
+    "اسپیکر",
     "اعلان",
-    "تقویت صدا",
-    "ابزار صوتی",
-    "ارتباط",
-    "رویداد"
+    "سیستم صوتی",
+    "میکروفن",
+    "بلندگو"
    ],
-   "fa_tags_for": "مگافون"
+   "fa_tags_for": "بلندگو"
   },
   "microscope": {
    "id": "microscope",

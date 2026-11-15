@@ -283,8 +283,8 @@
  },
  {
   "id": "flask",
-  "en": "chemistry flask with bubbling liquid",
-  "fa": "بالن شیمی",
+  "en": "flask",
+  "fa": "بشر آزمایشگاه",
   "tags": []
  },
  {
@@ -295,8 +295,8 @@
  },
  {
   "id": "magnet",
-  "en": "horseshoe magnet",
-  "fa": "آهنربا",
+  "en": "magnet",
+  "fa": "آهن ربا",
   "tags": []
  },
  {
@@ -373,7 +373,7 @@
  },
  {
   "id": "megaphone",
-  "en": "megaphone",
+  "en": "loudspeaker",
   "fa": "بلندگو",
   "tags": []
  },
@@ -752,7 +752,7 @@
  {
   "id": "compass",
   "en": "compass",
-  "fa": "قطب‌نما",
+  "fa": "قطب نما",
   "tags": []
  },
  {

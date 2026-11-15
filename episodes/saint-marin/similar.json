@@ -5,6 +5,12 @@
  "cloak": [
   "half-cloak"
  ],
+ "banknotes": [
+  "money-bag",
+  "money-coins",
+  "cash",
+  "euro-sign"
+ ],
  "goose": [
   "roast-goose"
  ],
@@ -12,18 +18,29 @@
   "flag"
  ],
  "group-people": [
-  "people-standing-in-line"
+  "people-standing-in-line",
+  "family"
+ ],
+ "beggar": [
+  "adult-male-human",
+  "person-happy",
+  "person-thinking",
+  "person-worried",
+  "doctor",
+  "chef",
+  "teacher"
  ],
  "food": [
-  "roast-goose",
   "burger",
+  "roast-goose",
+  "goose",
+  "coffee-beans",
   "coffee-cup",
   "espresso-cup",
   "moka-pot",
   "tea-cup",
   "wine-glass",
-  "restaurant",
-  "street-food-stall"
+  "silverware-set"
  ],
  "flag": [
   "banner"
@@ -32,21 +49,40 @@
   "lantern"
  ],
  "money-bag": [
-  "money-coins"
+  "money-coins",
+  "cash",
+  "banknotes",
+  "euro-sign"
  ],
  "money-coins": [
-  "money-bag"
+  "money-bag",
+  "cash",
+  "banknotes",
+  "euro-sign"
  ],
  "half-cloak": [
   "cloak"
  ],
  "saint-martin": [
-  "saint-martin-2"
+  "saint-martin-2",
+  "roman-soldier"
  ],
  "roast-goose": [
   "goose"
  ],
  "shield": [
   "shield-check"
+ ],
+ "roman-helmet": [
+  "roman-soldier"
+ ],
+ "map-pin": [
+  "map-folded"
+ ],
+ "star": [
+  "star-rating",
+  "one-star",
+  "two-stars",
+  "three-stars"
  ]
 }
