@@ -270,7 +270,7 @@ function posterBg(t, sc) {
   if (sc.bgc && (!im || sc.bgc.on)) posterColor(t, sc);
   else if (im) {
     const mo = p.motion && p.motion !== 'auto' ? p.motion : ['in', 'out', 'left', 'right'][sc.idx % 4]; let z = 1.05, ox = 0;
-    const dl = p.drift != null ? p.drift : D.meta.drift != null ? D.meta.drift : 1, DA = EDIT ? 0 : [0, 3, 6, 10][dl] || 0;   // micro hand-held drift of the whole picture (px)
+    const dl = p.drift != null ? p.drift : D.meta.drift != null ? D.meta.drift : 0, DA = EDIT ? 0 : [0, 3, 6, 10][dl] || 0;   // micro hand-held drift of the whole picture (px)
     if (EDIT || mo === 'none') z = 1; else if (mo === 'in') z = lerp(1.04, 1.15, pc); else if (mo === 'out') z = lerp(1.15, 1.04, pc); else if (mo === 'left') { z = 1.1; ox = lerp(.03, -.03, pc) } else if (mo === 'right') { z = 1.1; ox = lerp(-.03, .03, pc) }
     if (DA) z = Math.max(z, 1.02 + DA * .0015);
     const jx = DA ? DA * (2 * jit(t, 1) + .6 * Math.sin(t * .9)) : 0, jy = DA ? DA * (2 * jit(t, 7) + .6 * Math.cos(t * .7)) : 0;
@@ -316,7 +316,7 @@ function posterText(t, sc) {
       else posterChips(sc.text, size, maxW, rtl ? W - m : m, y, t, tt, rtl ? 'right' : 'left', st)
       ctx.restore() }
   }
-  posterLayers(t, sc)
+  posterLayers(t, sc); posterBubbles(t, sc)
 }
 /* extra layers (any number per scene): {kind:'text'|'stamp', text, t, out, x, y (centre, fractions of the frame), size (multiplier), col, bg ('none' = no chip), hl, rot (deg, stamps)} */
 const STAMPC = {};
@@ -360,6 +360,37 @@ function posterLayers(t, sc) {
     ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.scale(ps.s, ps.s); ctx.translate(-cx, -cy); ctx.globalAlpha = ps.al; posterChips(L.text, size, maxW, cx, cy - hh / 2, t, A === 'pop' ? t0 : t - 5, 'center', { col: L.col, bg: L.bg, hl: L.hl }); ctx.restore()
   })
 }
+/* speech bubbles: sc.bubbles = [{text, shape:'speech'|'thought'|'shout'|'box', tail:'dl'|'d'|'dr'|'ul'|'u'|'ur'|'l'|'r'|'none', x,y, size, col, bg, hl, t, out, anim, animOut}] */
+function bubblePath(shape, w, h, tail, B) {
+  const r = Math.min(h / 2, B * .035) * (shape === 'box' ? .35 : 1), L = B * .075, tb = B * .028, T = { dl: [-.5, 1, 0, 1, -.35], d: [0, 1, 0, 1, 0], dr: [.5, 1, 0, 1, .35], ul: [-.5, -1, 0, -1, -.35], u: [0, -1, 0, -1, 0], ur: [.5, -1, 0, -1, .35], l: [-1, 0, -1, 0, -.35], r: [1, 0, 1, 0, .35] }[tail];
+  return { r, L, tb, T }
+}
+function posterBubbles(t, sc) {
+  (sc.bubbles || []).forEach(Bb => {
+    if (!Bb || !String(Bb.text || '').trim()) return; const t0 = Bb.t != null ? Bb.t : sc.t0 + .3, out = Bb.out != null ? Bb.out : 1e9, A = Bb.anim || 'pop', P = (Bb.pos && Bb.pos[FMT]) || Bb;
+    const ps = lyrPose(t, t0, out, A, Bb.animOut); if (!ps) return; const k = Bb.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? .3 : P.y) * H, shape = Bb.shape || 'speech', tail = Bb.tail || (shape === 'box' || shape === 'shout' ? 'none' : 'dl');
+    const size = B * (V ? .05 : .045) * k, maxW = W * (V ? .62 : .36) * Math.min(k, 1.4), font = `900 ${size}px Vz`, Lw = wrapTokens(Bb.text, font, maxW), lh = size * 1.45, pad = size * .8;
+    const w = Math.max(...Lw.lines.map(l => l.w), size) + pad * 2 + (shape === 'shout' ? size * 1.2 : 0), h = Lw.lines.length * lh + pad * (shape === 'shout' ? 1.6 : 1.1), bg = Bb.bg || '#ffffff', col = Bb.col || '#17110d', ink = '#17110d', q = A === 'pop' ? .7 + .3 * Math.min(spr(t, t0, .5, 12), 1.1) : 1;
+    ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.scale(ps.s * q, ps.s * q); ctx.globalAlpha = ps.al * (A === 'pop' ? clamp(spr(t, t0, .5, 12) * 1.6) : 1); ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 5;
+    ctx.lineWidth = Math.max(3, B * .005); ctx.strokeStyle = ink; ctx.fillStyle = bg; ctx.lineJoin = 'round';
+    const bp = bubblePath(shape, w, h, tail === 'none' ? 'd' : tail, B), T = bp.T;
+    const tipOf = () => { const ex = T[0] * w / 2 * (Math.abs(T[0]) === 1 ? 1 : .9), ey = T[1] * h / 2 * (Math.abs(T[1]) === 1 ? 1 : 1), nx = T[2], ny = T[3]; return { bx: ex, by: ey, tx: ex + nx * bp.L * 1.25 + (ny ? T[4] * bp.L * 1.3 : 0), ty: ey + ny * bp.L * 1.25 + (nx ? T[4] * bp.L * 1.3 : 0), nx, ny } };
+    if (shape === 'shout') {
+      const n = 18, pts = []; for (let i = 0; i < n * 2; i++) { const a = i * Math.PI / n, rr = i % 2 ? .78 : 1.02; pts.push([Math.cos(a) * w / 2 * rr * 1.08, Math.sin(a) * h / 2 * rr * 1.12]) }
+      ctx.beginPath(); pts.forEach((p2, i) => i ? ctx.lineTo(p2[0], p2[1]) : ctx.moveTo(p2[0], p2[1])); ctx.closePath(); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.stroke()
+    } else {
+      let ti = null; if (tail !== 'none' && shape !== 'box') ti = tipOf();
+      if (ti && shape === 'speech') { const px = ti.ny ? 1 : 0, py = ti.nx ? 1 : 0; ctx.beginPath(); ctx.moveTo(ti.bx - px * bp.tb, ti.by - py * bp.tb); ctx.lineTo(ti.tx, ti.ty); ctx.lineTo(ti.bx + px * bp.tb, ti.by + py * bp.tb); ctx.closePath(); ctx.fill(); ctx.stroke() }
+      ctx.beginPath(); ctx.roundRect(-w / 2, -h / 2, w, h, shape === 'thought' ? h * .5 : bp.r); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.stroke();
+      if (ti && shape === 'speech') { const px = ti.ny ? 1 : 0, py = ti.nx ? 1 : 0, e = 3; ctx.beginPath(); ctx.moveTo(ti.bx - px * (bp.tb - 2) - ti.nx * e, ti.by - py * (bp.tb - 2) - ti.ny * e); ctx.lineTo(ti.tx - ti.nx * 3, ti.ty - ti.ny * 3); ctx.lineTo(ti.bx + px * (bp.tb - 2) - ti.nx * e, ti.by + py * (bp.tb - 2) - ti.ny * e); ctx.closePath(); ctx.fill() }
+      if (ti && shape === 'thought') for (let j = 0; j < 3; j++) { const f = (j + 1) / 3.4, rr = size * (.34 - j * .09); ctx.beginPath(); ctx.arc(ti.bx + (ti.tx - ti.bx) * f, ti.by + (ti.ty - ti.by) * f + ti.ny * rr, rr, 0, TAU); ctx.fill(); ctx.stroke() }
+    }
+    ctx.shadowColor = 'transparent'; ctx.font = font; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.direction = rtl ? 'rtl' : 'ltr';
+    Lw.lines.forEach((ln, li) => { const y = (li - (Lw.lines.length - 1) / 2) * lh + 2; let x = rtl ? ln.w / 2 : -ln.w / 2;
+      ln.ws.forEach(tk => { if (rtl) x -= tk.w; ctx.fillStyle = tk.hl ? (Bb.hl || '#d9420c') : col; ctx.fillText(tk.txt, x, y); if (rtl) x -= Lw.sp; else x += tk.w + Lw.sp }) });
+    ctx.restore()
+  })
+}
 /* atmosphere on a scene: sc.atm = [{type:'snow'|'rain'|'lightning'|'fog'|'embers', amt (0.3..2), t (start, optional)}]; every particle is a pure function of time */
 function posterAtm(t, sc) {
   const list = sc.atm; if (!list || !list.length) return;
@@ -388,7 +419,7 @@ function posterAtm(t, sc) {
 function uiPoster(t) {
   const m = V ? 70 : 90, ty = V ? 98 : 70, bw = W - 2 * m, sc = D.scenes[sceneIndex(t)], rtl = D.meta.rtl; ctx.save();
   ctx.fillStyle = '#fff'; ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 8; ctx.globalAlpha = .9; ctx.font = '700 28px Vz'; ctx.direction = 'ltr'; ctx.textAlign = rtl ? 'left' : 'right';
-  const lab = (sc && sc.kicker) || D.meta.topLabel || ''; ctx.fillText(lab, rtl ? m : W - m, ty);
+  const lab = D.meta.topLabel || (sc && sc.kicker) || ''; ctx.direction = /[\u0600-\u06FF]/.test(lab) ? 'rtl' : 'ltr'; ctx.fillText(lab, rtl ? m : W - m, ty);   // always the episode's name
   const brand = D.meta.brand || 'ذره‌بین'; ctx.font = '900 30px Vz'; ctx.direction = 'rtl'; const bwid = ctx.measureText(brand).width + 36;
   ctx.shadowColor = 'transparent'; ctx.globalAlpha = .95; ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.beginPath(); ctx.roundRect(rtl ? W - m - bwid : m, ty - 33, bwid, 56, 6); ctx.stroke();
   ctx.textAlign = 'center'; ctx.fillText(brand, (rtl ? W - m - bwid : m) + bwid / 2, ty + 2);

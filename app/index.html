@@ -1511,6 +1511,22 @@ function fxUI(el,s,i,box){
   const AB=q0('.atSecB'); AB.innerHTML=`<div class="atmr">${ATMS.map(a=>`<button data-a="${a[0]}" class="${(s.atm||[]).some(x=>x.type===a[0])?'on':''}">${a[1]}</button>`).join('')}</div><label>شدت</label><select class="sel atA"><option value="0.5">کم</option><option value="1">متوسط</option><option value="1.8">زیاد</option></select>`;
   AB.querySelectorAll('.atmr button').forEach(b=>b.onclick=()=>{ const a=b.dataset.a, amt=+AB.querySelector('.atA').value; s.atm=s.atm||[]; const k=s.atm.findIndex(x=>x.type===a); if(k>=0) s.atm.splice(k,1); else s.atm.push({type:a,amt}); if(!s.atm.length) delete s.atm; b.classList.toggle('on',k<0); ch() });
   const A0=(s.atm||[])[0]; AB.querySelector('.atA').value=A0?String(A0.amt):'1'; AB.querySelector('.atA').onchange=e=>{ (s.atm||[]).forEach(x=>x.amt=+e.target.value); ch() };
+  /* speech bubbles */
+  { const BB=q0('.bbSecB'), SH=[['speech','حرف زدن'],['thought','فکر کردن'],['shout','فریاد'],['box','کادر توضیح']], TL=[['dl','دم پایین‌چپ'],['d','دم پایین'],['dr','دم پایین‌راست'],['ul','دم بالاچپ'],['u','دم بالا'],['ur','دم بالاراست'],['l','دم چپ'],['r','دم راست'],['none','بدون دم']];
+    const drawB=()=>{ BB.innerHTML='<div class="bbL"></div><div class="row"><button class="pri aB">+ ابر گفتگو</button></div><p class="hint">برای تصویرهای پس‌زمینه: نوع ابر، متن، اندازه، رنگ و جای آن را خودت تنظیم می‌کنی. کلمه‌ی مهم را بین دو ستاره بگذار.</p>';
+      const L=BB.querySelector('.bbL'); (s.bubbles||[]).forEach((y,k)=>{ const c=document.createElement('details'); c.className='pSec lyI'; if(y._open) c.open=true;
+        c.innerHTML=`<summary></summary><div class="pSecB"><div class="krow"><div class="kR"><label style="margin-top:0">متن ابر</label><textarea class="bT" rows="2"></textarea></div><div class="kmini"><label style="margin:0 0 4px;font-size:12px">جای ابر</label><div class="bP"></div></div></div>
+          <div class="g2"><div><label>نوع ابر</label><select class="sel bS">${optsHtml(SH,y.shape||'speech')}</select></div><div class="bTlW"><label>جهت دم</label><select class="sel bTl">${optsHtml(TL,y.tail||'dl')}</select></div></div>
+          <div class="g3"><div><label>اندازه</label><input type="range" class="bZ" min="0.5" max="2.2" step="0.05"></div><div><label>رنگ نوشته</label><input type="color" class="bC"></div><div><label>رنگ ابر</label><input type="color" class="bG"></div></div>
+          <div class="bTm"></div><button class="bD" style="margin-top:8px">حذف این ابر</button></div>`;
+        const z=x=>c.querySelector(x), sm=()=>{ z('summary').textContent='💬 '+(y.text||'—') };
+        c.addEventListener('toggle',()=>{ y._open=c.open }); sm(); z('.bT').value=y.text||''; z('.bZ').value=y.size||1; z('.bC').value=y.col||'#17110d'; z('.bG').value=y.bg||'#ffffff';
+        const tw=()=>{ z('.bTlW').style.visibility=(y.shape==='shout'||y.shape==='box')?'hidden':'visible' }; tw();
+        z('.bT').oninput=e=>{ y.text=e.target.value; sm(); ch() }; z('.bZ').oninput=e=>{ y.size=+e.target.value; ch() }; z('.bC').oninput=e=>{ y.col=e.target.value; ch() }; z('.bG').oninput=e=>{ y.bg=e.target.value; ch() };
+        z('.bS').onchange=e=>{ y.shape=e.target.value; if(y.shape==='speech'||y.shape==='thought'){ if(!y.tail||y.tail==='none') y.tail='dl'; z('.bTl').value=y.tail } tw(); ch() }; z('.bTl').onchange=e=>{ y.tail=e.target.value; ch() };
+        padUI(z('.bP'),y,ch,.3); timeUI(z('.bTm'),y,{t:'t',out:'out',anim:'anim',animOut:'animOut'},s,'pop',ch);
+        z('.bD').onclick=()=>{ s.bubbles.splice(k,1); if(!s.bubbles.length) delete s.bubbles; drawB(); ch() }; L.appendChild(c) });
+      BB.querySelector('.aB').onclick=()=>{ (s.bubbles=s.bubbles||[]).push({text:'متن ابر گفتگو',shape:'speech',tail:'dl',x:.5,y:.3,_open:true}); drawB(); ch() } }; drawB(); }
   /* colour background (instead of a picture) */
   { const BB=q0('.bgSecB'), PAL=[['#c2410c','#1c1917'],['#b91c1c','#450a0a'],['#d97706','#78350f'],['#0f766e','#022c22'],['#1d4ed8','#0f172a'],['#6d28d9','#1e1b4b'],['#be185d','#500724'],['#57534e','#0c0a09']],
       FXS=[['glow','درخشش مرکزی'],['rays','پرتوهای چرخان'],['bokeh','حباب‌های نورانی'],['stripes','خط‌های مورب'],['dots','نقطه‌چین هافتون'],['waves','موج'],['none','بدون افکت']];
@@ -1527,20 +1543,18 @@ function fxUI(el,s,i,box){
     [c1,c2,fx,am,fo].forEach(e=>e.onchange=()=>{ if(on.checked) put() }); }
   /* camera */
   const CB=q0('.camSecB'); CB.innerHTML=`<div class="g2"><div><label>حرکت عکس</label><select class="sel pMot"><option value="auto">خودکار</option><option value="in">زوم به داخل</option><option value="out">زوم به بیرون</option><option value="left">حرکت به چپ</option><option value="right">حرکت به راست</option><option value="none">ثابت</option></select></div>
-    <div><label>لرزش ریز پس‌زمینه</label><select class="sel dr"><option value="0">خاموش</option><option value="1">کم (مثل نمونه)</option><option value="2">متوسط</option><option value="3">زیاد</option></select></div></div>
+    <div><label>لرزش ریز پس‌زمینه</label><select class="sel dr"><option value="0">خاموش</option><option value="1">کم</option><option value="2">متوسط</option><option value="3">زیاد</option></select></div></div>
     <label>افکت دوربین هنگام ورود عکس</label><select class="sel kk"><option value="both">ضربه‌ی زوم + لرزش</option><option value="punch">فقط ضربه‌ی زوم</option><option value="shake">فقط لرزش</option><option value="none">هیچ</option></select>
-    <label>برچسب کوچک بالا (مثلاً ROME · 1970s)</label><input type="text" class="pKick ltr" maxlength="40">
     <details class="pSec" style="margin-top:8px"><summary>✏️ ویرایش متن پرامپت عکس</summary><div class="pSecB"><textarea class="pPrompt" dir="ltr"></textarea></div></details>`;
   const mo=CB.querySelector('.pMot'); mo.value=s.photo.motion||'auto'; mo.onchange=()=>{ if(mo.value==='auto') delete s.photo.motion; else s.photo.motion=mo.value; ch() };
-  const dr=CB.querySelector('.dr'); dr.value=String(s.photo.drift!=null?s.photo.drift:1); dr.onchange=()=>{ s.photo.drift=+dr.value; ch() };
+  const dr=CB.querySelector('.dr'); dr.value=String(s.photo.drift!=null?s.photo.drift:0); dr.onchange=()=>{ s.photo.drift=+dr.value; ch() };
   const kk=CB.querySelector('.kk'); kk.value=s.kick||'both'; kk.onchange=()=>{ s.kick=kk.value; ch() };
-  const kc=CB.querySelector('.pKick'); kc.value=s.kicker||''; kc.oninput=()=>{ s.kicker=kc.value; rvSave(); pvRefresh(i) };
   const pr=CB.querySelector('.pPrompt'); pr.value=s.photo.prompt||''; pr.oninput=()=>{ s.photo.prompt=pr.value; rvSave() };
 }
 function posterBlock(box,s,i,d){
   s.photo=s.photo||{}; const el=document.createElement('div'); el.className='pst';
   el.innerHTML=`<div class="ph"><div class="pimg">${s.photo.src?'':'بدون عکس'}</div><div><div class="row" style="flex-direction:column;align-items:stretch"><button class="pri pCopy">کپی پرامپت عکس</button><label class="btn" style="display:grid;place-items:center;margin:0">${s.photo.src?'جایگزینی عکس':'آپلود عکس'}<input type="file" accept="image/*" hidden class="pFile"></label></div><div class="st pSt"></div></div></div>
-    ${pSec('pProps','🧩 اشیای جدا').replace('class="pSec pProps"','class="pSec pProps" hidden')}${pSec('itSec','🖼 تصویرهای روی صحنه').replace('class="pSec itSec"','class="pSec itSec" hidden')}${pSec('kSec','📝 متن کلیدی').replace('<div class="pSecB">','<div class="pSecB kSecB">')}${pSec('lySec','🔤 متن‌ها و مهرهای اضافه').replace('<div class="pSecB">','<div class="pSecB lySecB">')}${pSec('atSec','❄️ افکت جوّی (برف، باران، رعد و برق…)').replace('<div class="pSecB">','<div class="pSecB atSecB">')}${pSec('bgSec','🎨 پس‌زمینه‌ی رنگی (بدون عکس)').replace('<div class="pSecB">','<div class="pSecB bgSecB">')}${pSec('camSec','🎥 دوربین و تنظیمات عکس').replace('<div class="pSecB">','<div class="pSecB camSecB">')}`;
+    ${pSec('pProps','🧩 اشیای جدا').replace('class="pSec pProps"','class="pSec pProps" hidden')}${pSec('itSec','🖼 تصویرهای روی صحنه').replace('class="pSec itSec"','class="pSec itSec" hidden')}${pSec('lySec','🔤 متن‌ها و مهرهای اضافه').replace('<div class="pSecB">','<div class="pSecB lySecB">')}${pSec('bbSec','💬 ابر گفتگو').replace('<div class="pSecB">','<div class="pSecB bbSecB">')}${pSec('atSec','❄️ افکت جوّی (برف، باران، رعد و برق…)').replace('<div class="pSecB">','<div class="pSecB atSecB">')}${pSec('bgSec','🎨 پس‌زمینه‌ی رنگی (بدون عکس)').replace('<div class="pSecB">','<div class="pSecB bgSecB">')}${pSec('camSec','🎥 دوربین و تنظیمات عکس').replace('<div class="pSecB">','<div class="pSecB camSecB">')}${pSec('kSec','📝 متن کلیدی').replace('<div class="pSecB">','<div class="pSecB kSecB">')}`;
   box.insertBefore(el, box.firstChild);
   const img=el.querySelector('.pimg'); if(s.photo.src){ img.style.backgroundImage='url("'+rawRepo(s.photo.src)+'")' }
   el.querySelector('.pCopy').onclick=async()=>{ const t=posterFull(s); if(!(s.photo.prompt||'').trim()) return toast('این صحنه پرامپت ندارد'); toast(await copy(t)?'پرامپت کپی شد؛ در موتور ساخت تصویر بزن':'کپی نشد') };

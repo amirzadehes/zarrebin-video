@@ -60,3 +60,7 @@ Per scene (all optional): `layers` = any number of `{kind:'text'|'stamp', text, 
 ### سبک ثابت و پس‌زمینه‌ی رنگی (حالت پوستر)
 - سبک تصویر (Painterly retro poster) قفل است و با تأکید «ثابت، هرگز عوض نشود» به انتهای پرامپت عکس صحنه و پرامپت اشیای جدا اضافه می‌شود.
 - صحنه‌ای که عکس لازم ندارد می‌تواند `bgc` داشته باشد: `{c1, c2, fx: glow|rays|bokeh|stripes|dots|waves|none, amt, on?}`؛ گرادیان دو رنگ به‌علاوه‌ی افکت متحرک. `on:true` یعنی حتی با وجود عکس، رنگی نشان بده.
+
+### ابر گفتگو و برچسب بالا (حالت پوستر)
+- `scene.bubbles`: `[{text, shape: speech|thought|shout|box, tail: dl|d|dr|ul|u|ur|l|r|none, x, y, size, col, bg, hl, t, out, anim, animOut}]`.
+- برچسب کوچک بالای تصویر همیشه نام فارسی قسمت (`meta.topLabel`) است. لرزش ریز پس‌زمینه به‌طور پیش‌فرض خاموش است.
