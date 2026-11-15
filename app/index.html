@@ -229,6 +229,7 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
 .modesw button.on{background:var(--acc);color:var(--acc-tx);border-color:var(--acc)}
 body[data-mode=poster] .modesw button.on{background:#ff5a1f;color:#fff;border-color:#ff5a1f}
 .pal{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.pal .sw{width:38px;height:38px;border-radius:10px;border:2px solid #3a2e26;padding:0;cursor:pointer}.pal .sw:active{transform:scale(.94)}.bgSecB input[type=color]{width:100%;height:40px;padding:2px;border-radius:10px;background:#1d1511;border:1px solid #3a2e26}
+.bpG{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px;margin:6px 0 10px}.bpI{position:relative;background:repeating-conic-gradient(#2a211b 0 25%,#1d1511 0 50%) 0 0/16px 16px;border-radius:10px;border:1px solid #3a2e26;aspect-ratio:4/3}.bpA{all:unset;display:grid;place-items:center;width:100%;height:100%;cursor:pointer}.bpA img{max-width:92%;max-height:92%}.bpX{position:absolute;top:2px;left:2px;width:22px;height:22px;min-height:0;padding:0;border-radius:50%;background:#7a1d17;color:#fff;font-size:11px}
 .pstBox{border:1px dashed #ff5a1f;border-radius:14px;padding:10px 12px;margin:0 0 12px;background:#1d1511}
 .pst{border:1px solid #6b3a22;border-radius:14px;padding:10px;margin-bottom:10px;background:#1d1511}
 .pst .ph{display:grid;grid-template-columns:84px 1fr;gap:10px;align-items:start}
@@ -311,7 +312,7 @@ body[data-mode=poster] .modesw button.on{background:#ff5a1f;color:#fff;border-co
 <div id="pvModal" hidden>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvV" class="on">عمودی (اینستاگرام)</button><button id="pvH">افقی (یوتیوب)</button></div>
   <iframe id="pvFrame" src="../engine/preview.html?inline=1&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(62vh*9/16));height:min(62vh,calc(94vw*16/9))"></iframe>
-  <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvPlay">▶ پخش</button><button id="pvEdit">✋ ویرایش چیدمان</button></div>
+  <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvPlay">▶ پخش</button><button id="pvPause" hidden>⏸ توقف</button><button id="pvEdit">✋ ویرایش چیدمان</button></div>
   <div class="row" id="pvTools" hidden style="justify-content:center;width:100%;margin:0"><button data-op="bigger">＋ بزرگ‌تر</button><button data-op="smaller">－ کوچک‌تر</button><button data-op="rot">⟳ چرخش</button><button data-op="reset">↺ خودکار</button></div>
   <div class="row" id="pvSel" hidden style="justify-content:center;width:100%;margin:0"></div>
   <p class="hint" id="pvHint" hidden style="margin:0;text-align:center">تصویر را از ردیف بالا انتخاب کن (یا روی خودش لمس کن) و بکش؛ با دو انگشت هم می‌شود اندازه را عوض کرد.</p>
@@ -662,7 +663,10 @@ function openPreview(i,mode,sel){ if(!RV) return; pvI=i; pvMode=mode||'play'; pv
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('#pvModal').hidden) $('#pvClose').click() });   // Esc closes the preview (desktop)
 $('#pvClose').onclick=()=>{ $('#pvModal').hidden=true; document.body.classList.remove('pvdock'); try{ $('#pvFrame').contentWindow.postMessage({type:'stop'},'*') }catch(e){} };
 $('#pvV').onclick=()=>pvSetFmt('v'); $('#pvH').onclick=()=>pvSetFmt('h');
-$('#pvPlay').onclick=()=>{ if(pvMode==='all'){ pvGo(); return } pvMode='play'; pvTools(); pvGo() }; $('#pvEdit').onclick=()=>{ pvMode='edit'; pvTools(); pvGo() };
+$('#pvPlay').onclick=()=>{ if(pvPaused){ $('#pvFrame').contentWindow.postMessage({type:'resume'},'*'); return } if(pvMode==='all'){ pvGo(); return } pvMode='play'; pvTools(); pvGo() };
+let pvPaused=false, pvPlaying=false; function pvBtns(){ $('#pvPause').hidden=!pvPlaying; $('#pvPlay').textContent=pvPaused?'▶ ادامه':'▶ پخش' }
+$('#pvPause').onclick=()=>$('#pvFrame').contentWindow.postMessage({type:'pause'},'*');
+addEventListener('message',e=>{ const m=e.data||{}; if(m.type==='state'){ pvPlaying=!!m.playing; pvPaused=!!m.paused; pvBtns() } }); $('#pvEdit').onclick=()=>{ pvMode='edit'; pvTools(); pvGo() };
 document.querySelectorAll('#pvTools button').forEach(b=>b.onclick=()=>$('#pvFrame').contentWindow.postMessage({type:'adj',op:b.dataset.op},'*'));
 /* after approving a scene, the next one opens in the preview and its details open in the list on the other side of the dock */
 function pvShowDetails(i){ const bx=$('#rvBox'); if(bx) bx.open=true; document.querySelectorAll('details.sc[open]').forEach(d=>{ if(+d.dataset.i!==i) d.open=false });
@@ -1420,6 +1424,31 @@ async function posterUpload(i, file){
   if(old&&old!==path){ try{ const j=await api('/contents/'+old); await delFile(old,j.sha,'replace photo: '+old) }catch(_){} }
   const d=document.querySelector('details.sc[data-i="'+i+'"]'); if(d){ d.querySelector('summary').innerHTML=sceneHead(s,i); d.classList.toggle('warn',noPic(s)) }
   updOk(); pvRefresh(i); }
+/* ===== bubble pictures: prompt, cut-out (magenta -> transparent, text area detected), library listing ===== */
+const BUB_TYPES=[['speech','ابر حرف زدن (دم پایین‌چپ)'],['thought','ابر فکر کردن (ابری با حباب)'],['shout','ابر فریاد (دندانه‌دار)'],['caption','کادر توضیح (مستطیلی)']];
+const BUB_DESC={speech:'a classic oval comic speech bubble with a single pointed tail at the bottom left',thought:'a cloud-shaped thought bubble with three small circles trailing down to the bottom left',shout:'a jagged starburst shout bubble with spiky edges and no tail',caption:'a rectangular narration caption box with slightly irregular hand-cut paper edges and no tail'};
+const bubblePrompt=t=>'A single EMPTY comic bubble: '+(BUB_DESC[t]||BUB_DESC.speech)+'. It is completely blank inside (absolutely no text, letters, numbers or symbols), with a bold dark ink outline and a light cream off-white fill, hand-painted with a subtle paper grain. Wide proportions (about 4:3) so a line or two of text fits. Centered with a margin, isolated on a perfectly flat solid magenta (#FF00FF) background filling the whole canvas edge to edge; no shadow, no other objects, crisp clean edges so it can be cut out. '+POSTER_STYLE_PROP+' Reminder: pure flat magenta #FF00FF background, nothing but the empty bubble.';
+async function bubbleLib(){ if(S.bubLib) return S.bubLib; let list=[]; try{ const j=await api('/contents/bubbles'); list=(j||[]).filter(x=>x.type==='file'&&/\.webp$/i.test(x.name)).map(x=>{ const m=x.name.match(/__(\d+)_(\d+)_(\d+)_(\d+)\.webp$/); return {name:x.name,sha:x.sha,tb:m?[+m[1]/100,+m[2]/100,+m[3]/100,+m[4]/100]:[.14,.16,.72,.5]} }) }catch(e){ list=[] } return S.bubLib=list }
+async function bubbleCutout(file){
+  const url=URL.createObjectURL(file); let img; try{ img=await new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=()=>rej(new Error('این فایل تصویر نیست')); im.src=url }) } finally{ URL.revokeObjectURL(url) }
+  const k=Math.min(1,1000/Math.max(img.naturalWidth,img.naturalHeight)), w=Math.round(img.naturalWidth*k), h=Math.round(img.naturalHeight*k), c=document.createElement('canvas'); c.width=w; c.height=h; const g=c.getContext('2d',{willReadFrequently:true}); g.drawImage(img,0,0,w,h);
+  const id=g.getImageData(0,0,w,h), d=id.data, mag=i=>{ const r=d[i],gg=d[i+1],b=d[i+2]; return r>140&&b>120&&gg<130&&(r+b)/2-gg>70 };
+  const edge=[[2,2],[w-3,2],[2,h-3],[w-3,h-3]].filter(([x,y])=>mag((y*w+x)*4)).length; if(edge<3) throw new Error('زمینه‌ی سرخابی (#FF00FF) نیست');
+  const bgm=new Uint8Array(w*h), st=[]; const push=(x,y)=>{ if(x<0||y<0||x>=w||y>=h) return; const q=y*w+x; if(bgm[q]||!mag(q*4)) return; bgm[q]=1; st.push(q) };
+  for(let x=0;x<w;x++){ push(x,0); push(x,h-1) } for(let y=0;y<h;y++){ push(0,y); push(w-1,y) }
+  while(st.length){ const q=st.pop(), x=q%w, y=(q-x)/w; push(x+1,y); push(x-1,y); push(x,y+1); push(x,y-1) }
+  let x0=w,y0=h,x1=0,y1=0; for(let y=0;y<h;y++) for(let x=0;x<w;x++){ const q=y*w+x; if(bgm[q]){ d[q*4+3]=0; continue }
+    let nb=false; for(let dy=-2;dy<=2&&!nb;dy++) for(let dx=-2;dx<=2;dx++){ const xx=x+dx,yy=y+dy; if(xx>=0&&yy>=0&&xx<w&&yy<h&&bgm[yy*w+xx]){ nb=true; break } }
+    if(nb){ const r=d[q*4],gg=d[q*4+1],b=d[q*4+2], pk=Math.min(r,b)-gg; if(pk>38){ d[q*4+3]=pk>80?0:Math.round(255*(1-(pk-38)/42)); if(d[q*4+3]===0) continue } if(pk>12){ const m2=Math.min(r,b); d[q*4]=Math.min(r,gg+((r-gg)>>1)); d[q*4+2]=Math.min(b,gg+((b-gg)>>1)) } }
+    if(d[q*4+3]>40){ if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y } }
+  if(x1<=x0||y1<=y0) throw new Error('چیزی در تصویر نماند');
+  g.putImageData(id,0,0); const pw=x1-x0+1, ph=y1-y0+1, o=document.createElement('canvas'); o.width=pw; o.height=ph; const og=o.getContext('2d',{willReadFrequently:true}); og.drawImage(c,x0,y0,pw,ph,0,0,pw,ph);
+  /* text area: rows/columns where most of the body is light (the tail is narrow, so it is excluded) */
+  const od=og.getImageData(0,0,pw,ph).data, rowN=new Array(ph).fill(0); const light=(x,y)=>{ const i=(y*pw+x)*4; return od[i+3]>200&&(od[i]*.3+od[i+1]*.59+od[i+2]*.11)>185 };
+  for(let y=0;y<ph;y++) for(let x=0;x<pw;x++) if(light(x,y)) rowN[y]++; const rmax=Math.max(...rowN,1); let ry0=ph,ry1=0; for(let y=0;y<ph;y++) if(rowN[y]>rmax*.55){ if(y<ry0)ry0=y; if(y>ry1)ry1=y }
+  const colN=new Array(pw).fill(0); for(let y=ry0;y<=ry1;y++) for(let x=0;x<pw;x++) if(light(x,y)) colN[x]++; const cmax=Math.max(...colN,1); let rx0=pw,rx1=0; for(let x=0;x<pw;x++) if(colN[x]>cmax*.55){ if(x<rx0)rx0=x; if(x>rx1)rx1=x }
+  let tb=ry1>ry0&&rx1>rx0?[rx0/pw,ry0/ph,(rx1-rx0)/pw,(ry1-ry0)/ph]:[.14,.16,.72,.5]; const sh=.1; tb=[tb[0]+tb[2]*sh/2,tb[1]+tb[3]*sh/2,tb[2]*(1-sh),tb[3]*(1-sh)].map(v=>Math.max(0,Math.min(1,v)));
+  const blob=await new Promise((res,rej)=>o.toBlob(b=>b?res(b):rej(new Error('تبدیل ناموفق بود')),'image/webp',.92)); return {blob,tb} }
 const POSTER_PROP_HEAD = 'Draw ONLY this one object and nothing else: no table, no shelf, no ground, no other objects, no scenery. It floats alone in the centre of the frame with a margin around it, crisp clean edges so it can be cut out, and no cast shadow on the background. MANDATORY BACKGROUND: perfectly flat, solid, uniform magenta (#FF00FF) filling the entire canvas edge to edge; NOT a wall, NOT a room, NOT a gradient, NOT dark or brown.';
 const POSTER_PROP_TAIL = 'Reminder: pure flat magenta #FF00FF background everywhere, nothing but the one object described at the start.';
 const propFull = p => [(p.prompt||'').trim().replace(/\.*$/,'.'), POSTER_PROP_HEAD, POSTER_STYLE_PROP, POSTER_PROP_TAIL].filter(Boolean).join(' ');
@@ -1511,22 +1540,27 @@ function fxUI(el,s,i,box){
   const AB=q0('.atSecB'); AB.innerHTML=`<div class="atmr">${ATMS.map(a=>`<button data-a="${a[0]}" class="${(s.atm||[]).some(x=>x.type===a[0])?'on':''}">${a[1]}</button>`).join('')}</div><label>شدت</label><select class="sel atA"><option value="0.5">کم</option><option value="1">متوسط</option><option value="1.8">زیاد</option></select>`;
   AB.querySelectorAll('.atmr button').forEach(b=>b.onclick=()=>{ const a=b.dataset.a, amt=+AB.querySelector('.atA').value; s.atm=s.atm||[]; const k=s.atm.findIndex(x=>x.type===a); if(k>=0) s.atm.splice(k,1); else s.atm.push({type:a,amt}); if(!s.atm.length) delete s.atm; b.classList.toggle('on',k<0); ch() });
   const A0=(s.atm||[])[0]; AB.querySelector('.atA').value=A0?String(A0.amt):'1'; AB.querySelector('.atA').onchange=e=>{ (s.atm||[]).forEach(x=>x.amt=+e.target.value); ch() };
-  /* speech bubbles */
-  { const BB=q0('.bbSecB'), SH=[['speech','حرف زدن'],['thought','فکر کردن'],['shout','فریاد'],['box','کادر توضیح']], TL=[['dl','دم پایین‌چپ'],['d','دم پایین'],['dr','دم پایین‌راست'],['ul','دم بالاچپ'],['u','دم بالا'],['ur','دم بالاراست'],['l','دم چپ'],['r','دم راست'],['none','بدون دم']];
-    const drawB=()=>{ BB.innerHTML='<div class="bbL"></div><div class="row"><button class="pri aB">+ ابر گفتگو</button></div><p class="hint">برای تصویرهای پس‌زمینه: نوع ابر، متن، اندازه، رنگ و جای آن را خودت تنظیم می‌کنی. کلمه‌ی مهم را بین دو ستاره بگذار.</p>';
+  /* speech bubbles: the owner's own bubble pictures (library `bubbles/`), we only put the text in */
+  { const BB=q0('.bbSecB');
+    const drawB=async()=>{ const lib=await bubbleLib(); BB.innerHTML=`<div class="bbTop"></div><div class="bbL"></div><p class="hint">ابر را با پرامپت خودت می‌سازی و آپلود می‌کنی؛ زمینه‌ی سرخابی خودکار بریده می‌شود و جای متن تشخیص داده می‌شود. فقط متن را می‌نویسی. کلمه‌ی مهم را بین دو ستاره بگذار.</p>`;
+      const top=BB.querySelector('.bbTop'); top.innerHTML=`<div class="row"><select class="sel bpT" style="flex:1">${BUB_TYPES.map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('')}</select><button class="bpC">کپی پرامپت ابر</button></div>
+        <div class="row"><label class="btn" style="display:grid;place-items:center;margin:0;flex:1">آپلود ابر (چند فایل)<input type="file" accept="image/*" multiple hidden class="bpF"></label></div><div class="st bpSt"></div>
+        <label style="margin-top:8px">کتابخانه‌ی ابرها (روی یکی بزن تا به صحنه اضافه شود)</label><div class="bpG"></div>`;
+      top.querySelector('.bpC').onclick=async()=>toast(await copy(bubblePrompt(top.querySelector('.bpT').value))?'پرامپت ابر کپی شد؛ زمینه‌ی سرخابی می‌گیرد':'کپی نشد');
+      const G=top.querySelector('.bpG'); G.className='bpG'; G.innerHTML=lib.length?lib.map(x=>`<div class="bpI"><button type="button" class="bpA" data-n="${esc(x.name)}"><img src="${rawRepo('bubbles/'+x.name)}" loading="lazy"></button><button type="button" class="bpX" data-n="${esc(x.name)}" title="حذف از کتابخانه">✕</button></div>`).join(''):'<div class="hint">هنوز ابری آپلود نشده.</div>';
+      G.querySelectorAll('.bpA').forEach(b2=>b2.onclick=()=>{ const it=lib.find(x=>x.name===b2.dataset.n); (s.bubbles=s.bubbles||[]).push({img:'bubbles/'+it.name,tb:it.tb,text:'متن ابر گفتگو',x:.5,y:.3,_open:true}); drawB(); ch() });
+      G.querySelectorAll('.bpX').forEach(b2=>b2.onclick=async()=>{ const it=lib.find(x=>x.name===b2.dataset.n); if(!it||!confirm('این ابر از کتابخانه حذف شود؟ (در صحنه‌هایی که از آن استفاده کرده‌اند، تصویر ابر دیگر دیده نمی‌شود)')) return; try{ await delFile('bubbles/'+it.name,it.sha,'remove bubble: '+it.name); S.bubLib=null; drawB() }catch(e){ toast('حذف نشد: '+e.message,4000) } });
+      top.querySelector('.bpF').onchange=async e=>{ const fs=[...e.target.files]; e.target.value=''; const st=top.querySelector('.bpSt'); let ok=0; for(const f of fs){ try{ st.textContent='در حال برش «'+f.name+'»…'; const r=await bubbleCutout(f), name='b'+Date.now().toString(36)+Math.random().toString(36).slice(2,4)+'__'+r.tb.map(v=>Math.round(v*100)).join('_')+'.webp'; await putSerial('bubbles/'+name,await toB64(r.blob),'bubble: '+name); ok++ }catch(err){ st.textContent='✗ '+f.name+': '+err.message; await sleep(1800) } } if(ok){ S.bubLib=null; toast(fa(ok)+' ابر اضافه شد'); drawB() } else if(!fs.length) st.textContent='' };
       const L=BB.querySelector('.bbL'); (s.bubbles||[]).forEach((y,k)=>{ const c=document.createElement('details'); c.className='pSec lyI'; if(y._open) c.open=true;
         c.innerHTML=`<summary></summary><div class="pSecB"><div class="krow"><div class="kR"><label style="margin-top:0">متن ابر</label><textarea class="bT" rows="2"></textarea></div><div class="kmini"><label style="margin:0 0 4px;font-size:12px">جای ابر</label><div class="bP"></div></div></div>
-          <div class="g2"><div><label>نوع ابر</label><select class="sel bS">${optsHtml(SH,y.shape||'speech')}</select></div><div class="bTlW"><label>جهت دم</label><select class="sel bTl">${optsHtml(TL,y.tail||'dl')}</select></div></div>
-          <div class="g3"><div><label>اندازه</label><input type="range" class="bZ" min="0.5" max="2.2" step="0.05"></div><div><label>رنگ نوشته</label><input type="color" class="bC"></div><div><label>رنگ ابر</label><input type="color" class="bG"></div></div>
+          <div class="g3"><div><label>اندازه‌ی ابر</label><input type="range" class="bZ" min="0.5" max="2.2" step="0.05"></div><div><label>اندازه‌ی نوشته</label><input type="range" class="bZt" min="0.5" max="1.8" step="0.05"></div><div><label>رنگ نوشته</label><input type="color" class="bC"></div></div>
+          <label class="chk"><input type="checkbox" class="bF"> برعکس افقی (دم به سمت دیگر)</label>
           <div class="bTm"></div><button class="bD" style="margin-top:8px">حذف این ابر</button></div>`;
         const z=x=>c.querySelector(x), sm=()=>{ z('summary').textContent='💬 '+(y.text||'—') };
-        c.addEventListener('toggle',()=>{ y._open=c.open }); sm(); z('.bT').value=y.text||''; z('.bZ').value=y.size||1; z('.bC').value=y.col||'#17110d'; z('.bG').value=y.bg||'#ffffff';
-        const tw=()=>{ z('.bTlW').style.visibility=(y.shape==='shout'||y.shape==='box')?'hidden':'visible' }; tw();
-        z('.bT').oninput=e=>{ y.text=e.target.value; sm(); ch() }; z('.bZ').oninput=e=>{ y.size=+e.target.value; ch() }; z('.bC').oninput=e=>{ y.col=e.target.value; ch() }; z('.bG').oninput=e=>{ y.bg=e.target.value; ch() };
-        z('.bS').onchange=e=>{ y.shape=e.target.value; if(y.shape==='speech'||y.shape==='thought'){ if(!y.tail||y.tail==='none') y.tail='dl'; z('.bTl').value=y.tail } tw(); ch() }; z('.bTl').onchange=e=>{ y.tail=e.target.value; ch() };
+        c.addEventListener('toggle',()=>{ y._open=c.open }); sm(); z('.bT').value=y.text||''; z('.bZ').value=y.size||1; z('.bZt').value=y.tsz||1; z('.bC').value=y.col||'#17110d'; z('.bF').checked=!!y.flip;
+        z('.bT').oninput=e=>{ y.text=e.target.value; sm(); ch() }; z('.bZ').oninput=e=>{ y.size=+e.target.value; ch() }; z('.bZt').oninput=e=>{ y.tsz=+e.target.value; ch() }; z('.bC').oninput=e=>{ y.col=e.target.value; ch() }; z('.bF').onchange=e=>{ if(e.target.checked) y.flip=true; else delete y.flip; ch() };
         padUI(z('.bP'),y,ch,.3); timeUI(z('.bTm'),y,{t:'t',out:'out',anim:'anim',animOut:'animOut'},s,'pop',ch);
-        z('.bD').onclick=()=>{ s.bubbles.splice(k,1); if(!s.bubbles.length) delete s.bubbles; drawB(); ch() }; L.appendChild(c) });
-      BB.querySelector('.aB').onclick=()=>{ (s.bubbles=s.bubbles||[]).push({text:'متن ابر گفتگو',shape:'speech',tail:'dl',x:.5,y:.3,_open:true}); drawB(); ch() } }; drawB(); }
+        z('.bD').onclick=()=>{ s.bubbles.splice(k,1); if(!s.bubbles.length) delete s.bubbles; drawB(); ch() }; L.appendChild(c) }) }; drawB(); }
   /* colour background (instead of a picture) */
   { const BB=q0('.bgSecB'), PAL=[['#c2410c','#1c1917'],['#b91c1c','#450a0a'],['#d97706','#78350f'],['#0f766e','#022c22'],['#1d4ed8','#0f172a'],['#6d28d9','#1e1b4b'],['#be185d','#500724'],['#57534e','#0c0a09']],
       FXS=[['glow','درخشش مرکزی'],['rays','پرتوهای چرخان'],['bokeh','حباب‌های نورانی'],['stripes','خط‌های مورب'],['dots','نقطه‌چین هافتون'],['waves','موج'],['none','بدون افکت']];

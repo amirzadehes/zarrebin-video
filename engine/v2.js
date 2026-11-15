@@ -369,6 +369,18 @@ function posterBubbles(t, sc) {
   (sc.bubbles || []).forEach(Bb => {
     if (!Bb || !String(Bb.text || '').trim()) return; const t0 = Bb.t != null ? Bb.t : sc.t0 + .3, out = Bb.out != null ? Bb.out : 1e9, A = Bb.anim || 'pop', P = (Bb.pos && Bb.pos[FMT]) || Bb;
     const ps = lyrPose(t, t0, out, A, Bb.animOut); if (!ps) return; const k = Bb.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? .3 : P.y) * H, shape = Bb.shape || 'speech', tail = Bb.tail || (shape === 'box' || shape === 'shout' ? 'none' : 'dl');
+    const bim = Bb.img && IM[Bb.img];
+    if (bim) {   // the owner's own bubble picture (cut out, empty); only the text is ours. Bb.tb = text area as fractions of the picture [x,y,w,h]
+      const bw = W * (V ? .56 : .3) * k, bh = bw * bim.height / bim.width, fl = !!Bb.flip, q2 = A === 'pop' ? .7 + .3 * Math.min(spr(t, t0, .5, 12), 1.1) : 1, tb = Bb.tb || [.14, .16, .72, .5], rx = fl ? 1 - tb[0] - tb[2] : tb[0];
+      ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.scale(ps.s * q2, ps.s * q2); ctx.globalAlpha = ps.al * (A === 'pop' ? clamp(spr(t, t0, .5, 12) * 1.6) : 1);
+      ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.32)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 5; if (fl) ctx.scale(-1, 1); ctx.drawImage(bim, -bw / 2, -bh / 2, bw, bh); ctx.restore();
+      const tw = tb[2] * bw, th = tb[3] * bh, tcx = -bw / 2 + (rx + tb[2] / 2) * bw, tcy = -bh / 2 + (tb[1] + tb[3] / 2) * bh; let fs = B * (V ? .05 : .045) * (Bb.tsz || 1) * Math.max(k, .6), Lq, lq;
+      for (let it = 0; it < 18; it++) { Lq = wrapTokens(Bb.text, `900 ${fs}px Vz`, tw); lq = fs * 1.4; if (Lq.lines.length * lq <= th && Math.max(...Lq.lines.map(l => l.w)) <= tw * 1.02) break; fs *= .93 }
+      ctx.font = `900 ${fs}px Vz`; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.direction = rtl ? 'rtl' : 'ltr';
+      Lq.lines.forEach((ln, li) => { const y = tcy + (li - (Lq.lines.length - 1) / 2) * lq + 2; let x = tcx + (rtl ? ln.w / 2 : -ln.w / 2);
+        ln.ws.forEach(tk => { if (rtl) x -= tk.w; ctx.fillStyle = tk.hl ? (Bb.hl || '#d9420c') : (Bb.col || '#17110d'); ctx.fillText(tk.txt, x, y); if (rtl) x -= Lq.sp; else x += tk.w + Lq.sp }) });
+      ctx.restore(); return
+    }
     const size = B * (V ? .05 : .045) * k, maxW = W * (V ? .62 : .36) * Math.min(k, 1.4), font = `900 ${size}px Vz`, Lw = wrapTokens(Bb.text, font, maxW), lh = size * 1.45, pad = size * .8;
     const w = Math.max(...Lw.lines.map(l => l.w), size) + pad * 2 + (shape === 'shout' ? size * 1.2 : 0), h = Lw.lines.length * lh + pad * (shape === 'shout' ? 1.6 : 1.1), bg = Bb.bg || '#ffffff', col = Bb.col || '#17110d', ink = '#17110d', q = A === 'pop' ? .7 + .3 * Math.min(spr(t, t0, .5, 12), 1.1) : 1;
     ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.scale(ps.s * q, ps.s * q); ctx.globalAlpha = ps.al * (A === 'pop' ? clamp(spr(t, t0, .5, 12) * 1.6) : 1); ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 5;
@@ -598,7 +610,7 @@ window.frame = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 
 window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
 window.loadData = async (DD, only) => {   // shared by the renderer and the in-app preview (only = scene indices whose images are needed)
   D = DD; POSTER = D.meta.mode === 'poster'; VOX = POSTER || (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; VARY = Q.get('vary') !== '0' && D.meta.vary !== false; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
-  D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => { srcs.add(i.src); (i.fx || []).forEach(f => { if (f && f.type === 'bubble' && f.file) srcs.add(f.file) }) }); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); if (s.photo && s.photo.src) srcs.add(s.photo.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
+  D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => { srcs.add(i.src); (i.fx || []).forEach(f => { if (f && f.type === 'bubble' && f.file) srcs.add(f.file) }) }); (s.bubbles || []).forEach(b => { if (b && b.img) srcs.add(b.img) }); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); if (s.photo && s.photo.src) srcs.add(s.photo.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
   await Promise.all([...[...srcs].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
   if (window.FXL) await FXL.prepare([...srcs]);
   mkGrain(); mkPaper(); CH.length = 0; buildCaptions(); buildBeats(); seek(0); return true

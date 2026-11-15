@@ -26,12 +26,15 @@ function sfxFire(from,to){ sfxEv.forEach(e=>{ if(e.t<from||e.t>=to) return; if(e
   if(e.dur>0) setTimeout(()=>{ try{ a.pause() }catch(x){} sfxAct.delete(a) },e.dur*1000) }) }
 let sfxTm=0;   // own 25 ms timer: a slow frame (big scene, weak phone) must not delay a sound
 function sfxPoll(){ const t=au.currentTime; if(t>=sfxLast){ sfxFire(sfxLast,t+.001); sfxLast=t+.001 } else sfxLast=t }
-function stop(){ playing=false; cancelAnimationFrame(raf); au.pause(); clearInterval(sfxTm); sfxStop() }
-function tick(){ if(!playing) return; const t=au.currentTime; sfxPoll(); if(t>=sc.t1-.02||au.ended){ seek(Math.max(sc.t1-.03,sc.t0)); playing=false; au.pause(); msg.hidden=false; msg.textContent='▶ دوباره پخش'; return } seek(t); raf=requestAnimationFrame(tick) }
-async function play(){ stop(); setEdit(null); mode='play'; sfxBuild(); sfxLast=sc.t0-.001; au.currentTime=sc.t0; seek(sc.t0); try{ await au.play() }catch(e){ msg.hidden=false; msg.textContent='▶ برای پخش لمس کن'; return } msg.hidden=true; playing=true; sfxTm=setInterval(sfxPoll,25); tick() }
+let paused=false; const pstate=()=>{ try{ parent.postMessage({type:'state',playing,paused},'*') }catch(e){} };
+function stop(){ paused=false; playing=false; cancelAnimationFrame(raf); au.pause(); clearInterval(sfxTm); sfxStop() }
+function pausePlay(){ if(!playing) return; playing=false; paused=true; cancelAnimationFrame(raf); au.pause(); clearInterval(sfxTm); sfxStop(); msg.hidden=false; msg.textContent='⏸ متوقف شد'; pstate() }
+async function resumePlay(){ if(!paused) return; paused=false; sfxLast=au.currentTime-.001; try{ await au.play() }catch(e){ paused=true; return } msg.hidden=true; playing=true; sfxTm=setInterval(sfxPoll,25); pstate(); tick() }
+function tick(){ if(!playing) return; const t=au.currentTime; sfxPoll(); if(t>=sc.t1-.02||au.ended){ seek(Math.max(sc.t1-.03,sc.t0)); playing=false; au.pause(); msg.hidden=false; msg.textContent='▶ دوباره پخش'; pstate(); return } seek(t); raf=requestAnimationFrame(tick) }
+async function play(){ stop(); setEdit(null); mode='play'; sfxBuild(); sfxLast=sc.t0-.001; au.currentTime=sc.t0; seek(sc.t0); try{ await au.play() }catch(e){ msg.hidden=false; msg.textContent='▶ برای پخش لمس کن'; return } msg.hidden=true; playing=true; sfxTm=setInterval(sfxPoll,25); pstate(); tick() }
 const editT=()=>Math.min(sc.t1-.2, D.meta.total-.6);
-function edit(sel){ window.__sel=sel; stop(); mode='edit'; msg.hidden=true; setEdit({sel}); seek(editT()) }
-cvs.addEventListener('pointerdown',e=>{ if(mode!=='edit'){ if(!playing&&sc) play(); return }
+function edit(sel){ window.__sel=sel; stop(); pstate(); mode='edit'; msg.hidden=true; setEdit({sel}); seek(editT()) }
+cvs.addEventListener('pointerdown',e=>{ if(mode!=='edit'){ if(playing) pausePlay(); else if(paused) resumePlay(); else if(sc) play(); return }
   if(e.isPrimary){ ptrs.clear(); pinch0=null }   // a new first finger always starts a fresh gesture (a lost pointerup must never block selecting)
   cvs.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY}); const p=toC(e); 
   if(ptrs.size===1){ const cur=currentSel(), hit=inBox(cur,p)?cur:hitTest(p); if(hit>=0&&hit!==cur){ edit(hit); post() } } if(ptrs.size===2){ const [a,b]=[...ptrs.values()]; pinch0={d:Math.hypot(a.x-b.x,a.y-b.y),sz:lay().sz||1} } });
@@ -61,7 +64,8 @@ function post(){ const s=currentSel(); if(s<0) return; parent.postMessage({type:
 function setAudio(m){ const u=m.audio||('../episodes/'+m.ep+'/voice.mp3?v='+Date.now()); if(au.dataset.u===u&&(m.audio||au.dataset.ep===m.ep)) return false; au.dataset.u=u; au.dataset.ep=m.ep; au.src=u; return true }
 async function loadAudio(m,to){ const ch=setAudio(m); if(!ch&&au.readyState>=1){ chkAudio(); return } await new Promise(r=>{ au.onloadedmetadata=r; au.onerror=r; setTimeout(r,to) }); chkAudio() }
 function chkAudio(){ const T=D&&D.meta&&D.meta.total; if(T&&isFinite(au.duration)&&au.duration>0&&Math.abs(au.duration-T)>4) parent.postMessage({type:'audio-mismatch',a:au.duration,t:T},'*') }
-addEventListener('message',async e=>{ const m=e.data||{}; if(m.type==='stop'){ stop(); return }
+addEventListener('message',async e=>{ const m=e.data||{}; if(m.type==='stop'){ stop(); pstate(); return }
+  if(m.type==='pause'){ pausePlay(); return } if(m.type==='resume'){ resumePlay(); return }
   if(m.type==='adj'){ if(mode!=='edit'||currentSel()<0) return; const L=lay(); if(m.op==='bigger') L.sz=clampv((L.sz||1)*1.12,.3,3); else if(m.op==='smaller') L.sz=clampv((L.sz||1)/1.12,.3,3); else if(m.op==='rot') L.rot=((L.rot||0)+.2)%(Math.PI*2); else if(m.op==='reset') resetLay(); seek(editT()); post(); return }
   if(m.type==='playall'){ stop(); msg.hidden=false; msg.textContent='در حال آماده‌سازی کل ویدیو…'; try{ await loadData(m.data); await loadAudio(m,6000); ALL=true; SYN=m.sfxVol==null?65:+m.sfxVol; sc={t0:0,t1:D.meta.total,items:[],pins:[]}; si=0; play() }catch(err){ msg.textContent='خطا: '+err.message } return }
   if(m.type==='sel'){ if(sc&&getRec()[m.idx]){ edit(m.idx); post() } return }
