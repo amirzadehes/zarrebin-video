@@ -1420,9 +1420,9 @@ async function posterUpload(i, file){
   if(old&&old!==path){ try{ const j=await api('/contents/'+old); await delFile(old,j.sha,'replace photo: '+old) }catch(_){} }
   const d=document.querySelector('details.sc[data-i="'+i+'"]'); if(d){ d.querySelector('summary').innerHTML=sceneHead(s,i); d.classList.toggle('warn',noPic(s)) }
   updOk(); pvRefresh(i); }
-const POSTER_PROP_HEAD = 'IMPORTANT, MANDATORY BACKGROUND: the background must be a perfectly flat, solid, uniform magenta (#FF00FF) filling the entire canvas edge to edge. NOT a wall, NOT a room, NOT a table or surface, NOT a floor, NOT a gradient, NOT dark or brown. The only thing in the picture is ONE single isolated object (or one tight group) floating alone in the centre with a margin around it, with no ground, no tabletop, no props around it, no scenery and no cast shadow on the background; crisp clean edges so it can be cut out.';
-const POSTER_PROP_TAIL = 'Reminder: pure flat magenta #FF00FF background everywhere, nothing but the object.';
-const propFull = p => [POSTER_PROP_HEAD, (p.prompt||'').trim(), POSTER_STYLE_PROP, POSTER_PROP_TAIL].filter(Boolean).join(' ');
+const POSTER_PROP_HEAD = 'Draw ONLY this one object and nothing else: no table, no shelf, no ground, no other objects, no scenery. It floats alone in the centre of the frame with a margin around it, crisp clean edges so it can be cut out, and no cast shadow on the background. MANDATORY BACKGROUND: perfectly flat, solid, uniform magenta (#FF00FF) filling the entire canvas edge to edge; NOT a wall, NOT a room, NOT a gradient, NOT dark or brown.';
+const POSTER_PROP_TAIL = 'Reminder: pure flat magenta #FF00FF background everywhere, nothing but the one object described at the start.';
+const propFull = p => [(p.prompt||'').trim().replace(/\.*$/,'.'), POSTER_PROP_HEAD, POSTER_STYLE_PROP, POSTER_PROP_TAIL].filter(Boolean).join(' ');
 const STAMPS=[['تأیید شد','#1fa65a'],['کنسل شد','#e0352b'],['شایعه','#ff8a1f'],['تکذیب شد','#e0352b'],['تأیید نشده','#ff8a1f'],['محرمانه','#e0352b'],['فاش شد','#ff5a1f'],['ممنوع','#e0352b'],['هشدار','#e6b800'],['اثبات شد','#1fa65a'],['جعلی','#e0352b'],['خبر فوری','#e0352b'],['حقیقت','#1fa65a'],['دروغ','#e0352b'],['سانسور شد','#e0352b'],['CONFIRMED','#1fa65a'],['CANCELLED','#e0352b'],['RUMOR','#ff8a1f'],['CLASSIFIED','#e0352b'],['BREAKING','#e0352b']];
 const ATMS=[['snow','برف'],['rain','باران'],['lightning','رعد و برق'],['fog','مه'],['embers','جرقه و اخگر']];
 const ANIN=[['pop','فنری (پیش‌فرض)'],['left','از چپ'],['right','از راست'],['up','از بالا'],['down','از پایین'],['zoom','زوم'],['slam','کوبیده'],['fade','محو']];
@@ -1452,8 +1452,8 @@ function propsUI(el,s,i,d){
   const sec=el.querySelector('.pProps'); if(!sec) return; const list=s.props||[]; sec.hidden=!list.length; if(!list.length) return;
   sec.querySelector('summary').textContent='🧩 اشیای جدا ('+fa(list.length)+')'; const box=sec.querySelector('.pSecB'); box.innerHTML='';
   list.forEach((p,k)=>{ const r=document.createElement('div'); r.className='lyr';
-    r.innerHTML=`<label style="margin-top:0"><b class="pn"></b></label><div class="row"><button class="pri ppc">کپی پرامپت</button><label class="btn" style="display:grid;place-items:center;margin:0">آپلود تصویر<input type="file" accept="image/*" hidden class="ppf"></label><button class="ppx">حذف</button></div><div class="st ppst"></div>`;
-    r.querySelector('.pn').textContent=p.fa;
+    r.innerHTML=`<label style="margin-top:0"><b class="pn"></b></label><div class="row"><button class="pri ppc">کپی پرامپت</button><label class="btn" style="display:grid;place-items:center;margin:0">آپلود تصویر<input type="file" accept="image/*" hidden class="ppf"></label><button class="ppx">حذف</button></div><label>توصیف خود شیء (فقط همان شیء؛ اینجا ویرایش کن)</label><textarea class="ppp" rows="3" dir="ltr"></textarea><div class="st ppst"></div>`;
+    r.querySelector('.pn').textContent=p.fa; { const ta=r.querySelector('.ppp'); ta.value=p.prompt||''; ta.oninput=()=>{ p.prompt=ta.value; rvSave() } }
     r.querySelector('.ppc').onclick=async()=>toast(await copy(propFull(p))?'پرامپت شیء کپی شد؛ زمینه‌ی سرخابی می‌گیرد':'کپی نشد');
     r.querySelector('.ppx').onclick=()=>{ s.props.splice(k,1); if(!s.props.length) delete s.props; rvSave(); propsUI(el,s,i,d) };
     r.querySelector('.ppf').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; const st=r.querySelector('.ppst'), n=(s.items||[]).length; await newForScene(i,d,p.fa,f,st);
