@@ -9,7 +9,8 @@ import groqlib
 import direct_scenes as ds
 
 SYSTEM = """تو کارگردان هنری یک ویدیوی توضیحی عمودی هستی. در این سبک هر صحنه فقط یک تصویر تمام‌صفحه دارد و روی آن چند خط نوشته می‌آید.
-روایت به تکه‌های کوتاه تقسیم شده است (شماره، زمان، متن). تکه‌های پشت‌سرهم را در «صحنه» گروه‌بندی کن؛ هر صحنه @LO@ تا @HI@ ثانیه (معمولاً ۱ تا ۲ تکه، هرگز بیش از @MAX@ ثانیه) و همه‌ی تکه‌ها را بدون فاصله و همپوشانی پوشش بده. هر تکه باید در دقیقاً یک صحنه باشد؛ پس برای متن بلند صحنه‌های زیاد بساز، نه چند صحنه‌ی بلند.
+روایت به تکه‌های کوتاه تقسیم شده است (شماره، زمان، متن). تکه‌های پشت‌سرهم را در «صحنه» گروه‌بندی کن و همه‌ی تکه‌ها را بدون فاصله و همپوشانی پوشش بده؛ هر تکه در دقیقاً یک صحنه باشد.
+مرز صحنه‌ها را خطِ موضوعی داستان تعیین می‌کند، نه زمان: هر صحنه یک لحظه یا یک ایده‌ی تصویری است. وقتی مکان، زمان، شخصیت، رویداد یا موضوع عوض شد صحنه‌ی تازه شروع کن؛ تا وقتی چند جمله درباره‌ی همان تصویر حرف می‌زنند، در همان صحنه بمانند. پس صحنه می‌تواند کوتاه (حدود ۲ ثانیه) یا بلند باشد، ولی هرگز بیش از @MAX@ ثانیه.
 برای هر صحنه این‌ها را بنویس:
 - prompt: توضیح انگلیسیِ یک تصویر برای ابزار تصویرسازی (۲ تا ۴ جمله). یک صحنه‌ی واحد و روشن که همان چیزی را نشان بدهد که راوی می‌گوید: چه کسی یا چه چیزی، کجا، چه کاری می‌کند، نور و حال‌وهوا و زاویه‌ی دوربین. موضوع اصلی را در میانه‌ی کادر بگذار.
   خودِ موضوع و رویداد را نقاشی کن، نه گوینده را: هرگز راوی، گوینده، مجری یا «narrator» در تصویر نگذار و هیچ شخصیت یا چیزی از خودت اختراع نکن که در متن یا خلاصه‌ی داستان نیست. اگر جمله مقدمه‌ی گوینده است (مثل «امروز می‌خوام ... رو تعریف کنم»)، تصویر خودِ ماجرا یا نمادِ اصلی آن باشد.
@@ -23,6 +24,7 @@ SYSTEM = """تو کارگردان هنری یک ویدیوی توضیحی عمو
 خروجی فقط JSON: {"scenes":[{"from":0,"to":1,"prompt":"...","kicker":"...","text":"...","number":"","kw":[]}]}"""
 
 
+MAX_SCENE = 14.0   # hard cap only; the scene boundaries follow the story line (the director decides)
 PUNCT = tuple('.!?؟،,;؛…')
 
 
@@ -66,8 +68,8 @@ def cover(raw, n):
 
 
 def split_long(raw, S, brief, ss):
-    """a scene longer than the limit is cut at unit boundaries into pieces of about `tgt` seconds; every piece gets its own image prompt"""
-    lim, tgt = ss * 1.4, ss; out = []
+    """only a scene longer than the hard cap `ss` is cut (at unit boundaries, pieces of about 60% of the cap); every piece gets its own image prompt"""
+    lim, tgt = ss, ss * .6; out = []
     for r in cover(raw, len(S)):
         if S[r['to']]['t1'] - S[r['from']]['t0'] <= lim or r['to'] == r['from']: out.append(r); continue
         parts, a = [], r['from']
@@ -91,7 +93,7 @@ def split_long(raw, S, brief, ss):
 
 def direct(T, ss, brief=''):
     S = T['sentences']; scenes = []; prev = ''
-    sys_p = SYSTEM.replace('@LO@', ds.fadig(str(max(2, round(ss * .7))))).replace('@HI@', ds.fadig(str(round(ss * 1.2)))).replace('@MAX@', ds.fadig(str(round(ss * 1.4))))
+    sys_p = SYSTEM.replace('@MAX@', ds.fadig(str(round(ss))))
     B = 14
     for b in range(0, len(S), B):
         chunk = S[b:b + B]
@@ -139,7 +141,7 @@ def main(ep):
         return ds.main(ep)
     T = ds.load(f'{d}/timing.json', None)
     if not T: sys.exit('timing.json missing; run narrate_tts.py first')
-    ss = min(max(float(req.get('scene_sec') or (3.5 if short else 6)), 2.5), 12.0); T = dict(T); T['sentences'] = units(T, min(ss + .5, 6.5)); print('narration units:', len(T['sentences']))
+    ss = MAX_SCENE; T = dict(T); T['sentences'] = units(T, 7.0); print('narration units:', len(T['sentences']))
     raw = ds.load(f'{d}/director.json', None) if req.get('keep_direction') else None
     if raw is None:
         brief = bible(T['sentences']); raw = split_long(direct(T, ss, brief), T['sentences'], brief, ss); json.dump(raw, open(f'{d}/director.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
