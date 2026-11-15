@@ -49,7 +49,7 @@ window.FXL = (() => {
   async function prepare(srcs) {
     try { const r = await fetch('../library/anchors.json?' + Date.now()); if (r.ok) ANCH = await r.json() } catch (e) { }
     (srcs || []).forEach(src => { const im = IM[src]; if (im && !INFO[src]) INFO[src] = measure(im) });
-    buildPins()
+    buildPins(); buildItemFrames()
   }
   function anchorOf(it, f, type, inf) {
     if (Array.isArray(f.anchor) && f.anchor.length === 2) return [num(f.anchor[0], .5, -.5, 1.5), num(f.anchor[1], .5, -.5, 1.5)];
@@ -458,6 +458,13 @@ window.FXL = (() => {
     if (typeof D === 'undefined' || !D) return;
     D.scenes.forEach(sc => (sc.pins || []).forEach((p, i) => { if (!p || !p.src || !IM[p.src]) return; if (!INFO[p.src]) INFO[p.src] = measure(IM[p.src]); const key = pinKey(sc, i, p); if (key === p.src || IM[key]) return; const c = frameCanvas(p); if (c) { IM[key] = c; INFO[key] = measure(c) } }))
   }
+  /* a library picture placed as an ordinary item (it.frame / it.attach set) can sit inside the same frames and fasteners as the pinned pictures */
+  const itemFramed = p => !!(p && p.src && ((p.frame && p.frame !== 'none') || (p.attach && p.attach !== 'none')));
+  const itemKey = (sc, i, p) => itemFramed(p) ? ['itf', sc.idx, i, p.src, p.frame || 'polaroid', p.attach || 'none', p.card || '', p.photo || '', p.seed | 0].join('|') : null;
+  function buildItemFrames() {
+    if (typeof D === 'undefined' || !D) return;
+    D.scenes.forEach(sc => (sc.items || []).forEach((p, i) => { const key = itemKey(sc, i, p); if (!key || IM[key] || !IM[p.src]) return; if (!INFO[p.src]) INFO[p.src] = measure(IM[p.src]); const c = frameCanvas(p); if (c) { IM[key] = c; INFO[key] = measure(c) } }))
+  }
   function selBox(x, y, im, S, rot) { const m = Math.max(im.width, im.height), w = im.width / m * S, h = im.height / m * S; ctx.save(); ctx.translate(x, y); ctx.rotate(rot || 0); ctx.setLineDash([22, 14]); ctx.lineWidth = 7; ctx.strokeStyle = '#00e5ff'; ctx.strokeRect(-w / 2 - 8, -h / 2 - 8, w + 16, h + 16); ctx.restore() }
   function drawPinImg(key, x, y, size, rot, a, sh, o) {   // a picture stuck on the wall: no entrance, no float, no squash; only a soft contact shadow
     const im = IM[key]; if (!im) return; const s = size * (o ? o.k : 1) / Math.max(im.width, im.height);
@@ -607,5 +614,5 @@ window.FXL = (() => {
       ctx.restore()
     }
   }
-  return { prepare, bg, pins, item, TYPES }
+  return { prepare, bg, pins, item, TYPES, itemKey }
 })();

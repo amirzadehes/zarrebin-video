@@ -131,6 +131,8 @@ function ent(kind, t, t0, tx, ty) {
     case 'rise': y = lerp(H * 1.4, ty, Math.min(p, 1.15)); break;
     case 'spin': s = p; r = (1 - e) * -2.6; break;
     case 'zoom': s = lerp(3.4, 1, Math.min(e * 1.1, 1.05)); bl = (1 - e) * 6; break;
+    case 'fade': return { x, y, s: 1, r: 0, a: ramp(t, t0, t0 + .55), bl: 0 };
+    case 'far': s = lerp(.12, 1, Math.min(eoq(ramp(t, t0, t0 + .7)) * 1.05, 1.05)); break;
     default: s = VOX ? .86 + .14 * p : p; r = VOX ? 0 : (1 - p) * -.35 }
   return { x, y, s, r, a: ramp(t, t0, t0 + .06), bl }
 }
@@ -144,7 +146,8 @@ function drawItem(it, t, tx, ty, size, k, rx = 0) {
   const fl = EDIT ? 0 : Math.sin(t * 2 + k * 1.7), fr = EDIT ? 0 : Math.sin(t * 1.6 + k) * .03;
   if (idx >= 0) REC[idx] = { x: tx, y: ty, size };
   const sq = EDIT ? 0 : bump(t, it.t, .11);   // squash & stretch when the object lands
-  const baseDraw = o => drawImg(it.src, e.x, e.y + fl * size * .02, size * e.s * (o ? o.k : 1), e.r + fr + rot0 + (o ? o.dr : 0), e.a, e.bl ? `blur(${e.bl}px)` : 'none', 1 + sq, 1 - sq);
+  const fk = window.FXL && FXL.itemKey ? FXL.itemKey(CUR, idx, it) : null, srcK = fk && IM[fk] ? fk : it.src;   // framed item: the picture is drawn inside its frame
+  const baseDraw = o => drawImg(srcK, e.x, e.y + fl * size * .02, size * e.s * (o ? o.k : 1), e.r + fr + rot0 + (o ? o.dr : 0), e.a, e.bl ? `blur(${e.bl}px)` : 'none', 1 + sq, 1 - sq);
   if (!EDIT && it.fx && it.fx.length && window.FXL) FXL.item(it, t, { x: e.x, y: e.y + fl * size * .02, size: size * e.s, rot: e.r + fr + rot0, a: e.a, sx: 1 + sq, sy: 1 - sq }, baseDraw);   // image-bound effects follow the picture's own motion
   else baseDraw();
   if (!EDIT) impact(t, it.t, tx, ty, size * .5, k * 13 + (CUR ? CUR.idx : 0));
@@ -329,6 +332,11 @@ function posterLayers(t, sc) {
   (sc.layers || []).forEach(L => {
     if (!L || !String(L.text || '').trim()) return; const t0 = L.t != null ? L.t : sc.t0 + .3, out = L.out != null ? L.out : 1e9, P = (L.pos && L.pos[FMT]) || L, st = L.kind === 'stamp', A = L.anim || (st ? 'slam' : 'pop');
     const ps = lyrPose(t, t0, out, A, L.animOut); if (!ps) return; const k = L.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? (st ? .38 : .5) : P.y) * H;
+    if (L.kind === 'number') {
+      const size = B * (V ? .24 : .2) * k, q = A === 'pop' ? .7 + .3 * Math.min(spr(t, t0, .5, 12), 1.1) : 1;
+      ctx.save(); ctx.font = `900 ${size}px Vz`; ctx.textBaseline = 'middle'; ctx.textAlign = 'center'; ctx.direction = 'ltr'; ctx.translate(cx + ps.dx, cy + ps.dy); ctx.scale(ps.s * q, ps.s * q); ctx.globalAlpha = ps.al * (A === 'pop' ? clamp(spr(t, t0, .5, 12) * 1.6) : 1);
+      ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 22; ctx.shadowOffsetY = 6; ctx.fillStyle = L.col || '#fff'; ctx.fillText(String(L.text).trim(), 0, 0); ctx.restore(); return
+    }
     if (st) {
       const sp = stampSprite(String(L.text).trim(), Math.round(B * .1 * k), L.col || '#e0352b', rtl), q = A === 'pop' ? .6 + .4 * Math.min(spr(t, t0, .5, 14), 1.15) : 1;
       ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.rotate((L.rot == null ? -8 : L.rot) * Math.PI / 180); ctx.scale(ps.s * q, ps.s * q); ctx.globalAlpha = ps.al * .94; ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 10; ctx.drawImage(sp.cv, -sp.w / 2, -sp.h / 2); ctx.restore(); return
