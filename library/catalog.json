@@ -180,8 +180,7 @@
    "variants": [
     "banknotes__1.webp",
     "banknotes__2.webp",
-    "banknotes__3.webp",
-    "banknotes__4.webp"
+    "banknotes__3.webp"
    ],
    "fa_tags": [
     "پول",
@@ -3287,6 +3286,26 @@
     "تزریق"
    ],
    "fa_tags_for": "سیرنگ"
+  },
+  "tax": {
+   "id": "tax",
+   "en": "tax",
+   "fa": "مالیات",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "banknotes__4.webp"
+   ],
+   "fa_tags": [
+    "مالیات",
+    "مالی",
+    "مالیات بر درآمد",
+    "مالیات بر ارزش افزوده",
+    "مالیات شرکت‌ها",
+    "مالیات‌گذاری",
+    "دولت"
+   ],
+   "fa_tags_for": "مالیات"
   },
   "taxi-car": {
    "id": "taxi-car",

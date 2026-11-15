@@ -1,32 +1,31 @@
 {
  "star": [
   "star-rating",
-  "two-stars",
   "three-stars",
+  "two-stars",
   "one-star"
  ],
- "one-star": [
-  "two-stars",
-  "three-stars",
-  "star",
-  "star-rating"
+ "restaurant": [
+  "roadside-restaurant"
  ],
- "two-stars": [
-  "one-star",
-  "three-stars",
-  "star",
-  "star-rating"
- ],
- "three-stars": [
-  "one-star",
-  "two-stars",
-  "star",
-  "star-rating"
+ "car": [
+  "taxi-car",
+  "bus"
  ],
  "magnifier-search": [
   "magnifying-glass"
  ],
+ "question-mark": [
+  "question-mark-2"
+ ],
  "light-bulb-idea": [
   "bulb"
+ ],
+ "brain-colorful": [
+  "brain-gears",
+  "brain-pink"
+ ],
+ "star-rating": [
+  "star"
  ]
 }

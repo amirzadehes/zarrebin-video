@@ -1,77 +1,41 @@
 {
  "coffee-cup": [
-  "espresso-cup",
-  "moka-pot",
-  "coffee-beans",
-  "coffee-plant"
- ],
- "tea-cup": [
-  "wine-glass",
-  "dinner-plate"
- ],
- "battery-empty": [
-  "battery-full",
-  "battery-power"
- ],
- "battery-full": [
-  "battery-empty",
-  "battery-power"
+  "espresso-cup"
  ],
  "light-bulb-idea": [
   "bulb"
  ],
- "caffeine-molecule": [
-  "purple-molecule",
-  "atom",
-  "dna-helix"
- ],
  "brain-hacker": [
-  "brain-colorful",
   "brain-gears",
   "brain-pink",
-  "tired-brain",
-  "neuron"
- ],
- "person-sleeping": [
-  "eye-sleepy",
-  "person-thinking",
-  "person-happy",
-  "person-worried",
-  "head-profile"
- ],
- "adenosine": [
-  "caffeine-molecule",
-  "purple-molecule",
-  "atom"
- ],
- "receptor": [
-  "neuron",
-  "brain-colorful",
-  "brain-gears",
-  "brain-pink",
-  "tired-brain"
- ],
- "brain-colorful": [
-  "brain-gears",
-  "brain-pink",
-  "tired-brain",
-  "neuron"
+  "brain-colorful"
  ],
  "fatigue-brain": [
-  "tired-brain",
-  "brain-colorful",
-  "brain-gears",
-  "brain-pink",
-  "neuron"
+  "tired-brain"
  ],
  "key-fake": [
   "key",
   "old-key"
  ],
+ "lock-closed": [
+  "padlock"
+ ],
+ "adrenaline": [
+  "caffeine-molecule",
+  "purple-molecule"
+ ],
  "heart": [
   "broken-heart"
  ],
  "hand-tremble": [
-  "hand-stop"
+  "hand-stop",
+  "pointing-hand"
+ ],
+ "espresso-cup": [
+  "coffee-cup",
+  "moka-pot"
+ ],
+ "clock-wall": [
+  "alarm-clock"
  ]
 }
