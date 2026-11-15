@@ -223,6 +223,7 @@ button:focus-visible,.btn:focus-within,input:focus-visible,textarea:focus-visibl
 .kfmt{display:flex;gap:6px;justify-content:center}
 .kfmt button.on{background:var(--acc);color:var(--acc-tx);border-color:var(--acc)}
 /* ---------- mode switch (classic / poster) + poster panels ---------- */
+[hidden]{display:none!important}
 .modesw{display:flex;gap:6px;padding:12px 0 0}
 .modesw button{flex:1;min-height:42px;font-size:14px;padding:0 8px}
 .modesw button.on{background:var(--acc);color:var(--acc-tx);border-color:var(--acc)}
@@ -1377,7 +1378,7 @@ function applyMode(){
   const bx = $('#pstBox'); if(bx){ bx.hidden = !po; const ta=$('#pstStyle'); if(ta&&!ta.dataset.on){ ta.dataset.on=1; ta.value=posterStyle(); ta.oninput=()=>ls.set('posterStyle', ta.value.trim()===POSTER_STYLE_DEFAULT?'':ta.value.trim()); $('#pstStyleReset').onclick=()=>{ ls.set('posterStyle',''); ta.value=POSTER_STYLE_DEFAULT; toast('سبک پیش‌فرض برگشت') } }
     const f=$('#pstFooter'); if(f&&!f.dataset.on){ f.dataset.on=1; f.value=ls.get('posterFooter',''); f.oninput=()=>ls.set('posterFooter',f.value.trim()) } }
   /* the classic-only controls of the build card (image style, palette, key-text switch, direct build) are hidden in poster mode */
-  ['bStyle','bPal','bBaseOn','bTitles','bGoDirect'].forEach(id=>{ const e=document.getElementById(id); if(!e) return; const L=(e.tagName==='SELECT'&&e.previousElementSibling&&e.previousElementSibling.tagName==='LABEL')?e.previousElementSibling:null; const w=(id==='bBaseOn'||id==='bTitles')?e.closest('label'):e; if(w) w.hidden=po; if(L) L.hidden=po; });
+  ['bStyle','bPal','bBaseOn','bTitles','bGoDirect','bCover'].forEach(id=>{ const e=document.getElementById(id); if(!e) return; const L=(e.tagName==='SELECT'&&e.previousElementSibling&&e.previousElementSibling.tagName==='LABEL')?e.previousElementSibling:null; const w=(id==='bBaseOn'||id==='bTitles')?e.closest('label'):e; if(w) w.hidden=po; if(L) L.hidden=po; });
 }
 document.querySelectorAll('#modeSw button').forEach(b=>b.onclick=()=>{ if(S.mode===b.dataset.m) return; S.mode=b.dataset.m; ls.set('mode',S.mode); applyMode();
   toast(S.mode==='poster'?'حالت پوستر: ساخت‌های تازه با عکس تمام‌صفحه و پرامپت برای هر صحنه':'حالت ذره‌بین (کتابخانه‌ی تصاویر)', 4200) });
