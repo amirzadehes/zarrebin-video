@@ -233,8 +233,11 @@ body[data-mode=poster] .modesw button.on{background:#ff5a1f;color:#fff;border-co
 .pst .ph{display:grid;grid-template-columns:84px 1fr;gap:10px;align-items:start}
 .pst .pimg{width:84px;aspect-ratio:9/16;border-radius:10px;border:1px solid var(--line);background:#17120f center/cover no-repeat;display:grid;place-items:center;color:var(--mut);font-size:12px;text-align:center}
 .pst textarea{min-height:96px}
+.pSec{margin-top:8px;border:1px solid var(--line);border-radius:12px;background:#17120f}.pSec>summary{cursor:pointer;min-height:42px;line-height:42px;padding:0 12px;font-size:14px;font-weight:700}.pSecB{padding:0 10px 10px;min-width:0}
+.krow{display:flex;gap:10px;align-items:flex-start}.krow .kR{flex:1;min-width:0}.krow .kR textarea,.krow .kR input{width:100%;box-sizing:border-box}.kmini{flex:0 0 112px;min-width:0}.kmini .kfmt button{padding:0 6px;min-height:32px;font-size:12px}.kmini .kpad.v{width:92px;height:164px}.kmini .kpad.h{width:112px;height:63px}.kmini .kauto{width:100%;min-height:32px;font-size:12px}
+.lpad{position:relative;width:92px;height:164px;margin:0 auto;border:1px dashed var(--line);border-radius:8px;background:#17120f;touch-action:none;cursor:crosshair;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:33.333% 33.333%}.lpad i{position:absolute;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:var(--acc);box-shadow:0 2px 6px #000a;pointer-events:none}
 .pFx{margin-top:8px}.pFx>summary{display:block;text-align:center;cursor:pointer;min-height:42px;line-height:42px;font-size:14px;font-weight:700;border:1px solid var(--line);border-radius:12px;background:#17120f}
-.lyr{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;min-width:0}.lyr .g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.lyr .g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.lyr input,.lyr select{min-width:0;width:100%;box-sizing:border-box}.lyr .row{flex-wrap:nowrap}@media(max-width:560px){.lyr .g3{grid-template-columns:repeat(2,minmax(0,1fr))}.lyr .g3>div:last-child{grid-column:1/-1}}.pFxBody{min-width:0}
+.lyr{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;min-width:0}.lyr .g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.lyr .g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.lyr input,.lyr select{min-width:0;width:100%;box-sizing:border-box}.lyr .row{flex-wrap:nowrap}@media(max-width:560px){.lyr .g3{grid-template-columns:repeat(2,minmax(0,1fr))}.lyr .g3>div:last-child{grid-column:1/-1}}.pFxBody{min-width:0}.pSecB .g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.pSecB .g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.pSecB input,.pSecB select{min-width:0;width:100%;box-sizing:border-box}.pSecB .row{flex-wrap:nowrap}@media(max-width:560px){.pSecB .g3{grid-template-columns:repeat(2,minmax(0,1fr))}.pSecB .g3>div:last-child{grid-column:1/-1}}
 .lyr input[type=color]{width:100%;min-height:42px;padding:2px;border-radius:10px;background:#17120f;border:1px solid var(--line)}.lyr input[type=range]{width:100%;min-height:34px}
 .lyr .chk{display:flex;align-items:center;gap:6px;font-size:13px;margin-top:4px}.lyr .chk input{width:auto;min-height:0}
 .atmr{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.atmr button{min-height:38px;padding:0 12px}.atmr button.on{background:var(--acc,#ffc21a);color:var(--acc-tx,#1b1208)}
@@ -1416,82 +1419,98 @@ async function posterUpload(i, file){
   updOk(); pvRefresh(i); }
 const POSTER_PROP = 'Single isolated object, centered with some margin, on a perfectly flat solid magenta (#FF00FF) background with nothing else in the frame and no shadow on the background; clean edges so it can be cut out. No text, letters or logos.';
 const propFull = p => [(p.prompt||'').trim(), posterStyle(), POSTER_PROP].filter(Boolean).join(' ');
+const STAMPS=[['تأیید شد','#1fa65a'],['کنسل شد','#e0352b'],['شایعه','#ff8a1f'],['تکذیب شد','#e0352b'],['تأیید نشده','#ff8a1f'],['محرمانه','#e0352b'],['فاش شد','#ff5a1f'],['ممنوع','#e0352b'],['هشدار','#e6b800'],['اثبات شد','#1fa65a'],['جعلی','#e0352b'],['خبر فوری','#e0352b'],['حقیقت','#1fa65a'],['دروغ','#e0352b'],['سانسور شد','#e0352b'],['CONFIRMED','#1fa65a'],['CANCELLED','#e0352b'],['RUMOR','#ff8a1f'],['CLASSIFIED','#e0352b'],['BREAKING','#e0352b']];
+const ATMS=[['snow','برف'],['rain','باران'],['lightning','رعد و برق'],['fog','مه'],['embers','جرقه و اخگر']];
+const ANIN=[['pop','فنری (پیش‌فرض)'],['left','از چپ'],['right','از راست'],['up','از بالا'],['down','از پایین'],['zoom','زوم'],['slam','کوبیده'],['fade','محو']];
+const ANOUT=[['fade','محو'],['left','به چپ'],['right','به راست'],['up','به بالا'],['down','به پایین'],['zoom','کوچک‌شدن'],['none','ناگهانی']];
+const pSec=(cls,title)=>`<details class="pSec ${cls}"><summary>${title}</summary><div class="pSecB"></div></details>`;
+/* entry / exit by spoken word + entry and exit animation; o = the object that holds the fields, K = their names */
+function timeUI(host,o,K,s,defA,ch){
+  const words=(RV.data.words||[]).filter(w=>w.t0>=s.t0-.01&&w.t0<s.t1), r2=v=>Math.round(v*100)/100;
+  const opt=(arr,cur)=>arr.map(([v,t])=>`<option value="${v}"${v===cur?' selected':''}>${t}</option>`).join('');
+  const wIn=words.map(w=>`<option value="${w.t0}"${o[K.t]!=null&&Math.abs(o[K.t]-(w.t0-.05))<.02?' selected':''}>${esc(w.w)}</option>`).join(''), wOut=words.map(w=>`<option value="${w.t1}"${o[K.out]!=null&&Math.abs(o[K.out]-w.t1)<.02?' selected':''}>${esc(w.w)}</option>`).join('');
+  host.innerHTML=`<div class="g2"><div><label>ورود: با گفتن کلمه‌ی…</label><select class="sel tI"><option value="">ابتدای صحنه</option>${wIn}</select></div><div><label>خروج: بعد از گفتن کلمه‌ی…</label><select class="sel tO"><option value="">تا آخر صحنه</option>${wOut}</select></div></div>
+    <div class="g2"><div><label>انیمیشن ورود</label><select class="sel aI">${opt(ANIN,o[K.anim]||defA)}</select></div><div><label>انیمیشن خروج</label><select class="sel aO">${opt(ANOUT,o[K.animOut]||'fade')}</select></div></div>`;
+  const q=c=>host.querySelector(c);
+  q('.tI').onchange=e=>{ if(e.target.value==='') delete o[K.t]; else o[K.t]=r2(+e.target.value-.05); ch() };
+  q('.tO').onchange=e=>{ if(e.target.value==='') delete o[K.out]; else o[K.out]=r2(+e.target.value); ch() };
+  q('.aI').onchange=e=>{ if(e.target.value===defA) delete o[K.anim]; else o[K.anim]=e.target.value; ch() };
+  q('.aO').onchange=e=>{ if(e.target.value==='fade') delete o[K.animOut]; else o[K.animOut]=e.target.value; ch() }
+}
+/* small draggable position pad (x, y = centre as fractions of the frame) */
+function padUI(host,o,ch,dy){
+  host.innerHTML='<div class="lpad"><i></i></div>'; const pad=host.firstChild, dot=pad.firstChild;
+  const draw=()=>{ dot.style.left=(o.x==null?.5:o.x)*100+'%'; dot.style.top=(o.y==null?dy:o.y)*100+'%' };
+  const set=e=>{ const r=pad.getBoundingClientRect(); o.x=+Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)).toFixed(3); o.y=+Math.min(1,Math.max(0,(e.clientY-r.top)/r.height)).toFixed(3); draw(); ch() };
+  pad.onpointerdown=e=>{ e.preventDefault(); try{ pad.setPointerCapture(e.pointerId) }catch(_){} set(e); pad.onpointermove=set }; pad.onpointerup=pad.onpointercancel=()=>{ pad.onpointermove=null }; draw()
+}
 function propsUI(el,s,i,d){
-  const box=el.querySelector('.pProps'); if(!box) return; const list=s.props||[]; box.hidden=!list.length; box.innerHTML='';
-  list.forEach((p,k)=>{ const r=document.createElement('div'); r.className='pst2'; r.style.cssText='display:block;border-top:1px solid var(--line);margin-top:8px;padding-top:6px';
-    r.innerHTML=`<label style="margin-top:0">شیء جدا: <b class="pn"></b> (در کتابخانه نیست؛ با همین سبک بساز)</label><textarea class="ppr" dir="ltr" rows="4"></textarea>
-      <div class="row"><button class="pri ppc">کپی پرامپت شیء</button><label class="btn" style="display:grid;place-items:center;margin:0">آپلود شیء<input type="file" accept="image/*" hidden class="ppf"></label><button class="ppx">حذف</button></div><div class="st ppst"></div>`;
-    r.querySelector('.pn').textContent=p.fa; const ta=r.querySelector('.ppr'); ta.value=p.prompt||''; ta.oninput=()=>{ p.prompt=ta.value; rvSave() };
+  const sec=el.querySelector('.pProps'); if(!sec) return; const list=s.props||[]; sec.hidden=!list.length; if(!list.length) return;
+  sec.querySelector('summary').textContent='🧩 اشیای جدا ('+fa(list.length)+')'; const box=sec.querySelector('.pSecB'); box.innerHTML='';
+  list.forEach((p,k)=>{ const r=document.createElement('div'); r.className='lyr';
+    r.innerHTML=`<label style="margin-top:0"><b class="pn"></b></label><div class="row"><button class="pri ppc">کپی پرامپت</button><label class="btn" style="display:grid;place-items:center;margin:0">آپلود تصویر<input type="file" accept="image/*" hidden class="ppf"></label><button class="ppx">حذف</button></div><div class="st ppst"></div>`;
+    r.querySelector('.pn').textContent=p.fa;
     r.querySelector('.ppc').onclick=async()=>toast(await copy(propFull(p))?'پرامپت شیء کپی شد؛ زمینه‌ی سرخابی می‌گیرد':'کپی نشد');
     r.querySelector('.ppx').onclick=()=>{ s.props.splice(k,1); if(!s.props.length) delete s.props; rvSave(); propsUI(el,s,i,d) };
     r.querySelector('.ppf').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; const st=r.querySelector('.ppst'), n=(s.items||[]).length; await newForScene(i,d,p.fa,f,st);
       if((s.items||[]).length>n){ s.items[s.items.length-1].t=+Math.min(Math.max(p.t||s.t0+.45,s.t0+.1),s.t1-.3).toFixed(3); s.props.splice(k,1); if(!s.props.length) delete s.props; rvSave(); propsUI(el,s,i,d) } };
     box.appendChild(r) }) }
-const STAMPS=[['تأیید شد','#1fa65a'],['کنسل شد','#e0352b'],['شایعه','#ff8a1f'],['تکذیب شد','#e0352b'],['تأیید نشده','#ff8a1f'],['محرمانه','#e0352b'],['فاش شد','#ff5a1f'],['ممنوع','#e0352b'],['هشدار','#e6b800'],['اثبات شد','#1fa65a'],['جعلی','#e0352b'],['خبر فوری','#e0352b'],['حقیقت','#1fa65a'],['دروغ','#e0352b'],['سانسور شد','#e0352b'],['CONFIRMED','#1fa65a'],['CANCELLED','#e0352b'],['RUMOR','#ff8a1f'],['CLASSIFIED','#e0352b'],['BREAKING','#e0352b']];
-const ATMS=[['snow','برف'],['rain','باران'],['lightning','رعد و برق'],['fog','مه'],['embers','جرقه و اخگر']];
-function fxUI(el,s,i){
-  const body=el.querySelector('.pFxBody'); if(!body) return; const words=(RV.data.words||[]).filter(w=>w.t0>=s.t0-.01&&w.t0<s.t1);
-  const ch=()=>{ clearOk(s); rvSave(); pvRefresh(i) }, r1=v=>Math.round(v*100)/100, rel=v=>r1(v-s.t0), absT=v=>r1(s.t0+Math.max(0,+v||0));
-  const wordSel=cls=>`<select class="sel ${cls}"><option value="">با کلمه…</option>${words.map(w=>`<option value="${w.t0}">${esc(w.w)}</option>`).join('')}</select>`;
-  const draw=()=>{
-    body.innerHTML=`<div class="lyr" style="border:0;margin:0;padding:0"><label style="margin-top:6px">متن اصلی (تیتر این صحنه): رنگ‌ها و زمان</label>
-      <div class="g3"><div><label>رنگ نوشته</label><input type="color" class="mTc"></div><div><label>رنگ کادر</label><input type="color" class="mTb"></div><div><label>رنگ کلمه‌ی مهم</label><input type="color" class="mTh"></div></div>
-      <label class="chk"><input type="checkbox" class="mNo"> بدون کادر (فقط نوشته)</label>
-      <div class="g3"><div><label>ورود (ثانیه از شروع صحنه)</label><input type="number" class="mIn" step="0.1" min="0"></div><div><label>خروج (خالی = تا آخر)</label><input type="number" class="mOut" step="0.1" min="0"></div><div><label>&nbsp;</label>${wordSel('mW')}</div></div>
-      <button class="mRs" style="margin-top:6px">برگشت به رنگ و زمان پیش‌فرض</button></div>
-      <div class="lyr"><label style="margin-top:0">لایه‌های اضافه (متن و مهر؛ هر چند تا که بخواهی)</label><div class="lyL"></div>
-      <div class="row"><button class="pri aT">+ متن</button><select class="sel aS" style="flex:1"><option value="">+ مهر…</option>${STAMPS.map((x,k)=>`<option value="${k}">${esc(x[0])}</option>`).join('')}<option value="x">مهر با نوشته‌ی دلخواه</option></select></div></div>
-      <div class="lyr"><label style="margin-top:0">افکت جوّی (روی همین صحنه؛ چند تا هم‌زمان ممکن است)</label><div class="atmr">${ATMS.map(a=>`<button data-a="${a[0]}" class="${(s.atm||[]).some(x=>x.type===a[0])?'on':''}">${a[1]}</button>`).join('')}</div>
-      <label>شدت</label><select class="sel atA"><option value="0.5">کم</option><option value="1">متوسط</option><option value="1.8">زیاد</option></select></div>
-      <div class="lyr"><div class="g2"><div><label>لرزش ریز پس‌زمینه (دست‌گرفته)</label><select class="sel dr"><option value="0">خاموش</option><option value="1">کم (مثل نمونه)</option><option value="2">متوسط</option><option value="3">زیاد</option></select></div>
-      <div><label>افکت دوربین هنگام ورود عکس</label><select class="sel kk"><option value="both">ضربه‌ی زوم + لرزش</option><option value="punch">فقط ضربه‌ی زوم</option><option value="shake">فقط لرزش</option><option value="none">هیچ</option></select></div></div></div>`;
-    const m=s.tIn!=null||s.tOut!=null||s.tcol||s.tbg||s.thl;
-    const q=c=>body.querySelector(c); q('.mTc').value=s.tcol||'#ffffff'; q('.mTb').value=(s.tbg&&s.tbg!=='none')?s.tbg:'#0e0a07'; q('.mTh').value=s.thl||'#ff5a1f'; q('.mNo').checked=s.tbg==='none';
-    q('.mIn').value=s.tIn!=null?rel(s.tIn):''; q('.mOut').value=s.tOut!=null?rel(s.tOut):'';
-    q('.mTc').oninput=e=>{ s.tcol=e.target.value; ch() }; q('.mTb').oninput=e=>{ s.tbg=e.target.value; q('.mNo').checked=false; ch() }; q('.mTh').oninput=e=>{ s.thl=e.target.value; ch() };
-    q('.mNo').onchange=e=>{ if(e.target.checked) s.tbg='none'; else delete s.tbg; ch() };
-    q('.mIn').onchange=e=>{ if(e.target.value==='') delete s.tIn; else s.tIn=absT(e.target.value); ch() }; q('.mOut').onchange=e=>{ if(e.target.value==='') delete s.tOut; else s.tOut=absT(e.target.value); ch() };
-    q('.mW').onchange=e=>{ if(e.target.value==='') return; s.tIn=r1(+e.target.value-.05); q('.mIn').value=rel(s.tIn); ch() };
-    q('.mRs').onclick=()=>{ ['tcol','tbg','thl','tIn','tOut'].forEach(k=>delete s[k]); draw(); ch() };
-    const L=q('.lyL'); (s.layers||[]).forEach((y,k)=>{ const st=y.kind==='stamp', c=document.createElement('div'); c.className='lyr';
-      c.innerHTML=`<label style="margin-top:0">${st?'مهر':'متن'} ${fa(k+1)}</label><input type="text" class="yT" placeholder="${st?'نوشته‌ی مهر':'متن؛ کلمه‌ی مهم را بین دو ستاره بگذار'}">
-        <div class="g3"><div><label>ورود (ثانیه)</label><input type="number" class="yIn" step="0.1" min="0"></div><div><label>خروج (خالی = تا آخر)</label><input type="number" class="yOut" step="0.1" min="0"></div><div><label>&nbsp;</label>${wordSel('yW')}</div></div>
+function fxUI(el,s,i,box){
+  const q0=c=>el.querySelector(c), ch=()=>{ clearOk(s); rvSave(); pvRefresh(i) };
+  /* key text: the classic text box + position pad + size are moved here: text on the right, position pad on the left */
+  { const kOn=box.querySelector('.keyOn'), kBox=box.querySelector('.keyBox'), kTx=box.querySelector('.keyTx'), host=q0('.kSecB'); if(kOn&&kBox&&kTx&&host){
+    if(s.text&&s.keyOn===undefined) s.keyOn=true; kOn.closest('label').hidden=true; kBox.hidden=true;
+    kTx.addEventListener('input',()=>{ s.keyOn=!!kTx.value.trim() }); kTx.rows=3; kTx.placeholder='متن کلیدی؛ کلمه‌ی مهم را بین دو ستاره بگذار: *کلمه*';
+    host.innerHTML=`<div class="krow"><div class="kR"></div><div class="kmini"><label style="margin:0 0 4px;font-size:12px">جای متن</label></div></div><div class="kSz"></div><div class="kCol"></div><div class="kTm"></div><button class="mRs" style="margin-top:8px">برگشت رنگ و زمان به پیش‌فرض</button>`;
+    host.querySelector('.kR').appendChild(kTx); const mini=host.querySelector('.kmini'), fm=kBox.querySelector('.kfmt'); fm.querySelectorAll('button').forEach(b=>{ b.textContent=b.dataset.f==='v'?'عمودی':'افقی' });
+    mini.appendChild(fm); mini.appendChild(kBox.querySelector('.kpad')); mini.appendChild(kBox.querySelector('.kauto'));
+    const szw=kBox.querySelector('.ksz'); host.querySelector('.kSz').innerHTML='<label>اندازه‌ی متن</label>'; host.querySelector('.kSz').appendChild(szw.closest('.sl2r'));
+    host.querySelector('.kCol').innerHTML=`<div class="g3"><div><label>رنگ نوشته</label><input type="color" class="mTc"></div><div><label>رنگ کادر</label><input type="color" class="mTb"></div><div><label>رنگ کلمه‌ی مهم</label><input type="color" class="mTh"></div></div><label class="chk"><input type="checkbox" class="mNo"> بدون کادر (فقط نوشته)</label>`;
+    const q=c=>host.querySelector(c); q('.mTc').value=s.tcol||'#ffffff'; q('.mTb').value=(s.tbg&&s.tbg!=='none')?s.tbg:'#0e0a07'; q('.mTh').value=s.thl||'#ff5a1f'; q('.mNo').checked=s.tbg==='none';
+    q('.mTc').oninput=e=>{ s.tcol=e.target.value; ch() }; q('.mTb').oninput=e=>{ s.tbg=e.target.value; q('.mNo').checked=false; ch() }; q('.mTh').oninput=e=>{ s.thl=e.target.value; ch() }; q('.mNo').onchange=e=>{ if(e.target.checked) s.tbg='none'; else delete s.tbg; ch() };
+    timeUI(q('.kTm'),s,{t:'tIn',out:'tOut',anim:'tAnim',animOut:'tAnimOut'},s,'pop',ch);
+    q('.mRs').onclick=()=>{ ['tcol','tbg','thl','tIn','tOut','tAnim','tAnimOut'].forEach(k=>delete s[k]); q('.mTc').value='#ffffff'; q('.mTb').value='#0e0a07'; q('.mTh').value='#ff5a1f'; q('.mNo').checked=false; timeUI(q('.kTm'),s,{t:'tIn',out:'tOut',anim:'tAnim',animOut:'tAnimOut'},s,'pop',ch); ch() } } }
+  /* extra text and stamp layers */
+  const LB=q0('.lySecB'), drawL=()=>{
+    LB.innerHTML='<div class="lyL"></div><div class="row"><button class="pri aT">+ متن</button><select class="sel aS" style="flex:1"><option value="">+ مهر…</option>'+STAMPS.map((x,k)=>`<option value="${k}">${esc(x[0])}</option>`).join('')+'<option value="x">مهر با نوشته‌ی دلخواه</option></select></div>';
+    const L=LB.querySelector('.lyL'); (s.layers||[]).forEach((y,k)=>{ const st=y.kind==='stamp', c=document.createElement('details'); c.className='pSec lyI'; if(y._open) c.open=true;
+      c.innerHTML=`<summary></summary><div class="pSecB"><div class="krow"><div class="kR"><label style="margin-top:0">${st?'نوشته‌ی مهر':'متن (کلمه‌ی مهم را بین دو ستاره بگذار)'}</label><input type="text" class="yT"></div><div class="kmini"><label style="margin:0 0 4px;font-size:12px">جای ${st?'مهر':'متن'}</label><div class="yP"></div></div></div>
         <div class="g2"><div><label>اندازه</label><input type="range" class="yZ" min="0.4" max="3" step="0.05"></div><div>${st?'<label>چرخش</label><input type="range" class="yR" min="-25" max="25" step="1">':'<label>رنگ کلمه‌ی مهم</label><input type="color" class="yH">'}</div></div>
-        <div class="g2"><div><label>جای افقی</label><input type="range" class="yX" min="0" max="100" step="1"></div><div><label>جای عمودی</label><input type="range" class="yY" min="0" max="100" step="1"></div></div>
         <div class="g2"><div><label>${st?'رنگ مهر':'رنگ نوشته'}</label><input type="color" class="yC"></div>${st?'<div></div>':'<div><label>رنگ کادر</label><input type="color" class="yB"><label class="chk"><input type="checkbox" class="yN"> بدون کادر</label></div>'}</div>
-        <button class="yD" style="margin-top:6px">حذف این ${st?'مهر':'متن'}</button>`;
-      const z=x=>c.querySelector(x); z('.yT').value=y.text||''; z('.yIn').value=rel(y.t!=null?y.t:s.t0+.3); z('.yOut').value=y.out!=null?rel(y.out):''; z('.yZ').value=y.size||1; z('.yX').value=Math.round((y.x==null?.5:y.x)*100); z('.yY').value=Math.round((y.y==null?(st?.38:.5):y.y)*100); z('.yC').value=y.col||(st?'#e0352b':'#ffffff');
+        <div class="yTm"></div><button class="yD" style="margin-top:8px">حذف این ${st?'مهر':'متن'}</button></div>`;
+      const z=x=>c.querySelector(x), sm=()=>{ z('summary').textContent=(st?'🔖 ':'🔤 ')+(y.text||'—') };
+      c.addEventListener('toggle',()=>{ y._open=c.open }); sm(); z('.yT').value=y.text||''; z('.yZ').value=y.size||1; z('.yC').value=y.col||(st?'#e0352b':'#ffffff');
       if(st) z('.yR').value=y.rot==null?-8:y.rot; else { z('.yH').value=y.hl||'#ff5a1f'; z('.yB').value=(y.bg&&y.bg!=='none')?y.bg:'#0e0a07'; z('.yN').checked=y.bg==='none'; z('.yH').oninput=e=>{ y.hl=e.target.value; ch() }; z('.yB').oninput=e=>{ y.bg=e.target.value; z('.yN').checked=false; ch() }; z('.yN').onchange=e=>{ if(e.target.checked) y.bg='none'; else delete y.bg; ch() } }
-      z('.yT').oninput=e=>{ y.text=e.target.value; ch() }; z('.yIn').onchange=e=>{ y.t=absT(e.target.value); ch() }; z('.yOut').onchange=e=>{ if(e.target.value==='') delete y.out; else y.out=absT(e.target.value); ch() };
-      z('.yW').onchange=e=>{ if(e.target.value==='') return; y.t=r1(+e.target.value-.05); z('.yIn').value=rel(y.t); ch() };
-      z('.yZ').oninput=e=>{ y.size=+e.target.value; ch() }; z('.yX').oninput=e=>{ y.x=e.target.value/100; ch() }; z('.yY').oninput=e=>{ y.y=e.target.value/100; ch() }; z('.yC').oninput=e=>{ y.col=e.target.value; ch() }; if(st) z('.yR').oninput=e=>{ y.rot=+e.target.value; ch() };
-      z('.yD').onclick=()=>{ s.layers.splice(k,1); if(!s.layers.length) delete s.layers; draw(); ch() }; L.appendChild(c) });
-    q('.aT').onclick=()=>{ (s.layers=s.layers||[]).push({kind:'text',text:'متن تازه',t:r1(s.t0+.5),x:.5,y:.5}); draw(); ch() };
-    q('.aS').onchange=e=>{ const v=e.target.value; if(v==='') return; const p=v==='x'?['نوشته‌ی مهر','#e0352b']:STAMPS[+v]; (s.layers=s.layers||[]).push({kind:'stamp',text:p[0],t:r1(s.t0+.8),x:.5,y:.38,size:1,col:p[1],rot:-8}); draw(); ch() };
-    body.querySelectorAll('.atmr button').forEach(b=>b.onclick=()=>{ const a=b.dataset.a, amt=+q('.atA').value; s.atm=s.atm||[]; const k=s.atm.findIndex(x=>x.type===a); if(k>=0) s.atm.splice(k,1); else s.atm.push({type:a,amt}); if(!s.atm.length) delete s.atm; draw(); ch() });
-    const A=(s.atm||[])[0]; q('.atA').value=A?String(A.amt):'1'; q('.atA').onchange=e=>{ (s.atm||[]).forEach(x=>x.amt=+e.target.value); ch() };
-    q('.dr').value=String(s.photo&&s.photo.drift!=null?s.photo.drift:1); q('.dr').onchange=e=>{ s.photo=s.photo||{}; s.photo.drift=+e.target.value; ch() };
-    q('.kk').value=s.kick||'both'; q('.kk').onchange=e=>{ s.kick=e.target.value; ch() };
-  }; draw()
+      z('.yT').oninput=e=>{ y.text=e.target.value; sm(); ch() }; z('.yZ').oninput=e=>{ y.size=+e.target.value; ch() }; z('.yC').oninput=e=>{ y.col=e.target.value; ch() }; if(st) z('.yR').oninput=e=>{ y.rot=+e.target.value; ch() };
+      padUI(z('.yP'),y,ch,st?.38:.5); timeUI(z('.yTm'),y,{t:'t',out:'out',anim:'anim',animOut:'animOut'},s,st?'slam':'pop',ch);
+      z('.yD').onclick=()=>{ s.layers.splice(k,1); if(!s.layers.length) delete s.layers; drawL(); ch() }; L.appendChild(c) });
+    LB.querySelector('.aT').onclick=()=>{ (s.layers=s.layers||[]).push({kind:'text',text:'متن تازه',x:.5,y:.5,_open:true}); drawL(); ch() };
+    LB.querySelector('.aS').onchange=e=>{ const v=e.target.value; if(v==='') return; const pr=v==='x'?['نوشته‌ی مهر','#e0352b']:STAMPS[+v]; (s.layers=s.layers||[]).push({kind:'stamp',text:pr[0],x:.5,y:.38,size:1,col:pr[1],rot:-8,_open:true}); drawL(); ch() };
+  }; drawL();
+  /* atmosphere */
+  const AB=q0('.atSecB'); AB.innerHTML=`<div class="atmr">${ATMS.map(a=>`<button data-a="${a[0]}" class="${(s.atm||[]).some(x=>x.type===a[0])?'on':''}">${a[1]}</button>`).join('')}</div><label>شدت</label><select class="sel atA"><option value="0.5">کم</option><option value="1">متوسط</option><option value="1.8">زیاد</option></select>`;
+  AB.querySelectorAll('.atmr button').forEach(b=>b.onclick=()=>{ const a=b.dataset.a, amt=+AB.querySelector('.atA').value; s.atm=s.atm||[]; const k=s.atm.findIndex(x=>x.type===a); if(k>=0) s.atm.splice(k,1); else s.atm.push({type:a,amt}); if(!s.atm.length) delete s.atm; b.classList.toggle('on',k<0); ch() });
+  const A0=(s.atm||[])[0]; AB.querySelector('.atA').value=A0?String(A0.amt):'1'; AB.querySelector('.atA').onchange=e=>{ (s.atm||[]).forEach(x=>x.amt=+e.target.value); ch() };
+  /* camera */
+  const CB=q0('.camSecB'); CB.innerHTML=`<div class="g2"><div><label>حرکت عکس</label><select class="sel pMot"><option value="auto">خودکار</option><option value="in">زوم به داخل</option><option value="out">زوم به بیرون</option><option value="left">حرکت به چپ</option><option value="right">حرکت به راست</option><option value="none">ثابت</option></select></div>
+    <div><label>لرزش ریز پس‌زمینه</label><select class="sel dr"><option value="0">خاموش</option><option value="1">کم (مثل نمونه)</option><option value="2">متوسط</option><option value="3">زیاد</option></select></div></div>
+    <label>افکت دوربین هنگام ورود عکس</label><select class="sel kk"><option value="both">ضربه‌ی زوم + لرزش</option><option value="punch">فقط ضربه‌ی زوم</option><option value="shake">فقط لرزش</option><option value="none">هیچ</option></select>
+    <label>برچسب کوچک بالا (مثلاً ROME · 1970s)</label><input type="text" class="pKick ltr" maxlength="40">
+    <details class="pSec" style="margin-top:8px"><summary>✏️ ویرایش متن پرامپت عکس</summary><div class="pSecB"><textarea class="pPrompt" dir="ltr"></textarea></div></details>`;
+  const mo=CB.querySelector('.pMot'); mo.value=s.photo.motion||'auto'; mo.onchange=()=>{ if(mo.value==='auto') delete s.photo.motion; else s.photo.motion=mo.value; ch() };
+  const dr=CB.querySelector('.dr'); dr.value=String(s.photo.drift!=null?s.photo.drift:1); dr.onchange=()=>{ s.photo.drift=+dr.value; ch() };
+  const kk=CB.querySelector('.kk'); kk.value=s.kick||'both'; kk.onchange=()=>{ s.kick=kk.value; ch() };
+  const kc=CB.querySelector('.pKick'); kc.value=s.kicker||''; kc.oninput=()=>{ s.kicker=kc.value; rvSave(); pvRefresh(i) };
+  const pr=CB.querySelector('.pPrompt'); pr.value=s.photo.prompt||''; pr.oninput=()=>{ s.photo.prompt=pr.value; rvSave() };
 }
 function posterBlock(box,s,i,d){
   s.photo=s.photo||{}; const el=document.createElement('div'); el.className='pst';
-  el.innerHTML=`<div class="ph"><div class="pimg">${s.photo.src?'':'بدون عکس'}</div><div><label style="margin-top:0">توصیف این صحنه (انگلیسی؛ می‌توانی ویرایش کنی)</label><textarea class="pPrompt" dir="ltr"></textarea></div></div>
-    <div class="row"><button class="pri pCopy">کپی پرامپت کامل</button><label class="btn" style="display:grid;place-items:center;margin:0">${s.photo.src?'جایگزینی عکس':'آپلود عکس'}<input type="file" accept="image/*" hidden class="pFile"></label></div>
-    <div class="st pSt"></div>
-    <details class="pFull" open style="margin-top:6px"><summary class="btn" style="display:block;text-align:center;cursor:pointer;min-height:38px;line-height:38px;font-size:13px">پرامپت کامل (توصیف صحنه + سبک + تمام‌صفحه) که کپی می‌شود</summary><div class="pFullTx" dir="ltr" style="white-space:pre-wrap;font-size:12px;font-weight:500;color:var(--mut);padding:8px;text-align:left"></div></details>
-    <div class="pProps" hidden></div>
-    <details class="pFx"><summary>متن‌ها، مهرها، افکت جوّی و حرکت دوربین</summary><div class="pFxBody"></div></details>
-    <div class="pst2"><div><label>برچسب کوچک بالا (مثلاً ROME · 1970s)</label><input type="text" class="pKick ltr" maxlength="40"></div>
-      <div><label>حرکت عکس</label><select class="sel pMot"><option value="auto">خودکار</option><option value="in">زوم به داخل</option><option value="out">زوم به بیرون</option><option value="left">حرکت به چپ</option><option value="right">حرکت به راست</option><option value="none">ثابت</option></select></div></div>
-    <p class="hint" style="margin:8px 0 0">عنوان روی عکس همان «متن کلیدی» پایین است (کلمه‌ی مهم بین ستاره). عدد یا سال بزرگ را در کادر «عدد» بنویس. تصویرهای کتابخانه، کارت‌های چسبیده و افکت‌ها مثل قبل روی عکس کار می‌کنند.</p>`;
+  el.innerHTML=`<div class="ph"><div class="pimg">${s.photo.src?'':'بدون عکس'}</div><div><div class="row" style="flex-direction:column;align-items:stretch"><button class="pri pCopy">کپی پرامپت عکس</button><label class="btn" style="display:grid;place-items:center;margin:0">${s.photo.src?'جایگزینی عکس':'آپلود عکس'}<input type="file" accept="image/*" hidden class="pFile"></label></div><div class="st pSt"></div></div></div>
+    ${pSec('pProps','🧩 اشیای جدا').replace('class="pSec pProps"','class="pSec pProps" hidden')}${pSec('kSec','📝 متن کلیدی').replace('<div class="pSecB">','<div class="pSecB kSecB">')}${pSec('lySec','🔤 متن‌ها و مهرهای اضافه').replace('<div class="pSecB">','<div class="pSecB lySecB">')}${pSec('atSec','❄️ افکت جوّی (برف، باران، رعد و برق…)').replace('<div class="pSecB">','<div class="pSecB atSecB">')}${pSec('camSec','🎥 دوربین و تنظیمات عکس').replace('<div class="pSecB">','<div class="pSecB camSecB">')}`;
   box.insertBefore(el, box.firstChild);
   const img=el.querySelector('.pimg'); if(s.photo.src){ img.style.backgroundImage='url("'+rawRepo(s.photo.src)+'")' }
-  const pr=el.querySelector('.pPrompt'), pf=el.querySelector('.pFullTx'), pfill=()=>{ pf.textContent=posterFull(s) }; pr.value=s.photo.prompt||''; pfill(); pr.oninput=()=>{ s.photo.prompt=pr.value; pfill(); rvSave() };
-  el.querySelector('.pCopy').onclick=async()=>{ const t=posterFull(s); if(!(s.photo.prompt||'').trim()) return toast('این صحنه پرامپت ندارد؛ اول یکی بنویس'); toast(await copy(t)?'پرامپت کپی شد؛ در موتور ساخت تصویر بزن':'کپی نشد؛ متن را دستی انتخاب کن') };
-  propsUI(el,s,i,d); fxUI(el,s,i);
-  const kk=el.querySelector('.pKick'); kk.value=s.kicker||''; kk.oninput=()=>{ s.kicker=kk.value; rvSave(); pvRefresh(i) };
-  const mo=el.querySelector('.pMot'); mo.value=s.photo.motion||'auto'; mo.onchange=()=>{ if(mo.value==='auto') delete s.photo.motion; else s.photo.motion=mo.value; clearOk(s); rvSave(); pvRefresh(i) };
+  el.querySelector('.pCopy').onclick=async()=>{ const t=posterFull(s); if(!(s.photo.prompt||'').trim()) return toast('این صحنه پرامپت ندارد'); toast(await copy(t)?'پرامپت کپی شد؛ در موتور ساخت تصویر بزن':'کپی نشد') };
+  propsUI(el,s,i,d); fxUI(el,s,i,box);
   const st=el.querySelector('.pSt'); el.querySelector('.pFile').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; if(!S.token){ st.className='st pSt bad'; st.textContent='اول توکن را در تنظیمات وارد کن'; return }
     st.className='st pSt'; st.textContent='در حال کوچک‌کردن و ارسال عکس…'; try{ await posterUpload(i,f); st.className='st pSt ok'; st.textContent='✓ عکس گذاشته شد'; img.textContent=''; img.style.backgroundImage='url("'+URL.createObjectURL(f)+'")' }catch(er){ st.className='st pSt bad'; st.textContent='خطا: '+er.message } } }
 function posterBar(body){

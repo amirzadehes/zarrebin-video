@@ -291,12 +291,12 @@ function posterText(t, sc) {
   const num = String(sc.number == null ? '' : sc.number).trim();
   if (num) { const e = spr(t, sc.t0 + .15, .5, 12), size = B * (V ? .24 : .2); ctx.save(); ctx.font = `900 ${size}px Vz`; ctx.textBaseline = 'middle'; ctx.direction = 'ltr'; ctx.textAlign = rtl ? 'right' : 'left';
     ctx.translate(rtl ? W - m : m, y + size * .55); ctx.scale(.7 + .3 * Math.min(e, 1.1), .7 + .3 * Math.min(e, 1.1)); ctx.globalAlpha = clamp(e * 1.6); ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 22; ctx.shadowOffsetY = 6; ctx.fillStyle = '#fff'; ctx.fillText(num, 0, 0); ctx.restore(); y += size * 1.12 }
-  if (sc.text && tOn(sc) && (sc.tOut == null || t < sc.tOut + .25)) {
-    const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), t0 = sc.tIn != null ? sc.tIn : sc.t0 + (num ? .5 : .3), st = { col: sc.tcol, bg: sc.tbg, hl: sc.thl };
-    ctx.save(); if (sc.tOut != null) ctx.globalAlpha = clamp((sc.tOut + .25 - t) / .25);
-    if (kp) { const L = wrapTokens(sc.text, `900 ${size}px Vz`, maxW), hh = L.lines.length * size * 1.5; posterChips(sc.text, size, maxW, kp.x * W, kp.y * H - hh / 2, t, t0, 'center', st) }
-    else posterChips(sc.text, size, maxW, rtl ? W - m : m, y, t, t0, rtl ? 'right' : 'left', st)
-    ctx.restore()
+  if (sc.text && tOn(sc)) {
+    const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), t0 = sc.tIn != null ? sc.tIn : sc.t0 + (num ? .5 : .3), st = { col: sc.tcol, bg: sc.tbg, hl: sc.thl }, A = sc.tAnim || 'pop', ps = lyrPose(t, t0, sc.tOut != null ? sc.tOut : 1e9, A, sc.tAnimOut);
+    if (ps) { ctx.save(); ctx.translate(W / 2 + ps.dx, H / 2 + ps.dy); ctx.scale(ps.s, ps.s); ctx.translate(-W / 2, -H / 2); ctx.globalAlpha = ps.al; const tt = A === 'pop' ? t0 : t - 5;
+      if (kp) { const L = wrapTokens(sc.text, `900 ${size}px Vz`, maxW), hh = L.lines.length * size * 1.5; posterChips(sc.text, size, maxW, kp.x * W, kp.y * H - hh / 2, t, tt, 'center', st) }
+      else posterChips(sc.text, size, maxW, rtl ? W - m : m, y, t, tt, rtl ? 'right' : 'left', st)
+      ctx.restore() }
   }
   posterLayers(t, sc)
 }
@@ -313,16 +313,28 @@ function stampSprite(text, size, col, rtl) {
   c.globalAlpha = .55; c.lineWidth = 2; for (let j = 0; j < 7; j++) { c.beginPath(); const x = hz(j * 8.1) * w, y = hz(j * 6.2) * h; c.moveTo(x, y); c.lineTo(x + (hz(j * 9) - .5) * size * 1.6, y + (hz(j * 7) - .5) * size * .5); c.stroke() }
   return STAMPC[key] = { cv, w, h }
 }
+/* entry / exit animation of a layer: entry 'pop' (spring) | left | right | up | down | zoom | slam | fade; exit 'fade' | left | right | up | down | zoom | none. Returns the pose or null when it is not visible */
+function lyrPose(t, t0, out, ain, aout) {
+  const d = t - t0; if (d < 0) return null; let dx = 0, dy = 0, s = 1, al = 1; const e = eio(d / .45), A = ain || 'pop';
+  if (A === 'left') { dx = -(1 - e) * W * .8; al = clamp(d / .15) } else if (A === 'right') { dx = (1 - e) * W * .8; al = clamp(d / .15) } else if (A === 'up') { dy = -(1 - e) * H * .45; al = clamp(d / .15) } else if (A === 'down') { dy = (1 - e) * H * .45; al = clamp(d / .15) }
+  else if (A === 'zoom') { s = lerp(.15, 1, Math.min(spr(t, t0, .55, 13), 1.12)); al = clamp(d / .12) }
+  else if (A === 'slam') { s = d < .16 ? lerp(2.6, 1, eio(d / .16)) : 1 + .05 * Math.exp(-(d - .16) * 11) * Math.cos((d - .16) * 38); al = clamp(d / .06); if (d >= .16 && d < .42) { const q = Math.sin(d * 150) * 7 * (1 - (d - .16) / .26); dx = q; dy = q * .6 } }
+  else if (A === 'fade') al = clamp(d / .35);
+  if (t > out) { const x = eio((t - out) / .35), O = aout || 'fade'; if (O === 'none' || x >= 1) return null;
+    if (O === 'left') dx -= x * W * .8; else if (O === 'right') dx += x * W * .8; else if (O === 'up') dy -= x * H * .45; else if (O === 'down') dy += x * H * .45; else if (O === 'zoom') s *= lerp(1, .15, x);
+    al *= (O === 'fade' || O === 'zoom') ? 1 - x : 1 - x * x * x }
+  return { dx, dy, s, al }
+}
 function posterLayers(t, sc) {
   (sc.layers || []).forEach(L => {
-    if (!L || !String(L.text || '').trim()) return; const t0 = L.t != null ? L.t : sc.t0 + .3, out = L.out != null ? L.out : 1e9, P = (L.pos && L.pos[FMT]) || L; if (t < t0 || t > out + .25) return;
-    const al = clamp((out + .25 - t) / .25), k = L.size || 1, rtl = D.meta.rtl, d = t - t0, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? (L.kind === 'stamp' ? .38 : .5) : P.y) * H;
-    if (L.kind === 'stamp') {
-      const sp = stampSprite(String(L.text).trim(), Math.round(B * .1 * k), L.col || '#e0352b', rtl), q = d < .16 ? lerp(2.4, 1, eio(d / .16)) : 1 + .05 * Math.exp(-(d - .16) * 11) * Math.cos((d - .16) * 38), sh = d >= .16 && d < .42 ? Math.sin(d * 150) * 7 * (1 - (d - .16) / .26) : 0;
-      ctx.save(); ctx.translate(cx + sh, cy + sh * .6); ctx.rotate((L.rot == null ? -8 : L.rot) * Math.PI / 180); ctx.scale(q, q); ctx.globalAlpha = al * clamp(d / .06) * .94; ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 10; ctx.drawImage(sp.cv, -sp.w / 2, -sp.h / 2); ctx.restore(); return
+    if (!L || !String(L.text || '').trim()) return; const t0 = L.t != null ? L.t : sc.t0 + .3, out = L.out != null ? L.out : 1e9, P = (L.pos && L.pos[FMT]) || L, st = L.kind === 'stamp', A = L.anim || (st ? 'slam' : 'pop');
+    const ps = lyrPose(t, t0, out, A, L.animOut); if (!ps) return; const k = L.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? (st ? .38 : .5) : P.y) * H;
+    if (st) {
+      const sp = stampSprite(String(L.text).trim(), Math.round(B * .1 * k), L.col || '#e0352b', rtl), q = A === 'pop' ? .6 + .4 * Math.min(spr(t, t0, .5, 14), 1.15) : 1;
+      ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.rotate((L.rot == null ? -8 : L.rot) * Math.PI / 180); ctx.scale(ps.s * q, ps.s * q); ctx.globalAlpha = ps.al * .94; ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 10; ctx.drawImage(sp.cv, -sp.w / 2, -sp.h / 2); ctx.restore(); return
     }
     const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), Lw = wrapTokens(L.text, `900 ${size}px Vz`, maxW), hh = Lw.lines.length * size * 1.5;
-    ctx.save(); ctx.globalAlpha = al; posterChips(L.text, size, maxW, cx, cy - hh / 2, t, t0, 'center', { col: L.col, bg: L.bg, hl: L.hl }); ctx.restore()
+    ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.scale(ps.s, ps.s); ctx.translate(-cx, -cy); ctx.globalAlpha = ps.al; posterChips(L.text, size, maxW, cx, cy - hh / 2, t, A === 'pop' ? t0 : t - 5, 'center', { col: L.col, bg: L.bg, hl: L.hl }); ctx.restore()
   })
 }
 /* atmosphere on a scene: sc.atm = [{type:'snow'|'rain'|'lightning'|'fog'|'embers', amt (0.3..2), t (start, optional)}]; every particle is a pure function of time */

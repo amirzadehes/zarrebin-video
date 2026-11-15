@@ -97,11 +97,30 @@ VERIFY = """برای هر صحنه، متن راوی و توصیف تصویر د
 خروجی فقط JSON: {"scenes":[{"i":0,"prompt":"..."}]} به همان ترتیب و تعداد."""
 
 
+PROPS = """برای هر صحنه متن راوی داده می‌شود. اگر در متن همان صحنه چیز کوچک و مستقلی نام برده شده که بهتر است جدا ساخته و روی عکس گذاشته شود (غذا، ابزار، حیوان، شیء نمادین؛ نه آدم، نه گروه و نه مکان) آن را در props بنویس، حداکثر ۲ مورد. هر مورد:
+fa = نام فارسی کوتاه و مشخص (مثل «غاز کبابی»)، word = کلمه‌ای دقیقاً از متن همان صحنه که با گفتنش شیء ظاهر می‌شود، prompt = توصیف انگلیسی کامل و پرجزئیات فقط همان شیء (جنس، رنگ‌ها، حالت، ترکیب‌بندی و چیزهای همراهش؛ مثلاً غاز کبابی طلایی و براق روی سینی چوبی روستایی با کلم قرمز، سیب پخته، نان و جعفری و بخار ملایم).
+اگر صحنه چیز کوچک مستقلی ندارد props را خالی بگذار.
+خروجی فقط JSON: {"scenes":[{"i":0,"props":[{"fa":"","word":"","prompt":""}]}]} به همان ترتیب."""
+
+
+def props_pass(got, S, brief):
+    """dedicated pass (a small task the model does reliably): small separate objects named in each scene's text"""
+    if not got: return got
+    try:
+        user = 'خلاصه‌ی داستان:\n%s\n\nصحنه‌ها:\n%s' % (brief or '-', '\n'.join('%d | %s' % (k, ' '.join(S[j]['text'] for j in range(o['from'], min(o.get('to', o['from']), len(S) - 1) + 1))) for k, o in enumerate(got)))
+        fix = [o for o in groqlib.objects(groqlib.chat(PROPS, user, max_tokens=3000, json_mode=True, temperature=.3), 'props') if isinstance(o, dict)]
+        by = {o.get('i'): o.get('props') for o in fix if isinstance(o.get('i'), int)}
+        for k, o in enumerate(got):
+            if isinstance(by.get(k), list) and by[k]: o['props'] = by[k]
+    except (Exception, SystemExit) as e: print('props pass skipped:', str(e)[:120])
+    return got
+
+
 def verify(got, S, brief):
     """second pass: every prompt must show what its own narration names; wrong ones are rewritten"""
     if not got: return got
     try:
-        user = 'خلاصه‌ی داستان:\n%s\n\nصحنه‌ها:\n%s' % (brief or '-', '\n'.join('%d | متن: %s | توصیف فعلی: %s' % (k, ' '.join(S[j]['text'] for j in range(o['from'], min(o.get('to', o['from']), len(S) - 1) + 1)), str(o.get('prompt', ''))[:500]) for k, o in enumerate(got)))
+        user = 'خلاصه‌ی داستان:\n%s\n\nصحنه‌ها:\n%s' % (brief or '-', '\n'.join('%d | متن: %s | توصیف فعلی: %s | اشیای جدا (نباید در توصیف باشند): %s' % (k, ' '.join(S[j]['text'] for j in range(o['from'], min(o.get('to', o['from']), len(S) - 1) + 1)), str(o.get('prompt', ''))[:500], ', '.join(str(q.get('fa', '')) for q in (o.get('props') or []) if isinstance(q, dict)) or '-') for k, o in enumerate(got)))
         fix = [o for o in groqlib.objects(groqlib.chat(VERIFY, user, max_tokens=3000, json_mode=True, temperature=.2), 'prompt') if isinstance(o, dict)]
         by = {o.get('i'): o.get('prompt') for o in fix if isinstance(o.get('i'), int)}
         for k, o in enumerate(got):
@@ -125,7 +144,7 @@ def direct(T, ss, brief=''):
             print('poster director fallback for sentences %d-%d (no AI):' % (b, min(b + B, len(S)) - 1), str(e)[:160])
             got = [{'from': i, 'to': min(i + 1, b + B - 1, len(S) - 1), 'prompt': '', 'text': ' '.join(S[i]['text'].split()[:6])} for i in range(b, min(b + B, len(S)), 2)]
         got = [o for o in got if b <= o['from'] < b + B] or [{'from': b, 'to': min(b + B, len(S)) - 1, 'prompt': ''}]
-        got = verify(got, S, brief)
+        got = props_pass(got, S, brief); got = verify(got, S, brief)
         scenes += got; prev = '\n'.join('- ' + str(o.get('prompt', ''))[:300] for o in got[-2:])
     return scenes
 
