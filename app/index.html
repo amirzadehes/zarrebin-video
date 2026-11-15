@@ -329,7 +329,7 @@ let S = { repo: ls.get('repo','amirzadehes/zarrebin-video'), token: ls.get('toke
 
 S.mode = ls.get('mode','classic')==='poster' ? 'poster' : 'classic';
 const isPoster = () => !!(RV && RV.data && RV.data.meta && RV.data.meta.mode==='poster');
-const noPic = s => isPoster() ? !(s.photo && s.photo.src) && !s.bgc : (!(s.items||[]).length && s.tpl!=='stat');
+const noPic = s => isPoster() ? !(s.photo && s.photo.src) && !s.bgc && !(s.photos||[]).some(x=>x&&x.src) : (!(s.items||[]).length && s.tpl!=='stat');
 function toast(t, ms=3200){ const e=$('#toast'); e.textContent=t; e.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>e.classList.remove('show'), ms); }
 async function api(path, opt={}){
   const h = { 'Accept':'application/vnd.github+json' }; if (S.token) h.Authorization = 'Bearer '+S.token;
@@ -1424,6 +1424,30 @@ async function posterUpload(i, file){
   if(old&&old!==path){ try{ const j=await api('/contents/'+old); await delFile(old,j.sha,'replace photo: '+old) }catch(_){} }
   const d=document.querySelector('details.sc[data-i="'+i+'"]'); if(d){ d.querySelector('summary').innerHTML=sceneHead(s,i); d.classList.toggle('warn',noPic(s)) }
   updOk(); pvRefresh(i); }
+function posterFullP(p){ return [((p&&p.prompt)||'').trim(), posterStyle(), POSTER_FULLBLEED].filter(Boolean).join(' ') }
+async function photoUploadTo(i,p,k,file){
+  const s=RV.data.scenes[i], blob=await resizeJpeg(file), b64=await toB64(blob), path='episodes/'+RV.ep+'/bg/'+String(i+1).padStart(2,'0')+'-x'+(k+1)+'-'+Date.now().toString(36)+'.jpg', old=p.src;
+  await putSerial(path,b64,'poster photo: '+RV.ep+' #'+(i+1)+' extra '+(k+1)); p.src=path; clearOk(s); rvSave();
+  if(old&&old!==path){ try{ const j=await api('/contents/'+old); await delFile(old,j.sha,'replace photo: '+old) }catch(_){} }
+  const d=document.querySelector('details.sc[data-i="'+i+'"]'); if(d){ d.querySelector('summary').innerHTML=sceneHead(s,i); d.classList.toggle('warn',noPic(s)) }
+  updOk(); pvRefresh(i); return URL.createObjectURL(blob) }
+function photosUI(el,s,i,ch){
+  const sec=el.querySelector('.mpSec'), B=sec.querySelector('.mpSecB'); const list=s.photos||[]; sec.querySelector('summary').textContent='🖼 عکس‌های بیشتر برای پس‌زمینه'+(list.length?' ('+fa(list.length)+')':'');
+  B.innerHTML='<p class="hint" style="margin:0 0 6px">وقتی در یک صحنه چند تصویر لازم است (مثلاً اول مردم شهر، بعد قایم شدن در طویله)، عکس بعدی در لحظه‌ی کلمه‌ی انتخابی با یک افکت روی عکس قبلی می‌نشیند.</p><div class="mpL"></div><div class="row"><button class="pri mpA">+ عکس پس‌زمینه‌ی دیگر</button></div>';
+  const L=B.querySelector('.mpL'); list.forEach((p,k)=>{ const c=document.createElement('details'); c.className='pSec lyI'; if(p._open) c.open=true;
+    c.innerHTML=`<summary></summary><div class="pSecB"><div class="krow"><div class="kmini" style="flex:0 0 72px"><div class="thumb mpTh" style="width:72px;height:72px;display:grid;place-items:center;font-size:11px;color:#9a8f86">${p.src?'<img style="max-width:100%;max-height:100%" src="'+rawRepo(p.src)+'">':'بدون عکس'}</div></div><div class="kR"><div class="row" style="flex-direction:column;align-items:stretch"><button class="pri mpC">کپی پرامپت عکس</button><label class="btn" style="display:grid;place-items:center;margin:0">${p.src?'جایگزینی عکس':'آپلود عکس'}<input type="file" accept="image/*" hidden class="mpF"></label></div></div></div><div class="st mpSt"></div>
+      <div class="mpTm"></div>
+      <details class="pSec" style="margin-top:8px"><summary>✏️ ویرایش متن پرامپت</summary><div class="pSecB"><textarea class="mpP" dir="ltr"></textarea></div></details>
+      <div class="g2"><div><label>حرکت عکس</label><select class="sel mpM"><option value="auto">خودکار</option><option value="in">زوم به داخل</option><option value="out">زوم به بیرون</option><option value="left">حرکت به چپ</option><option value="right">حرکت به راست</option><option value="none">ثابت</option></select></div><div></div></div>
+      <button class="mpD" style="margin-top:8px">حذف این عکس</button></div>`;
+    const z=x=>c.querySelector(x), sm=()=>{ z('summary').textContent='🖼 '+fa(k+2)+') '+((p.prompt||'').slice(0,40)||'عکس بعدی') }; c.addEventListener('toggle',()=>{ p._open=c.open }); sm();
+    z('.mpP').value=p.prompt||''; z('.mpP').oninput=e=>{ p.prompt=e.target.value; sm(); rvSave() }; z('.mpM').value=p.motion||'auto'; z('.mpM').onchange=e=>{ if(e.target.value==='auto') delete p.motion; else p.motion=e.target.value; ch() };
+    z('.mpC').onclick=async()=>{ if(!(p.prompt||'').trim()) return toast('پرامپت این عکس خالی است'); toast(await copy(posterFullP(p))?'پرامپت عکس کپی شد':'کپی نشد') };
+    z('.mpF').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; const st=z('.mpSt'); if(!S.token){ st.className='st mpSt bad'; st.textContent='برای آپلود توکن لازم است'; return } st.className='st mpSt'; st.textContent='در حال آپلود…';
+      try{ const u=await photoUploadTo(i,p,k,f); z('.mpTh').innerHTML='<img style="max-width:100%;max-height:100%" src="'+u+'">'; st.textContent='✓ آپلود شد' }catch(err){ st.className='st mpSt bad'; st.textContent='✗ '+err.message } };
+    timeUI(z('.mpTm'),p,{t:'t',out:'out',anim:'en',animOut:'ex',off:0,ain:PHIN,aout:PHOUT},s,'fade',ch);
+    z('.mpD').onclick=()=>{ const old=p.src; s.photos.splice(k,1); if(!s.photos.length) delete s.photos; if(old){ api('/contents/'+old).then(j=>delFile(old,j.sha,'remove photo: '+old)).catch(()=>{}) } photosUI(el,s,i,ch); ch() }; L.appendChild(c) });
+  B.querySelector('.mpA').onclick=()=>{ (s.photos=s.photos||[]).push({prompt:'',t:+(s.t0+(s.t1-s.t0)*.5).toFixed(2),_open:true}); photosUI(el,s,i,ch); ch() } }
 /* ===== bubble pictures: prompt, cut-out (magenta -> transparent, text area detected), library listing ===== */
 const BUB_TYPES=[['speech','ابر حرف زدن (دم پایین‌چپ)'],['thought','ابر فکر کردن (ابری با حباب)'],['shout','ابر فریاد (دندانه‌دار)'],['caption','کادر توضیح (مستطیلی)']];
 const BUB_DESC={speech:'a classic oval comic speech bubble with a single pointed tail at the bottom left',thought:'a cloud-shaped thought bubble with three small circles trailing down to the bottom left',shout:'a jagged starburst shout bubble with spiky edges and no tail',caption:'a rectangular narration caption box with slightly irregular hand-cut paper edges and no tail'};
@@ -1455,6 +1479,7 @@ const propFull = p => [(p.prompt||'').trim().replace(/\.*$/,'.'), POSTER_PROP_HE
 const STAMPS=[['تأیید شد','#1fa65a'],['کنسل شد','#e0352b'],['شایعه','#ff8a1f'],['تکذیب شد','#e0352b'],['تأیید نشده','#ff8a1f'],['محرمانه','#e0352b'],['فاش شد','#ff5a1f'],['ممنوع','#e0352b'],['هشدار','#e6b800'],['اثبات شد','#1fa65a'],['جعلی','#e0352b'],['خبر فوری','#e0352b'],['حقیقت','#1fa65a'],['دروغ','#e0352b'],['سانسور شد','#e0352b'],['CONFIRMED','#1fa65a'],['CANCELLED','#e0352b'],['RUMOR','#ff8a1f'],['CLASSIFIED','#e0352b'],['BREAKING','#e0352b']];
 const ATMS=[['snow','برف'],['rain','باران'],['lightning','رعد و برق'],['fog','مه'],['embers','جرقه و اخگر']];
 const ANIN=[['pop','فنری (پیش‌فرض)'],['left','از چپ'],['right','از راست'],['up','از بالا'],['down','از پایین'],['zoom','زوم'],['slam','کوبیده'],['fade','محو']];
+const PHIN=[['fade','محو شدن'],['left','از چپ باز شود'],['right','از راست باز شود'],['up','از بالا باز شود'],['down','از پایین باز شود'],['circle','دایره‌ای باز شود'],['zoom','زوم']], PHOUT=[['fade','محو شدن'],['left','به چپ'],['right','به راست'],['up','به بالا'],['down','به پایین'],['circle','دایره‌ای بسته شود'],['zoom','زوم'],['none','ناگهانی']];
 const ANOUT=[['fade','محو'],['left','به چپ'],['right','به راست'],['up','به بالا'],['down','به پایین'],['zoom','کوچک‌شدن'],['none','ناگهانی']];
 const pSec=(cls,title)=>`<details class="pSec ${cls}"><summary>${title}</summary><div class="pSecB"></div></details>`;
 /* entry / exit by spoken word + entry and exit animation; o = the object that holds the fields, K = their names */
@@ -1562,9 +1587,9 @@ function fxUI(el,s,i,box){
         padUI(z('.bP'),y,ch,.3); timeUI(z('.bTm'),y,{t:'t',out:'out',anim:'anim',animOut:'animOut'},s,'pop',ch);
         z('.bD').onclick=()=>{ s.bubbles.splice(k,1); if(!s.bubbles.length) delete s.bubbles; drawB(); ch() }; L.appendChild(c) }) }; drawB(); }
   /* background picture: start / end by spoken word, with an entry effect over the gradient */
-  { const PB=q0('.phSecB'), PIN=[['fade','محو شدن'],['left','از چپ باز شود'],['right','از راست باز شود'],['up','از بالا باز شود'],['down','از پایین باز شود'],['circle','دایره‌ای باز شود'],['zoom','زوم']], POUT=[['fade','محو شدن'],['left','به چپ'],['right','به راست'],['up','به بالا'],['down','به پایین'],['circle','دایره‌ای بسته شود'],['zoom','زوم'],['none','ناگهانی']];
+  { const PB=q0('.phSecB');
     PB.innerHTML='<p class="hint" style="margin:0 0 6px">اگر برای ورود کلمه‌ای انتخاب کنی، قبل از آن گرادیان (یا پس‌زمینه‌ی رنگی همین صحنه) دیده می‌شود و عکس با افکت جایش می‌نشیند. بعد از کلمه‌ی خروج هم دوباره گرادیان برمی‌گردد.</p><div class="phT"></div>';
-    timeUI(PB.querySelector('.phT'),s.photo,{t:'t',out:'out',anim:'en',animOut:'ex',off:0,ain:PIN,aout:POUT},s,'fade',()=>{ clearOk(s); rvSave(); pvRefresh(i) }) }
+    timeUI(PB.querySelector('.phT'),s.photo,{t:'t',out:'out',anim:'en',animOut:'ex',off:0,ain:PHIN,aout:PHOUT},s,'fade',()=>{ clearOk(s); rvSave(); pvRefresh(i) }) }
   /* colour background (instead of a picture) */
   { const BB=q0('.bgSecB'), PAL=[['#c2410c','#1c1917'],['#b91c1c','#450a0a'],['#d97706','#78350f'],['#0f766e','#022c22'],['#1d4ed8','#0f172a'],['#6d28d9','#1e1b4b'],['#be185d','#500724'],['#57534e','#0c0a09']],
       FXS=[['glow','درخشش مرکزی'],['rays','پرتوهای چرخان'],['bokeh','حباب‌های نورانی'],['stripes','خط‌های مورب'],['dots','نقطه‌چین هافتون'],['waves','موج'],['none','بدون افکت']];
@@ -1592,11 +1617,11 @@ function fxUI(el,s,i,box){
 function posterBlock(box,s,i,d){
   s.photo=s.photo||{}; const el=document.createElement('div'); el.className='pst';
   el.innerHTML=`<div class="ph"><div class="pimg">${s.photo.src?'':'بدون عکس'}</div><div><div class="row" style="flex-direction:column;align-items:stretch"><button class="pri pCopy">کپی پرامپت عکس</button><label class="btn" style="display:grid;place-items:center;margin:0">${s.photo.src?'جایگزینی عکس':'آپلود عکس'}<input type="file" accept="image/*" hidden class="pFile"></label></div><div class="st pSt"></div></div></div>
-    ${pSec('pProps','🧩 اشیای جدا').replace('class="pSec pProps"','class="pSec pProps" hidden')}${pSec('itSec','🖼 تصویرهای روی صحنه').replace('class="pSec itSec"','class="pSec itSec" hidden')}${pSec('lySec','🔤 متن‌ها و مهرهای اضافه').replace('<div class="pSecB">','<div class="pSecB lySecB">')}${pSec('phSec','🕘 زمان و ورود عکس پس‌زمینه').replace('<div class="pSecB">','<div class="pSecB phSecB">')}${pSec('bbSec','💬 ابر گفتگو').replace('<div class="pSecB">','<div class="pSecB bbSecB">')}${pSec('atSec','❄️ افکت جوّی (برف، باران، رعد و برق…)').replace('<div class="pSecB">','<div class="pSecB atSecB">')}${pSec('bgSec','🎨 پس‌زمینه‌ی رنگی (بدون عکس)').replace('<div class="pSecB">','<div class="pSecB bgSecB">')}${pSec('camSec','🎥 دوربین و تنظیمات عکس').replace('<div class="pSecB">','<div class="pSecB camSecB">')}${pSec('kSec','📝 متن کلیدی').replace('<div class="pSecB">','<div class="pSecB kSecB">')}`;
+    ${pSec('pProps','🧩 اشیای جدا').replace('class="pSec pProps"','class="pSec pProps" hidden')}${pSec('itSec','🖼 تصویرهای روی صحنه').replace('class="pSec itSec"','class="pSec itSec" hidden')}${pSec('lySec','🔤 متن‌ها و مهرهای اضافه').replace('<div class="pSecB">','<div class="pSecB lySecB">')}${pSec('phSec','🕘 زمان و ورود عکس اول پس‌زمینه').replace('<div class="pSecB">','<div class="pSecB phSecB">')}${pSec('mpSec','🖼 عکس‌های بیشتر برای پس‌زمینه').replace('<div class="pSecB">','<div class="pSecB mpSecB">')}${pSec('bbSec','💬 ابر گفتگو').replace('<div class="pSecB">','<div class="pSecB bbSecB">')}${pSec('atSec','❄️ افکت جوّی (برف، باران، رعد و برق…)').replace('<div class="pSecB">','<div class="pSecB atSecB">')}${pSec('bgSec','🎨 پس‌زمینه‌ی رنگی (بدون عکس)').replace('<div class="pSecB">','<div class="pSecB bgSecB">')}${pSec('camSec','🎥 دوربین و تنظیمات عکس').replace('<div class="pSecB">','<div class="pSecB camSecB">')}${pSec('kSec','📝 متن کلیدی').replace('<div class="pSecB">','<div class="pSecB kSecB">')}`;
   box.insertBefore(el, box.firstChild);
   const img=el.querySelector('.pimg'); if(s.photo.src){ img.style.backgroundImage='url("'+rawRepo(s.photo.src)+'")' }
   el.querySelector('.pCopy').onclick=async()=>{ const t=posterFull(s); if(!(s.photo.prompt||'').trim()) return toast('این صحنه پرامپت ندارد'); toast(await copy(t)?'پرامپت کپی شد؛ در موتور ساخت تصویر بزن':'کپی نشد') };
-  propsUI(el,s,i,d); fxUI(el,s,i,box); itemsUI(el,s,i,()=>{ clearOk(s); rvSave(); pvRefresh(i) });
+  propsUI(el,s,i,d); fxUI(el,s,i,box); itemsUI(el,s,i,()=>{ clearOk(s); rvSave(); pvRefresh(i) }); photosUI(el,s,i,()=>{ clearOk(s); rvSave(); pvRefresh(i) });
   const st=el.querySelector('.pSt'); el.querySelector('.pFile').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; if(!S.token){ st.className='st pSt bad'; st.textContent='اول توکن را در تنظیمات وارد کن'; return }
     st.className='st pSt'; st.textContent='در حال کوچک‌کردن و ارسال عکس…'; try{ await posterUpload(i,f); st.className='st pSt ok'; st.textContent='✓ عکس گذاشته شد'; img.textContent=''; img.style.backgroundImage='url("'+URL.createObjectURL(f)+'")' }catch(er){ st.className='st pSt bad'; st.textContent='خطا: '+er.message } } }
 function posterBar(body){

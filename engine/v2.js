@@ -271,25 +271,29 @@ function phReveal(e, kind, sw) {   // clip/alpha/scale for the background pictur
   else if (kind === 'circle') ctx.arc(W / 2, H * .48, Math.hypot(W, H) * .56 * k, 0, TAU); else ctx.rect(-300, -300, W + 600, H + 600);
   ctx.clip(); if (kind === 'zoom') { ctx.translate(W / 2, H / 2); ctx.scale(1 + .3 * (1 - k), 1 + .3 * (1 - k)); ctx.translate(-W / 2, -H / 2) } if (kind === 'fade' || kind === 'zoom') ctx.globalAlpha *= k
 }
+function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's own, or an extra one from sc.photos) with its start/end by word and entry/exit effects
+  const im = p.src && IM[p.src]; if (!im) return; const gate = gateAlways || p.t != null || p.out != null, ps0 = p.t != null ? p.t : sc.t0, pe = p.out != null ? p.out : 1e9, ENT = .75, EXT = .55;
+  if (!(EDIT || (t >= ps0 - 1e-6 && t < pe + EXT))) return;
+  const ein = (t - ps0) / ENT, eout = t > pe ? 1 - (t - pe) / EXT : 1, kin = p.en || 'fade', kout = p.ex || 'fade'; ctx.save();
+  if ((p.t != null || gateAlways) && ein < 1 && !EDIT) phReveal(ein, kin, false); else if (p.out != null && t > pe && !EDIT) { if (kout === 'none') { ctx.beginPath(); ctx.rect(0, 0, 0, 0); ctx.clip() } else phReveal(eout, kout, true) }
+  const lt = t - Math.max(ps0, sc.t0), pc = clamp(lt / Math.max(.8, sc.t1 - Math.max(ps0, sc.t0) + WD));
+  const mo = p.motion && p.motion !== 'auto' ? p.motion : ['in', 'out', 'left', 'right'][(sc.idx + (p.mi || 0)) % 4]; let z = 1.05, ox = 0;
+  const dl = p.drift != null ? p.drift : D.meta.drift != null ? D.meta.drift : 0, DA = EDIT ? 0 : [0, 3, 6, 10][dl] || 0;   // micro hand-held drift of the whole picture (px)
+  if (EDIT || mo === 'none') z = 1; else if (mo === 'in') z = lerp(1.04, 1.15, pc); else if (mo === 'out') z = lerp(1.15, 1.04, pc); else if (mo === 'left') { z = 1.1; ox = lerp(.03, -.03, pc) } else if (mo === 'right') { z = 1.1; ox = lerp(-.03, .03, pc) }
+  if (DA) z = Math.max(z, 1.02 + DA * .0015);
+  const jx = DA ? DA * (2 * jit(t, 1) + .6 * Math.sin(t * .9)) : 0, jy = DA ? DA * (2 * jit(t, 7) + .6 * Math.cos(t * .7)) : 0;
+  const fx = p.fx == null ? .5 : p.fx, fy = p.fy == null ? .5 : p.fy, k = Math.max(W / im.width, H / im.height) * z, dw = im.width * k, dh = im.height * k;
+  const x = clamp((W - dw) * fx + ox * W + jx, Math.min(0, W - dw), 0), y = clamp((H - dh) * fy + jy, Math.min(0, H - dh), 0);
+  ctx.drawImage(im, x, y, dw, dh); ctx.restore()
+}
 function posterBg(t, sc) {
-  const p = sc.photo || {}, im = p.src && IM[p.src], useCol = sc.bgc && (!im || sc.bgc.on), hasPic = im && !useCol;
+  const p = sc.photo || {}, im = p.src && IM[p.src], useCol = sc.bgc && (!im || sc.bgc.on), hasPic = im && !useCol, extra = (sc.photos || []).filter(q => q && q.src && IM[q.src]);
   ctx.fillStyle = '#14100e'; ctx.fillRect(-300, -300, W + 600, H + 600);
-  const gate = p.t != null || p.out != null, ps0 = p.t != null ? p.t : sc.t0, pe = p.out != null ? p.out : 1e9, ENT = .75, EXT = .55;
+  const gate = p.t != null || p.out != null;
   if (useCol) posterColor(t, sc);
   else if (!hasPic || gate) { if (sc.bgc) posterColor(t, sc); else { const g0 = ctx.createLinearGradient(0, 0, W, H); g0.addColorStop(0, '#2b2118'); g0.addColorStop(1, '#14100e'); ctx.fillStyle = g0; ctx.fillRect(-300, -300, W + 600, H + 600) } }   // gradient (or the colour background) lies beneath until the picture arrives
-  if (hasPic && (EDIT || (t >= ps0 - 1e-6 && t < pe + EXT))) {
-    const ein = (t - ps0) / ENT, eout = t > pe ? 1 - (t - pe) / EXT : 1, kin = p.en || 'fade', kout = p.ex || 'fade'; ctx.save();
-    if (p.t != null && ein < 1 && !EDIT) phReveal(ein, kin, false); else if (p.out != null && t > pe && !EDIT) { if (kout === 'none') { ctx.restore(); ctx.save(); ctx.beginPath(); ctx.rect(0, 0, 0, 0); ctx.clip() } else phReveal(eout, kout, true) }
-    const lt = t - Math.max(ps0, sc.t0), pc = clamp(lt / Math.max(.8, sc.t1 - Math.max(ps0, sc.t0) + WD));
-    const mo = p.motion && p.motion !== 'auto' ? p.motion : ['in', 'out', 'left', 'right'][sc.idx % 4]; let z = 1.05, ox = 0;
-    const dl = p.drift != null ? p.drift : D.meta.drift != null ? D.meta.drift : 0, DA = EDIT ? 0 : [0, 3, 6, 10][dl] || 0;   // micro hand-held drift of the whole picture (px)
-    if (EDIT || mo === 'none') z = 1; else if (mo === 'in') z = lerp(1.04, 1.15, pc); else if (mo === 'out') z = lerp(1.15, 1.04, pc); else if (mo === 'left') { z = 1.1; ox = lerp(.03, -.03, pc) } else if (mo === 'right') { z = 1.1; ox = lerp(-.03, .03, pc) }
-    if (DA) z = Math.max(z, 1.02 + DA * .0015);
-    const jx = DA ? DA * (2 * jit(t, 1) + .6 * Math.sin(t * .9)) : 0, jy = DA ? DA * (2 * jit(t, 7) + .6 * Math.cos(t * .7)) : 0;
-    const fx = p.fx == null ? .5 : p.fx, fy = p.fy == null ? .5 : p.fy, k = Math.max(W / im.width, H / im.height) * z, dw = im.width * k, dh = im.height * k;
-    const x = clamp((W - dw) * fx + ox * W + jx, Math.min(0, W - dw), 0), y = clamp((H - dh) * fy + jy, Math.min(0, H - dh), 0);
-    ctx.drawImage(im, x, y, dw, dh); ctx.restore()
-  }
+  if (hasPic) bgPic(p, t, sc, false);
+  if (!useCol) extra.slice().sort((a, b) => (a.t == null ? sc.t0 : a.t) - (b.t == null ? sc.t0 : b.t)).forEach((q, n) => { q.mi = q.mi == null ? n + 1 : q.mi; bgPic(q, t, sc, true) })   // later pictures arrive on top of the earlier ones
   let g = ctx.createLinearGradient(0, 0, 0, H * .3); g.addColorStop(0, 'rgba(10,6,2,.55)'); g.addColorStop(1, 'rgba(10,6,2,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H * .3);
   g = ctx.createLinearGradient(0, H * (V ? .62 : .6), 0, H); g.addColorStop(0, 'rgba(10,6,2,0)'); g.addColorStop(1, 'rgba(10,6,2,.72)'); ctx.fillStyle = g; ctx.fillRect(0, H * (V ? .62 : .6), W, H);
 }
@@ -622,7 +626,7 @@ window.frame = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 
 window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
 window.loadData = async (DD, only) => {   // shared by the renderer and the in-app preview (only = scene indices whose images are needed)
   D = DD; POSTER = D.meta.mode === 'poster'; VOX = POSTER || (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; VARY = Q.get('vary') !== '0' && D.meta.vary !== false; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
-  D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => { srcs.add(i.src); (i.fx || []).forEach(f => { if (f && f.type === 'bubble' && f.file) srcs.add(f.file) }) }); (s.bubbles || []).forEach(b => { if (b && b.img) srcs.add(b.img) }); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); if (s.photo && s.photo.src) srcs.add(s.photo.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
+  D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => { srcs.add(i.src); (i.fx || []).forEach(f => { if (f && f.type === 'bubble' && f.file) srcs.add(f.file) }) }); (s.bubbles || []).forEach(b => { if (b && b.img) srcs.add(b.img) }); (s.photos || []).forEach(q => { if (q && q.src) srcs.add(q.src) }); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); if (s.photo && s.photo.src) srcs.add(s.photo.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
   await Promise.all([...[...srcs].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
   if (window.FXL) await FXL.prepare([...srcs]);
   mkGrain(); mkPaper(); CH.length = 0; buildCaptions(); buildBeats(); seek(0); return true

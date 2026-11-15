@@ -17,13 +17,14 @@ SYSTEM = """تو کارگردان هنری یک ویدیوی توضیحی عمو
   خودِ موضوع و رویداد را نقاشی کن، نه گوینده را: هرگز راوی، گوینده، مجری یا «narrator» در تصویر نگذار و هیچ شخصیت یا چیزی از خودت اختراع نکن که در متن یا خلاصه‌ی داستان نیست. اگر جمله مقدمه‌ی گوینده است (مثل «امروز می‌خوام ... رو تعریف کنم»)، تصویر خودِ ماجرا یا نمادِ اصلی آن باشد.
   دوره‌ی زمانی را از خود داستان بردار: اگر ماجرا تاریخی است لباس و وسیله‌ها همان دوره باشند؛ هرگز «modern» یا «today» ننویس مگر خودِ آن صحنه واقعاً امروزی باشد (دوره‌ی هر صحنه را از خلاصه‌ی داستان و متن همان صحنه بگیر). هر prompt باید کاملاً مستقل و خودکفا باشد: ابزار تصویرسازی هیچ‌کدام از صحنه‌های دیگر را نمی‌بیند. پس هرگز ارجاع نده («the previous scene»، «same as before»، «the same soldier»، «again»، «continuing»). هر شخصیتی که در تصویر هست را هر بار از نو و کامل توصیف کن: «FIXED LOOK» او را در فهرست شخصیت‌ها (CAST) در خلاصه‌ی داستان کلمه‌به‌کلمه در همان prompt بنویس (چهره، مو، ریش، هیکل)، و لباس و سنش را مطابق دوره‌ی همان صحنه (از ستون CLOTHES/AGE BY PERIOD و متن صحنه) کامل با رنگ و جنس بنویس؛ لباسِ دوره‌ی دیگر را نیاور. هرگز نگو «از صحنه‌های قبل».
   در تصویر هیچ نوشته، حرف، عدد یا لوگو نباشد.
+- more: فقط اگر در همین صحنه (هنوز یک خط موضوعی) متن به چند تصویر کاملاً متفاوت نیاز دارد (مثلاً اول «مردم شهر اصرار می‌کنند» و بعد «او در طویله قایم شده»)، تصویرهای بعدی را اینجا بنویس، حداکثر ۲ تصویر: {"word":"کلمه‌ای دقیقاً از متن همین صحنه که از آن لحظه تصویر عوض می‌شود","prompt":"توصیف انگلیسی کامل، مستقل و خودکفا مثل prompt اصلی"}. prompt اصلی تصویر اول صحنه است. اگر صحنه یک تصویر بیشتر لازم ندارد more را خالی بگذار.
 - props: حداکثر ۲ شیء کوچک و مستقل که در متن همین صحنه نام برده شده و بهتر است جدا ساخته و روی عکس گذاشته شوند (غذا، ابزار، حیوان، شیء نمادین؛ نه آدم و نه مکان). اشیای props را در prompt صحنه نیاور. هر کدام: {"fa":"نام فارسی کوتاه و مشخص مثل غاز کبابی","word":"کلمه‌ای دقیقاً از متن همین صحنه که با گفتنش شیء ظاهر می‌شود","prompt":"توصیف انگلیسی کامل و پرجزئیات فقط همان شیء"}. توصیف prop باید غنی و جذاب باشد: جنس و رنگ‌ها، بافت، حالت و جزئیات ریز خود شیء (مثلاً غاز کبابی طلایی و براق روی یک سینی چوبی کوچک با کلم قرمز و سیب پخته)، نه فقط نام شیء؛ ولی هرگز میز، زمین، اتاق، دیوار یا پس‌زمینه را توصیف نکن و چند شیء جدا (مثل سکه و قلم و طومار) را در یک prop نیاور. اگر شیء کوچکی نیست props را خالی بگذار.
 - kicker: برچسب کوتاه انگلیسی با حروف بزرگ، حداکثر ۴ کلمه، مثل «ROME · 4TH CENTURY» یا «THE SHAH · 1970s». اگر چیز مشخصی ندارد خالی بگذار.
 - text: تیتر کوتاه فارسی محاوره‌ای (حداکثر ۷ کلمه) و کلمه‌ی مهم را بین دو ستاره بگذار، مثل: برگه‌ی *بدون خریدار*. اگر صحنه نیازی به تیتر ندارد خالی بگذار. تیتر تکرار کلمه‌به‌کلمه‌ی جمله نباشد؛ خلاصه یا نکته‌ی اصلی باشد.
 - number: فقط اگر سال یا عدد مهمی واقعاً در متن آمده (مثلاً ۱۹۷۲)، همان را بنویس؛ وگرنه خالی.
 - kw: حداکثر ۳ کلمه‌ی مهم همان صحنه برای هایلایت زیرنویس (دقیقاً از متن جمله‌ها).
 صحنه‌ی اول قلاب (hook) است: text آن یک سؤال یا جمله‌ی کنجکاوی‌برانگیز باشد.
-خروجی فقط JSON: {"scenes":[{"from":0,"to":1,"elements":[],"props":[],"prompt":"...","kicker":"...","text":"...","number":"","kw":[]}]}"""
+خروجی فقط JSON: {"scenes":[{"from":0,"to":1,"elements":[],"props":[],"more":[],"prompt":"...","kicker":"...","text":"...","number":"","kw":[]}]}"""
 
 
 MAX_SCENE = 14.0   # hard cap only; the scene boundaries follow the story line (the director decides)
@@ -154,7 +155,7 @@ def verify(got, S, brief):
     """second pass: every prompt must show what its own narration names; wrong ones are rewritten"""
     if not got: return got
     try:
-        user = 'خلاصه‌ی داستان:\n%s\n\nصحنه‌ها:\n%s' % (brief or '-', '\n'.join('%d | متن: %s | توصیف فعلی: %s | اشیای جدا (نباید در توصیف باشند): %s' % (k, ' '.join(S[j]['text'] for j in range(o['from'], min(o.get('to', o['from']), len(S) - 1) + 1)), str(o.get('prompt', ''))[:500], ', '.join(str(q.get('fa', '')) for q in (o.get('props') or []) if isinstance(q, dict)) or '-') for k, o in enumerate(got)))
+        user = 'خلاصه‌ی داستان:\n%s\n\nصحنه‌ها:\n%s' % (brief or '-', '\n'.join('%d | متن: %s | توصیف فعلی: %s | اشیای جدا (نباید در توصیف باشند): %s | تصویرهای بعدیِ همین صحنه (در توصیف فعلی نیایند؛ توصیف فعلی فقط تصویر اول است): %s' % (k, ' '.join(S[j]['text'] for j in range(o['from'], min(o.get('to', o['from']), len(S) - 1) + 1)), str(o.get('prompt', ''))[:500], ', '.join(str(q.get('fa', '')) for q in (o.get('props') or []) if isinstance(q, dict)) or '-', ' / '.join(str(m.get('prompt', ''))[:90] for m in (o.get('more') or []) if isinstance(m, dict)) or '-') for k, o in enumerate(got)))
         fix = [o for o in groqlib.objects(groqlib.chat(VERIFY, user, max_tokens=3000, json_mode=True, temperature=.2), 'prompt') if isinstance(o, dict)]
         by = {o.get('i'): o.get('prompt') for o in fix if isinstance(o.get('i'), int)}
         for k, o in enumerate(got):
@@ -199,6 +200,20 @@ def add_props(sc, props, Wd, lib):
     if need: sc['props'] = need
 
 
+def add_more(sc, r, Wd, S, n):
+    """extra background pictures inside one scene: each enters at its spoken word on top of the previous one"""
+    out = []; txt = ' '.join(S[j]['text'] for j in range(r['from'], min(r.get('to', r['from']), n - 1) + 1))
+    for q in (r.get('more') or [])[:2]:
+        if not isinstance(q, dict) or len(str(q.get('prompt') or '')) < 15: continue
+        wn = ds.norm(str(q.get('word') or '')); t = None
+        if wn:
+            for w in Wd:
+                if sc['t0'] + .3 <= w['t0'] < sc['t1'] and wn in ds.norm(w['w']): t = round(w['t0'] - .05, 3); break
+        if t is None: t = round(sc['t0'] + (sc['t1'] - sc['t0']) * (.5 if not out else .75), 3)
+        out.append({'prompt': selfcontain(re.sub(r'\s+', ' ', str(q['prompt'])).strip(), txt), 't': t, 'en': 'fade'})
+    if out: sc['photos'] = out
+
+
 def compile_scenes(ep, T, raw, req, short):
     S, Wd = T['sentences'], T['words']; n = len(S); total = round(T['voice_seconds'] + 1.2, 2)
     cov = cover(raw, n)
@@ -213,6 +228,7 @@ def compile_scenes(ep, T, raw, req, short):
         sc = {'t0': round(r['t0'], 3), 't1': round(r['t1'], 3), 'tpl': 'poster', 'theme': THEME[k % 8], 'wipe': (k * 5) % 6, 'items': [], 'text': text, 'number': number,
               'kicker': re.sub(r'\s+', ' ', str(r.get('kicker') or '')).strip()[:40], 'keyOn': bool(text), 'photo': {'prompt': selfcontain(re.sub(r'\s+', ' ', str(r.get('prompt') or '')).strip(), ' '.join(S[j]['text'] for j in range(r['from'], min(r.get('to', r['from']), n - 1) + 1)))}}
         add_props(sc, r.get('props'), Wd, lib)
+        add_more(sc, r, Wd, S, n)
         for kwd in (r.get('kw') or []): kwall.add(ds.norm(str(kwd)))
         scenes.append(sc)
     if T.get('lang', 'fa') == 'fa':
