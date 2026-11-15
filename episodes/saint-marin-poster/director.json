@@ -1,0 +1,605 @@
+[
+ {
+  "from": 0,
+  "to": 1,
+  "elements": [
+   "children carrying lanterns",
+   "Roman soldier on horseback",
+   "Germany in November"
+  ],
+  "props": [],
+  "prompt": "A festive night scene in a German street during November, with a group of children carrying glowing paper lanterns walking in a procession. They are following a large figure dressed as a Roman soldier in armor, riding a horse. The atmosphere is cold and autumnal, with warm light from the lanterns contrasting against the dark blue evening sky.",
+  "kicker": "ST. MARTIN'S DAY",
+  "text": "فانوس‌بازی *مارتین*",
+  "number": "",
+  "kw": [
+   "فانوس",
+   "سرباز",
+   "آلمان"
+  ]
+ },
+ {
+  "from": 2,
+  "to": 3,
+  "elements": [
+   "Roman soldier",
+   "cloak",
+   "burial ceremony",
+   "tax"
+  ],
+  "props": [
+   {
+    "fa": "شنل رومی",
+    "word": "شنل",
+    "prompt": "A heavy, textured red Roman military cloak draped over a wooden stand, showing deep folds and a slightly worn edge, with a metallic fibula pin visible at the shoulder."
+   },
+   {
+    "fa": "اسکناس مالیات",
+    "word": "مالیات",
+    "prompt": "A stack of ancient Roman bronze coins tied with a rough leather string, sitting on a small wooden table next to a quill and parchment scroll."
+   }
+  ],
+  "prompt": "A still life arrangement on a rustic wooden table featuring a Roman soldier's helmet and a folded red cloak. Next to them are a small oil lamp symbolizing a burial and a stack of bronze coins representing tax. The lighting is moody and dramatic, highlighting the textures of the metal, fabric, and wood.",
+  "kicker": "THE ELEMENTS",
+  "text": "مواد لازم *داستان*",
+  "number": "",
+  "kw": [
+   "سرباز",
+   "شنل",
+   "مالیات"
+  ]
+ },
+ {
+  "from": 4,
+  "to": 5,
+  "elements": [
+   "Martin as a baby",
+   "Hungary",
+   "Roman army officer father"
+  ],
+  "props": [],
+  "prompt": "A warm, indoor scene in a Roman-era house in Hungary, circa 316 AD. A Roman army officer in armor stands proudly beside a wooden cradle where a newborn baby, Martin, is sleeping. The room is lit by soft firelight, creating a cozy and historical atmosphere.",
+  "kicker": "HUNGARY · 316 AD",
+  "text": "تولد *مارتین*",
+  "number": "316",
+  "kw": [
+   "مارتین",
+   "مجارستان",
+   "سرباز"
+  ]
+ },
+ {
+  "from": 6,
+  "to": 7,
+  "prompt": "A Roman soldier in armor stands in a cold, snowy street in Amiens, looking down at a shivering beggar. The atmosphere is dark and wintry, highlighting the contrast between the warm soldier and the freezing man.",
+  "kicker": "AMIENS, 316 AD",
+  "text": "شب سرد *آمین* و گدای لرزان",
+  "number": "316",
+  "kw": [
+   "آمین",
+   "گدا",
+   "لرزان"
+  ]
+ },
+ {
+  "from": 8,
+  "to": 8,
+  "prompt": "The soldier uses his sword to cut his military cloak in half, holding one half out to the beggar. The scene captures the moment of charity with the divided fabric and the cold winter air.",
+  "kicker": "THE CLOAK",
+  "text": "نصف کردن *شنل* با شمشیر",
+  "number": "",
+  "kw": [
+   "شنل",
+   "شمشیر",
+   "نصف"
+  ]
+ },
+ {
+  "from": 9,
+  "to": 10,
+  "elements": [
+   "Martin cutting cloak",
+   "Roman soldier",
+   "beggar"
+  ],
+  "props": [
+   {
+    "fa": "شمشیر رومی",
+    "word": "شمشیر",
+    "prompt": "A short, curved Roman gladius sword with a bronze hilt and a sharp, gleaming steel blade, resting on a dark stone surface with a slight reflection."
+   }
+  ],
+  "prompt": "A close-up action shot of a young Roman soldier, Martin, using a short sword to cut his heavy red cloak in half. He is holding one half of the cloak out towards a freezing beggar. The focus is on the act of charity and the texture of the thick wool fabric being divided.",
+  "kicker": "THE CHARITY",
+  "text": "نصف *شنل*",
+  "number": "",
+  "kw": [
+   "شمشیر",
+   "نصف",
+   "شنل"
+  ]
+ },
+ {
+  "from": 11,
+  "to": 13,
+  "elements": [
+   "Jesus in dream",
+   "half cloak",
+   "Martin waking up"
+  ],
+  "props": [],
+  "prompt": "A surreal and ethereal dream sequence where a radiant figure of Jesus is seen wearing the glowing half of the red cloak. The background is a soft, heavenly light, contrasting with the dark, realistic foreground where Martin's eyes are open, reflecting the divine light. The mood is spiritual and awe-inspiring.",
+  "kicker": "THE VISION",
+  "text": "خواب *مسیح*",
+  "number": "",
+  "kw": [
+   "خواب",
+   "مسیح",
+   "شنل"
+  ]
+ },
+ {
+  "from": 14,
+  "to": 15,
+  "elements": [
+   "Martin",
+   "Bishop's mitre",
+   "Tours"
+  ],
+  "props": [],
+  "prompt": "A medium shot of Martin, the Roman soldier from previous scenes, now wearing a simple white bishop's robe and a tall, pointed mitre. He stands in a modest stone church interior, looking humble and slightly uncomfortable with his new religious authority. The lighting is soft and warm, highlighting the texture of the wool mitre and his serious expression.",
+  "kicker": "BISHOP OF TOURS",
+  "text": "*بیسپ* شد",
+  "number": "",
+  "kw": [
+   "بیسپ",
+   "رهبر مذهبی"
+  ]
+ },
+ {
+  "from": 16,
+  "to": 17,
+  "elements": [
+   "Martin",
+   "goose barn",
+   "geese"
+  ],
+  "props": [
+   {
+    "fa": "قاز",
+    "word": "قاز",
+    "prompt": "A detailed close-up of a white domestic goose with fluffy feathers, looking alert and slightly agitated, standing on straw bedding inside a dimly lit barn."
+   }
+  ],
+  "prompt": "A chaotic scene inside a rustic barn filled with straw. Martin, dressed in his bishop's robes, is crouching and trying to hide among a large flock of white geese. The geese are flapping their wings and honking, creating a sense of commotion and noise that reveals his hiding spot. The atmosphere is dusty and filled with flying feathers.",
+  "kicker": "THE GOOSE BARN",
+  "text": "قایم شد توی *طویله*",
+  "number": "",
+  "kw": [
+   "طویله قازها",
+   "شلوک"
+  ]
+ },
+ {
+  "from": 18,
+  "to": 19,
+  "elements": [
+   "Martin",
+   "goose",
+   "Tours"
+  ],
+  "props": [
+   {
+    "fa": "قاز کبابی",
+    "word": "کباب قاز",
+    "prompt": "A whole roasted goose with golden-brown, crispy skin, garnished with fresh thyme and lemon slices, served on a rustic wooden platter with a side of red cabbage, symbolizing the feast day tradition."
+   }
+  ],
+  "prompt": "A symbolic split composition. On the left, a faint, ethereal image of Martin as a saintly figure in a halo. On the right, a close-up of a roasted goose on a table, suggesting the culinary tradition linked to his story. The background is a blurred view of the city of Tours in autumn, connecting the saint to the local custom.",
+  "kicker": "SAINT MARTIN",
+  "text": "*قدیس* شد",
+  "number": "",
+  "kw": [
+   "قدیس",
+   "کباب قاز"
+  ]
+ },
+ {
+  "from": 20,
+  "to": 22,
+  "elements": [
+   "November 11",
+   "calendar"
+  ],
+  "props": [],
+  "prompt": "A close-up of an old, weathered wooden calendar or almanac page. The date 'November 11' is prominently displayed in the center, surrounded by autumn leaves and frost patterns. The focus is on the date itself, creating a sense of mystery about why this specific day is celebrated.",
+  "kicker": "NOVEMBER 11",
+  "text": "*۱۱ نوامبر*",
+  "number": "11",
+  "kw": [
+   "یازده نوامبر",
+   "نام گذاری"
+  ]
+ },
+ {
+  "from": 23,
+  "to": 25,
+  "elements": [
+   "Martin",
+   "Candes",
+   "Tours",
+   "autumn landscape"
+  ],
+  "props": [],
+  "prompt": "A wide landscape shot of a rural European road in late autumn, with bare trees and falling leaves. In the distance, a small medieval town (Candes) is visible, while the larger city of Tours can be seen on the horizon. The scene depicts the location of Martin's death, roughly 50 km away from his bishopric, under a grey, overcast sky.",
+  "kicker": "CANDES · 397 AD",
+  "text": "*مرگ* در کند",
+  "number": "397",
+  "kw": [
+   "هشت نوامبر",
+   "کند",
+   "تور"
+  ]
+ },
+ {
+  "from": 26,
+  "to": 27,
+  "elements": [
+   "people of Tours",
+   "people of Candes",
+   "coffin",
+   "night"
+  ],
+  "props": [
+   {
+    "fa": "تابوت",
+    "word": "پیکرش",
+    "prompt": "A simple, dark wooden coffin with iron hinges, resting on a cart in a dimly lit medieval street at night, illuminated by the flickering light of torches held by unseen figures."
+   }
+  ],
+  "prompt": "A dramatic night scene in a medieval street. A group of people from Tours are shown hurriedly moving a wooden coffin on a cart, looking over their shoulders nervously. The street is dark, lit only by distant torches, creating a tense atmosphere of a secret midnight heist of the saint's body.",
+  "kicker": "MIDNIGHT HEIST",
+  "text": "*دزدیدن* پیکر",
+  "number": "",
+  "kw": [
+   "دعوا",
+   "پیکرش",
+   "ورداشتن"
+  ]
+ },
+ {
+  "from": 28,
+  "to": 29,
+  "elements": [
+   "wooden coffin",
+   "river",
+   "boats",
+   "Tours city"
+  ],
+  "props": [],
+  "prompt": "A wide, atmospheric shot of a medieval river in late autumn with mist rising from the water. Several wooden boats are carrying a large wooden coffin towards the distant silhouette of the city of Tours. The lighting is dim and overcast, capturing the solemnity of a funeral procession by water.",
+  "kicker": "FUNERAL PROCESSION",
+  "text": "خاک‌سپاری در *تور*",
+  "number": "",
+  "kw": [
+   "تور",
+   "خاک سپاری"
+  ]
+ },
+ {
+  "from": 30,
+  "to": 31,
+  "elements": [
+   "St. Martin",
+   "grave",
+   "November 11th"
+  ],
+  "props": [],
+  "prompt": "A close-up, symbolic shot of a stone grave marker in a quiet, cold cemetery. The date 'November 11' is subtly implied by the bare, frost-covered branches surrounding the stone. The atmosphere is solemn and historical, emphasizing the significance of the burial date rather than the death date.",
+  "kicker": "NOVEMBER 11TH",
+  "text": "روز *خاک‌سپاری* مهم‌تره",
+  "number": "11",
+  "kw": [
+   "خاک سپاری",
+   "مهم"
+  ]
+ },
+ {
+  "from": 32,
+  "to": 33,
+  "elements": [
+   "Martin Luther",
+   "baby",
+   "baptism font",
+   "November 1483"
+  ],
+  "props": [],
+  "prompt": "A historical illustration-style scene of a baby being baptized in a stone font in a dimly lit church. The lighting is warm but subdued, focusing on the holy water and the infant. The scene captures the moment of naming, linking the saint's feast day to the reformer's birth.",
+  "kicker": "LUTHER · 1483",
+  "text": "تعمید *مارتین لوتر*",
+  "number": "1483",
+  "kw": [
+   "مارتین لوتر",
+   "تعمید"
+  ]
+ },
+ {
+  "from": 34,
+  "to": 36,
+  "elements": [
+   "goose",
+   "historical setting"
+  ],
+  "props": [
+   {
+    "fa": "غاز روستایی",
+    "word": "غاز",
+    "prompt": "A plump, white domestic goose standing on a wooden table, looking alert and healthy, with detailed feathers and a strong orange beak, isolated on a clean background for overlay."
+   }
+  ],
+  "prompt": "A medium shot of a plump goose standing in a rustic medieval kitchen or barn setting. The goose is the central subject, looking healthy and ready for the season. The background is slightly blurred, showing wooden beams and straw, establishing the historical context.",
+  "kicker": "THE GOOSE MYTH",
+  "text": "غاز ربطی به *مارتین* نداره",
+  "number": "",
+  "kw": [
+   "غاز",
+   "مارتین"
+  ]
+ },
+ {
+  "from": 37,
+  "to": 40,
+  "elements": [
+   "farmers",
+   "goose",
+   "tax payment",
+   "November"
+  ],
+  "props": [],
+  "prompt": "A wide shot of a medieval farmyard in late autumn. Farmers are seen handing over plump geese to a tax collector or lord. The scene depicts the end of the agricultural year and the payment of rent in kind, with bare trees and a grey sky in the background.",
+  "kicker": "TAX DAY",
+  "text": "مالیات با *غاز* پرداخت می‌شد",
+  "number": "",
+  "kw": [
+   "مالیات",
+   "غاز"
+  ]
+ },
+ {
+  "from": 41,
+  "to": 41,
+  "elements": [
+   "Lent",
+   "Christmas",
+   "40 days"
+  ],
+  "props": [],
+  "prompt": "A symbolic, artistic representation of a long path or timeline stretching into a snowy, festive distance. The path represents the 40 days of Lent leading to Christmas. The mood is cold and anticipatory, with the first snowflakes falling.",
+  "kicker": "START OF LENT",
+  "text": "شروع روزه *چهل‌روزه*",
+  "number": "40",
+  "kw": [
+   "چهل",
+   "کریسمس"
+  ]
+ },
+ {
+  "from": 42,
+  "to": 43,
+  "prompt": "A crowded medieval village square at night where people gather around large wooden tables laden with roasted geese. The atmosphere is festive and warm, contrasting with the cold winter air outside.",
+  "kicker": "FEAST NIGHT",
+  "text": "شبی که همه *غاز* خوردند",
+  "number": "",
+  "kw": [
+   "غاز",
+   "خوردن",
+   "شب"
+  ]
+ },
+ {
+  "from": 44,
+  "to": 44,
+  "prompt": "A rustic farm scene showing the end of the harvest season with fields cleared and baskets full of produce. A calendar or symbolic representation of the agricultural year is visible in the background.",
+  "kicker": "HARVEST END",
+  "text": "پایان *سال* کشاورزی",
+  "number": "",
+  "kw": [
+   "سال",
+   "کشاورزی",
+   "پایان"
+  ]
+ },
+ {
+  "from": 45,
+  "to": 45,
+  "prompt": "A close-up of a dinner table where a roasted goose is being carved, symbolizing the start of the Lenten fast. The lighting is dim and intimate, focusing on the food and the act of sharing.",
+  "kicker": "LENTEN FAST",
+  "text": "شروع *روزه* با غاز",
+  "number": "",
+  "kw": [
+   "روزه",
+   "غاز",
+   "شروع"
+  ]
+ },
+ {
+  "from": 46,
+  "to": 48,
+  "prompt": "A group of children stands in a cold, autumnal European street at night, holding glowing paper lanterns. They are dressed in warm winter clothing, looking up with curiosity and anticipation.",
+  "kicker": "LANTERN NIGHT",
+  "text": "چرا *فانوس* در دست بچه‌ها؟",
+  "number": "",
+  "kw": [
+   "فانوس",
+   "بچه ها",
+   "شب"
+  ]
+ },
+ {
+  "from": 49,
+  "to": 51,
+  "prompt": "A historical scene showing a funeral procession in a medieval town, with mourners carrying torches or lanterns behind a coffin. The atmosphere is somber and cold, contrasting with the festive modern tradition.",
+  "kicker": "HISTORICAL TRADITION",
+  "text": "سنت‌های *کهن* کنار هم",
+  "number": "",
+  "kw": [
+   "سنت",
+   "خاک سپاری",
+   "فانوس"
+  ]
+ },
+ {
+  "from": 52,
+  "to": 52,
+  "prompt": "A rustic farmyard at dusk with a large bonfire burning, symbolizing the end of the harvest season. Children in the foreground are crafting lanterns from straw and turnips, their faces illuminated by the warm firelight in a cold, autumnal setting.",
+  "kicker": "HARVEST TRADITIONS",
+  "text": "فانوس از *کاه* و شلغم",
+  "number": "",
+  "kw": [
+   "کاه",
+   "شلغم",
+   "فانوس"
+  ]
+ },
+ {
+  "from": 53,
+  "to": 54,
+  "prompt": "A historical depiction of an organized lantern procession in a German town square during the late 19th century. People hold lit candles and lanterns, moving in a line through the cobblestone streets under a dim, atmospheric sky.",
+  "kicker": "EARLY PROCESSIONS",
+  "text": "رجعه‌های اولیه در *راینلند*",
+  "number": "",
+  "kw": [
+   "رجعه",
+   "فانوس",
+   "راینلند"
+  ]
+ },
+ {
+  "from": 55,
+  "to": 55,
+  "prompt": "A vintage black-and-white style illustration of a crowd carrying lanterns in a European town, capturing the specific moment of the late 19th-century tradition. The scene emphasizes the collective movement and the glow of the lights against the darkening evening.",
+  "kicker": "LATE 19TH CENTURY",
+  "text": "دوران *۱۸۸۷* و ۱۸۹۰",
+  "number": "1887",
+  "kw": [
+   "سال",
+   "رجعه",
+   "سازمانی"
+  ]
+ },
+ {
+  "from": 56,
+  "to": 58,
+  "elements": [
+   "lantern procession",
+   "European streets"
+  ],
+  "props": [],
+  "prompt": "A wide shot of a lively lantern procession winding through narrow, cobblestone European streets in the late 19th century. The scene is illuminated by the warm glow of numerous handheld lanterns carried by villagers, contrasting with the cool, dark blue of the night sky. The atmosphere is festive and historical, capturing the spread of the custom around 1900.",
+  "kicker": "LATE 19TH CENTURY",
+  "text": "*فانوس* پخش شد",
+  "number": "1900",
+  "kw": [
+   "پخش",
+   "فانوس"
+  ]
+ },
+ {
+  "from": 59,
+  "to": 63,
+  "elements": [
+   "Roman soldier on horseback",
+   "children carrying lanterns",
+   "autumnal street"
+  ],
+  "props": [],
+  "prompt": "A dynamic street scene in a cold, autumnal European town at night. In the center, a figure dressed as a Roman soldier in armor and cloak rides a horse, leading the procession. Behind the horse, a group of children walk holding glowing lanterns, their faces illuminated. The camera follows the procession from a low angle, emphasizing the height of the horse and the festive yet chilly atmosphere.",
+  "kicker": "THE PROCESSION",
+  "text": "*سرباز* رومی جلو",
+  "number": "",
+  "kw": [
+   "سرباز",
+   "فانوس"
+  ]
+ },
+ {
+  "from": 64,
+  "to": 65,
+  "elements": [
+   "Roman soldier",
+   "beggar",
+   "cut cloak"
+  ],
+  "props": [],
+  "prompt": "A dramatic close-up of a Roman soldier on horseback in the middle of a street at night. He is using a sword to cut his heavy cloak in half. A humble beggar stands nearby, reaching out to receive the half of the cloak. The lighting is focused on the interaction, highlighting the texture of the wool and the metallic gleam of the sword against the dark background.",
+  "kicker": "THE ACT OF CHARITY",
+  "text": "*شنل* نصف شد",
+  "number": "",
+  "kw": [
+   "نصف",
+   "شنل"
+  ]
+ },
+ {
+  "from": 66,
+  "to": 69,
+  "elements": [
+   "large bonfire",
+   "children",
+   "lanterns"
+  ],
+  "props": [],
+  "prompt": "A warm, glowing large bonfire in a town square at night, with children standing around it holding their lanterns. The fire illuminates the children's faces and the surrounding cobblestones, creating a cozy and celebratory mood. The scene captures the end of the procession where the community gathers, emphasizing the warmth of the fire against the cold night air.",
+  "kicker": "THE CELEBRATION",
+  "text": "*آتش* بزرگ روشن",
+  "number": "",
+  "kw": [
+   "آتیش",
+   "بزرگ"
+  ]
+ },
+ {
+  "from": 70,
+  "to": 73,
+  "elements": [
+   "Roman soldier",
+   "beggar",
+   "goose dinner",
+   "Tours"
+  ],
+  "props": [
+   {
+    "fa": "غاز کبابی",
+    "word": "کباب غاز",
+    "prompt": "A golden, crispy roasted goose served on a rustic wooden platter, garnished with red cabbage, roasted apples, and fresh parsley, with gentle steam rising from the hot meat"
+   }
+  ],
+  "prompt": "A Roman soldier in armor cuts his cloak in half to give to a shivering beggar in a cold, autumnal European setting. The scene captures the act of charity with a focus on the interaction between the two figures. The background features a dimly lit, historical town square with muted colors.",
+  "kicker": "HISTORICAL COINCIDENCE",
+  "text": "کباب غاز *تصادف* تاریخی",
+  "number": "",
+  "kw": [
+   "سرباز",
+   "کباب غاز",
+   "تداخل"
+  ]
+ },
+ {
+  "from": 74,
+  "to": 74,
+  "elements": [
+   "children",
+   "lanterns",
+   "Roman soldier on horseback"
+  ],
+  "props": [],
+  "prompt": "A festive night scene in a cobblestone street where children carry glowing paper lanterns in a procession. They walk behind a large, costumed figure of a Roman soldier on horseback. The warm light from the lanterns illuminates the children's faces and the wet pavement, creating a celebratory atmosphere.",
+  "kicker": "LANTERN PROCESSION",
+  "text": "شما بگید بعدی کجاست؟",
+  "number": "",
+  "kw": [
+   "دست شماست",
+   "بعدی"
+  ]
+ }
+]
