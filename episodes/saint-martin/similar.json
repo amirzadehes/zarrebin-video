@@ -1,28 +1,37 @@
 {
  "roman-cloak-4c": [
-  "cloak",
-  "half-cloak"
+  "roman-helmet",
+  "roman-soldier"
  ],
  "roman-sword-4c": [
-  "sword"
+  "sword",
+  "roman-soldier"
  ],
  "roman-helmet-4c": [
-  "roman-helmet"
+  "roman-helmet",
+  "roman-soldier"
  ],
  "roman-shield-4c": [
-  "shield"
+  "shield",
+  "roman-soldier"
  ],
  "live-goose-19c": [
-  "goose"
+  "goose",
+  "roast-goose"
  ],
  "roasted-goose-19c": [
-  "roast-goose"
+  "roast-goose",
+  "goose"
  ],
  "lantern-19c": [
   "lantern"
  ],
+ "bonfire-19c": [
+  "fire"
+ ],
  "coin-denarius-4c": [
   "money-coins",
-  "banknotes"
+  "banknotes",
+  "cash"
  ]
 }
