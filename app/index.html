@@ -1201,6 +1201,7 @@ function renderAll(){ if(!keepEpDone){ keepEpDone=true; renderEp(); } renderGen(
 /* ---------- upload ---------- */
 /* آپلود فایل بزرگ (تا ۲۵ مگ): هر بار sha تازه می‌گیرد و با قطع اینترنت/خطای موقت تا ۵ بار دوباره می‌فرستد */
 async function putBig(path,b64,msg,say){
+  try{ await api('') }catch(e){ if(e.status===401||e.status===403||e.status===404) throw new Error('توکن نامعتبر یا منقضی است ('+e.message+'). در GitHub توکن تازه بساز و در تنظیمات اپ جایگزین کن.'); }
   for(let k=0;k<5;k++){
     let sha; try{ sha=(await api('/contents/'+path)).sha }catch(e){ if(e.status&&e.status!==404) throw e }
     try{ return await api('/contents/'+path,{method:'PUT',body:JSON.stringify({message:msg,content:b64,branch:'main',sha})}); }
