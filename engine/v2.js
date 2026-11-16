@@ -308,19 +308,21 @@ function boxBlur(a, w, h, r) {   // separable box blur of a float field (edge-cl
   for (let x = 0; x < w; x++) { let s = 0; for (let y = -r; y <= r; y++) s += t[Math.min(h - 1, Math.max(0, y)) * w + x]; for (let y = 0; y < h; y++) { a[y * w + x] = s / n; s += t[Math.min(h - 1, y + r + 1) * w + x] - t[Math.max(0, y - r) * w + x] } }
   return a
 }
-function depthLayers(src) {
-  if (DEP[src] !== undefined) return DEP[src]; DEP[src] = 0; const im = IM[src], fm = IM[flatPath(src)], dm = fm || IM[depthPath(src)]; if (!im || !dm || !('filter' in ctx)) return 0;
+function depthLayers(src, win) {   // win = [x0, y0, x1, y1]: the part of the picture that is on screen (fractions); the depth is stretched over THAT part, so a close-up crop still has full near-far range
+  const key = win ? src + '|' + win.map(v => v.toFixed(2)).join(',') : src; if (DEP[key] !== undefined) return DEP[key]; DEP[key] = 0; const im = IM[src], fm = IM[flatPath(src)], dm = fm || IM[depthPath(src)]; if (!im || !dm || !('filter' in ctx)) return 0;
   try {
     const m = Math.min(1, (LIVE ? 720 : 1100) / Math.max(im.width, im.height)), w = Math.max(2, Math.round(im.width * m)), h = Math.max(2, Math.round(im.height * m)), n = w * h;   // the live preview works smaller to stay smooth
     const mk = () => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c };
     const cI = mk(), gI = cI.getContext('2d', { willReadFrequently: true }); gI.drawImage(im, 0, 0, w, h); const P = gI.getImageData(0, 0, w, h).data;
     const cD = mk(), gD = cD.getContext('2d', { willReadFrequently: true }); gD.filter = 'blur(2px)'; gD.drawImage(dm, 0, 0, w, h); const Q = gD.getImageData(0, 0, w, h).data;
-    const hist = new Uint32Array(256); for (let i = 0; i < n; i++) hist[Q[i * 4]]++; let acc = 0, lo = 0, hi = 255; for (let v = 0; v < 256; v++) { acc += hist[v]; if (acc < n * .02) lo = v; if (acc < n * .98) hi = v + 1 }
+    const hist = new Uint32Array(256), wx0 = win ? Math.max(0, Math.floor(win[0] * w)) : 0, wx1 = win ? Math.min(w, Math.ceil(win[2] * w)) : w, wy0 = win ? Math.max(0, Math.floor(win[1] * h)) : 0, wy1 = win ? Math.min(h, Math.ceil(win[3] * h)) : h; let cnt = 0; for (let y = wy0; y < wy1; y++) for (let x = wx0; x < wx1; x++) { hist[Q[(y * w + x) * 4]]++; cnt++ } if (cnt < 16) { hist.fill(0); for (let i = 0; i < n; i++) hist[Q[i * 4]]++; cnt = n }
+    let acc = 0, lo = 0, hi = 255; for (let v = 0; v < 256; v++) { acc += hist[v]; if (acc < cnt * .02) lo = v; if (acc < cnt * .98) hi = v + 1 }
+    if (hi - lo < 70) { lo = Math.max(0, Math.min(lo, 255 - 70)); hi = lo + 70 }   // a nearly flat view is not blown up into big moves
     let d = new Float32Array(n); for (let i = 0; i < n; i++) d[i] = Math.max(0, Math.min(1, (Q[i * 4] - lo) / Math.max(1, hi - lo)));
     if (fm) d = boxBlur(d, w, h, Math.max(1, Math.round(Math.max(w, h) * .0015)));   // flat map: objects are rigid pieces and the ramp beside them is already in the map, so only a hairline of smoothing (a strong blur would bend the objects again)
     else { const r = Math.max(2, Math.round(Math.max(w, h) * .0065)); for (let k = 0; k < 3; k++) d = boxBlur(d, w, h, r) }   // soft depth edges: the picture bends gently where near meets far, it never tears into layers
     const out = mk(), og = out.getContext('2d'), id = og.createImageData(w, h);
-    return DEP[src] = { w, h, P, d, out, og, id }
+    return DEP[key] = { w, h, P, d, out, og, id }
   } catch (e) { return 0 }
 }
 function depthWarp(X, ox, oy, kq) {   // X: depthLayers result; every pixel moves by (ox, oy) * its depth (image px) and is scaled about the centre by 1 + kq * depth; returns the canvas
@@ -350,7 +352,7 @@ function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's 
   const jx = DA ? DA * (2 * jit(t, 1) + .6 * Math.sin(t * .9)) : 0, jy = DA ? DA * (2 * jit(t, 7) + .6 * Math.cos(t * .7)) : 0;
   const fx = p.fx == null ? .5 : p.fx, fy = p.fy == null ? .5 : p.fy, k = Math.max(W / im.width, H / im.height) * z, dw = im.width * k, dh = im.height * k;
   const x = clamp((W - dw) * fx + ox * W + jx, Math.min(0, W - dw), 0), y = clamp((H - dh) * fy + jy, Math.min(0, H - dh), 0);
-  const dpl = p.depth != null ? p.depth : D.meta.depth != null ? D.meta.depth : 2, PA = EDIT && !LIVE ? 0 : [0, .018, .03, .048][dpl] || 0, PX = PA ? depthLayers(p.src) : 0;
+  const dpl = p.depth != null ? p.depth : D.meta.depth != null ? D.meta.depth : 2, PA = EDIT && !LIVE ? 0 : [0, .03, .05, .075][dpl] || 0, PX = PA ? depthLayers(p.src, (() => { const kb = Math.max(W / im.width, H / im.height) * 1.1, vw = Math.min(1, W / (im.width * kb)), vh = Math.min(1, H / (im.height * kb)), x0 = (1 - vw) * fx, y0 = (1 - vh) * fy, m = .07; return [Math.max(0, x0 - m), Math.max(0, y0 - m), Math.min(1, x0 + vw + m), Math.min(1, y0 + vh + m)] })()) : 0;
   if (PX) {   // 3D: the depth bands slide by different amounts (the far band stays), a pure function of the scene progress
     const cx = EDIT ? Math.sin(TH * .8) : lerp(-1, 1, pc) * (sc.idx % 2 ? -1 : 1), cy = EDIT ? Math.sin(TH * .55) : Math.sin(pc * Math.PI * 2), amp = PA * W, ez = EDIT ? .5 * Math.sin(TH * .8 + 1) : (pc - .5) * (mo === 'out' ? -1 : 1);   // ez: dolly, the near bands grow (or shrink) faster than the far ones, with every kind of zoom
     const put = (g, ox0, oy0) => g.drawImage(depthWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez), ox0, oy0, dw, dh);
