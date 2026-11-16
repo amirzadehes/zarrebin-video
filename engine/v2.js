@@ -271,9 +271,9 @@ function phReveal(e, kind, sw) {   // clip/alpha/scale for the background pictur
   else if (kind === 'circle') ctx.arc(W / 2, H * .48, Math.hypot(W, H) * .56 * k, 0, TAU); else ctx.rect(-300, -300, W + 600, H + 600);
   ctx.clip(); if (kind === 'zoom') { ctx.translate(W / 2, H / 2); ctx.scale(1 + .3 * (1 - k), 1 + .3 * (1 - k)); ctx.translate(-W / 2, -H / 2) } if (kind === 'fade' || kind === 'zoom') ctx.globalAlpha *= k
 }
-/* 3D depth (parallax): scenes/<ep>/depth/<name>.png (made by tools/make_depth.py, white = near). The photo is warped as ONE continuous picture: every pixel slides by an amount that follows its own
-   (smoothed) depth, so near things move more than far things and there are no separate layers, no seams and no repaired background showing at the sides of objects. A pure function of t. */
-const DEP = {}, depthPath = s => s.replace(/(^|\/)bg\//, '$1depth/').replace(/\.[a-z0-9]+$/i, '.png');
+/* 3D depth (parallax): scenes/<ep>/depth/<name>.flat.png (made by tools/make_depth.py, white = near; every object is ONE flat depth, so it moves as a rigid piece and is never bent). The photo is warped as ONE continuous picture: every pixel slides by an amount that follows its own
+   depth, so near things move more than far things and there are no separate layers, no seams and no repaired background showing at the sides of objects. A pure function of t. */
+const DEP = {}, depthPath = s => s.replace(/(^|\/)bg\//, '$1depth/').replace(/\.[a-z0-9]+$/i, '.png'), flatPath = s => depthPath(s).replace(/\.png$/, '.flat.png');   // .flat.png: rigid regions + ramp (tools/make_depth.py); .png: raw model output, the fallback
 let HC = null;
 function boxBlur(a, w, h, r) {   // separable box blur of a float field (edge-clamped), r px
   if (r < 1) return a; const t = new Float32Array(a.length), n = 2 * r + 1;
@@ -282,7 +282,7 @@ function boxBlur(a, w, h, r) {   // separable box blur of a float field (edge-cl
   return a
 }
 function depthLayers(src) {
-  if (DEP[src] !== undefined) return DEP[src]; DEP[src] = 0; const im = IM[src], dm = IM[depthPath(src)]; if (!im || !dm || !('filter' in ctx)) return 0;
+  if (DEP[src] !== undefined) return DEP[src]; DEP[src] = 0; const im = IM[src], fm = IM[flatPath(src)], dm = fm || IM[depthPath(src)]; if (!im || !dm || !('filter' in ctx)) return 0;
   try {
     const m = Math.min(1, (LIVE ? 720 : 1100) / Math.max(im.width, im.height)), w = Math.max(2, Math.round(im.width * m)), h = Math.max(2, Math.round(im.height * m)), n = w * h;   // the live preview works smaller to stay smooth
     const mk = () => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c };
@@ -290,7 +290,8 @@ function depthLayers(src) {
     const cD = mk(), gD = cD.getContext('2d', { willReadFrequently: true }); gD.filter = 'blur(2px)'; gD.drawImage(dm, 0, 0, w, h); const Q = gD.getImageData(0, 0, w, h).data;
     const hist = new Uint32Array(256); for (let i = 0; i < n; i++) hist[Q[i * 4]]++; let acc = 0, lo = 0, hi = 255; for (let v = 0; v < 256; v++) { acc += hist[v]; if (acc < n * .02) lo = v; if (acc < n * .98) hi = v + 1 }
     let d = new Float32Array(n); for (let i = 0; i < n; i++) d[i] = Math.max(0, Math.min(1, (Q[i * 4] - lo) / Math.max(1, hi - lo)));
-    const r = Math.max(2, Math.round(Math.max(w, h) * .0065)); for (let k = 0; k < 3; k++) d = boxBlur(d, w, h, r);   // soft depth edges: the picture bends gently where near meets far, it never tears into layers
+    if (fm) d = boxBlur(d, w, h, Math.max(1, Math.round(Math.max(w, h) * .0015)));   // flat map: objects are rigid pieces and the ramp beside them is already in the map, so only a hairline of smoothing (a strong blur would bend the objects again)
+    else { const r = Math.max(2, Math.round(Math.max(w, h) * .0065)); for (let k = 0; k < 3; k++) d = boxBlur(d, w, h, r) }   // soft depth edges: the picture bends gently where near meets far, it never tears into layers
     const out = mk(), og = out.getContext('2d'), id = og.createImageData(w, h);
     return DEP[src] = { w, h, P, d, out, og, id }
   } catch (e) { return 0 }
@@ -683,7 +684,7 @@ window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0
 window.loadData = async (DD, only) => {   // shared by the renderer and the in-app preview (only = scene indices whose images are needed)
   D = DD; POSTER = D.meta.mode === 'poster'; VOX = POSTER || (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; VARY = Q.get('vary') !== '0' && D.meta.vary !== false; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
   D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => { srcs.add(i.src); (i.fx || []).forEach(f => { if (f && f.type === 'bubble' && f.file) srcs.add(f.file) }) }); (s.bubbles || []).forEach(b => { if (b && b.img) srcs.add(b.img) }); (s.photos || []).forEach(q => { if (q && q.src) srcs.add(q.src) }); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); if (s.photo && s.photo.src) srcs.add(s.photo.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
-  const dsrc = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; [s.photo, ...(s.photos || [])].forEach(q => { if (q && q.src && /(^|\/)bg\//.test(q.src)) dsrc.add(depthPath(q.src)) }) }); for (const k in DEP) delete DEP[k];
+  const dsrc = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; [s.photo, ...(s.photos || [])].forEach(q => { if (q && q.src && /(^|\/)bg\//.test(q.src)) { dsrc.add(flatPath(q.src)); dsrc.add(depthPath(q.src)) } }) }); for (const k in DEP) delete DEP[k];
   await Promise.all([...[...srcs].map(loadImg), ...[...dsrc].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
   if (window.FXL) await FXL.prepare([...srcs]);
   mkGrain(); mkPaper(); CH.length = 0; buildCaptions(); buildBeats(); seek(0); return true

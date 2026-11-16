@@ -20,7 +20,7 @@ jobs:
       - name: Install (CPU torch + transformers)
         run: |
           pip install torch --index-url https://download.pytorch.org/whl/cpu
-          pip install transformers pillow numpy
+          pip install transformers pillow numpy scipy scikit-image
       - name: Make depth maps
         run: |
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
