@@ -29,13 +29,15 @@ function sfxPoll(){ const t=au.currentTime; if(t>=sfxLast){ sfxFire(sfxLast,t+.0
 const mu=new Audio(); mu.loop=true; let muVol=100; const muSet=()=>{ mu.volume=Math.max(0,Math.min(1,muVol/100*.28)) };
 function musStart(){ if(!ALL||!mu.src) return; muSet(); try{ if(isFinite(mu.duration)&&mu.duration>0) mu.currentTime=au.currentTime%mu.duration; else mu.currentTime=0 }catch(e){} mu.play().catch(()=>{}) }
 let paused=false; const pstate=()=>{ try{ parent.postMessage({type:'state',playing,paused},'*') }catch(e){} };
-function stop(){ try{ mu.pause() }catch(e){} paused=false; playing=false; cancelAnimationFrame(raf); au.pause(); clearInterval(sfxTm); sfxStop() }
+let liveRaf=0, liveT=0; function liveStop(){ cancelAnimationFrame(liveRaf); liveRaf=0; try{ setLive(false) }catch(e){} }
+function liveLoop(ts){ if(mode!=='edit'||playing){ liveRaf=0; return } if(ts-liveT>=40){ liveT=ts; try{ seek(editT()) }catch(e){} } liveRaf=requestAnimationFrame(liveLoop) }   // the haze / depth effects keep moving while the owner arranges pictures
+function stop(){ liveStop(); try{ mu.pause() }catch(e){} paused=false; playing=false; cancelAnimationFrame(raf); au.pause(); clearInterval(sfxTm); sfxStop() }
 function pausePlay(){ if(!playing) return; try{ mu.pause() }catch(e){} playing=false; paused=true; cancelAnimationFrame(raf); au.pause(); clearInterval(sfxTm); sfxStop(); msg.hidden=false; msg.textContent='⏸ متوقف شد'; pstate() }
 async function resumePlay(){ if(!paused) return; paused=false; sfxLast=au.currentTime-.001; try{ await au.play() }catch(e){ paused=true; return } msg.hidden=true; playing=true; sfxTm=setInterval(sfxPoll,25); pstate(); musStart(); tick() }
 function tick(){ if(!playing) return; const t=au.currentTime; sfxPoll(); if(t>=sc.t1-.02||au.ended){ seek(Math.max(sc.t1-.03,sc.t0)); playing=false; au.pause(); try{ mu.pause() }catch(e){} msg.hidden=false; msg.textContent='▶ دوباره پخش'; pstate(); return } seek(t); raf=requestAnimationFrame(tick) }
 async function play(){ stop(); setEdit(null); mode='play'; sfxBuild(); sfxLast=sc.t0-.001; au.currentTime=sc.t0; seek(sc.t0); try{ await au.play() }catch(e){ msg.hidden=false; msg.textContent='▶ برای پخش لمس کن'; return } msg.hidden=true; playing=true; sfxTm=setInterval(sfxPoll,25); pstate(); musStart(); tick() }
 const editT=()=>Math.min(sc.t1-.2, D.meta.total-.6);
-function edit(sel){ window.__sel=sel; stop(); pstate(); mode='edit'; msg.hidden=true; setEdit({sel}); seek(editT()) }
+function edit(sel){ window.__sel=sel; stop(); pstate(); mode='edit'; msg.hidden=true; setEdit({sel}); setLive(true); seek(editT()); if(!liveRaf) liveRaf=requestAnimationFrame(liveLoop) }
 cvs.addEventListener('pointerdown',e=>{ if(mode!=='edit'){ if(playing) pausePlay(); else if(paused) resumePlay(); else if(sc) play(); return }
   if(e.isPrimary){ ptrs.clear(); pinch0=null }   // a new first finger always starts a fresh gesture (a lost pointerup must never block selecting)
   cvs.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY}); const p=toC(e); 

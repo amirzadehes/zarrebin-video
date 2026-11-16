@@ -137,7 +137,7 @@ function ent(kind, t, t0, tx, ty) {
   return { x, y, s, r, a: ramp(t, t0, t0 + .06), bl }
 }
 let EDIT = null; const REC = {};   // EDIT = {sel} while the owner arranges items in the in-app preview; REC = where each item of the current scene is drawn
-window.setEdit = v => { EDIT = v }; window.getRec = () => REC;
+let LIVE = false; window.setEdit = v => { EDIT = v }; window.setLive = v => { LIVE = !!v };   // LIVE: the in-app layout editor keeps animating the picture effects (haze, depth) from the wall clock window.getRec = () => REC;
 function drawItem(it, t, tx, ty, size, k, rx = 0) {
   const L = it.lay && it.lay[FMT], idx = CUR ? CUR.items.indexOf(it) : -1;   // owner's manual placement for this format (fractions of the canvas)
   let rot0 = rx; if (L) { tx += (L.dx || 0) * W; ty += (L.dy || 0) * H; size *= (L.sz || 1); rot0 += L.rot || 0 }
@@ -271,6 +271,30 @@ function phReveal(e, kind, sw) {   // clip/alpha/scale for the background pictur
   else if (kind === 'circle') ctx.arc(W / 2, H * .48, Math.hypot(W, H) * .56 * k, 0, TAU); else ctx.rect(-300, -300, W + 600, H + 600);
   ctx.clip(); if (kind === 'zoom') { ctx.translate(W / 2, H / 2); ctx.scale(1 + .3 * (1 - k), 1 + .3 * (1 - k)); ctx.translate(-W / 2, -H / 2) } if (kind === 'fade' || kind === 'zoom') ctx.globalAlpha *= k
 }
+/* 3D depth (parallax): scenes/<ep>/depth/<name>.png (made by tools/make_depth.py, white = near) splits the photo into 5 depth bands. The far band is repaired behind the nearer
+   ones (blurred colours of the far pixels), the bands slide by different amounts while the camera glides, so near things move more than far things. A pure function of t. */
+const DEP = {}, depthPath = s => s.replace(/(^|\/)bg\//, '$1depth/').replace(/\.[a-z0-9]+$/i, '.png');
+let HC = null;
+function depthLayers(src) {
+  if (DEP[src] !== undefined) return DEP[src]; DEP[src] = 0; const im = IM[src], dm = IM[depthPath(src)]; if (!im || !dm || !('filter' in ctx)) return 0;
+  try {
+    const m = Math.min(1, 1100 / Math.max(im.width, im.height)), w = Math.max(2, Math.round(im.width * m)), h = Math.max(2, Math.round(im.height * m)), N = 5, F = .045, n = w * h;
+    const mk = () => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c };
+    const cI = mk(), gI = cI.getContext('2d', { willReadFrequently: true }); gI.drawImage(im, 0, 0, w, h); const P = gI.getImageData(0, 0, w, h).data;
+    const cD = mk(), gD = cD.getContext('2d', { willReadFrequently: true }); gD.filter = 'blur(2px)'; gD.drawImage(dm, 0, 0, w, h); const Q = gD.getImageData(0, 0, w, h).data;
+    const hist = new Uint32Array(256); for (let i = 0; i < n; i++) hist[Q[i * 4]]++; let acc = 0, lo = 0, hi = 255; for (let v = 0; v < 256; v++) { acc += hist[v]; if (acc < n * .02) lo = v; if (acc < n * .98) hi = v + 1 }
+    const d = new Float32Array(n), sm = (x, a, b) => { x = (x - a) / (b - a); x = x < 0 ? 0 : x > 1 ? 1 : x; return x * x * (3 - 2 * x) };
+    for (let i = 0; i < n; i++) d[i] = Math.max(0, Math.min(1, (Q[i * 4] - lo) / Math.max(1, hi - lo)));
+    const layer = (alphaOf, col) => { const c = mk(), g = c.getContext('2d'), id = g.createImageData(w, h), o = id.data; for (let i = 0; i < n; i++) { o[i * 4] = P[i * 4]; o[i * 4 + 1] = P[i * 4 + 1]; o[i * 4 + 2] = P[i * 4 + 2]; o[i * 4 + 3] = 255 * alphaOf(d[i]) } g.putImageData(id, 0, 0); return c };
+    const band = j => v => (j === 0 ? 1 : sm(v, j / N - F, j / N + F)) * (j === N - 1 ? 1 : 1 - sm(v, (j + 1) / N - F, (j + 1) / N + F));
+    const L = []; for (let j = 0; j < N; j++) L.push(layer(band(j)));
+    const src2 = layer(v => 1 - sm(v, 2 / N - F, 2 / N + F));   // far side of the picture: what the base is repaired from
+    let r = 0, g0 = 0, b = 0; for (let i = 0; i < n; i += 37) { r += P[i * 4]; g0 += P[i * 4 + 1]; b += P[i * 4 + 2] } const k37 = Math.ceil(n / 37);
+    const base = mk(), gb = base.getContext('2d'); gb.fillStyle = `rgb(${r / k37 | 0},${g0 / k37 | 0},${b / k37 | 0})`; gb.fillRect(0, 0, w, h);
+    const sc2 = Math.max(w, h) / 1100; [[cI, 150], [src2, 110], [src2, 30]].forEach(([c, bl]) => { gb.filter = `blur(${Math.round(bl * sc2)}px)`; gb.drawImage(c, 0, 0) }); gb.filter = 'none'; gb.drawImage(L[0], 0, 0);
+    L[0] = base; return DEP[src] = { L, N }
+  } catch (e) { return 0 }
+}
 function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's own, or an extra one from sc.photos) with its start/end by word and entry/exit effects
   const im = p.src && IM[p.src]; if (!im) return; const gate = gateAlways || p.t != null || p.out != null, ps0 = p.t != null ? p.t : sc.t0, pe = p.out != null ? p.out : 1e9, ENT = .75, EXT = .55;
   if (!(EDIT || (t >= ps0 - 1e-6 && t < pe + EXT))) return;
@@ -278,24 +302,30 @@ function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's 
   if ((p.t != null || gateAlways) && ein < 1 && !EDIT) phReveal(ein, kin, false); else if (p.out != null && t > pe && !EDIT) { if (kout === 'none') { ctx.beginPath(); ctx.rect(0, 0, 0, 0); ctx.clip() } else phReveal(eout, kout, true) }
   const lt = t - Math.max(ps0, sc.t0), pc = clamp(lt / Math.max(.8, sc.t1 - Math.max(ps0, sc.t0) + WD));
   const mo = p.motion && p.motion !== 'auto' ? p.motion : ['in', 'out', 'left', 'right'][(sc.idx + (p.mi || 0)) % 4]; let z = 1.05, ox = 0;
-  const dl = p.drift != null ? p.drift : D.meta.drift != null ? D.meta.drift : 0, DA = EDIT ? 0 : [0, 3, 6, 10][dl] || 0;   // micro hand-held drift of the whole picture (px)
-  const hl = p.haze != null ? p.haze : D.meta.haze != null ? D.meta.haze : 1, HA = EDIT ? 0 : [0, 1.4, 2.6, 4.2][hl] * (W / 1080) || 0;   // heat haze: the picture shimmers like the air above a fire (0 off, 1 low, 2 medium, 3 high; default low)
+  const dl = p.drift != null ? p.drift : D.meta.drift != null ? D.meta.drift : 0, DA = EDIT ? 0 : [0, 3, 6, 10][dl] || 0, TH = EDIT ? performance.now() / 1000 : t;   // micro hand-held drift of the whole picture (px)
+  const hl = p.haze != null ? p.haze : D.meta.haze != null ? D.meta.haze : 1, HA = EDIT && !LIVE ? 0 : [0, 1.4, 2.6, 4.2][hl] * (W / 1080) || 0;   // heat haze: the picture shimmers like the air above a fire (0 off, 1 low, 2 medium, 3 high; default low)
   if (EDIT || mo === 'none') z = 1; else if (mo === 'in') z = lerp(1.04, 1.15, pc); else if (mo === 'out') z = lerp(1.15, 1.04, pc); else if (mo === 'left') { z = 1.1; ox = lerp(.03, -.03, pc) } else if (mo === 'right') { z = 1.1; ox = lerp(-.03, .03, pc) }
   if (DA) z = Math.max(z, 1.02 + DA * .0015);
   if (HA) z = Math.max(z, 1 + (2 * HA + 3) / W);   // a little extra size so the shimmer never shows an edge
   const jx = DA ? DA * (2 * jit(t, 1) + .6 * Math.sin(t * .9)) : 0, jy = DA ? DA * (2 * jit(t, 7) + .6 * Math.cos(t * .7)) : 0;
   const fx = p.fx == null ? .5 : p.fx, fy = p.fy == null ? .5 : p.fy, k = Math.max(W / im.width, H / im.height) * z, dw = im.width * k, dh = im.height * k;
   const x = clamp((W - dw) * fx + ox * W + jx, Math.min(0, W - dw), 0), y = clamp((H - dh) * fy + jy, Math.min(0, H - dh), 0);
-  if (HA) hazeDraw(im, x, y, dw, dh, k, t, HA); else ctx.drawImage(im, x, y, dw, dh);
+  const dpl = p.depth != null ? p.depth : D.meta.depth != null ? D.meta.depth : 2, PA = EDIT && !LIVE ? 0 : [0, .012, .022, .036][dpl] || 0, PX = PA ? depthLayers(p.src) : 0;
+  if (PX) {   // 3D: the depth bands slide by different amounts (the far band stays), a pure function of the scene progress
+    const cx = EDIT ? Math.sin(TH * .8) : lerp(-1, 1, pc) * (sc.idx % 2 ? -1 : 1), cy = EDIT ? Math.sin(TH * .55) : Math.sin(pc * Math.PI * 2), amp = PA * W;
+    const put = (g, ox0, oy0) => PX.L.forEach((c, j) => { const f = j / (PX.N - 1); g.drawImage(c, ox0 + amp * f * cx, oy0 + amp * .3 * f * cy, dw, dh) });
+    if (HA) { const cw = Math.ceil(Math.max(dw, W * 1.3)), ch = Math.ceil(Math.max(dh, H * 1.3)); if (!HC || HC.width < cw || HC.height < ch) { HC = document.createElement('canvas'); HC.width = cw; HC.height = ch } const hg = HC.getContext('2d'); hg.clearRect(0, 0, HC.width, HC.height); put(hg, 0, 0); hazeDraw(HC, x, y, dw, dh, 1, TH, HA, dw, dh) }
+    else put(ctx, x, y)
+  } else if (HA) hazeDraw(im, x, y, dw, dh, k, TH, HA); else ctx.drawImage(im, x, y, dw, dh);
   ctx.restore()
 }
 /* heat haze: the picture is drawn in thin horizontal strips, each pushed sideways by a slow wave that travels upward (a pure function of t, so parallel chunks stay frame-exact) */
-function hazeDraw(im, x, y, dw, dh, k, t, A) {
-  const S = 4, lo = Math.min(0, W - dw), y0 = Math.max(0, y), y1 = Math.min(H, y + dh);
+function hazeDraw(im, x, y, dw, dh, k, t, A, sw, shh) {
+  sw = sw || im.width; shh = shh || im.height; const S = 4, lo = Math.min(0, W - dw), y0 = Math.max(0, y), y1 = Math.min(H, y + dh);
   for (let yd = y0; yd < y1; yd += S) {
     const amp = A * (.7 + .3 * Math.sin(yd * .004 + t * .5)), dx = amp * (.62 * Math.sin(yd * .046 - t * 2.3) + .38 * Math.sin(yd * .0115 - t * 1.25 + 1.7));
-    const xs = Math.max(lo, Math.min(0, x + dx)), sy = (yd - y) / k, sh = Math.min((S + 1) / k, im.height - sy);
-    if (sh > 0) ctx.drawImage(im, 0, sy, im.width, sh, xs, yd, dw, Math.min(S + 1, y1 - yd + 1))
+    const xs = Math.max(lo, Math.min(0, x + dx)), sy = (yd - y) / k, sh = Math.min((S + 1) / k, shh - sy);
+    if (sh > 0) ctx.drawImage(im, 0, sy, sw, sh, xs, yd, dw, Math.min(S + 1, y1 - yd + 1))
   }
 }
 function posterBg(t, sc) {
@@ -639,7 +669,8 @@ window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0
 window.loadData = async (DD, only) => {   // shared by the renderer and the in-app preview (only = scene indices whose images are needed)
   D = DD; POSTER = D.meta.mode === 'poster'; VOX = POSTER || (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; VARY = Q.get('vary') !== '0' && D.meta.vary !== false; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
   D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => { srcs.add(i.src); (i.fx || []).forEach(f => { if (f && f.type === 'bubble' && f.file) srcs.add(f.file) }) }); (s.bubbles || []).forEach(b => { if (b && b.img) srcs.add(b.img) }); (s.photos || []).forEach(q => { if (q && q.src) srcs.add(q.src) }); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); if (s.photo && s.photo.src) srcs.add(s.photo.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
-  await Promise.all([...[...srcs].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
+  const dsrc = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; [s.photo, ...(s.photos || [])].forEach(q => { if (q && q.src && /(^|\/)bg\//.test(q.src)) dsrc.add(depthPath(q.src)) }) }); for (const k in DEP) delete DEP[k];
+  await Promise.all([...[...srcs].map(loadImg), ...[...dsrc].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
   if (window.FXL) await FXL.prepare([...srcs]);
   mkGrain(); mkPaper(); CH.length = 0; buildCaptions(); buildBeats(); seek(0); return true
 };
