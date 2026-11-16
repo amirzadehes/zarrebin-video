@@ -57,7 +57,6 @@ A test style next to the classic one: **one full-bleed picture per scene** (made
 3. "آماده‌سازی صحنه‌ها" with the box "با رونویسی و برش‌های ذخیره‌شده بساز" writes `request.json` with `use_transcript` + `use_cuts` (and `own_voice`). `narrate_tts.py` then keeps the saved transcript instead of transcribing again; `direct_poster.py` forces a break at every cut (`units(..., force)`), skips the AI grouping and `split_long`, and `direct_fixed` asks the AI for one scene per owner group (from/to are forced to the owner's boundaries, so a misbehaving answer cannot move them). A cut whose word number no longer fits the transcript follows its time. Without `use_cuts`, or without a `cuts.json`, everything works as before.
 
 ### Poster mode: motion switches (whole episode, set in the review panel "🎛 حرکت و لرزش تصویرها")
-- `meta.haze` 0-3 (default 1 = low): **heat haze** on the full-bleed background photo, like the air above a fire. The picture is drawn in 4 px strips pushed sideways by a slow upward-travelling wave (`bgPic` / `hazeDraw` in `engine/v2.js`, a pure function of time). A scene's own `photo.haze` wins over the meta value. Off in the in-app layout editor.
 - `meta.shake: false` switches the short camera shake that happens when a library picture enters the scene (the `kick` of every scene follows it; the zoom punch is separate, `meta.punch: false`). Missing / true = on.
 - `meta.drift` 0-3 (default 0): the micro hand-held drift of the photo (a scene's `photo.drift` wins).
 

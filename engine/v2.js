@@ -137,7 +137,7 @@ function ent(kind, t, t0, tx, ty) {
   return { x, y, s, r, a: ramp(t, t0, t0 + .06), bl }
 }
 let EDIT = null; const REC = {};   // EDIT = {sel} while the owner arranges items in the in-app preview; REC = where each item of the current scene is drawn
-let LIVE = false; window.setEdit = v => { EDIT = v }; window.setLive = v => { LIVE = !!v };   // LIVE: the in-app layout editor keeps animating the picture effects (haze, depth) from the wall clock window.getRec = () => REC;
+let LIVE = false; window.setEdit = v => { EDIT = v }; window.setLive = v => { LIVE = !!v };   // LIVE: the in-app layout editor keeps animating the picture effects (depth) from the wall clock window.getRec = () => REC;
 function drawItem(it, t, tx, ty, size, k, rx = 0) {
   const L = it.lay && it.lay[FMT], idx = CUR ? CUR.items.indexOf(it) : -1;   // owner's manual placement for this format (fractions of the canvas)
   let rot0 = rx; if (L) { tx += (L.dx || 0) * W; ty += (L.dy || 0) * H; size *= (L.sz || 1); rot0 += L.rot || 0 }
@@ -274,7 +274,6 @@ function phReveal(e, kind, sw) {   // clip/alpha/scale for the background pictur
 /* 3D depth (parallax): scenes/<ep>/depth/<name>.flat.png (made by tools/make_depth.py, white = near; every object is ONE flat depth, so it moves as a rigid piece and is never bent). The photo is warped as ONE continuous picture: every pixel slides by an amount that follows its own
    depth, so near things move more than far things and there are no separate layers, no seams and no repaired background showing at the sides of objects. A pure function of t. */
 const DEP = {}, depthPath = s => s.replace(/(^|\/)bg\//, '$1depth/').replace(/\.[a-z0-9]+$/i, '.png'), flatPath = s => depthPath(s).replace(/\.png$/, '.flat.png');   // .flat.png: rigid regions + ramp (tools/make_depth.py); .png: raw model output, the fallback
-let HC = null;
 function boxBlur(a, w, h, r) {   // separable box blur of a float field (edge-clamped), r px
   if (r < 1) return a; const t = new Float32Array(a.length), n = 2 * r + 1;
   for (let y = 0; y < h; y++) { const o = y * w; let s = 0; for (let x = -r; x <= r; x++) s += a[o + Math.min(w - 1, Math.max(0, x))]; for (let x = 0; x < w; x++) { t[o + x] = s / n; s += a[o + Math.min(w - 1, x + r + 1)] - a[o + Math.max(0, x - r)] } }
@@ -318,10 +317,8 @@ function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's 
   const lt = t - Math.max(ps0, sc.t0), pc = clamp(lt / Math.max(.8, sc.t1 - Math.max(ps0, sc.t0) + WD));
   const mo = p.motion && p.motion !== 'auto' ? p.motion : ['in', 'out', 'left', 'right'][(sc.idx + (p.mi || 0)) % 4]; let z = 1.05, ox = 0;
   const dl = p.drift != null ? p.drift : D.meta.drift != null ? D.meta.drift : 0, DA = EDIT ? 0 : [0, 3, 6, 10][dl] || 0, TH = EDIT ? performance.now() / 1000 : t;   // micro hand-held drift of the whole picture (px)
-  const hl = p.haze != null ? p.haze : D.meta.haze != null ? D.meta.haze : 1, HA = EDIT && !LIVE ? 0 : [0, 1.4, 2.6, 4.2][hl] * (W / 1080) || 0;   // heat haze: the picture shimmers like the air above a fire (0 off, 1 low, 2 medium, 3 high; default low)
   if (EDIT || mo === 'none') z = 1; else if (mo === 'in') z = lerp(1.04, 1.15, pc); else if (mo === 'out') z = lerp(1.15, 1.04, pc); else if (mo === 'left') { z = 1.1; ox = lerp(.03, -.03, pc) } else if (mo === 'right') { z = 1.1; ox = lerp(-.03, .03, pc) }
   if (DA) z = Math.max(z, 1.02 + DA * .0015);
-  if (HA) z = Math.max(z, 1 + (2 * HA + 3) / W);   // a little extra size so the shimmer never shows an edge
   const jx = DA ? DA * (2 * jit(t, 1) + .6 * Math.sin(t * .9)) : 0, jy = DA ? DA * (2 * jit(t, 7) + .6 * Math.cos(t * .7)) : 0;
   const fx = p.fx == null ? .5 : p.fx, fy = p.fy == null ? .5 : p.fy, k = Math.max(W / im.width, H / im.height) * z, dw = im.width * k, dh = im.height * k;
   const x = clamp((W - dw) * fx + ox * W + jx, Math.min(0, W - dw), 0), y = clamp((H - dh) * fy + jy, Math.min(0, H - dh), 0);
@@ -329,19 +326,9 @@ function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's 
   if (PX) {   // 3D: the depth bands slide by different amounts (the far band stays), a pure function of the scene progress
     const cx = EDIT ? Math.sin(TH * .8) : lerp(-1, 1, pc) * (sc.idx % 2 ? -1 : 1), cy = EDIT ? Math.sin(TH * .55) : Math.sin(pc * Math.PI * 2), amp = PA * W, ez = EDIT ? .5 * Math.sin(TH * .8 + 1) : (pc - .5) * (mo === 'out' ? -1 : 1);   // ez: dolly, the near bands grow (or shrink) faster than the far ones, with every kind of zoom
     const put = (g, ox0, oy0) => g.drawImage(depthWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez), ox0, oy0, dw, dh);
-    if (HA) { const cw = Math.ceil(Math.max(dw, W * 1.3)), ch = Math.ceil(Math.max(dh, H * 1.3)); if (!HC || HC.width < cw || HC.height < ch) { HC = document.createElement('canvas'); HC.width = cw; HC.height = ch } const hg = HC.getContext('2d'); hg.clearRect(0, 0, HC.width, HC.height); put(hg, 0, 0); hazeDraw(HC, x, y, dw, dh, 1, TH, HA, dw, dh) }
-    else put(ctx, x, y)
-  } else if (HA) hazeDraw(im, x, y, dw, dh, k, TH, HA); else ctx.drawImage(im, x, y, dw, dh);
+    put(ctx, x, y)
+  } else ctx.drawImage(im, x, y, dw, dh);
   ctx.restore()
-}
-/* heat haze: the picture is drawn in thin horizontal strips, each pushed sideways by a slow wave that travels upward (a pure function of t, so parallel chunks stay frame-exact) */
-function hazeDraw(im, x, y, dw, dh, k, t, A, sw, shh) {
-  sw = sw || im.width; shh = shh || im.height; const S = 4, lo = Math.min(0, W - dw), y0 = Math.max(0, y), y1 = Math.min(H, y + dh);
-  for (let yd = y0; yd < y1; yd += S) {
-    const amp = A * (.7 + .3 * Math.sin(yd * .004 + t * .5)), dx = amp * (.62 * Math.sin(yd * .046 - t * 2.3) + .38 * Math.sin(yd * .0115 - t * 1.25 + 1.7));
-    const xs = Math.max(lo, Math.min(0, x + dx)), sy = (yd - y) / k, sh = Math.min((S + 1) / k, shh - sy);
-    if (sh > 0) ctx.drawImage(im, 0, sy, sw, sh, xs, yd, dw, Math.min(S + 1, y1 - yd + 1))
-  }
 }
 function posterBg(t, sc) {
   const p = sc.photo || {}, im = p.src && IM[p.src], useCol = sc.bgc && (!im || sc.bgc.on), hasPic = im && !useCol, extra = (sc.photos || []).filter(q => q && q.src && IM[q.src]);
