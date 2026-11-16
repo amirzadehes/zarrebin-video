@@ -143,9 +143,9 @@ function drawItem(it, t, tx, ty, size, k, rx = 0) {
   let rot0 = rx; if (L) { tx += (L.dx || 0) * W; ty += (L.dy || 0) * H; size *= (L.sz || 1); rot0 += L.rot || 0 }
   const e = ent(it.en, t, it.t, tx, ty); if (!e) return;
   if (!EDIT && it.out != null && it.out > it.t + .3 && t >= it.out) { const q = ramp(t, it.out, it.out + .4); if (q >= 1) return; const g = eoq(q); e.a *= 1 - g; e.s *= 1 - .3 * g; e.y -= size * .12 * g }   // owner-set exit time: the picture shrinks and fades away
-  const fl = EDIT ? 0 : Math.sin(t * 2 + k * 1.7), fr = EDIT ? 0 : Math.sin(t * 1.6 + k) * .03;
+  const fl = 0, fr = 0;   // library pictures stay exactly where the owner put them: no floating, no wobble
   if (idx >= 0) REC[idx] = { x: tx, y: ty, size };
-  const sq = EDIT ? 0 : bump(t, it.t, .11);   // squash & stretch when the object lands
+  const sq = 0;   // no squash & stretch either
   const fk = window.FXL && FXL.itemKey ? FXL.itemKey(CUR, idx, it) : null, srcK = fk && IM[fk] ? fk : it.src;   // framed item: the picture is drawn inside its frame
   const baseDraw = o => drawImg(srcK, e.x, e.y + fl * size * .02, size * e.s * (o ? o.k : 1), e.r + fr + rot0 + (o ? o.dr : 0), e.a, e.bl ? `blur(${e.bl}px)` : 'none', 1 + sq, 1 - sq);
   if (!EDIT && it.fx && it.fx.length && window.FXL) FXL.item(it, t, { x: e.x, y: e.y + fl * size * .02, size: size * e.s, rot: e.r + fr + rot0, a: e.a, sx: 1 + sq, sy: 1 - sq }, baseDraw);   // image-bound effects follow the picture's own motion
@@ -271,29 +271,43 @@ function phReveal(e, kind, sw) {   // clip/alpha/scale for the background pictur
   else if (kind === 'circle') ctx.arc(W / 2, H * .48, Math.hypot(W, H) * .56 * k, 0, TAU); else ctx.rect(-300, -300, W + 600, H + 600);
   ctx.clip(); if (kind === 'zoom') { ctx.translate(W / 2, H / 2); ctx.scale(1 + .3 * (1 - k), 1 + .3 * (1 - k)); ctx.translate(-W / 2, -H / 2) } if (kind === 'fade' || kind === 'zoom') ctx.globalAlpha *= k
 }
-/* 3D depth (parallax): scenes/<ep>/depth/<name>.png (made by tools/make_depth.py, white = near) splits the photo into 5 depth bands. The far band is repaired behind the nearer
-   ones (blurred colours of the far pixels), the bands slide by different amounts while the camera glides, so near things move more than far things. A pure function of t. */
+/* 3D depth (parallax): scenes/<ep>/depth/<name>.png (made by tools/make_depth.py, white = near). The photo is warped as ONE continuous picture: every pixel slides by an amount that follows its own
+   (smoothed) depth, so near things move more than far things and there are no separate layers, no seams and no repaired background showing at the sides of objects. A pure function of t. */
 const DEP = {}, depthPath = s => s.replace(/(^|\/)bg\//, '$1depth/').replace(/\.[a-z0-9]+$/i, '.png');
 let HC = null;
+function boxBlur(a, w, h, r) {   // separable box blur of a float field (edge-clamped), r px
+  if (r < 1) return a; const t = new Float32Array(a.length), n = 2 * r + 1;
+  for (let y = 0; y < h; y++) { const o = y * w; let s = 0; for (let x = -r; x <= r; x++) s += a[o + Math.min(w - 1, Math.max(0, x))]; for (let x = 0; x < w; x++) { t[o + x] = s / n; s += a[o + Math.min(w - 1, x + r + 1)] - a[o + Math.max(0, x - r)] } }
+  for (let x = 0; x < w; x++) { let s = 0; for (let y = -r; y <= r; y++) s += t[Math.min(h - 1, Math.max(0, y)) * w + x]; for (let y = 0; y < h; y++) { a[y * w + x] = s / n; s += t[Math.min(h - 1, y + r + 1) * w + x] - t[Math.max(0, y - r) * w + x] } }
+  return a
+}
 function depthLayers(src) {
   if (DEP[src] !== undefined) return DEP[src]; DEP[src] = 0; const im = IM[src], dm = IM[depthPath(src)]; if (!im || !dm || !('filter' in ctx)) return 0;
   try {
-    const m = Math.min(1, 1100 / Math.max(im.width, im.height)), w = Math.max(2, Math.round(im.width * m)), h = Math.max(2, Math.round(im.height * m)), N = 5, F = .045, n = w * h;
+    const m = Math.min(1, (LIVE ? 720 : 1100) / Math.max(im.width, im.height)), w = Math.max(2, Math.round(im.width * m)), h = Math.max(2, Math.round(im.height * m)), n = w * h;   // the live preview works smaller to stay smooth
     const mk = () => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c };
     const cI = mk(), gI = cI.getContext('2d', { willReadFrequently: true }); gI.drawImage(im, 0, 0, w, h); const P = gI.getImageData(0, 0, w, h).data;
     const cD = mk(), gD = cD.getContext('2d', { willReadFrequently: true }); gD.filter = 'blur(2px)'; gD.drawImage(dm, 0, 0, w, h); const Q = gD.getImageData(0, 0, w, h).data;
     const hist = new Uint32Array(256); for (let i = 0; i < n; i++) hist[Q[i * 4]]++; let acc = 0, lo = 0, hi = 255; for (let v = 0; v < 256; v++) { acc += hist[v]; if (acc < n * .02) lo = v; if (acc < n * .98) hi = v + 1 }
-    const d = new Float32Array(n), sm = (x, a, b) => { x = (x - a) / (b - a); x = x < 0 ? 0 : x > 1 ? 1 : x; return x * x * (3 - 2 * x) };
-    for (let i = 0; i < n; i++) d[i] = Math.max(0, Math.min(1, (Q[i * 4] - lo) / Math.max(1, hi - lo)));
-    const layer = (alphaOf, col) => { const c = mk(), g = c.getContext('2d'), id = g.createImageData(w, h), o = id.data; for (let i = 0; i < n; i++) { o[i * 4] = P[i * 4]; o[i * 4 + 1] = P[i * 4 + 1]; o[i * 4 + 2] = P[i * 4 + 2]; o[i * 4 + 3] = 255 * alphaOf(d[i]) } g.putImageData(id, 0, 0); return c };
-    const band = j => v => (j === 0 ? 1 : sm(v, j / N - F, j / N + F)) * (j === N - 1 ? 1 : 1 - sm(v, (j + 1) / N - F, (j + 1) / N + F));
-    const L = []; for (let j = 0; j < N; j++) L.push(layer(band(j)));
-    const src2 = layer(v => 1 - sm(v, 2 / N - F, 2 / N + F));   // far side of the picture: what the base is repaired from
-    let r = 0, g0 = 0, b = 0; for (let i = 0; i < n; i += 37) { r += P[i * 4]; g0 += P[i * 4 + 1]; b += P[i * 4 + 2] } const k37 = Math.ceil(n / 37);
-    const base = mk(), gb = base.getContext('2d'); gb.fillStyle = `rgb(${r / k37 | 0},${g0 / k37 | 0},${b / k37 | 0})`; gb.fillRect(0, 0, w, h);
-    const sc2 = Math.max(w, h) / 1100; [[cI, 150], [src2, 110], [src2, 30]].forEach(([c, bl]) => { gb.filter = `blur(${Math.round(bl * sc2)}px)`; gb.drawImage(c, 0, 0) }); gb.filter = 'none'; gb.drawImage(L[0], 0, 0);
-    L[0] = base; return DEP[src] = { L, N }
+    let d = new Float32Array(n); for (let i = 0; i < n; i++) d[i] = Math.max(0, Math.min(1, (Q[i * 4] - lo) / Math.max(1, hi - lo)));
+    const r = Math.max(2, Math.round(Math.max(w, h) * .0065)); for (let k = 0; k < 3; k++) d = boxBlur(d, w, h, r);   // soft depth edges: the picture bends gently where near meets far, it never tears into layers
+    const out = mk(), og = out.getContext('2d'), id = og.createImageData(w, h);
+    return DEP[src] = { w, h, P, d, out, og, id }
   } catch (e) { return 0 }
+}
+function depthWarp(X, ox, oy, kq) {   // X: depthLayers result; every pixel moves by (ox, oy) * its depth (image px) and is scaled about the centre by 1 + kq * depth; returns the canvas
+  const { w, h, P, d } = X, O = X.id.data, cx = w / 2, cy = h / 2, mx = w - 1, my = h - 1, n = w * h; let i = 0;
+  const D = X.D || (X.D = new Float32Array(n)); D.fill(-1);   // depth as it lies AFTER the move (forward splat, nearest wins), so a small near object is found where it has moved to
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const f = d[y * w + x], q = 1 + kq * f, X1 = Math.round(cx + (x - cx) * q + ox * f), Y1 = Math.round(cy + (y - cy) * q + oy * f); if (X1 >= 0 && X1 < w && Y1 >= 0 && Y1 < h) { const j = Y1 * w + X1; if (f > D[j]) D[j] = f } }
+  for (let y = 0; y < h; y++) { const o = y * w; let x = 0; while (x < w) { if (D[o + x] >= 0) { x++; continue } let e = x; while (e < w && D[o + e] < 0) e++; const a = x > 0 ? D[o + x - 1] : -1, b = e < w ? D[o + e] : -1, v = a < 0 ? (b < 0 ? 0 : b) : b < 0 ? a : Math.min(a, b); for (let k = x; k < e; k++) D[o + k] = v; x = e } }   // holes (uncovered background) take the farther of their two neighbours
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++, i++) {
+    const f = D[i], q = 1 + kq * f; let sx = cx + (x - cx - ox * f) / q, sy = cy + (y - cy - oy * f) / q;
+    sx = sx < 0 ? 0 : sx > mx ? mx : sx; sy = sy < 0 ? 0 : sy > my ? my : sy;
+    const x0 = sx | 0, y0 = sy | 0, x1 = x0 < mx ? x0 + 1 : x0, y1 = y0 < my ? y0 + 1 : y0, fx = sx - x0, fy = sy - y0, a = (1 - fx) * (1 - fy), b = fx * (1 - fy), c = (1 - fx) * fy, e = fx * fy,
+      p00 = (y0 * w + x0) * 4, p10 = (y0 * w + x1) * 4, p01 = (y1 * w + x0) * 4, p11 = (y1 * w + x1) * 4, o = i * 4;
+    O[o] = P[p00] * a + P[p10] * b + P[p01] * c + P[p11] * e; O[o + 1] = P[p00 + 1] * a + P[p10 + 1] * b + P[p01 + 1] * c + P[p11 + 1] * e; O[o + 2] = P[p00 + 2] * a + P[p10 + 2] * b + P[p01 + 2] * c + P[p11 + 2] * e; O[o + 3] = 255
+  }
+  X.og.putImageData(X.id, 0, 0); return X.out
 }
 function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's own, or an extra one from sc.photos) with its start/end by word and entry/exit effects
   const im = p.src && IM[p.src]; if (!im) return; const gate = gateAlways || p.t != null || p.out != null, ps0 = p.t != null ? p.t : sc.t0, pe = p.out != null ? p.out : 1e9, ENT = .75, EXT = .55;
@@ -313,7 +327,7 @@ function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's 
   const dpl = p.depth != null ? p.depth : D.meta.depth != null ? D.meta.depth : 2, PA = EDIT && !LIVE ? 0 : [0, .018, .03, .048][dpl] || 0, PX = PA ? depthLayers(p.src) : 0;
   if (PX) {   // 3D: the depth bands slide by different amounts (the far band stays), a pure function of the scene progress
     const cx = EDIT ? Math.sin(TH * .8) : lerp(-1, 1, pc) * (sc.idx % 2 ? -1 : 1), cy = EDIT ? Math.sin(TH * .55) : Math.sin(pc * Math.PI * 2), amp = PA * W, ez = EDIT ? .5 * Math.sin(TH * .8 + 1) : (pc - .5) * (mo === 'out' ? -1 : 1);   // ez: dolly, the near bands grow (or shrink) faster than the far ones, with every kind of zoom
-    const put = (g, ox0, oy0) => PX.L.forEach((c, j) => { const f = j / (PX.N - 1), q = 1 + PA * 1.8 * f * ez; g.drawImage(c, ox0 + amp * f * cx - dw * (q - 1) / 2, oy0 + amp * .3 * f * cy - dh * (q - 1) / 2, dw * q, dh * q) });
+    const put = (g, ox0, oy0) => g.drawImage(depthWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez), ox0, oy0, dw, dh);
     if (HA) { const cw = Math.ceil(Math.max(dw, W * 1.3)), ch = Math.ceil(Math.max(dh, H * 1.3)); if (!HC || HC.width < cw || HC.height < ch) { HC = document.createElement('canvas'); HC.width = cw; HC.height = ch } const hg = HC.getContext('2d'); hg.clearRect(0, 0, HC.width, HC.height); put(hg, 0, 0); hazeDraw(HC, x, y, dw, dh, 1, TH, HA, dw, dh) }
     else put(ctx, x, y)
   } else if (HA) hazeDraw(im, x, y, dw, dh, k, TH, HA); else ctx.drawImage(im, x, y, dw, dh);
@@ -341,8 +355,8 @@ function posterBg(t, sc) {
 }
 TPL.poster = function (t, sc) {   // library pictures only (the owner places them with the usual tools); the layers of text are drawn by posterText
   const its = sc.items || []; if (!its.length) return; const cx = W / 2, cy = H * (V ? .55 : .54), hs = B * (V ? .62 : .56);
-  const vo = heroVary(sc, its); drawItem(its[0], t, cx + vo.dx, cy, hs * (1 + .012 * Math.sin(t * 3)), 0, vo.rot);
-  const n = its.length - 1; its.slice(1).forEach((it, i) => { const a = -Math.PI / 2 + (i + .5) * TAU / Math.max(n, 1) + (n === 1 ? 2.2 : 0) + t * .05, rx = V ? W * .34 : W * .3, ry = V ? H * .17 : H * .24; drawItem(it, t, cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, B * .3, i + 1) })
+  const vo = heroVary(sc, its); drawItem(its[0], t, cx + vo.dx, cy, hs, 0, vo.rot);
+  const n = its.length - 1; its.slice(1).forEach((it, i) => { const a = -Math.PI / 2 + (i + .5) * TAU / Math.max(n, 1) + (n === 1 ? 2.2 : 0), rx = V ? W * .34 : W * .3, ry = V ? H * .17 : H * .24; drawItem(it, t, cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, B * .3, i + 1) })
 };
 function posterChips(text, size, maxW, cx, top, t, t0, align, o) {   // o: {col: text colour, bg: chip colour or 'none', hl: highlight chip colour}
   o = o || {}; const ga = ctx.globalAlpha, tcol = o.col || '#fff', hcol = o.hl || ORG, chip = o.bg === 'none' ? null : (o.bg || 'rgba(14,10,7,.84)');   // headline on dark chips, *word* on an orange chip; returns its height
