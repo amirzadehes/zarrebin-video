@@ -1,0 +1,744 @@
+[
+ {
+  "from": 0,
+  "to": 1,
+  "elements": [
+   "Roman soldier",
+   "children",
+   "Germany",
+   "handmade lanterns",
+   "roast goose"
+  ],
+  "props": [
+   {
+    "fa": "فانوس",
+    "word": "فانوس",
+    "prompt": "A handmade lantern made of a thin paper or parchment shell, filled with dry straw and a small glowing orange flame inside, casting warm light; the lantern has a simple wooden handle and a faint smoky glow around its edges."
+   },
+   {
+    "fa": "کباب قاز",
+    "word": "کباب قاز",
+    "prompt": "A roasted goose, golden-brown and crisp on the skin, perched on a small wooden platter; the meat glistens with rendered fat, with a few herbs and a hint of rosemary visible, steam rising gently."
+   }
+  ],
+  "more": [],
+  "prompt": "A bustling German street in late November, early winter, children in thick winter coats march, a Roman soldier in a red‑brown cloak walks among them, cold sky above, eye‑level view of the festive scene",
+  "kicker": "GERMANY · LATE NOVEMBER",
+  "text": "آیا می‌دونی *سنت* مارتین چیه؟",
+  "number": "",
+  "kw": [
+   "Roman soldier",
+   "lanterns",
+   "roast goose"
+  ]
+ },
+ {
+  "from": 2,
+  "to": 3,
+  "elements": [
+   "Roman soldier",
+   "cloak",
+   "burial ceremony",
+   "tax"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A Roman soldier in a red‑brown military cloak stands solemnly beside a simple burial mound, muted battlefield background, low afternoon light, close‑up view of the soldier",
+  "kicker": "ROME · 4TH CENTURY",
+  "text": "مواد لازم برای *داستان*",
+  "number": "",
+  "kw": [
+   "Roman soldier",
+   "cloak",
+   "burial"
+  ]
+ },
+ {
+  "from": 4,
+  "to": 4,
+  "elements": [
+   "boy",
+   "Hungary",
+   "year 316"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A young boy named Martin stands in a modest 4th‑century Hungarian village, simple rustic clothing, wooden houses and a misty river behind him, early morning light, the year 316 subtly etched on a stone wall",
+  "kicker": "HUNGARY · 316 AD",
+  "text": "پسر *مارتین* در…",
+  "number": "316",
+  "kw": [
+   "boy",
+   "Hungary",
+   "316"
+  ]
+ },
+ {
+  "from": 5,
+  "to": 5,
+  "elements": [
+   "father",
+   "Roman army officer"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A stern Roman army officer in polished armor stands beside his son Martin, a small child in simple clothes, interior of a Roman barracks with banners, midday sun streaming through a window",
+  "kicker": "ROME · 4TH CENTURY",
+  "text": "پدرش *افسر* رومی بود",
+  "number": "",
+  "kw": [
+   "father",
+   "Roman officer"
+  ]
+ },
+ {
+  "from": 6,
+  "to": 7,
+  "elements": [
+   "cold night",
+   "France",
+   "city",
+   "beggar"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A cold night in a medieval French town, narrow cobblestone streets illuminated by faint torchlight, a shivering beggar with ragged clothes huddles against a stone wall, bleak and silent atmosphere",
+  "kicker": "FRANCE · MIDDLE AGES",
+  "text": "شب *سرد* و گدا",
+  "number": "",
+  "kw": [
+   "cold night",
+   "France",
+   "beggar"
+  ]
+ },
+ {
+  "from": 8,
+  "to": 9,
+  "elements": [
+   "Roman soldier",
+   "cloak",
+   "sword"
+  ],
+  "props": [
+   {
+    "fa": "شنل",
+    "word": "شنل",
+    "prompt": "A Roman military cloak, deep red-brown fabric, heavy wool with a rough texture, draped over shoulders and partially open to reveal the inner lining."
+   },
+   {
+    "fa": "شمشیر",
+    "word": "شمشیر",
+    "prompt": "A Roman sword with a straight double-edged steel blade, a polished silver hilt wrapped in leather, and a bronze pommel; the blade reflects light with a sharp, gleaming edge."
+   }
+  ],
+  "more": [],
+  "prompt": "A Roman soldier with a neutral expression stands in dim campfire light, close focus on his face",
+  "kicker": "ROME · 4TH CENTURY",
+  "text": "شنل *نصف* شد",
+  "number": "",
+  "kw": [
+   "Roman soldier",
+   "cloak",
+   "sword"
+  ]
+ },
+ {
+  "from": 10,
+  "to": 10,
+  "elements": [
+   "Christ",
+   "cloak"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A solemn, dimly lit medieval bedroom at night. Christ, bathed in gentle golden light, reaches out to cover half of a simple red‑brown Roman cloak draped over a wooden chair, creating a contrast between divine glow and darkness.",
+  "kicker": "",
+  "text": "آیا مارتین *خواب*‌اش را دید؟",
+  "number": "",
+  "kw": [
+   "Christ",
+   "cloak"
+  ]
+ },
+ {
+  "from": 11,
+  "to": 12,
+  "elements": [
+   "Martin",
+   "Roman soldier uniform",
+   "baptism water"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "Early morning in a stone courtyard. Martin (FIXED LOOK: male, unspecified skin tone, unspecified facial features, average height and build, neutral expression) stands barefoot, wearing a simple brown monk's habit, as a priest pours clear baptismal water over his head, symbolizing his departure from the Roman army.",
+  "kicker": "",
+  "text": "از ارتش *تعمید* شد",
+  "number": "",
+  "kw": [
+   "Martin",
+   "baptism"
+  ]
+ },
+ {
+  "from": 13,
+  "to": 17,
+  "elements": [
+   "people of Tours",
+   "city of Tours",
+   "Western France",
+   "religious leader"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A bustling 4th‑century street in Tours, Western France, under a cold early‑winter sky. Townsfolk in simple woolen garments gather, looking up toward a figure on a modest platform. Martin (FIXED LOOK) wears a modest monk's brown habit with his half‑cloak draped over his shoulders, being proclaimed as the city's religious leader.",
+  "kicker": "",
+  "text": "مردم *تور* خواستند او رهبر شود",
+  "number": "",
+  "kw": [
+   "Tours",
+   "religious leader"
+  ]
+ },
+ {
+  "from": 18,
+  "to": 18,
+  "elements": [
+   "Martin",
+   "goose coop",
+   "people"
+  ],
+  "props": [
+   {
+    "fa": "قاز کبابی",
+    "word": "قاز",
+    "prompt": "A succulent roasted goose, golden-brown and glossy skin, crisped to a deep amber hue. The bird is whole, its plump body resting on a simple wooden platter, with a few rosemary sprigs and sliced oranges scattered around for garnish. Steam rises gently, revealing a faint caramelized glaze that catches the warm lantern light, highlighting the rich texture of the meat and the crisped feathers at the edges."
+   }
+  ],
+  "more": [],
+  "prompt": "A quiet, dimly lit goose coop at night, with wooden beams and scattered straw. Martin (FIXED LOOK) in a simple monk's habit hides behind a stack of hay, his face showing modesty as silhouetted villagers peer over his shoulder with curious expressions.",
+  "kicker": "",
+  "text": "مارتین در *قازها* پنهان شد",
+  "number": "",
+  "kw": [
+   "Martin",
+   "goose coop"
+  ]
+ },
+ {
+  "from": 19,
+  "to": 20,
+  "elements": [
+   "goose",
+   "villagers",
+   "city leader"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A lively medieval town square after a feast. Villagers in winter coats cheer around a large roasted goose on a wooden table, steam rising. A banner reading 'Saint Martin' hangs in the background, and festive lanterns cast warm orange light over the celebration.",
+  "kicker": "",
+  "text": "قازها *شلوق* کردند، مارتین رهبر شد",
+  "number": "",
+  "kw": [
+   "goose",
+   "villagers"
+  ]
+ },
+ {
+  "from": 21,
+  "to": 21,
+  "elements": [
+   "roasted goose",
+   "night sky"
+  ],
+  "props": [
+   {
+    "fa": "قاز کبابی",
+    "word": "قاز",
+    "prompt": "A whole roasted goose, its skin caramelized to a shiny mahogany color, resting on a rustic wooden board. The bird is garnished with a few sprigs of fresh thyme and slices of orange, with a drizzle of glossy, amber sauce pooling around its legs. The meat looks tender and juicy, steam curling upward, illuminated by the soft glow of nearby lanterns."
+   }
+  ],
+  "more": [],
+  "prompt": "A night scene of a medieval outdoor feast under a starry sky. A golden, crispy roasted goose rests on a rustic wooden platter, steam curling upward, illuminated by flickering lanterns, suggesting a mysterious link to the saintly legend.",
+  "kicker": "",
+  "text": "آیا *کباب قاز* راز دارد؟",
+  "number": "",
+  "kw": [
+   "roasted goose",
+   "night"
+  ]
+ },
+ {
+  "from": 22,
+  "to": 23,
+  "elements": [],
+  "props": [],
+  "more": [],
+  "prompt": "A close‑up of an ancient parchment calendar opened to the eleventh month, the page illuminated by a soft candlelight glow. The parchment shows faded Latin numerals and decorative borders, with a subtle hint of winter frost on the edges, suggesting a solemn time of remembrance.",
+  "kicker": "",
+  "text": "آیا *یازده نوام* روز مرگ است؟",
+  "number": "",
+  "kw": [
+   "یازده نوام",
+   "روز مرگ"
+  ]
+ },
+ {
+  "from": 24,
+  "to": 25,
+  "elements": [],
+  "props": [],
+  "more": [],
+  "prompt": "A thoughtful young monk (Martin) standing in a dimly lit stone cloister, looking toward a distant horizon, his half‑cloak draped over his shoulders, conveying contemplation about the upcoming eleventh month.",
+  "kicker": "",
+  "text": "انتظار *یازده نوام* چه می‌کشه؟",
+  "number": "",
+  "kw": [
+   "یازده نوام",
+   "مارتین"
+  ]
+ },
+ {
+  "from": 26,
+  "to": 28,
+  "elements": [
+   "Martin"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "Saint Martin as a Roman soldier in a red‑brown military cloak, standing on a misty early‑winter road near a small village, the landscape stretching toward distant hills, his expression calm as he contemplates his fate.",
+  "kicker": "SAINT MARTIN · 316 AD",
+  "text": "مارتین در *هشت نوام* چه می‌کنه؟",
+  "number": "",
+  "kw": [
+   "هشت نوام",
+   "مارتین"
+  ]
+ },
+ {
+  "from": 29,
+  "to": 29,
+  "elements": [
+   "people of Khand",
+   "people of Tours"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "Two groups of medieval villagers, one from a rugged countryside (Khand) and the other from a modest town (Tours), facing each other on a dusty road, their winter cloaks flapping in the cold wind, tension evident in their stances.",
+  "kicker": "",
+  "text": "مردم *کند* و *تور* دعوا می‌کنن",
+  "number": "",
+  "kw": [
+   "کند",
+   "تور"
+  ]
+ },
+ {
+  "from": 30,
+  "to": 31,
+  "elements": [
+   "people of Tours"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A night scene in medieval Tours showing a crowd gathered around a dimly lit alley, a lone figure’s body being carried on a simple wooden pallet, the surrounding townsfolk whispering in hushed tones.",
+  "kicker": "",
+  "text": "مردم *تور* شبانه بدن رو بردن",
+  "number": "",
+  "kw": [
+   "تور",
+   "بدن"
+  ]
+ },
+ {
+  "from": 32,
+  "to": 34,
+  "elements": [
+   "Saint Martin"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A solemn burial scene in Tours during early winter: Saint Martin’s modest stone tomb being covered with fresh earth by a small group of mourners, snow lightly falling, the sky overcast and gray.",
+  "kicker": "",
+  "text": "در *تور* خاکسپاری مارتین",
+  "number": "",
+  "kw": [
+   "تور",
+   "خاکسپاری"
+  ]
+ },
+ {
+  "from": 35,
+  "to": 35,
+  "elements": [
+   "Martin Luther"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A simple parchment bearing the name \"Saint Martin\" in medieval calligraphy, lying on a wooden table illuminated by soft daylight.",
+  "kicker": "MARTIN LUTHER · 1500s",
+  "text": "آیا *مارتین لوتر* ربطی به داستان دارد؟",
+  "number": "",
+  "kw": [
+   "مارتین لوتر"
+  ]
+ },
+ {
+  "from": 36,
+  "to": 37,
+  "elements": [
+   "Martin Luther",
+   "November 1483"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "Martin Luther as a newborn baby in a modest 15th‑century Hungarian cottage, swaddled in simple linen, with a faint glow of sunrise through a thatched roof and autumn leaves visible outside the window.",
+  "kicker": "BIRTH · NOVEMBER 1483",
+  "text": "نوامبر *1483* تولد اوست",
+  "number": "1483",
+  "kw": [
+   "نوامبر",
+   "1483"
+  ]
+ },
+ {
+  "from": 38,
+  "to": 39,
+  "elements": [
+   "roasted goose"
+  ],
+  "props": [
+   {
+    "fa": "کباب قاز",
+    "word": "کباب",
+    "prompt": "A golden-brown roasted goose kebab, the goose meat glazed with a glossy caramelized sauce, skewered on a wooden stick, with crisp skin showing slight char, resting on a small rustic wooden platter, steam gently rising, surrounded by a few sprigs of fresh rosemary and a slice of lemon for garnish."
+   }
+  ],
+  "more": [],
+  "prompt": "A group of medieval scholars gathered around a wooden table in a stone hall, examining ancient manuscripts by the light of a winter sun streaming through narrow windows.",
+  "kicker": "ROASTED GOOSE",
+  "text": "کباب قاز *آفثانی*؟",
+  "number": "",
+  "kw": [
+   "قاز"
+  ]
+ },
+ {
+  "from": 40,
+  "to": 40,
+  "elements": [],
+  "props": [],
+  "more": [],
+  "prompt": "A collage of overlapping historical silhouettes: a Roman soldier sharing a cloak, a monk in a simple habit, and a modern lantern parade, merged into an abstract visual representing many events in one timeline.",
+  "kicker": "",
+  "text": "چند *اتفاق* در یک تاریخ",
+  "number": "",
+  "kw": [
+   "اتفاق"
+  ]
+ },
+ {
+  "from": 41,
+  "to": 42,
+  "elements": [
+   "November",
+   "agricultural year"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A late‑November rural landscape with fields ready for harvest, a small village where farmers gather to discuss the final month of the agricultural year, muted earth tones and a pale sky indicating the end of the season.",
+  "kicker": "END OF YEAR",
+  "text": "یازده *نوامبر* آخر سال",
+  "number": "",
+  "kw": [
+   "نوامبر"
+  ]
+ },
+ {
+  "from": 43,
+  "to": 44,
+  "elements": [
+   "goose"
+  ],
+  "props": [
+   {
+    "fa": "غاز",
+    "word": "غاز",
+    "prompt": "A plump, fat goose in winter, its feathers puffed out, glossy dark brown with hints of iridescent green, standing on a snowy ground, its beak slightly open as if honking, with a subtle sheen of frost on its wings, eyes bright and alert."
+   }
+  ],
+  "more": [],
+  "prompt": "A bustling 19th‑century German market square in late November, townsfolk exchanging documents and coins for taxes, snow lightly covering the ground and wooden stalls lining the square.",
+  "kicker": "TAX PAYMENT",
+  "text": "پرداخت *مالیات* با غاز",
+  "number": "",
+  "kw": [
+   "مالیات",
+   "غاز"
+  ]
+ },
+ {
+  "from": 45,
+  "to": 47,
+  "elements": [
+   "Christmas",
+   "goose"
+  ],
+  "props": [
+   {
+    "fa": "غاز کبابی",
+    "word": "غاز",
+    "prompt": "A roasted goose, golden-brown skin with crisp, shiny surface, steam rising, placed on a simple wooden platter, with visible herbs and a hint of caramelized glaze."
+   }
+  ],
+  "more": [],
+  "prompt": "A cold early‑winter medieval street in a Hungarian village, snow‑covered roofs and dim twilight, villagers in simple woolen cloaks gather around a large wooden table laden with food, the warm glow of candles contrasts with the dark sky, view from slightly above center",
+  "kicker": "",
+  "text": "چرا قبل از کریسمس *غاز* می‌خورند؟",
+  "number": "",
+  "kw": [
+   "غاز",
+   "کریسمس"
+  ]
+ },
+ {
+  "from": 48,
+  "to": 49,
+  "elements": [
+   "Saint Martin",
+   "goat?",
+   "harvest"
+  ],
+  "props": [
+   {
+    "fa": "غاز کبابی",
+    "word": "غاز",
+    "prompt": "A roasted goose, golden-brown skin with crisp, shiny surface, steam rising, placed on a simple wooden platter, with visible herbs and a hint of caramelized glaze."
+   }
+  ],
+  "more": [],
+  "prompt": "A late‑autumn medieval field near a small village, golden wheat stalks ready for harvest, a modest wooden cross bearing a banner with Saint Martin’s name, the scene suggesting the coincidence of Saint Martin’s feast with the end of the harvest season",
+  "kicker": "",
+  "text": "سنت مارتین و پایان *کشاورزی*",
+  "number": "",
+  "kw": [
+   "سنت مارتین",
+   "کشاورزی"
+  ]
+ },
+ {
+  "from": 50,
+  "to": 53,
+  "elements": [
+   "children",
+   "lantern"
+  ],
+  "props": [
+   {
+    "fa": "فانوس کاغذی",
+    "word": "فانوس",
+    "prompt": "A handmade paper lantern, cylindrical shape, filled with straw, emitting a warm orange glow, thin bamboo frame, slightly translucent paper showing flickering light inside."
+   }
+  ],
+  "more": [],
+  "prompt": "A narrow cobblestone street at night, a group of children in thick winter coats clutching glowing handmade lanterns, the orange light creates warm halos on the wet stones, the camera looks straight ahead capturing the children in the middle of the frame",
+  "kicker": "",
+  "text": "چرا بچه‌ها *فانوس* می‌گیرند؟",
+  "number": "",
+  "kw": [
+   "فانوس",
+   "بچه‌ها"
+  ]
+ },
+ {
+  "from": 54,
+  "to": 57,
+  "elements": [
+   "burial ceremony",
+   "Martin",
+   "lantern",
+   "autumn harvest",
+   "straw",
+   "turnip"
+  ],
+  "props": [
+   {
+    "fa": "فانوس کاغذی",
+    "word": "فانوس",
+    "prompt": "A handmade paper lantern, cylindrical shape, filled with straw, emitting a warm orange glow, thin bamboo frame, slightly translucent paper showing flickering light inside."
+   }
+  ],
+  "more": [],
+  "prompt": "An autumn evening in a rural German village, a modest burial ceremony for Saint Martin with mourners holding soft glowing lanterns, a distant bonfire on a harvested field, children nearby shaping straw and turnip into lanterns, the scene bathed in a warm amber hue, centered on the ceremonial lanterns",
+  "kicker": "",
+  "text": "مراسم خاک‌سپاری *فانوس*‌دار",
+  "number": "",
+  "kw": [
+   "مراسم",
+   "فانوس"
+  ]
+ },
+ {
+  "from": 58,
+  "to": 61,
+  "elements": [
+   "Rhineland",
+   "Germany",
+   "lantern"
+  ],
+  "props": [
+   {
+    "fa": "فانوس کاغذی",
+    "word": "فانوس",
+    "prompt": "A handmade paper lantern, cylindrical shape, filled with straw, emitting a warm orange glow, thin bamboo frame, slightly translucent paper showing flickering light inside."
+   }
+  ],
+  "more": [],
+  "prompt": "A late‑19th‑century street in the Rhineland, Germany, organized lantern parade with rows of children and adults holding uniformly crafted paper lanterns, gas‑lit street lamps, historic half‑timber houses, the scene captured from eye level with the lanterns forming a bright river of light through the dusk",
+  "kicker": "RHINELAND · 1887",
+  "text": "شروع *فانوس*‌های مدرن در آلمان",
+  "number": "",
+  "kw": [
+   "آلمان",
+   "فانوس"
+  ]
+ },
+ {
+  "from": 62,
+  "to": 63,
+  "elements": [
+   "Saint Martin",
+   "lantern"
+  ],
+  "props": [
+   {
+    "fa": "دست‌نوشتهٔ قدیمی",
+    "word": "داستان",
+    "prompt": "An illuminated medieval manuscript page showing Saint Martin sharing his cloak, aged parchment, gold leaf accents, soft candlelight highlighting the text"
+   }
+  ],
+  "more": [],
+  "prompt": "A split‑screen illustration: left side an aged medieval manuscript depicting Saint Martin sharing his cloak, right side a 19th‑century German lantern parade with glowing paper lanterns, the contrast highlighting the 1600‑year legend versus the 150‑year lantern tradition, each half centered in the frame",
+  "kicker": "",
+  "text": "داستان ۱۶۰۰ ساله vs *فانوس* ۱۵۰ ساله",
+  "number": "",
+  "kw": [
+   "داستان",
+   "فانوس"
+  ]
+ },
+ {
+  "from": 64,
+  "to": 67,
+  "elements": [
+   "Roman soldier",
+   "children carrying lanterns"
+  ],
+  "props": [
+   {
+    "fa": "فانوس",
+    "word": "فانوس",
+    "prompt": "A small hand‑held lantern made of a thin metal frame, filled with a bundle of dry straw and a flickering orange flame, the glass panes are slightly smoky and the light casts a warm glow on the child's face."
+   }
+  ],
+  "more": [],
+  "prompt": "Martin, a Roman soldier wearing a red‑brown military cloak, rides a horse at the front of a winter parade. Behind him, children in simple winter coats walk on a narrow cobblestone street lined with bare trees under a pale gray sky. The low camera angle looks slightly up to emphasize his authority.",
+  "kicker": "ROME · 4TH CENTURY",
+  "text": "در رژه *چه می‌گذره*؟",
+  "number": "",
+  "kw": [
+   "رژه",
+   "سرباز رومی",
+   "فانوس"
+  ]
+ },
+ {
+  "from": 68,
+  "to": 69,
+  "elements": [
+   "Roman soldier",
+   "beggar"
+  ],
+  "props": [
+   {
+    "fa": "شمشیر",
+    "word": "شمشیر",
+    "prompt": "A Roman‑style sword with a straight, double‑edged steel blade, a polished brass hilt wrapped in leather, and a simple crossguard; the blade reflects a faint metallic sheen."
+   }
+  ],
+  "more": [],
+  "prompt": "Martin, a Roman soldier in a red‑brown cloak, stops in the middle of the street and tears his cloak in half, offering one half to a ragged beggar shivering in the cold. The winter street is blurred behind them, with soft light highlighting the torn fabric.",
+  "kicker": "ROME · 4TH CENTURY",
+  "text": "سرباز *شنل* میده",
+  "number": "",
+  "kw": [
+   "شنل",
+   "بخشیدن",
+   "گدار"
+  ]
+ },
+ {
+  "from": 70,
+  "to": 73,
+  "elements": [
+   "children carrying lanterns",
+   "Saint Martin"
+  ],
+  "props": [
+   {
+    "fa": "آتش",
+    "word": "آتش",
+    "prompt": "A large open bonfire with tall, crackling flames of orange and yellow, surrounded by a bed of charcoal and wood logs, sparks rising into the night sky."
+   }
+  ],
+  "more": [],
+  "prompt": "Children in winter coats gather in a snowy square as a figure resembling Saint Martin in a simple monk habit watches them. The dark night sky contrasts with the warm atmosphere of the scene.",
+  "kicker": "GERMANY · LATE 19TH C",
+  "text": "آتش *بزرگ* روشن میشه",
+  "number": "",
+  "kw": [
+   "آتش",
+   "فانوس",
+   "مارتین"
+  ]
+ },
+ {
+  "from": 74,
+  "to": 77,
+  "elements": [
+   "Roman soldier"
+  ],
+  "props": [
+   {
+    "fa": "کباب غاز",
+    "word": "کباب غاز",
+    "prompt": "A golden‑brown roasted goose, its skin crisp and glossy, glazed with a honey‑caramel glaze, resting on a rustic wooden platter with a few sprigs of rosemary."
+   }
+  ],
+  "more": [],
+  "prompt": "Martin, now a former Roman soldier, stands solemnly holding the torn half‑cloak he once gave away. Behind him a medieval market square stretches under a cold winter sky.",
+  "kicker": "ROME · 4TH CENTURY",
+  "text": "سرباز *کباب غاز* یادگار",
+  "number": "",
+  "kw": [
+   "کباب غاز",
+   "سرباز",
+   "یادگار"
+  ]
+ },
+ {
+  "from": 78,
+  "to": 79,
+  "elements": [],
+  "props": [],
+  "more": [],
+  "prompt": "A close‑up of two hands holding a parchment scroll against a dark background, with soft neutral lighting emphasizing the texture of the paper and the fingers.",
+  "kicker": "",
+  "text": "بخش بعدی *کجا*؟",
+  "number": "",
+  "kw": [
+   "بخش بعدی",
+   "تصمیم"
+  ]
+ }
+]
