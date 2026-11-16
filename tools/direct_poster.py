@@ -174,18 +174,22 @@ def bad_prompts(prompts, thr=.62):
     return bad
 
 
-def fix_prompts(texts, olds, brief, rounds=4):
+HINTP = """\nبعضی صحنه‌ها یک «راهنمای مالک» دارند: توضیح کوتاه و کلیِ خود مالک (فارسی) درباره‌ی اینکه تصویر چه باشد. آن را اصل بگیر و تصویر را مطابق آن بساز، و جزئیاتی که مالک نگفته (زاویه‌ی دوربین، نور، ترکیب‌بندی، لباس، حالت و حرکت آدم‌ها، رنگ‌ها، فضای پشت‌صحنه، حال‌وهوا) را خودت مثل بقیه‌ی توصیف‌ها کامل و دقیق بنویس. اگر راهنما با متن راوی فرق دارد، راهنما برنده است. توصیف نهایی مثل بقیه انگلیسی، ۲ تا ۴ جمله، مستقل و بدون نوشته در تصویر باشد."""
+
+
+def fix_prompts(texts, olds, brief, rounds=4, hints=None):
     """new prompt for every index in `texts` ({i: narration}); waits out Groq rate limits (each model has its own quota) instead of giving up; returns {i: prompt}"""
     import time
     res, todo = {}, list(texts)
     used = [_body(p)[:80] for p in olds if _body(p)]
+    hints = hints or {}
     for rd in range(rounds):
         for a in range(0, len(todo), 5):
             ids = todo[a:a + 5]
             if all(i in res for i in ids): continue
-            user = 'خلاصه‌ی داستان:\n%s\n\nقبلاً استفاده‌شده (تکرار نکن):\n%s\n\nصحنه‌ها:\n%s' % (brief or '-', '\n'.join('- ' + u for u in used[-40:]) or '-', '\n'.join('%d | %s' % (k, texts[i]) for k, i in enumerate(ids)))
+            user = 'خلاصه‌ی داستان:\n%s\n\nقبلاً استفاده‌شده (تکرار نکن):\n%s\n\nصحنه‌ها:\n%s' % (brief or '-', '\n'.join('- ' + u for u in used[-40:]) or '-', '\n'.join('%d | %s' % (k, texts[i]) + (' | راهنمای مالک: ' + hints[i] if hints.get(i) else '') for k, i in enumerate(ids)))
             try:
-                got = [o for o in groqlib.objects(groqlib.chat(FIXP, user, max_tokens=2200, json_mode=True, temperature=.7), 'prompt') if isinstance(o, dict)]
+                got = [o for o in groqlib.objects(groqlib.chat(FIXP + (HINTP if any(hints.get(i) for i in ids) else ''), user, max_tokens=2200, json_mode=True, temperature=.7), 'prompt') if isinstance(o, dict)]
                 for o in got:
                     k = o.get('i')
                     if isinstance(k, int) and 0 <= k < len(ids) and len(str(o.get('prompt', ''))) > 30: res[ids[k]] = re.sub(r'\s+', ' ', str(o['prompt'])).strip(); used.append(res[ids[k]][:80])
