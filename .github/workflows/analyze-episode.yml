@@ -2,7 +2,7 @@ name: Analyze episode script
 on:
   push:
     branches: [main]
-    paths: ['episodes/*/script.txt']
+    paths: ['episodes/*/script.txt', 'episodes/*/analyze.json']
   workflow_dispatch:
     inputs:
       episode:
@@ -28,7 +28,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$EP_INPUT" ]; then eps="$EP_INPUT"; else eps=$(git diff --name-only HEAD~1 HEAD -- 'episodes/*/script.txt' | cut -d/ -f2 | sort -u); fi
+          if [ -n "$EP_INPUT" ]; then eps="$EP_INPUT"; else eps=$(git diff --name-only HEAD~1 HEAD -- 'episodes/*/script.txt' 'episodes/*/analyze.json' | cut -d/ -f2 | sort -u); fi
           for ep in $eps; do
             if ! python tools/analyze_episode.py "$ep" 2> err.txt; then
               python tools/write_error.py "$ep"

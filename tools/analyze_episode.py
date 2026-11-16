@@ -1,8 +1,20 @@
-"""Reads episodes/<ep>/script.txt, asks Groq which sticker objects the episode needs,
-writes episodes/<ep>/needs.json. Usage: python tools/analyze_episode.py <ep>"""
-import json, os, re, sys, urllib.request, urllib.error
+"""Reads the episode text (srctext.source_text: script.txt, or what was really said for an own-voice episode), asks Groq which separate objects the whole episode needs,
+writes episodes/<ep>/needs.json. Poster episodes (request.json mode=poster) get a poster-style list: objects only, nothing from the old comic library offered for reuse.
+Usage: python tools/analyze_episode.py <ep>"""
+import json, os, re, sys, time, urllib.request, urllib.error
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import srctext
+
+CLASSIC_HEAD = (
+    "You are the art director of an animated explainer video in American comic / pop-art style. "
+    "The video is built from layered cut-out sticker objects. Read the narration text (Persian) and list the "
+    "concrete, drawable single objects needed to illustrate it: 30 to 45 items, ordered by narration order. "
+    "Each item must be ONE physical object or symbol (never a scene, never text, letters or numbers, never a real person's face). ")
+POSTER_HEAD = (
+    "You are the art director of an animated explainer video made of full-bleed painted illustrations, one per scene. Separate cut-out objects are laid over those pictures and pop up on a spoken word. "
+    "Listen to the WHOLE episode (the Persian narration text is exactly what was said, in order) and list the concrete, drawable single objects the episode needs as separate cut-outs: 12 to 30 items, ordered by narration order, every distinct object only once even when the narration comes back to it. "
+    "Pick things the narration names or clearly shows and that are worth showing alone, large and clear (a roast goose, a sword, a letter, a lantern, a coin), not things that only fill a scene. "
+    "Each item must be ONE physical object or symbol (never a scene, a room or a landscape, never a crowd or a person's face, never text, letters or numbers). People and scenery are painted into the scene pictures, so they are not listed here. ")
 
 def load(p, d):
     try: return json.load(open(p, encoding='utf8'))
@@ -22,7 +34,9 @@ def pick_model(key):
 
 def main(ep, text=None):
     d = f'episodes/{ep}'
-    if text is None: text = open(f'{d}/script.txt', encoding='utf8').read().strip()
+    if text is None: text = srctext.source_text(ep)
+    if not text: sys.exit('no text for this episode yet')
+    poster = (load(f'{d}/request.json', {}) or {}).get('mode') == 'poster'
     cat = load('library/catalog.json', {'items': {}})['items']
     have = {i for i, v in cat.items() if v.get('variants')}
     known = {}
@@ -31,15 +45,13 @@ def main(ep, text=None):
     key = os.environ.get('GROQ_API_KEY', '')
     if not key: sys.exit('GROQ_API_KEY is not set (repo Settings > Secrets > Actions)')
     system = (
-        "You are the art director of an animated explainer video in American comic / pop-art style. "
-        "The video is built from layered cut-out sticker objects. Read the narration text (Persian) and list the "
-        "concrete, drawable single objects needed to illustrate it: 30 to 45 items, ordered by narration order. "
-        "Each item must be ONE physical object or symbol (never a scene, never text, letters or numbers, never a real person's face). "
-        "Existing library pictures (id=description). Reuse one only when its description fits the meaning AND this episode's setting (period, place); reuse means no new drawing is needed: " + "; ".join("%s=%s" % (i, str(known[i].get('en', ''))[:60]) for i in sorted(known)) + ". "
+        (POSTER_HEAD if poster else CLASSIC_HEAD) +
+        ("" if poster else "Existing library pictures (id=description). Reuse one only when its description fits the meaning AND this episode's setting (period, place); reuse means no new drawing is needed: " + "; ".join("%s=%s" % (i, str(known[i].get('en', ''))[:60]) for i in sorted(known)) + ". ") +
         "FIRST read the whole text and decide the episode's setting: the period (year or decade), the place or culture, and what everyday things looked like then. Write it as one English sentence in \"setting\". EVERY item must match this setting: clothing, uniforms, vehicles, weapons, buildings, cities, tools and technology of that time and place (an episode about World War II needs WWII uniforms, tanks and bombed European towns, never modern ones; a medieval episode needs medieval clothes and castles). Only when the narration of a specific item clearly jumps to another time (a flashback, or today) does that item get that other time. For things whose look depends on the era or place, put a short tag in the new id (soldier-ww2, tank-ww2, city-ruins-ww2) so it never collides with the same thing from another period. "
         "Reuse an existing id only when it is the same kind of thing AND from the same era; a specific historical or period figure (e.g. a Roman soldier, a medieval bishop) must get its own new id, never a generic modern person or object id such as adult-male-human. "
         "For anything else invent a new kebab-case English id. "
         "For every item write \"en\" as a rich English image description of 20 to 40 words, written for THIS moment of the story (use what the narration says about it), so the picture is exactly the one the episode needs: what it is, its material, colours, shape and typical parts, and in parentheses at the very end the era and place it belongs to in this episode (for example (modern, Germany today) or (Roman Gaul, 4th century)). A person: say male or female, approximate age, the exact clothes of that time and weather, pose and expression, and what they hold or wear (a bishop: tall mitre, long robe, crozier staff, pectoral cross). A group: say how many, their ages, their clothes for the season and what each holds. Food: say the dish, the container (for example a white oval plate) and the side dishes and garnish around it. A place or building: say its type, material and surroundings. The same object can need a different look in a different episode. "
+        + ("The \"en\" text is a prompt for an image generator that draws ONLY this one object on a plain background, so describe the object itself (material, colours, shape, parts, condition) and nothing around it: no table, shelf, ground, hands, people or other objects. " if poster else "") +
         'Return JSON only: {"setting":"one sentence: period, place, look of everyday things","items":[{"id":"kebab-id","en":"detailed English description ending with the era in parentheses","fa":"نام فارسی کوتاه","why":"چند کلمه فارسی: کجای متن"}]}')
     try: model = pick_model(key)
     except urllib.error.HTTPError as e: sys.exit('Groq error %s: %s' % (e.code, e.read()[:300]))
@@ -76,7 +88,7 @@ def main(ep, text=None):
         seen.add(i); k = known.get(i, {})
         out.append({'id': i, 'en': it.get('en') or k.get('en') or i.replace('-', ' '), 'fa': it.get('fa') or k.get('fa', ''),
                     'why': it.get('why', ''), 'tags': []})
-    json.dump({'episode': ep, 'src_h': srctext.digest(text), 'setting': setting, 'items': out}, open(f'{d}/needs.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
+    json.dump({'episode': ep, 'src_h': srctext.digest(text), 'at': int(time.time()), 'mode': 'poster' if poster else 'classic', 'setting': setting, 'items': out}, open(f'{d}/needs.json', 'w', encoding='utf8'), ensure_ascii=False, indent=1)
     print(len(out), 'items;', sum(1 for o in out if o['id'] not in have), 'missing')
 
 if __name__ == '__main__': main(sys.argv[1])

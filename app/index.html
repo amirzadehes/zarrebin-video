@@ -412,7 +412,7 @@ function cards(el, L, withAdd, head, ep){
     const id=c.dataset.id, w=L.find(x=>x.id===id), st=c.querySelector('.st');
     c.querySelector('.bEdit').onclick = ()=>renameItem(id, w.fa||w.en, w.en);
     const th=c.querySelector('.thumb[data-all]'); if(th) th.onclick=()=>showVariants(S.catalog.items[id]);
-    c.querySelector('.bCopy').onclick = async()=>{ const ok = await copy(prompt(w.en)); st.className='st '+(ok?'ok':'bad'); st.textContent = ok?'پرامپت کپی شد؛ در Gemini بچسبان':'کپی نشد'; };
+    c.querySelector('.bCopy').onclick = async()=>{ const ok = await copy(S.mode==='poster'?propFull({prompt:w.en}):prompt(w.en)); st.className='st '+(ok?'ok':'bad'); st.textContent = ok?'پرامپت کپی شد؛ در Gemini بچسبان':'کپی نشد'; };
     c.querySelector('.bFile').onchange = e => upload(id, [...e.target.files], st, e.target);
   });
   el.querySelectorAll('.bSim').forEach(btn=>btn.onclick=()=>{ const c=btn.closest('.item'), id=c.dataset.id, w=L.find(x=>x.id===id), box=c.querySelector('.simBox'); box.hidden=!box.hidden; if(box.hidden||box.dataset.f) return; box.dataset.f=1;
@@ -1179,9 +1179,20 @@ async function rvContinue(){ const st=$('#rvSt'); const rq=await readJson('episo
     st.className='st ok'; st.textContent='ساخت ویدیو شروع شد؛ حدود ۱۰ تا ۳۰ دقیقه. می‌توانی اپ را ببندی.'; setTimeout(buildStatus,6000); setTimeout(buildStatus,20000);
     for(let k=0;k<90;k++){ await sleep(30000); const before=$('#vids')?.textContent.length||0; await loadVids(); if(($('#vids')?.textContent.length||0)!==before){ st.textContent='ویدیو آماده شد!'; return } }
   }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message } }
-function epHead(ep){ const eps=S.eps||[]; return `<div class="card"><label>قسمت</label><select id="needEp" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px">${epSelOptions(ep)}</select></div>` }
+function epHead(ep){ const eps=S.eps||[]; return `<div class="card"><label>قسمت</label><select id="needEp" style="width:100%;min-height:46px;font:inherit;background:#17120f;color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:0 10px">${epSelOptions(ep)}</select></div>`+(S.mode==='poster'&&ep?`<div class="card"><div class="row"><button class="pri" id="needGo" style="width:100%">🎬 کارگردان کل قسمت را گوش بدهد و اشیای لازم را بگوید</button></div><p class="hint" style="margin:8px 0 0">متن رونویسی‌شده‌ی کل این قسمت خوانده می‌شود و فهرست اشیای جدا (مثل غاز بریان، شمشیر، فانوس) با پرامپتِ همان سبک قفل‌شده و زمینه‌ی سرخابی می‌آید. هر کدام را کپی، در موتور تصویر بساز و همین‌جا آپلود کن. یک تا دو دقیقه طول می‌کشد.</p><div class="st" id="needSt"></div></div>`:'') }
 function epSelOptions(ep){ const eps=S.eps||[]; return (eps.includes(ep)||!ep?'':`<option value="${ep}" selected>${epTitle(ep)}</option>`)+eps.map(e=>`<option value="${e}" ${e===ep?'selected':''}>${epTitle(e)}</option>`).join('')+(!ep?'<option value="">— یک قسمت انتخاب کن —</option>':'') }
-function bindEpHead(){ const s=$('#needEp'); if(s) s.onchange=()=>{ if(s.value) setEpisode(s.value) } }
+function bindEpHead(){ const s=$('#needEp'); if(s) s.onchange=()=>{ if(s.value) setEpisode(s.value) }; const g=$('#needGo'); if(g) g.onclick=()=>analyzeEpisode(s&&s.value||'') }
+/* poster mode: the director reads the whole transcript and lists the separate objects the episode needs (tools/analyze_episode.py, started by episodes/<ep>/analyze.json) */
+async function analyzeEpisode(ep){
+  const st=()=>$('#needSt'), say=(t,c)=>{ const e=st(); if(e){ e.className='st '+(c||''); e.textContent=t } }, btn=$('#needGo');
+  if(!ep) return toast('اول یک قسمت انتخاب کن'); if(!S.token) return say('اول در تنظیمات توکن را وارد کن','bad');
+  const ts=Date.now(); if(btn) btn.disabled=true; say('درخواست فرستاده شد…');
+  try{ await putBig('episodes/'+ep+'/analyze.json', enc(JSON.stringify({ts})), 'analyze episode: '+ep, say) }catch(e){ if(btn) btn.disabled=false; return say('ارسال نشد: '+e.message,'bad') }
+  for(let k=0;k<45;k++){ say('کارگردان دارد کل قسمت را می‌خواند… ('+fa(k*6)+' ثانیه)'); await sleep(6000);
+    const j=await readJson('episodes/'+ep+'/needs.json', null);
+    if(j&&(j.at||0)>=Math.floor(ts/1000)-2){ if(j.error){ if(btn) btn.disabled=false; return say('تحلیل خطا داد: '+(j.message||'نامشخص'),'bad') } await showNeeds(ep); return toast('✓ فهرست اشیای لازم آماده شد') } }
+  if(btn) btn.disabled=false; say('هنوز آماده نشد؛ چند دقیقه بعد همین صفحه را دوباره باز کن','bad')
+}
 let lastShort=null;   // both checkboxes stay free to change; a short episode only gets a different starting choice (vertical only), and only when the name switches between short and long
 function shortDefaults(){ const n=$('#epName'); if(!n||!$('#bH')) return; const sh=/-short$/.test(slug(n.value)); $('#bShortNote').hidden=!sh; if(sh===lastShort) return; const was=lastShort; lastShort=sh; if(sh){ $('#bV').checked=true; $('#bH').checked=false } else if(was===true){ $('#bH').checked=true } }
 function renderEpLabels(){ document.querySelectorAll('#epList .epSel').forEach(b=>b.textContent=epTitle(b.dataset.e)); const rb=document.querySelector('#rvBody p.hint b'); if(rb&&RV) rb.textContent=epTitle(RV.ep); const ne=$('#needEp'); if(ne){ const cur=ne.value; ne.innerHTML=epSelOptions(cur) } }
@@ -1445,7 +1456,7 @@ $('#repo').value=S.repo; $('#token').value=S.token;
 const PALS={comic:[['','پیش‌فرض (رنگارنگ)'],['warm','گرم: نارنجی، زرد، قرمز'],['cool','سرد: آبی، سبز، بنفش'],['pop','پاپ: سرخابی، زرد، سرمه‌ای']],vox:[['','کاغذ کهنه (پیش‌فرض)'],['cream','کاغذ روشن و کرم'],['grey','کاغذ روزنامه‌ی خاکستری'],['dark','کاغذ تیره و قهوه‌ای']]};
 function fillPal(){ const el=$('#bPal'); if(!el) return; el.innerHTML=PALS[S.style].map(([v,t])=>`<option value="${v}">${t}</option>`).join(''); el.value=ls.get('pal_'+S.style,'') }
 function setStyle(v,quiet){ S.style=v; fillPal(); ls.set('style',v); const a=$('#tplStyle'), b=$('#bStyle'); if(a) a.value=v; if(b) b.value=v; document.querySelectorAll('.styleNote').forEach(e=>e.textContent=styleNote()); if(!quiet) toast(v==='vox'?'سبک ووکس: پرامپت عکس و ویدیو عوض شد ✓':'سبک کمیک: پرامپت عکس و ویدیو عوض شد ✓') }
-const styleNote=()=>'سبک فعلی پرامپت عکس: '+(S.style==='vox'?'ووکس (گراوور و عکس قدیمی رنگی)':'کمیک رنگی');
+const styleNote=()=>S.mode==='poster'?'سبک پرامپت اشیا: پوستر (قفل‌شده)، فقط خود شیء روی زمینه‌ی سرخابی':'سبک فعلی پرامپت عکس: '+(S.style==='vox'?'ووکس (گراوور و عکس قدیمی رنگی)':'کمیک رنگی');
 $('#tplStyle').value=S.style; $('#tplStyle').onchange=()=>setStyle($('#tplStyle').value);
 $('#btnSave').onclick=async()=>{
   S.repo=$('#repo').value.trim(); S.token=$('#token').value.replace(/[^\x21-\x7E]/g,''); $('#token').value=S.token;
