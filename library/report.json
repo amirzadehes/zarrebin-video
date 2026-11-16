@@ -1,42 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-10 21:14:56 UTC",
-   "ok": [
-    {
-     "file": "taxi-car__mwb6uho003f.jpg",
-     "id": "taxi-car",
-     "saved": "taxi-car__1.webp",
-     "kb": 96
-    },
-    {
-     "file": "taxi-car__mwb6uhoc1a9.jpg",
-     "id": "taxi-car",
-     "saved": "taxi-car__2.webp",
-     "kb": 82
-    },
-    {
-     "file": "taxi-car__mwb6uhor2y7.jpg",
-     "id": "taxi-car",
-     "saved": "taxi-car__3.webp",
-     "kb": 82
-    },
-    {
-     "file": "taxi-car__mwb6uhoz3ez.jpg",
-     "id": "taxi-car",
-     "saved": "taxi-car__4.webp",
-     "kb": 108
-    },
-    {
-     "file": "taxi-car__mwb6uhp84l3.jpg",
-     "id": "taxi-car",
-     "saved": "taxi-car__5.webp",
-     "kb": 92
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-10 21:17:18 UTC",
    "ok": [
     {
@@ -860,6 +824,16 @@
     }
    ],
    "failed": []
+  },
+  {
+   "time": "2026-11-16 20:35:50 UTC",
+   "ok": [],
+   "failed": [
+    {
+     "file": "u-mwjq36cc__mwjq36cd.jpg",
+     "reason": "زمینه‌ی سرخابی نیست (رنگ زمینه: 41,32,22)"
+    }
+   ]
   }
  ]
 }
