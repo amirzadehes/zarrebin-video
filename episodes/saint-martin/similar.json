@@ -21,13 +21,8 @@
  "lantern-19c": [
   "lantern"
  ],
- "bonfire-19c": [
-  "fire"
- ],
  "coin-denarius-4c": [
   "money-coins",
-  "banknotes",
-  "cash",
-  "euro-sign"
+  "money-bag"
  ]
 }
