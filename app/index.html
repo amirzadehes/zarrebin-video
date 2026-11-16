@@ -329,7 +329,7 @@ const $ = s => document.querySelector(s);
 const ls = { get:(k,d)=>{try{return localStorage.getItem(k)??d}catch(e){return d}}, set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}} };
 const fa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-let S = { repo: ls.get('repo','amirzadehes/zarrebin-video'), token: ls.get('token',''), style: ls.get('style','comic'), wanted: [], pool: [], genN: +ls.get('genN','30'), catalog: {items:{}}, report: {runs:[]}, pending: 0, custom: JSON.parse(ls.get('custom','[]')), picks: {} };
+let S = { repo: ls.get('repo','amirzadehes/zarrebin-video'), token: String(ls.get('token','')).replace(/[^\x21-\x7E]/g,''), style: ls.get('style','comic'), wanted: [], pool: [], genN: +ls.get('genN','30'), catalog: {items:{}}, report: {runs:[]}, pending: 0, custom: JSON.parse(ls.get('custom','[]')), picks: {} };
 
 S.mode = ls.get('mode','classic')==='poster' ? 'poster' : 'classic';
 const isPoster = () => !!(RV && RV.data && RV.data.meta && RV.data.meta.mode==='poster');
@@ -341,7 +341,7 @@ async function api(path, opt={}){
   let r;
   for (let k=0;;k++) {
     try{ r = await fetch('https://api.github.com/repos/'+S.repo+path, { ...opt, headers:h, cache:'no-store' }); }
-    catch(ne){ const er=new Error('اتصال به GitHub قطع شد (اینترنت یا حجم زیاد فایل)'); er.status=0; er.net=true; throw er; }
+    catch(ne){ const er=new Error('اتصال به GitHub قطع شد ['+(ne&&ne.message||ne)+'] '+(opt.method||'GET')+' '+path.slice(0,60)+(opt.body?' ('+(opt.body.length/1048576).toFixed(1)+'MB)':'')); er.status=0; er.net=true; throw er; }
     if (r.ok) break;
     let m=''; try{ m=(await r.clone().json()).message }catch(e){}
     if (k<2 && opt.method && opt.method!=='GET' && /timeout|timed out/i.test(m||'')) { await sleep(3000*(k+1)); continue; }   // GitHub sometimes times out while checking its rules for a commit: the same write usually works a moment later
@@ -1411,7 +1411,7 @@ function setStyle(v,quiet){ S.style=v; fillPal(); ls.set('style',v); const a=$('
 const styleNote=()=>'سبک فعلی پرامپت عکس: '+(S.style==='vox'?'ووکس (گراوور و عکس قدیمی رنگی)':'کمیک رنگی');
 $('#tplStyle').value=S.style; $('#tplStyle').onchange=()=>setStyle($('#tplStyle').value);
 $('#btnSave').onclick=async()=>{
-  S.repo=$('#repo').value.trim(); S.token=$('#token').value.trim();
+  S.repo=$('#repo').value.trim(); S.token=$('#token').value.replace(/[^\x21-\x7E]/g,''); $('#token').value=S.token;
   ls.set('repo',S.repo); ls.set('token',S.token);
   const st=$('#setSt'); st.className='st'; st.textContent='در حال بررسی…';
   try{ const r=await api(''); st.className='st '+(r.permissions?.push?'ok':'bad'); st.textContent = r.permissions?.push ? 'اتصال برقرار است و اجازه‌ی نوشتن دارد ✓' : 'اتصال هست ولی اجازه‌ی نوشتن نداری؛ توکن را با دسترسی Contents بساز'; await loadAll(); }
