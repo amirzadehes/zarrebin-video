@@ -1,42 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-10 21:17:18 UTC",
-   "ok": [
-    {
-     "file": "bus__mwb6xdk70nt.jpg",
-     "id": "bus",
-     "saved": "bus__1.webp",
-     "kb": 118
-    },
-    {
-     "file": "bus__mwb6xdkj1w7.jpg",
-     "id": "bus",
-     "saved": "bus__2.webp",
-     "kb": 127
-    },
-    {
-     "file": "bus__mwb6xdkt2m1.jpg",
-     "id": "bus",
-     "saved": "bus__3.webp",
-     "kb": 133
-    },
-    {
-     "file": "bus__mwb6xdl23m3.jpg",
-     "id": "bus",
-     "saved": "bus__4.webp",
-     "kb": 100
-    },
-    {
-     "file": "bus__mwb6xdl94y5.jpg",
-     "id": "bus",
-     "saved": "bus__5.webp",
-     "kb": 116
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-10 21:19:57 UTC",
    "ok": [
     {
@@ -834,6 +798,30 @@
      "reason": "زمینه‌ی سرخابی نیست (رنگ زمینه: 41,32,22)"
     }
    ]
+  },
+  {
+   "time": "2026-11-16 20:39:13 UTC",
+   "ok": [
+    {
+     "file": "u-mwjq36cc__mwjq7fq00q6.jpg",
+     "id": "u-mwjq36cc",
+     "saved": "u-mwjq36cc__1.webp",
+     "kb": 110
+    },
+    {
+     "file": "u-mwjq36cc__mwjq7fq11of.jpg",
+     "id": "u-mwjq36cc",
+     "saved": "u-mwjq36cc__2.webp",
+     "kb": 132
+    },
+    {
+     "file": "u-mwjq36cc__mwjq7fq22km.jpg",
+     "id": "u-mwjq36cc",
+     "saved": "u-mwjq36cc__3.webp",
+     "kb": 144
+    }
+   ],
+   "failed": []
   }
  ]
 }
