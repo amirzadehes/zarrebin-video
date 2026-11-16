@@ -1,0 +1,100 @@
+{
+ "episode": "saint-martin",
+ "src_h": "c5d27241bb7a7ba7bf8355cad61f544e",
+ "at": 1794859284,
+ "mode": "poster",
+ "setting": "The episode shifts between the early 4th‑century Roman Empire in Gaul (modern France) and the late 19th‑century Rhineland of Germany, showing Roman military gear, early Christian relics and Victorian‑era paper lanterns.",
+ "items": [
+  {
+   "id": "roman-cloak-4c",
+   "en": "A heavy woolen Roman military cloak (sagum), dyed deep red, fastened with a bronze clasp, draped over shoulders, rough texture, typical of 4th‑century legionary gear (Roman Empire, 4th century)",
+   "fa": "شنل رومی",
+   "why": "اولین ذکر شنل",
+   "tags": []
+  },
+  {
+   "id": "roman-sword-4c",
+   "en": "A short Roman gladius with a double‑edged steel blade, wooden hilt wrapped in leather, iron pommel, about 60 cm long, shining metallic surface (Roman Empire, 4th century)",
+   "fa": "شمشیر رومی",
+   "why": "بعد از شنل شمشیر",
+   "tags": []
+  },
+  {
+   "id": "roman-helmet-4c",
+   "en": "A Roman galea helmet of iron, with a curved brow ridge, cheek guards, and a brass crest holder, polished but weathered, typical of a 4th‑century legionary (Roman Empire, 4th century)",
+   "fa": "کلاه رومی",
+   "why": "سرباز رومی نشان می‌دهد کلاه",
+   "tags": []
+  },
+  {
+   "id": "roman-shield-4c",
+   "en": "A rectangular Roman scutum shield, wooden frame covered with leather, central boss of iron, painted with a red and gold emblem, curved edges for hand grip (Roman Empire, 4th century)",
+   "fa": "سپر رومی",
+   "why": "سرباز رومی نشان می‌دهد سپر",
+   "tags": []
+  },
+  {
+   "id": "roman-sandal-4c",
+   "en": "A pair of Roman caligae sandals, leather straps criss‑crossing over a hobnail‑topped sole, dark brown, worn but sturdy, standard footgear of a 4th‑century soldier (Roman Empire, 4th century)",
+   "fa": "چپل رومی",
+   "why": "سرباز رومی نشان می‌دهد چپل",
+   "tags": []
+  },
+  {
+   "id": "roman-belt-4c",
+   "en": "A leather military belt (cincture) with bronze buckles, wrapped around the waist, supporting a sword sheath, dark brown, slightly worn, typical of Roman legionaries (Roman Empire, 4th century)",
+   "fa": "کمربند رومی",
+   "why": "سرباز رومی نشان می‌دهد کمربند",
+   "tags": []
+  },
+  {
+   "id": "horse-4c",
+   "en": "A sturdy Roman cavalry horse, chestnut coat, muscular build, bridle of leather with metal fittings, saddle of leather, poised as if ready to ride (Roman Empire, 4th century)",
+   "fa": "اسب رومی",
+   "why": "سرباز سوار اسب",
+   "tags": []
+  },
+  {
+   "id": "live-goose-19c",
+   "en": "A plump domestic goose, white feathers with a greenish head, orange beak, standing on short legs, eyes alert, representing the live geese used for tax payment (Rhineland, 19th century)",
+   "fa": "غاز زنده",
+   "why": "مالیات با غاز پرداخت می‌شد",
+   "tags": []
+  },
+  {
+   "id": "roasted-goose-19c",
+   "en": "A whole roasted goose on a silver platter, golden‑brown crispy skin, steam rising, stuffed with herbs, glazed with butter, cut open to show juicy meat (Rhineland, 19th century)",
+   "fa": "کباب غاز",
+   "why": "کباب غاز در جشن",
+   "tags": []
+  },
+  {
+   "id": "lantern-19c",
+   "en": "A paper lantern of the late 19th‑century German tradition, cylindrical paper dyed amber, metal frame of thin brass, a small candle inside, handle of twisted wire, glowing warm light (Rhineland, 19th century)",
+   "fa": "فانوس کاغذی",
+   "why": "بچه‌ها فانوس می‌گیرند",
+   "tags": []
+  },
+  {
+   "id": "bonfire-19c",
+   "en": "A large outdoor bonfire, tall wooden logs arranged in a pyramid, bright orange flames licking upward, sparks flying, thick smoke at the base, representing the communal fire at the parade’s end (Rhineland, 19th century)",
+   "fa": "آتش بزرگ",
+   "why": "در پایان رژه آتش روشن می‌شود",
+   "tags": []
+  },
+  {
+   "id": "coin-denarius-4c",
+   "en": "A bronze Roman denarius coin, obverse showing the profile of Emperor Constantine, reverse with a cross, slightly tarnished edges, about 18 mm diameter (Roman Empire, 4th century)",
+   "fa": "سکه رومی",
+   "why": "مالیات یا پول رومی",
+   "tags": []
+  },
+  {
+   "id": "staff-herald-19c",
+   "en": "A wooden herald’s staff, smooth pine shaft about 1.5 m long, topped with a silver finial shaped like a small trumpet, painted black, used by parade officials (Rhineland, 19th century)",
+   "fa": "چوب گدار",
+   "why": "نقش گدار با چوب",
+   "tags": []
+  }
+ ]
+}
