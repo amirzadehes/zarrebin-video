@@ -165,7 +165,7 @@ function ent(kind, t, t0, tx, ty) {
   return { x, y, s, r, a: ramp(t, t0, t0 + .06), bl }
 }
 let EDIT = null; const REC = {};   // EDIT = {sel} while the owner arranges items in the in-app preview; REC = where each item of the current scene is drawn
-let LIVE = false; window.setEdit = v => { EDIT = v }; window.setLive = v => { LIVE = !!v };   // LIVE: the in-app layout editor keeps animating the picture effects (depth) from the wall clock window.getRec = () => REC;
+let LIVE = false; window.setEdit = v => { EDIT = v }; window.setLive = v => { LIVE = !!v }; window.getRec = () => REC;   // LIVE: the in-app layout editor keeps animating the picture effects (depth) from the wall clock; getRec: where each item is drawn (hit testing in preview.html)
 function drawItem(it, t, tx, ty, size, k, rx = 0) {
   const L = it.lay && it.lay[FMT], idx = CUR ? CUR.items.indexOf(it) : -1;   // owner's manual placement for this format (fractions of the canvas)
   let rot0 = rx; if (L) { tx += (L.dx || 0) * W; ty += (L.dy || 0) * H; size *= (L.sz || 1); rot0 += L.rot || 0 }
