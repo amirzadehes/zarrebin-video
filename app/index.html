@@ -670,7 +670,7 @@ async function loadReview(ep, quiet){ const body=$('#rvBody'); if(!body) return;
   try{ const j=await api('/contents/episodes/'+ep+'/scenes.json'); let txt=j.content&&j.content.replace(/\n/g,'')?new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))):null;
     if(!txt){ const r=await fetch(j.download_url); txt=await r.text() }
     RV={ep, sha:j.sha, data:JSON.parse(txt), req:(await readJson('episodes/'+ep+'/request.json',{}))||{}, cast:((await readJson('episodes/'+ep+'/cast.json',{}))||{}).characters||[]}; renderReview() }catch(e){ if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
-function thumbUrl(src){ return /^decor\//.test(src)?'https://raw.githubusercontent.com/'+S.repo+'/main/'+src:raw(src.replace(/^library\//,'')) }
+function thumbUrl(src){ return /^(decor|episodes)\//.test(src)?'https://raw.githubusercontent.com/'+S.repo+'/main/'+src:raw(src.replace(/^library\//,'')) }
 const pWords=p=>new Set(String(p||'').split(' Character look')[0].toLowerCase().match(/[a-z]{4,}/g)||[]);
 function badPrompts(sc){ const kept=[], bad=[]; sc.forEach((s,i)=>{ const w=pWords((s.photo||{}).prompt); if(w.size<6){ bad.push(i); return }
   for(const v of kept){ let n=0; w.forEach(x=>{ if(v.has(x)) n++ }); if(n/(w.size+v.size-n)>.62){ bad.push(i); return } } kept.push(w) }); return bad }
@@ -881,11 +881,12 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
     <div class="its">${(s.items||[]).map((it,k)=>`<div class="it"><div class="thumb"><img loading="lazy" src="${thumbUrl(it.src)}"></div><b style="position:absolute;top:54px;right:4px;background:#000a;border-radius:8px;padding:0 6px;font-size:12px">${fa(k+1)}</b><button class="x" data-k="${k}">✕</button><button class="ws" data-k="${k}" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏱ ${wordAt(s,it)}</button><button class="xs" data-k="${k}" title="چه زمانی این تصویر بیرون برود" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">⏏ ${it.out!=null?wordAtT(s,it.out):'تا آخر صحنه'}</button><button class="fxb" data-k="${k}" title="افکت‌های روی این تصویر" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${fxBtnTxt(it)}</button><button class="snb" data-k="${k}" title="صدایی که با این تصویر پخش شود (شروع، پایان و بلندی)" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${snBtnTxt(it)}</button><button class="bbb" data-k="${k}" title="حباب گفتگوی متصل به این تصویر" style="min-height:28px;width:100%;margin-top:4px;padding:0 2px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${bbBtnTxt(it)}</button><div style="display:flex;gap:4px;margin-top:4px"><button class="mv" data-k="${k}" data-d="-1" style="min-height:30px;flex:1;padding:0" ${k===0?'disabled':''}>›</button><button class="mv" data-k="${k}" data-d="1" style="min-height:30px;flex:1;padding:0" ${k===n-1?'disabled':''}>‹</button></div></div>`).join('')||'<span class="hint">بدون تصویر</span>'}</div>
     <div class="wpanel" hidden style="margin:6px 0;padding:8px;border:1px dashed var(--line);border-radius:10px"><div class="hint wph"></div><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"></div></div>
     <div class="fxpanel" hidden style="margin:6px 0;padding:8px;border:1px dashed var(--line);border-radius:10px"><div class="hint fxh"></div><div class="fxhost"></div></div>
-    <div class="row3"><button class="bAdd" title="آخر صحنه اضافه می‌شود">+ از کتابخانه</button><button class="bNew" title="آپلود در کتابخانه و استفاده در این صحنه">+ تصویر تازه</button><button class="bBg" title="تصویر متحرک پشت صحنه">🖼 پس‌زمینه</button></div><div class="pick" hidden></div>
+    <div class="row3"><button class="bAdd" title="آخر صحنه اضافه می‌شود">+ از کتابخانه</button><button class="bNew" title="آپلود در کتابخانه و استفاده در این صحنه">+ تصویر تازه</button><button class="bBg" title="تصویر متحرک پشت صحنه">🖼 پس‌زمینه</button></div><div class="row" style="margin-top:8px"><label class="btn" style="display:grid;place-items:center;margin:0;width:100%;min-height:46px;text-align:center;line-height:1.35" title="عکس معمولی بدون زمینه‌ی سرخابی؛ با قاب مثل عکس چسبیده و با همان افکت‌های تصویر">🃏 + کارت (بدون زمینه‌ی سرخابی، با قاب)<input type="file" accept="image/*" multiple hidden class="cardFile"></label></div><div class="st cardSt"></div><div class="pick" hidden></div>
     <div class="newbox" hidden style="margin-top:8px"><label>نام فارسی تصویر</label><input type="text" class="nfa" placeholder="مثلاً: سطل زباله">
       <label class="btn pri" style="display:grid;place-items:center;margin:8px 0 0;color:var(--acc-tx)">انتخاب تصویر و ارسال<input type="file" accept="image/*" hidden class="nfile"></label>
       <p class="hint">زمینه‌ی تصویر باید همان سرخابی یک‌دست باشد (مثل تصویرهای دیگر کتابخانه). حدود ۲ تا ۴ دقیقه طول می‌کشد؛ تصویر پس از ذخیره خودش به آخر همین صحنه اضافه می‌شود. می‌توانی بقیه‌ی صحنه‌ها را ادامه بدهی.</p><div class="st nst"></div></div>`;
   box.querySelector('.bNew').onclick=()=>{ const nb=box.querySelector('.newbox'); nb.hidden=!nb.hidden };
+  box.querySelector('.cardFile').onchange=async e=>{ const fs=[...e.target.files]; e.target.value=''; if(fs.length) await addCards(i,d,fs,box.querySelector('.cardSt')) };
   box.querySelector('.nfile').onchange=e=>{ const f=e.target.files[0]; e.target.value=''; if(f) newForScene(i,d,box.querySelector('.nfa').value.trim(),f,box.querySelector('.nst')) };
   box.querySelector('.bPv').onclick=()=>openPreview(i,'play'); box.querySelector('.bLay').onclick=()=>openPreview(i,'edit');
   box.querySelector('.okv').onchange=e=>{ setOk(s,'v',e.target.checked); syncOk(i); rvSave() }; box.querySelector('.okh').onchange=e=>{ setOk(s,'h',e.target.checked); syncOk(i); rvSave() };
@@ -925,7 +926,7 @@ function fillScene(d){ const i=+d.dataset.i, s=RV.data.scenes[i], box=d.querySel
   box.querySelectorAll('.ws').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, wp=box.querySelector('.wpanel'); wp.hidden=false; fxp.hidden=true; selIt(k); wp.querySelector('.wph').textContent='تصویر '+fa(k+1)+' با کدام کلمه‌ی راوی ظاهر شود؟ روی کلمه بزن.';
     wp.querySelector('.chips').innerHTML=sceneWords(s).map(w=>`<button class="chip" data-t="${w.t0}" style="min-height:34px;padding:0 10px">${w.w}</button>`).join('');
     wp.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{ const it=s.items[k]; it.t=+Math.max(s.t0+.15,Math.min(+c.dataset.t,s.t1-.5)).toFixed(3); it.fix=true; rvChanged(i,d,true) }) });
-  box.querySelectorAll('.x').forEach(b=>b.onclick=()=>{ s.items.splice(+b.dataset.k,1); rvChanged(i,d) });
+  box.querySelectorAll('.x').forEach(b=>b.onclick=()=>{ const gone=s.items.splice(+b.dataset.k,1)[0]; dropCardFile(gone); rvChanged(i,d) });
   box.querySelectorAll('.mv').forEach(b=>b.onclick=()=>{ const k=+b.dataset.k, j=k+(+b.dataset.d), a=s.items[k], c=s.items[j]; if(!c) return; const ta=a.t; a.t=c.t; c.t=ta; s.items[k]=c; s.items[j]=a; rvChanged(i,d) });
   box.querySelector('.bAdd').onclick=()=>{ const pk=box.querySelector('.pick'); pk.hidden=!pk.hidden; if(pk.hidden||pk.dataset.f) return; pk.dataset.f=1;
     const its=Object.values(S.catalog.items).filter(x=>x.variants&&x.variants.length).sort((a,b)=>(a.fa||a.en).localeCompare(b.fa||b.en));
@@ -957,6 +958,27 @@ function tfUI(box,s,i,d){
   q('.tfPast').onclick=()=>{ q('.tfPast').classList.add('pri'); q('.tfFut').classList.remove('pri'); save() };
   q('.tfFut').onclick=()=>{ q('.tfFut').classList.add('pri'); q('.tfPast').classList.remove('pri'); save() };
 }
+/* CARDS: ordinary pictures (no magenta background, no cut-out) that act exactly like library pictures on the scene: same entry/exit by spoken word, same effects, sounds and layout tools.
+   They are stored as episodes/<ep>/cards/NN-<id>.jpg and sit in a frame (the same frames and fasteners as the pinned pictures) so the whole card is a clear, selectable shape. item = {t, src, en, kind:'card', frame, attach, card, photo, seed} */
+async function addCards(i,d,files,st){
+  const s=RV.data.scenes[i], say=(t,c)=>{ st.className='st '+(c||''); st.textContent=t };
+  if(!S.token) return say('اول در تنظیمات توکن را وارد کن','bad');
+  let n=0;
+  try{
+    for(const f of files){
+      if((s.items||[]).length>=6){ say('حداکثر ۶ تصویر در هر صحنه است'+(n?'؛ '+fa(n)+' کارت اضافه شد.':'.'),'bad'); break }
+      if(f.size>25*1024*1024){ say('کارت بزرگ‌تر از ۲۵ مگابایت است','bad'); continue }
+      say('در حال ارسال کارت '+fa(n+1)+' از '+fa(files.length)+'…');
+      const blob=await resizeJpeg(f,1600,.9,'#fff'), path='episodes/'+RV.ep+'/cards/'+String(i+1).padStart(2,'0')+'-'+Date.now().toString(36)+n+'.jpg';
+      await putSerial(path,await toB64(blob),'card: '+RV.ep+' #'+(i+1));
+      s.items=s.items||[]; const last=s.items.length?s.items[s.items.length-1].t:s.t0, end=Math.max(s.t1-.5,s.t0+.3), tt=s.items.length?last+Math.max(.35,(end-last)/2):s.t0+.45;
+      s.items.push({t:+tt.toFixed(3), src:path, en:'pop', kind:'card', frame:(PIN_LAST&&PIN_LAST!=='none')?PIN_LAST:'polaroid', attach:'none', card:'white', photo:'cream', seed:1+Math.floor(Math.random()*9999)}); n++ }
+    if(n){ say('','ok'); toast(n>1?fa(n)+' کارت به آخر صحنه اضافه شد':'کارت به آخر صحنه اضافه شد'); rvChanged(i,d) }
+  }catch(e){ say('خطا: '+e.message,'bad'); if(n) rvChanged(i,d) } }
+function dropCardFile(it){   // a removed card's picture is deleted from the repo too (unless another scene still uses the same file)
+  if(!it||it.kind!=='card'||!/^episodes\/[^/]+\/cards\//.test(it.src||'')) return;
+  if(RV.data.scenes.some(sc=>(sc.items||[]).some(o=>o.src===it.src))) return;
+  api('/contents/'+it.src).then(j=>delFile(it.src,j.sha,'remove card: '+it.src)).catch(()=>{}) }
 async function newForScene(i,d,faName,f,st){
   if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return }
   if(!faName){ st.className='st bad'; st.textContent='اول نام فارسی را بنویس'; return }
@@ -1533,10 +1555,10 @@ function posterFull(s){
 }
 const rawRepo = path => 'https://raw.githubusercontent.com/'+S.repo+'/main/'+path;
 const photoTitle = i => 'عکس صحنه‌ی '+fa(i+1);
-async function resizeJpeg(file, maxSide=2400, q=.88){
+async function resizeJpeg(file, maxSide=2400, q=.88, fill='#000'){
   const url=URL.createObjectURL(file);
   try{ const img=await new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=()=>rej(new Error('این فایل تصویر نیست یا خوانده نشد')); im.src=url });
-    const k=Math.min(1,maxSide/Math.max(img.naturalWidth,img.naturalHeight)), w=Math.round(img.naturalWidth*k), h=Math.round(img.naturalHeight*k), c=document.createElement('canvas'); c.width=w; c.height=h; const g=c.getContext('2d'); g.fillStyle='#000'; g.fillRect(0,0,w,h); g.drawImage(img,0,0,w,h);
+    const k=Math.min(1,maxSide/Math.max(img.naturalWidth,img.naturalHeight)), w=Math.round(img.naturalWidth*k), h=Math.round(img.naturalHeight*k), c=document.createElement('canvas'); c.width=w; c.height=h; const g=c.getContext('2d'); g.fillStyle=fill; g.fillRect(0,0,w,h); g.drawImage(img,0,0,w,h);
     return await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error('تبدیل تصویر ناموفق بود')),'image/jpeg',q)); }
   finally{ URL.revokeObjectURL(url) } }
 async function posterUpload(i, file){
@@ -1670,14 +1692,14 @@ const ENTSEL=[['pop','ظاهر شدن (فنری)'],['fade','محو شدن'],['le
 function itemsUI(el,s,i,ch){
   const sec=el.querySelector('.itSec'), B=sec.querySelector('.pSecB'), list=s.items||[]; sec.hidden=!list.length; if(!list.length) return; sec.querySelector('summary').textContent='🖼 تصویرهای روی صحنه ('+fa(list.length)+')'; B.innerHTML='';
   list.forEach((it,k)=>{ const c=document.createElement('details'); c.className='pSec'; if(it._open) c.open=true;
-    c.innerHTML=`<summary>${fa(k+1)}) ${esc(((S.catalog.items||{})[(it.src||'').replace(/^library\//,'').replace(/__\d+\.\w+$/,'')]||{}).fa||'تصویر')}</summary><div class="pSecB"><div class="krow"><div class="kmini" style="flex:0 0 72px"><div class="thumb" style="width:72px;height:72px"><img src="${thumbUrl(it.src)}" style="max-width:100%;max-height:100%"></div></div><div class="kR"><label style="margin-top:0">افکت ورود</label><select class="sel iE">${optsHtml(ENTSEL,it.en||'pop')}</select></div></div>
+    c.innerHTML=`<summary>${fa(k+1)}) ${it.kind==='card'?'🃏 کارت':esc(((S.catalog.items||{})[(it.src||'').replace(/^library\//,'').replace(/__\d+\.\w+$/,'')]||{}).fa||'تصویر')}</summary><div class="pSecB"><div class="krow"><div class="kmini" style="flex:0 0 72px"><div class="thumb" style="width:72px;height:72px"><img src="${thumbUrl(it.src)}" style="max-width:100%;max-height:100%"></div></div><div class="kR"><label style="margin-top:0">افکت ورود</label><select class="sel iE">${optsHtml(ENTSEL,it.en||'pop')}</select></div></div>
       <div class="itTm"></div>
-      <div class="g2"><div><label>قاب</label><select class="sel iF">${optsHtml([['none','بدون قاب'],...FRAMES.filter(x=>x[0]!=='none')],it.frame||'none')}</select></div><div><label>چسباننده</label><select class="sel iA">${optsHtml([['none','بدون چسب'],...ATTACH.filter(x=>x[0]!=='none')],it.attach||'none')}</select></div>
+      <div class="g2"><div><label>قاب</label><select class="sel iF">${it.kind==='card'?optsHtml(FRAMES,it.frame||'polaroid'):optsHtml([['none','بدون قاب'],...FRAMES.filter(x=>x[0]!=='none')],it.frame||'none')}</select></div><div><label>چسباننده</label><select class="sel iA">${optsHtml([['none','بدون چسب'],...ATTACH.filter(x=>x[0]!=='none')],it.attach||'none')}</select></div>
       <div><label>حجم شیء (سایه‌روشن)</label><select class="sel iV">${optsHtml([['0','خاموش'],['1','کم'],['2','متوسط'],['3','زیاد']],String(it.vol!=null?it.vol:((RV.data&&RV.data.meta)||{}).vol!=null?((RV.data&&RV.data.meta)||{}).vol:2))}</select></div><div class="iCardW"><label>رنگ کارت</label><select class="sel iC">${optsHtml(CARDS,it.card||'white')}</select></div><div class="iPhW"><label>رنگ زمینه‌ی عکس</label><select class="sel iP">${optsHtml(PHOTOS,it.photo||'cream')}</select></div></div>
       <p class="hint" style="margin:6px 0 0">جا و اندازه را با «✋ چیدمان» تنظیم کن. قاب فقط وقتی دیده می‌شود که پیش‌نمایش یا ویدیو را دوباره بسازی.</p></div>`;
     c.addEventListener('toggle',()=>{ it._open=c.open }); const q=x=>c.querySelector(x);
     q('.iE').onchange=e=>{ if(e.target.value==='pop') delete it.en; else it.en=e.target.value; ch() };
-    const setF=(k2,v,def)=>{ if(v===def) delete it[k2]; else it[k2]=v; ch() }; q('.iF').onchange=e=>setF('frame',e.target.value,'none'); q('.iA').onchange=e=>setF('attach',e.target.value,'none'); q('.iC').onchange=e=>setF('card',e.target.value,'white'); q('.iP').onchange=e=>setF('photo',e.target.value,'cream'); q('.iV').onchange=e=>{ const v=+e.target.value, dv=((RV.data&&RV.data.meta)||{}).vol!=null?RV.data.meta.vol:2; if(v===dv) delete it.vol; else it.vol=v; ch() };
+    const setF=(k2,v,def)=>{ if(v===def) delete it[k2]; else it[k2]=v; ch() }; q('.iF').onchange=e=>{ if(it.kind==='card'){ it.frame=e.target.value; ch() } else setF('frame',e.target.value,'none') }; q('.iA').onchange=e=>setF('attach',e.target.value,'none'); q('.iC').onchange=e=>setF('card',e.target.value,'white'); q('.iP').onchange=e=>setF('photo',e.target.value,'cream'); q('.iV').onchange=e=>{ const v=+e.target.value, dv=((RV.data&&RV.data.meta)||{}).vol!=null?RV.data.meta.vol:2; if(v===dv) delete it.vol; else it.vol=v; ch() };
     timeUI(q('.itTm'),it,{t:'t',out:'out',off:0},s,'pop',ch); B.appendChild(c) }) }
 function fxUI(el,s,i,box){
   const q0=c=>el.querySelector(c), ch=()=>{ clearOk(s); rvSave(); pvRefresh(i) };

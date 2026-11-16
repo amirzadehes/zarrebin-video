@@ -172,14 +172,14 @@ function drawItem(it, t, tx, ty, size, k, rx = 0) {
   const e = ent(it.en, t, it.t, tx, ty); if (!e) return;
   if (!EDIT && it.out != null && it.out > it.t + .3 && t >= it.out) { const q = ramp(t, it.out, it.out + .4); if (q >= 1) return; const g = eoq(q); e.a *= 1 - g; e.s *= 1 - .3 * g; e.y -= size * .12 * g }   // owner-set exit time: the picture shrinks and fades away
   const fl = 0, fr = 0;   // library pictures stay exactly where the owner put them: no floating, no wobble
-  if (idx >= 0) REC[idx] = { x: tx, y: ty, size };
   const sq = 0;   // no squash & stretch either
   const fk = window.FXL && FXL.itemKey ? FXL.itemKey(CUR, idx, it) : null, srcK = fk && IM[fk] ? fk : it.src;   // framed item: the picture is drawn inside its frame
+  if (idx >= 0) REC[idx] = { x: tx, y: ty, size, src: srcK };   // hit box and selection outline follow what is really drawn (the frame included, e.g. a card)
   const baseDraw = o => drawImg(srcK, e.x, e.y + fl * size * .02, size * e.s * (o ? o.k : 1), e.r + fr + rot0 + (o ? o.dr : 0), e.a, e.bl ? `blur(${e.bl}px)` : 'none', 1 + sq, 1 - sq, true, srcK === it.src ? VOLK[it.vol != null ? it.vol : D.meta.vol != null ? D.meta.vol : 2] || 0 : 0);
   if (!EDIT && it.fx && it.fx.length && window.FXL) FXL.item(it, t, { x: e.x, y: e.y + fl * size * .02, size: size * e.s, rot: e.r + fr + rot0, a: e.a, sx: 1 + sq, sy: 1 - sq }, baseDraw);   // image-bound effects follow the picture's own motion
   else baseDraw();
   if (!EDIT) impact(t, it.t, tx, ty, size * .5, k * 13 + (CUR ? CUR.idx : 0));
-  if (EDIT && EDIT.sel === idx && idx >= 0) { const im = IM[it.src]; if (im) { const m = Math.max(im.width, im.height), w = im.width / m * size, h = im.height / m * size; ctx.save(); ctx.translate(e.x, e.y); ctx.rotate(rot0); ctx.setLineDash([22, 14]); ctx.lineWidth = 7; ctx.strokeStyle = '#00e5ff'; ctx.strokeRect(-w / 2 - 8, -h / 2 - 8, w + 16, h + 16); ctx.restore() } }
+  if (EDIT && EDIT.sel === idx && idx >= 0) { const im = IM[srcK]; if (im) { const m = Math.max(im.width, im.height), w = im.width / m * size, h = im.height / m * size; ctx.save(); ctx.translate(e.x, e.y); ctx.rotate(rot0); ctx.setLineDash([22, 14]); ctx.lineWidth = 7; ctx.strokeStyle = '#00e5ff'; ctx.strokeRect(-w / 2 - 8, -h / 2 - 8, w + 16, h + 16); ctx.restore() } }
   if (it.label) labelPill(it.label, e.x, e.y + size * .55, size, e.a * clamp(e.s), k);
   return e
 }
