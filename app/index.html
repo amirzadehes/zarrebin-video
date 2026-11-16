@@ -669,7 +669,7 @@ const srcId=s=>(s||'').split('/').pop().split('__')[0];
 async function loadReview(ep, quiet){ const body=$('#rvBody'); if(!body) return;
   try{ const j=await api('/contents/episodes/'+ep+'/scenes.json'); let txt=j.content&&j.content.replace(/\n/g,'')?new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))):null;
     if(!txt){ const r=await fetch(j.download_url); txt=await r.text() }
-    RV={ep, sha:j.sha, data:JSON.parse(txt), req:(await readJson('episodes/'+ep+'/request.json',{}))||{}}; renderReview() }catch(e){ if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
+    RV={ep, sha:j.sha, data:JSON.parse(txt), req:(await readJson('episodes/'+ep+'/request.json',{}))||{}, cast:((await readJson('episodes/'+ep+'/cast.json',{}))||{}).characters||[]}; renderReview() }catch(e){ if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
 function thumbUrl(src){ return /^decor\//.test(src)?'https://raw.githubusercontent.com/'+S.repo+'/main/'+src:raw(src.replace(/^library\//,'')) }
 const pWords=p=>new Set(String(p||'').split(' Character look')[0].toLowerCase().match(/[a-z]{4,}/g)||[]);
 function badPrompts(sc){ const kept=[], bad=[]; sc.forEach((s,i)=>{ const w=pWords((s.photo||{}).prompt); if(w.size<6){ bad.push(i); return }
@@ -1485,8 +1485,12 @@ document.querySelectorAll('#modeSw button').forEach(b=>b.onclick=()=>{ if(S.mode
 applyMode();
 
 const POSTER_FULLBLEED = 'Full-bleed artwork that fills the entire canvas edge to edge: no white border, margin, frame, mat, vignette frame or letterbox around the picture.';
+/* characters of the episode (episodes/<ep>/cast.json) named in a prompt: their reference pictures are attached by the owner when the picture is made */
+function refChars(p){ const low=String(p||'').toLowerCase(); return ((RV&&RV.cast)||[]).filter(c=>[c.en,...(c.aliases||[])].some(n=>n&&low.includes(String(n).toLowerCase()))) }
+function refNote(p){ const c=refChars(p); return c.length?'REFERENCE IMAGES ATTACHED: keep the face, hair, body and look of these characters exactly as in the attached reference images, do not redesign them: '+c.map(x=>x.en).join('; ')+'.':'' }
+const refToast=(p,ok)=>{ const c=refChars(p); return ok?(c.length?'پرامپت کپی شد؛ عکس مرجع این شخصیت‌ها را هم آپلود کن: '+c.map(x=>x.fa||x.en).join('، '):'پرامپت کپی شد؛ در موتور ساخت تصویر بزن'):'کپی نشد' };
 function posterFull(s){
-  return [((s.photo&&s.photo.prompt)||'').trim(), posterStyle(), POSTER_FULLBLEED].filter(Boolean).join(' ');
+  const p=((s.photo&&s.photo.prompt)||'').trim(); return [p, refNote(p), posterStyle(), POSTER_FULLBLEED].filter(Boolean).join(' ');
 }
 const rawRepo = path => 'https://raw.githubusercontent.com/'+S.repo+'/main/'+path;
 const photoTitle = i => 'عکس صحنه‌ی '+fa(i+1);
@@ -1503,7 +1507,7 @@ async function posterUpload(i, file){
   if(old&&old!==path){ try{ const j=await api('/contents/'+old); await delFile(old,j.sha,'replace photo: '+old) }catch(_){} }
   const d=document.querySelector('details.sc[data-i="'+i+'"]'); if(d){ d.querySelector('summary').innerHTML=sceneHead(s,i); d.classList.toggle('warn',noPic(s)) }
   updOk(); pvRefresh(i); }
-function posterFullP(p){ return [((p&&p.prompt)||'').trim(), posterStyle(), POSTER_FULLBLEED].filter(Boolean).join(' ') }
+function posterFullP(p){ const t=((p&&p.prompt)||'').trim(); return [t, refNote(t), posterStyle(), POSTER_FULLBLEED].filter(Boolean).join(' ') }
 async function photoUploadTo(i,p,k,file){
   const s=RV.data.scenes[i], blob=await resizeJpeg(file), b64=await toB64(blob), path='episodes/'+RV.ep+'/bg/'+String(i+1).padStart(2,'0')+'-x'+(k+1)+'-'+Date.now().toString(36)+'.jpg', old=p.src;
   await putSerial(path,b64,'poster photo: '+RV.ep+' #'+(i+1)+' extra '+(k+1)); p.src=path; clearOk(s); rvSave();
@@ -1734,7 +1738,7 @@ function posterBlock(box,s,i,d){
     ${pSec('pProps','🧩 اشیای جدا').replace('class="pSec pProps"','class="pSec pProps" hidden')}${pSec('itSec','🖼 تصویرهای روی صحنه').replace('class="pSec itSec"','class="pSec itSec" hidden')}${pSec('lySec','🔤 متن‌ها و مهرهای اضافه').replace('<div class="pSecB">','<div class="pSecB lySecB">')}${pSec('phSec','🕘 زمان و ورود عکس اول پس‌زمینه').replace('<div class="pSecB">','<div class="pSecB phSecB">')}${pSec('mpSec','🖼 عکس‌های بیشتر برای پس‌زمینه').replace('<div class="pSecB">','<div class="pSecB mpSecB">')}${pSec('bbSec','💬 ابر گفتگو').replace('<div class="pSecB">','<div class="pSecB bbSecB">')}${pSec('atSec','❄️ افکت جوّی (برف، باران، رعد و برق…)').replace('<div class="pSecB">','<div class="pSecB atSecB">')}${pSec('bgSec','🎨 پس‌زمینه‌ی رنگی (بدون عکس)').replace('<div class="pSecB">','<div class="pSecB bgSecB">')}${pSec('camSec','🎥 دوربین و تنظیمات عکس').replace('<div class="pSecB">','<div class="pSecB camSecB">')}${pSec('kSec','📝 متن کلیدی').replace('<div class="pSecB">','<div class="pSecB kSecB">')}`;
   box.insertBefore(el, box.firstChild);
   const img=el.querySelector('.pimg'); if(s.photo.src){ img.style.backgroundImage='url("'+rawRepo(s.photo.src)+'")' }
-  el.querySelector('.pCopy').onclick=async()=>{ const t=posterFull(s); if(!(s.photo.prompt||'').trim()) return toast('این صحنه پرامپت ندارد'); toast(await copy(t)?'پرامپت کپی شد؛ در موتور ساخت تصویر بزن':'کپی نشد') };
+  el.querySelector('.pCopy').onclick=async()=>{ const t=posterFull(s); if(!(s.photo.prompt||'').trim()) return toast('این صحنه پرامپت ندارد'); toast(refToast(s.photo.prompt, await copy(t)),(refChars(s.photo.prompt).length?6000:undefined)) };
   propsUI(el,s,i,d); fxUI(el,s,i,box); itemsUI(el,s,i,()=>{ clearOk(s); rvSave(); pvRefresh(i) }); photosUI(el,s,i,()=>{ clearOk(s); rvSave(); pvRefresh(i) });
   const st=el.querySelector('.pSt'); el.querySelector('.pFile').onchange=async e=>{ const f=e.target.files[0]; e.target.value=''; if(!f) return; if(!S.token){ st.className='st pSt bad'; st.textContent='اول توکن را در تنظیمات وارد کن'; return }
     st.className='st pSt'; st.textContent='در حال کوچک‌کردن و ارسال عکس…'; try{ await posterUpload(i,f); st.className='st pSt ok'; st.textContent='✓ عکس گذاشته شد'; img.textContent=''; img.style.backgroundImage='url("'+URL.createObjectURL(f)+'")' }catch(er){ st.className='st pSt bad'; st.textContent='خطا: '+er.message } } }

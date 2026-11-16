@@ -17,6 +17,7 @@ SYSTEM = """تو کارگردان هنری یک ویدیوی توضیحی عمو
   خودِ موضوع و رویداد را نقاشی کن، نه گوینده را: هرگز راوی، گوینده، مجری یا «narrator» در تصویر نگذار و هیچ شخصیت یا چیزی از خودت اختراع نکن که در متن یا خلاصه‌ی داستان نیست. اگر جمله مقدمه‌ی گوینده است (مثل «امروز می‌خوام ... رو تعریف کنم»)، تصویر خودِ ماجرا یا نمادِ اصلی آن باشد.
   دوره‌ی زمانی را از خود داستان بردار: اگر ماجرا تاریخی است لباس و وسیله‌ها همان دوره باشند؛ هرگز «modern» یا «today» ننویس مگر خودِ آن صحنه واقعاً امروزی باشد (دوره‌ی هر صحنه را از خلاصه‌ی داستان و متن همان صحنه بگیر). هر prompt باید کاملاً مستقل و خودکفا باشد: ابزار تصویرسازی هیچ‌کدام از صحنه‌های دیگر را نمی‌بیند. پس هرگز ارجاع نده («the previous scene»، «same as before»، «the same soldier»، «again»، «continuing»). هر شخصیتی که در تصویر هست را هر بار از نو و کامل توصیف کن: «FIXED LOOK» او را در فهرست شخصیت‌ها (CAST) در خلاصه‌ی داستان کلمه‌به‌کلمه در همان prompt بنویس (چهره، مو، ریش، هیکل)، و لباس و سنش را مطابق دوره‌ی همان صحنه (از ستون CLOTHES/AGE BY PERIOD و متن صحنه) کامل با رنگ و جنس بنویس؛ لباسِ دوره‌ی دیگر را نیاور. هرگز نگو «از صحنه‌های قبل».
   در تصویر هیچ نوشته، حرف، عدد یا لوگو نباشد.
+  قواعد شخصیت‌ها (برای همه‌ی صحنه‌ها): (۱) اگر در خلاصه‌ی داستان فهرست CAST هست، هر شخصیتی را که در صحنه هست دقیقاً با همان نام انگلیسیِ en در prompt بیاور (مثلاً «Young Martin»، «The Beggar») و ردیف درست را برای دوره و سنِ همان صحنه انتخاب کن؛ ظاهر را خودت عوض نکن. (۲) فاعل جمله حتماً در تصویر باشد، حتی وقتی اسمش در جمله نیامده و فقط «او»، «همون»، «بهش» گفته شده؛ از «زمینه‌ی داستان» (صحنه‌های قبل و بعد) بفهم چه کسی است. وقتی جمله می‌گوید کسی خواب می‌بیند، خودِ آن آدم خوابیده را نشان بده و چیزی را که می‌بیند جدا و در همان کادر (مثلاً بالای سرش، در نور و ابر رؤیا) بکش، نه اینکه فقط خودِ رؤیا را بکشی. (۳) جزئیات هنری (نور، هاله، ابر، رنگ، زاویه‌ی دوربین، ترکیب‌بندی، حال‌وهوا) با خودت است و باید زیبا و سینمایی و دقیق نوشته شود؛ مالک فقط کلیات را می‌گوید.
 - more: فقط اگر در همین صحنه (هنوز یک خط موضوعی) متن به چند تصویر کاملاً متفاوت نیاز دارد (مثلاً اول «مردم شهر اصرار می‌کنند» و بعد «او در طویله قایم شده»)، تصویرهای بعدی را اینجا بنویس، حداکثر ۲ تصویر: {"word":"کلمه‌ای دقیقاً از متن همین صحنه که از آن لحظه تصویر عوض می‌شود","prompt":"توصیف انگلیسی کامل، مستقل و خودکفا مثل prompt اصلی"}. prompt اصلی تصویر اول صحنه است. اگر صحنه یک تصویر بیشتر لازم ندارد more را خالی بگذار.
 - props: حداکثر ۲ شیء کوچک و مستقل که در متن همین صحنه نام برده شده و بهتر است جدا ساخته و روی عکس گذاشته شوند (غذا، ابزار، حیوان، شیء نمادین؛ نه آدم و نه مکان). اشیای props را در prompt صحنه نیاور. هر کدام: {"fa":"نام فارسی کوتاه و مشخص مثل غاز کبابی","word":"کلمه‌ای دقیقاً از متن همین صحنه که با گفتنش شیء ظاهر می‌شود","prompt":"توصیف انگلیسی کامل و پرجزئیات فقط همان شیء"}. توصیف prop باید غنی و جذاب باشد: جنس و رنگ‌ها، بافت، حالت و جزئیات ریز خود شیء (مثلاً غاز کبابی طلایی و براق روی یک سینی چوبی کوچک با کلم قرمز و سیب پخته)، نه فقط نام شیء؛ ولی هرگز میز، زمین، اتاق، دیوار یا پس‌زمینه را توصیف نکن و چند شیء جدا (مثل سکه و قلم و طومار) را در یک prop نیاور. اگر شیء کوچکی نیست props را خالی بگذار.
 - kicker: برچسب کوتاه انگلیسی با حروف بزرگ، حداکثر ۴ کلمه، مثل «ROME · 4TH CENTURY» یا «THE SHAH · 1970s». اگر چیز مشخصی ندارد خالی بگذار.
@@ -77,22 +78,37 @@ def bible(U):
     try: return groqlib.chat(BIBLE, ' '.join(u['text'] for u in U)[:7000], max_tokens=600, temperature=.2).strip()
     except (Exception, SystemExit) as e: print('story brief skipped:', str(e)[:120]); return ''
 
-CAST_P = """متن یک ویدیوی توضیحی را می‌خوانی. فهرست شخصیت‌ها یا موجودات تکرارشونده‌ی داستان را بنویس (آدم یا حیوان که در بیش از یک جا می‌آید؛ حداکثر ۶). برای هرکدام:
-- base: توصیف انگلیسیِ ثابتِ چهره و بدن که در همه‌ی تصویرها یکی است: جنسیت، رنگ پوست، شکل صورت، مو و ریش، قد و هیکل، حالت چهره (بدون لباس و بدون سن دقیق).
-- outfits: لباس و سن در هر دوره‌ی داستان به‌صورت کوتاه و انگلیسی (مثلاً «as a young recruit: red wool cloak over bronze-studded leather tunic; as an old bishop: plain white robe and tall mitre»).
-فقط از چیزهایی بگو که در متن هست، چیزی اختراع نکن.
-خروجی فقط JSON: {"characters":[{"fa":"نام فارسی","en":"English name","base":"...","outfits":"..."}]}"""
-CAST = []; BRIEF = ''
+CAST_P = """متن یک ویدیوی توضیحی را می‌خوانی. فهرست شخصیت‌ها یا موجودات تکرارشونده‌ی داستان را بنویس (آدم یا حیوان که در بیش از یک جا می‌آید؛ حداکثر ۸). اگر ظاهر یک شخصیت در دوره‌های مختلف عمراً فرق می‌کند (مثلاً نوجوانی و پیری)، برای هر دوره یک ردیف جدا بنویس و در base بگو «same face and bone structure as <نام ردیف دیگر>». برای هرکدام:
+- en: نام انگلیسیِ یکتا و دقیق (مثلاً «Young Martin»، «Elderly Bishop Martin»، «The Beggar»)؛ تصویرسازها همین نام را در prompt می‌آورند.
+- aliases: چند نام یا عنوان دیگرِ انگلیسی که در prompt برای همین ردیف می‌آید (مثلاً «Roman soldier»).
+- base: توصیف انگلیسیِ ثابت و مشخصِ چهره و بدن که در همه‌ی تصویرها یکی است: جنسیت، سن تقریبی، رنگ پوست، شکل صورت و بینی و چشم، مو و ریش، قد و هیکل. هرگز «unspecified» یا «neutral» ننویس؛ اگر متن نگفته، یک ظاهر مشخص و باورپذیر برای همان دوره و مکان انتخاب کن.
+- outfits: لباس و وسایل همیشگی در همین ردیف، کوتاه و انگلیسی.
+- when: به فارسی، این ردیف در کدام بخش داستان می‌آید.
+چیزی از رویدادها اختراع نکن؛ فقط ظاهر را مشخص کن.
+خروجی فقط JSON: {"characters":[{"fa":"نام فارسی","en":"English name","aliases":["..."],"base":"...","outfits":"...","when":"..."}]}"""
+CAST = []; BRIEF = ''; EP = None
 
 
-def make_cast(U):
+def cast_line(o):
+    return '- %s (%s; also called: %s): FIXED LOOK: %s | CLOTHES: %s | WHEN: %s' % (o.get('en') or '', o.get('fa') or '', ', '.join(o.get('aliases') or []) or '-', re.sub(r'\s+', ' ', str(o['base'])).strip(), re.sub(r'\s+', ' ', str(o.get('outfits') or '-')).strip(), re.sub(r'\s+', ' ', str(o.get('when') or '-')).strip())
+
+
+def make_cast(U, ep=None):
+    """The cast of an episode is written ONCE and kept in episodes/<ep>/cast.json (the owner can edit it); every later prompt rewrite reads the same file so the characters never change."""
     global CAST
+    ep = ep or EP; f = 'episodes/%s/cast.json' % ep if ep else None
+    if f and os.path.exists(f):
+        try:
+            CAST = [o for o in json.load(open(f, encoding='utf8')).get('characters', []) if isinstance(o, dict) and o.get('base') and (o.get('en') or o.get('fa'))]
+            if CAST: return '\n'.join(cast_line(o) for o in CAST)
+        except Exception as e: print('cast.json unreadable:', str(e)[:100])
     try:
-        raw = groqlib.chat(CAST_P, ' '.join(u['text'] for u in U)[:7000], max_tokens=900, json_mode=True, temperature=.2)
-        CAST = [o for o in groqlib.objects(raw, 'base') if isinstance(o, dict) and str(o.get('base', '') or o.get('desc', '')).strip() and (o.get('fa') or o.get('en'))][:6]
-        for o in CAST: o['base'] = o.get('base') or o.get('desc')
+        raw = groqlib.chat(CAST_P, ' '.join(u['text'] for u in U)[:7000], max_tokens=1600, json_mode=True, temperature=.2)
+        CAST = [o for o in groqlib.objects(raw, 'base') if isinstance(o, dict) and str(o.get('base', '') or o.get('desc', '')).strip() and (o.get('fa') or o.get('en'))][:8]
+        for o in CAST: o['base'] = o.get('base') or o.get('desc'); o['aliases'] = [str(x) for x in (o.get('aliases') or []) if str(x).strip()]
+        if f and CAST: os.makedirs(os.path.dirname(f), exist_ok=True); json.dump({'characters': CAST}, open(f, 'w', encoding='utf8'), ensure_ascii=False, indent=1)
     except (Exception, SystemExit) as e: print('cast skipped:', str(e)[:120]); CAST = []
-    return '\n'.join('- %s (%s): FIXED LOOK: %s | CLOTHES/AGE BY PERIOD: %s' % (o.get('en') or '', o.get('fa') or '', re.sub(r'\s+', ' ', str(o['base'])).strip(), re.sub(r'\s+', ' ', str(o.get('outfits') or '-')).strip()) for o in CAST)
+    return '\n'.join(cast_line(o) for o in CAST)
 
 
 BAD_REF = re.compile(r'\b(?:in|from|as in|like in|same as|as seen in|continuing from|continues from)\s+(?:the\s+)?(?:previous|last|earlier|preceding|prior|same)\s+(?:scene|image|picture|shot|frame)s?\b[^.,;]*|\b(?:the\s+)?same\s+(?:scene|character|man|woman|boy|girl|soldier|person|figure)s?\s+(?:as before|again)\b|\b(?:as before|once again|again)\b|\bsame (?:scene|moment)\b', re.I)
@@ -105,7 +121,7 @@ def selfcontain(prompt, text):
     low, tn = pr.lower(), ds.norm(text or ''); add = []
     for o in CAST:
         en, fa_, d = str(o.get('en') or '').strip(), str(o.get('fa') or '').strip(), re.sub(r'\s+', ' ', str(o['base'])).strip()
-        named = bool(en) and en.lower() in low   # only when the picture itself names the character
+        named = any(n and n.lower() in low for n in [en] + [str(x).strip() for x in (o.get('aliases') or [])])   # only when the picture itself names the character (by its name or one of its aliases)
         fp = ' '.join(d.lower().split()[:4])
         if named and fp not in low: add.append('%s: %s' % (en or fa_, d.rstrip('.')))
     if add: pr = pr.rstrip() + ' Character look (face and body, keep exactly; the clothes and age are the ones described above): ' + '; '.join(add) + '.'
@@ -154,6 +170,8 @@ def split_long(raw, S, brief, ss):
 
 
 FIXP = """برای هر صحنه‌ی ویدیو فقط متن راوی همان صحنه داده می‌شود و باید یک توصیف تصویر انگلیسی بنویسی (۲ تا ۴ جمله، بدون نوشته در تصویر، بدون نشان‌دادن راوی). این صحنه‌ها با هم و با صحنه‌های دیگر فرق دارند: هر توصیف باید دقیقاً چیزی را نشان بدهد که در متن همان صحنه گفته می‌شود (آدم‌ها، مکان، دوره، فصل، اشیای بزرگ، عمل)، پس توصیف‌ها نباید شبیه هم یا شبیه فهرست «قبلاً استفاده‌شده» باشند: هر صحنه صحنه‌ی، زاویه‌ی و ترکیب خودش را داشته باشد. اگر متن چیز عینی ندارد (توضیح، عدد، مالیات، تاریخ)، یک تصویر نمادین و تصویری بساز که با همان مفهوم بخواند (مثلاً مزرعه‌ی پاییزی، اسناد و سکه، فانوس). هر توصیف مستقل باشد و به صحنه‌ی دیگر ارجاع ندهد؛ هر شخصیت را کامل (طبق CAST در خلاصه) و با لباس و سن همان دوره بنویس. چیزی که در متن نیست اختراع نکن.
+قواعد شخصیت‌ها (برای همه‌ی صحنه‌ها): (۱) اگر در خلاصه‌ی داستان فهرست CAST هست، هر شخصیتی را که در صحنه هست دقیقاً با همان نام انگلیسیِ en در prompt بیاور (مثلاً «Young Martin»، «The Beggar») و ردیف درست را برای دوره و سنِ همان صحنه انتخاب کن؛ ظاهر را خودت عوض نکن. (۲) فاعل جمله حتماً در تصویر باشد، حتی وقتی اسمش در جمله نیامده و فقط «او»، «همون»، «بهش» گفته شده؛ از «زمینه‌ی داستان» (صحنه‌های قبل و بعد) بفهم چه کسی است. وقتی جمله می‌گوید کسی خواب می‌بیند، خودِ آن آدم خوابیده را نشان بده و چیزی را که می‌بیند جدا و در همان کادر (مثلاً بالای سرش، در نور و ابر رؤیا) بکش، نه اینکه فقط خودِ رؤیا را بکشی. (۳) جزئیات هنری (نور، هاله، ابر، رنگ، زاویه‌ی دوربین، ترکیب‌بندی، حال‌وهوا) با خودت است و باید زیبا و سینمایی و دقیق نوشته شود؛ مالک فقط کلیات را می‌گوید.
+برای هر صحنه علاوه بر متن راوی، «زمینه‌ی داستان» (متن دو صحنه‌ی قبل و یک صحنه‌ی بعد) هم داده می‌شود: فقط برای فهمیدن اینکه جمله درباره‌ی چه کسی و چه لحظه‌ای است؛ تصویر را از روی متن راوی خودِ صحنه بساز.
 خروجی فقط JSON: {"scenes":[{"i":0,"prompt":""}]} به همان ترتیب و تعداد."""
 
 
@@ -174,20 +192,20 @@ def bad_prompts(prompts, thr=.62):
     return bad
 
 
-HINTP = """\nبعضی صحنه‌ها یک «راهنمای مالک» دارند: توضیح کوتاه و کلیِ خود مالک (فارسی) درباره‌ی اینکه تصویر چه باشد. آن را اصل بگیر و تصویر را مطابق آن بساز، و جزئیاتی که مالک نگفته (زاویه‌ی دوربین، نور، ترکیب‌بندی، لباس، حالت و حرکت آدم‌ها، رنگ‌ها، فضای پشت‌صحنه، حال‌وهوا) را خودت مثل بقیه‌ی توصیف‌ها کامل و دقیق بنویس. اگر راهنما با متن راوی فرق دارد، راهنما برنده است. توصیف نهایی مثل بقیه انگلیسی، ۲ تا ۴ جمله، مستقل و بدون نوشته در تصویر باشد."""
+HINTP = """\nبعضی صحنه‌ها یک «راهنمای مالک» دارند: یک جمله‌ی کوتاه و کلیِ فارسی که فقط می‌گوید در تصویر چه اتفاقی بیفتد و چه کسی باشد. آن را اصل بگیر (اگر با متن راوی فرق دارد، راهنما برنده است) و همه‌ی هنرِ تصویر را خودت بساز: هاله و نور، ابر یا مه، رنگ‌ها، زاویه‌ی دوربین، ترکیب‌بندی، حال‌وهوا، جزئیات لباس و مکان و حالت چهره‌ی آدم‌ها را کامل، زیبا و سینمایی بنویس؛ مالک اینها را نمی‌گوید و انتظار دارد تو بنویسی. توصیف نهایی مثل بقیه انگلیسی، ۲ تا ۴ جمله، مستقل و بدون نوشته در تصویر باشد."""
 
 
-def fix_prompts(texts, olds, brief, rounds=4, hints=None):
+def fix_prompts(texts, olds, brief, rounds=4, hints=None, around=None):
     """new prompt for every index in `texts` ({i: narration}); waits out Groq rate limits (each model has its own quota) instead of giving up; returns {i: prompt}"""
     import time
     res, todo = {}, list(texts)
     used = [_body(p)[:80] for p in olds if _body(p)]
-    hints = hints or {}
+    hints = hints or {}; around = around or {}
     for rd in range(rounds):
         for a in range(0, len(todo), 5):
             ids = todo[a:a + 5]
             if all(i in res for i in ids): continue
-            user = 'خلاصه‌ی داستان:\n%s\n\nقبلاً استفاده‌شده (تکرار نکن):\n%s\n\nصحنه‌ها:\n%s' % (brief or '-', '\n'.join('- ' + u for u in used[-40:]) or '-', '\n'.join('%d | %s' % (k, texts[i]) + (' | راهنمای مالک: ' + hints[i] if hints.get(i) else '') for k, i in enumerate(ids)))
+            user = 'خلاصه‌ی داستان:\n%s\n\nقبلاً استفاده‌شده (تکرار نکن):\n%s\n\nصحنه‌ها:\n%s' % (brief or '-', '\n'.join('- ' + u for u in used[-40:]) or '-', '\n'.join('%d | %s' % (k, texts[i]) + (' | زمینه‌ی داستان: ' + around[i] if around.get(i) else '') + (' | راهنمای مالک: ' + hints[i] if hints.get(i) else '') for k, i in enumerate(ids)))
             try:
                 got = [o for o in groqlib.objects(groqlib.chat(FIXP + (HINTP if any(hints.get(i) for i in ids) else ''), user, max_tokens=2200, json_mode=True, temperature=.7), 'prompt') if isinstance(o, dict)]
                 for o in got:
@@ -385,6 +403,7 @@ def compile_scenes(ep, T, raw, req, short):
 
 
 def main(ep):
+    global EP; EP = ep
     d = f'episodes/{ep}'; req = ds.load(f'{d}/request.json', {}); short = bool(req.get('short')) or ep.endswith('-short')
     if req.get('use_plan') and os.path.exists(f'{d}/scenes.json'):   # reviewed in the app: keep it (the shared code also refreshes label, subs flag and the render plan)
         D = ds.load(f'{d}/scenes.json', {})

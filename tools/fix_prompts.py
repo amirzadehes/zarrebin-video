@@ -15,10 +15,11 @@ def run(ep, idx=None, hints=None):
     hints = {i: h for i, h in (hints or {}).items() if 0 <= i < len(sc) and h}
     bad = [i for i in (idx if idx else dp.bad_prompts(prompts)) if 0 <= i < len(sc) and (texts[i].strip() or i in hints)]
     if not bad: print(ep, ': nothing to fix'); return False
-    U = [{'text': t} for t in texts]; brief = dp.bible(U); c = dp.make_cast(U)
+    U = [{'text': t} for t in texts]; brief = dp.bible(U); c = dp.make_cast(U, ep)
     brief = (brief + ('\nCAST (fixed look of recurring characters; copy this description inside every prompt where the character appears):\n' + c if c else '')).strip()
     keep = [p for i, p in enumerate(prompts) if i not in bad]
-    got = dp.fix_prompts({i: texts[i] for i in bad}, keep, brief, hints=hints)
+    around = {i: ' // '.join([t for t in (texts[i - 2] if i >= 2 else '', texts[i - 1] if i >= 1 else '') if t] + (['(بعد:) ' + texts[i + 1]] if i + 1 < len(texts) and texts[i + 1] else [])) for i in bad}   # neighbouring narration: so «همون شب» / «بهش» are understood
+    got = dp.fix_prompts({i: texts[i] for i in bad}, keep, brief, hints=hints, around=around)
     n = 0
     for i, p in got.items():
         sc[i].setdefault('photo', {})['prompt'] = dp.selfcontain(p, texts[i]); n += 1
