@@ -310,10 +310,10 @@ function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's 
   const jx = DA ? DA * (2 * jit(t, 1) + .6 * Math.sin(t * .9)) : 0, jy = DA ? DA * (2 * jit(t, 7) + .6 * Math.cos(t * .7)) : 0;
   const fx = p.fx == null ? .5 : p.fx, fy = p.fy == null ? .5 : p.fy, k = Math.max(W / im.width, H / im.height) * z, dw = im.width * k, dh = im.height * k;
   const x = clamp((W - dw) * fx + ox * W + jx, Math.min(0, W - dw), 0), y = clamp((H - dh) * fy + jy, Math.min(0, H - dh), 0);
-  const dpl = p.depth != null ? p.depth : D.meta.depth != null ? D.meta.depth : 2, PA = EDIT && !LIVE ? 0 : [0, .012, .022, .036][dpl] || 0, PX = PA ? depthLayers(p.src) : 0;
+  const dpl = p.depth != null ? p.depth : D.meta.depth != null ? D.meta.depth : 2, PA = EDIT && !LIVE ? 0 : [0, .018, .03, .048][dpl] || 0, PX = PA ? depthLayers(p.src) : 0;
   if (PX) {   // 3D: the depth bands slide by different amounts (the far band stays), a pure function of the scene progress
-    const cx = EDIT ? Math.sin(TH * .8) : lerp(-1, 1, pc) * (sc.idx % 2 ? -1 : 1), cy = EDIT ? Math.sin(TH * .55) : Math.sin(pc * Math.PI * 2), amp = PA * W;
-    const put = (g, ox0, oy0) => PX.L.forEach((c, j) => { const f = j / (PX.N - 1); g.drawImage(c, ox0 + amp * f * cx, oy0 + amp * .3 * f * cy, dw, dh) });
+    const cx = EDIT ? Math.sin(TH * .8) : lerp(-1, 1, pc) * (sc.idx % 2 ? -1 : 1), cy = EDIT ? Math.sin(TH * .55) : Math.sin(pc * Math.PI * 2), amp = PA * W, ez = EDIT ? .5 * Math.sin(TH * .8 + 1) : (pc - .5) * (mo === 'out' ? -1 : 1);   // ez: dolly, the near bands grow (or shrink) faster than the far ones, with every kind of zoom
+    const put = (g, ox0, oy0) => PX.L.forEach((c, j) => { const f = j / (PX.N - 1), q = 1 + PA * 1.8 * f * ez; g.drawImage(c, ox0 + amp * f * cx - dw * (q - 1) / 2, oy0 + amp * .3 * f * cy - dh * (q - 1) / 2, dw * q, dh * q) });
     if (HA) { const cw = Math.ceil(Math.max(dw, W * 1.3)), ch = Math.ceil(Math.max(dh, H * 1.3)); if (!HC || HC.width < cw || HC.height < ch) { HC = document.createElement('canvas'); HC.width = cw; HC.height = ch } const hg = HC.getContext('2d'); hg.clearRect(0, 0, HC.width, HC.height); put(hg, 0, 0); hazeDraw(HC, x, y, dw, dh, 1, TH, HA, dw, dh) }
     else put(ctx, x, y)
   } else if (HA) hazeDraw(im, x, y, dw, dh, k, TH, HA); else ctx.drawImage(im, x, y, dw, dh);
