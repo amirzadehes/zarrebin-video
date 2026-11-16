@@ -7,7 +7,8 @@
   "sword"
  ],
  "roman-helmet-4c": [
-  "roman-helmet"
+  "roman-soldier",
+  "shield"
  ],
  "roman-shield-4c": [
   "shield"
@@ -27,10 +28,8 @@
   "fire"
  ],
  "coin-denarius-4c": [
-  "money-bag",
   "money-coins",
   "banknotes",
-  "cash",
-  "euro-sign"
+  "cash"
  ]
 }
