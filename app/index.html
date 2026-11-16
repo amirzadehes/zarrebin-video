@@ -1569,13 +1569,14 @@ function motionUI(){ const B=document.querySelector('#rvMot .mtB'); if(!B||!RV) 
   const lv='<option value="0">خاموش</option><option value="1">کم</option><option value="2">متوسط</option><option value="3">زیاد</option>';
   B.innerHTML=`<label><input type="checkbox" class="mtSh" style="width:auto;min-height:0"> لرزش کوتاه دوربین هنگام ورود هر تصویر</label>
     <div class="g2"><div><label>لرزش ریز دست‌گرفته روی عکس پس‌زمینه</label><select class="sel mtDr">${lv}</select></div><div></div></div>
-    <div class="g2"><div><label>عمق سه‌بعدی عکس پس‌زمینه (پارالاکس)</label><select class="sel mtDp">${lv}</select></div><div></div></div>
-    <p class="hint">این سه مورد برای همه‌ی صحنه‌ها اعمال می‌شود. برای یک صحنه‌ی خاص، لرزش ریز را در بخش «حرکت عکس» همان صحنه می‌توانی جدا عوض کنی. در پیش‌نمایش صحنه می‌بینی.</p>`;
-  const sh=B.querySelector('.mtSh'), dr=B.querySelector('.mtDr'), dp=B.querySelector('.mtDp');
-  sh.checked=M.shake!==false; dr.value=String(M.drift!=null?M.drift:0); dp.value=String(M.depth!=null?M.depth:2);
+    <div class="g2"><div><label>عمق سه‌بعدی عکس پس‌زمینه (پارالاکس)</label><select class="sel mtDp">${lv}</select></div><div><label>حجم اشیای روی صحنه (سایه‌روشن)</label><select class="sel mtVl">${lv}</select></div></div>
+    <p class="hint">این چهار مورد برای همه‌ی صحنه‌ها اعمال می‌شود. برای یک صحنه‌ی خاص، لرزش ریز را در بخش «حرکت عکس» همان صحنه می‌توانی جدا عوض کنی. در پیش‌نمایش صحنه می‌بینی.</p>`;
+  const sh=B.querySelector('.mtSh'), dr=B.querySelector('.mtDr'), dp=B.querySelector('.mtDp'), vl=B.querySelector('.mtVl');
+  sh.checked=M.shake!==false; dr.value=String(M.drift!=null?M.drift:0); dp.value=String(M.depth!=null?M.depth:2); vl.value=String(M.vol!=null?M.vol:2);
   const go=()=>{ rvSave(); try{ if(!$('#pvModal').hidden) pvRefresh(pvI) }catch(e){} };
   sh.onchange=()=>{ if(sh.checked) delete M.shake; else M.shake=false; go() };
   dr.onchange=()=>{ M.drift=+dr.value; go() };
+  vl.onchange=()=>{ M.vol=+vl.value; go() };
   dp.onchange=()=>{ M.depth=+dp.value; go() } }
 async function musicUI(){ const B=document.querySelector('#rvMus .mpB'); if(!B||!RV) return; const M=(RV.data.meta||{}).music, vol=(RV.data.meta||{}).musicVol==null?100:(RV.data.meta||{}).musicVol;
   B.innerHTML=`${M?`<label style="margin-top:0">پرامپت Suno (فقط ساز، هم‌طول ویدیو: حدود ${fa(Math.floor(M.duration/60))}:${fa(String(M.duration%60).padStart(2,'0'))})</label><div class="hint" dir="ltr" style="text-align:left;white-space:pre-wrap;margin:4px 0 8px;max-height:210px;overflow:auto">${esc(M.full)}</div>
@@ -1661,11 +1662,11 @@ function itemsUI(el,s,i,ch){
     c.innerHTML=`<summary>${fa(k+1)}) ${esc(((S.catalog.items||{})[(it.src||'').replace(/^library\//,'').replace(/__\d+\.\w+$/,'')]||{}).fa||'تصویر')}</summary><div class="pSecB"><div class="krow"><div class="kmini" style="flex:0 0 72px"><div class="thumb" style="width:72px;height:72px"><img src="${thumbUrl(it.src)}" style="max-width:100%;max-height:100%"></div></div><div class="kR"><label style="margin-top:0">افکت ورود</label><select class="sel iE">${optsHtml(ENTSEL,it.en||'pop')}</select></div></div>
       <div class="itTm"></div>
       <div class="g2"><div><label>قاب</label><select class="sel iF">${optsHtml([['none','بدون قاب'],...FRAMES.filter(x=>x[0]!=='none')],it.frame||'none')}</select></div><div><label>چسباننده</label><select class="sel iA">${optsHtml([['none','بدون چسب'],...ATTACH.filter(x=>x[0]!=='none')],it.attach||'none')}</select></div>
-      <div class="iCardW"><label>رنگ کارت</label><select class="sel iC">${optsHtml(CARDS,it.card||'white')}</select></div><div class="iPhW"><label>رنگ زمینه‌ی عکس</label><select class="sel iP">${optsHtml(PHOTOS,it.photo||'cream')}</select></div></div>
+      <div><label>حجم شیء (سایه‌روشن)</label><select class="sel iV">${optsHtml([['0','خاموش'],['1','کم'],['2','متوسط'],['3','زیاد']],String(it.vol!=null?it.vol:((RV.data&&RV.data.meta)||{}).vol!=null?((RV.data&&RV.data.meta)||{}).vol:2))}</select></div><div class="iCardW"><label>رنگ کارت</label><select class="sel iC">${optsHtml(CARDS,it.card||'white')}</select></div><div class="iPhW"><label>رنگ زمینه‌ی عکس</label><select class="sel iP">${optsHtml(PHOTOS,it.photo||'cream')}</select></div></div>
       <p class="hint" style="margin:6px 0 0">جا و اندازه را با «✋ چیدمان» تنظیم کن. قاب فقط وقتی دیده می‌شود که پیش‌نمایش یا ویدیو را دوباره بسازی.</p></div>`;
     c.addEventListener('toggle',()=>{ it._open=c.open }); const q=x=>c.querySelector(x);
     q('.iE').onchange=e=>{ if(e.target.value==='pop') delete it.en; else it.en=e.target.value; ch() };
-    const setF=(k2,v,def)=>{ if(v===def) delete it[k2]; else it[k2]=v; ch() }; q('.iF').onchange=e=>setF('frame',e.target.value,'none'); q('.iA').onchange=e=>setF('attach',e.target.value,'none'); q('.iC').onchange=e=>setF('card',e.target.value,'white'); q('.iP').onchange=e=>setF('photo',e.target.value,'cream');
+    const setF=(k2,v,def)=>{ if(v===def) delete it[k2]; else it[k2]=v; ch() }; q('.iF').onchange=e=>setF('frame',e.target.value,'none'); q('.iA').onchange=e=>setF('attach',e.target.value,'none'); q('.iC').onchange=e=>setF('card',e.target.value,'white'); q('.iP').onchange=e=>setF('photo',e.target.value,'cream'); q('.iV').onchange=e=>{ const v=+e.target.value, dv=((RV.data&&RV.data.meta)||{}).vol!=null?RV.data.meta.vol:2; if(v===dv) delete it.vol; else it.vol=v; ch() };
     timeUI(q('.itTm'),it,{t:'t',out:'out',off:0},s,'pop',ch); B.appendChild(c) }) }
 function fxUI(el,s,i,box){
   const q0=c=>el.querySelector(c), ch=()=>{ clearOk(s); rvSave(); pvRefresh(i) };

@@ -73,11 +73,39 @@ let D = null; const IM = {};
 function loadImg(src) { return new Promise(r => { const i = new Image(); i.onload = () => { IM[src] = i; r() }; i.onerror = () => { if (i.dataset.r) return r(); i.dataset.r = 1; i.src = 'https://raw.githubusercontent.com/amirzadehes/zarrebin-video/main/' + src }; i.src = '../' + src }) }
 
 /* ---------- primitives ---------- */
-function drawImg(src, x, y, size, rot = 0, a = 1, filter = 'none', sx = 1, sy = 1, shadow = true) {
+function drawImg(src, x, y, size, rot = 0, a = 1, filter = 'none', sx = 1, sy = 1, shadow = true, vol = 0) {
   const i = IM[src]; if (!i) return; const s = size / Math.max(i.width, i.height);
   ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s * sx, s * sy); ctx.globalAlpha = a; if (VOX) filter = (filter !== 'none' ? filter + ' ' : '') + 'sepia(.1) saturate(1.05) contrast(1.05)'; if (filter !== 'none') ctx.filter = filter;
   if (shadow) { if (VOX) { ctx.shadowColor = 'rgba(20,25,45,.32)'; ctx.shadowOffsetX = 6 / s; ctx.shadowOffsetY = 22 / s; ctx.shadowBlur = 34 / s } else { ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowOffsetX = 16 / s; ctx.shadowOffsetY = 20 / s; ctx.shadowBlur = 0 } }
-  ctx.drawImage(i, -i.width / 2, -i.height / 2); ctx.restore()
+  ctx.drawImage(i, -i.width / 2, -i.height / 2);
+  const vl = vol > 0 ? volLayer(src) : null; if (vl) { ctx.shadowColor = 'transparent'; ctx.filter = 'none'; ctx.globalAlpha = a * vol; ctx.drawImage(vl, -i.width / 2, -i.height / 2, i.width, i.height) }   // soft light on top of the picture: it looks round, its outline never changes
+  ctx.restore()
+}
+
+/* VOLUME of a cut-out picture (library objects): NOT a geometric warp, only shading, so the outline and the face never change.
+   From the picture's own alpha: a bevel (distance from the edge, quarter-circle profile) + a broad dome (blurred mask) make a height field; its normals, lit from the top left, give a white (lit) / black (shade)
+   overlay that is cached once per picture and laid over it. Photos (nearly fully opaque) get none. Strength per picture: it.vol 0-3, default D.meta.vol, default 2. */
+const VOLC = {}, VOLK = [0, .7, 1, 1.4];
+function volLayer(src) {
+  if (VOLC[src] !== undefined) return VOLC[src]; VOLC[src] = null; const im = IM[src]; if (!im || !('filter' in ctx)) return null;
+  try {
+    const k = Math.min(1, 320 / Math.max(im.width, im.height)), w = Math.max(8, Math.round(im.width * k)), h = Math.max(8, Math.round(im.height * k)), n = w * h;
+    const c0 = document.createElement('canvas'); c0.width = w; c0.height = h; const g0 = c0.getContext('2d', { willReadFrequently: true }); g0.drawImage(im, 0, 0, w, h); const P = g0.getImageData(0, 0, w, h).data;
+    const M = new Float32Array(n); let on = 0; for (let i = 0; i < n; i++) { const a = P[i * 4 + 3]; M[i] = a > 127 ? 1 : 0; on += M[i] } if (on < n * .02 || on > n * .97) return null;
+    const dist = new Float32Array(n); for (let i = 0; i < n; i++) dist[i] = M[i] ? 1e6 : 0;   // chamfer distance from the nearest empty pixel (the border of the picture is not an edge)
+    const A = 1, Bd = 1.414; for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const i = y * w + x; let v = dist[i]; if (x) v = Math.min(v, dist[i - 1] + A); if (y) { v = Math.min(v, dist[i - w] + A); if (x) v = Math.min(v, dist[i - w - 1] + Bd); if (x < w - 1) v = Math.min(v, dist[i - w + 1] + Bd) } dist[i] = v }
+    for (let y = h - 1; y >= 0; y--) for (let x = w - 1; x >= 0; x--) { const i = y * w + x; let v = dist[i]; if (x < w - 1) v = Math.min(v, dist[i + 1] + A); if (y < h - 1) { v = Math.min(v, dist[i + w] + A); if (x < w - 1) v = Math.min(v, dist[i + w + 1] + Bd); if (x) v = Math.min(v, dist[i + w - 1] + Bd) } dist[i] = v }
+    let dm = 0; for (let i = 0; i < n; i++) if (dist[i] < 1e5 && dist[i] > dm) dm = dist[i]; const R = Math.max(2, Math.min(dm, .13 * Math.max(w, h)));
+    let dome = Float32Array.from(M); const rb = Math.max(2, Math.round(.1 * Math.max(w, h))); for (let q = 0; q < 3; q++) dome = boxBlur(dome, w, h, rb);
+    const H = new Float32Array(n); for (let i = 0; i < n; i++) { const t = Math.min(1, dist[i] / R); H[i] = (M[i] ? R * Math.sqrt(1 - (1 - t) * (1 - t)) : 0) + .9 * R * dome[i] }
+    const o = document.createElement('canvas'); o.width = w; o.height = h; const og = o.getContext('2d'), id = og.createImageData(w, h), O = id.data, Lx = -.55, Ly = -.6, Lz = .58, ln = Math.hypot(Lx, Ly, Lz), lx = Lx / ln, ly = Ly / ln, lz = Lz / ln, f = 1.6 / R;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = y * w + x, gx = (H[y * w + Math.min(w - 1, x + 1)] - H[y * w + Math.max(0, x - 1)]) * .5 * f, gy = (H[Math.min(h - 1, y + 1) * w + x] - H[Math.max(0, y - 1) * w + x]) * .5 * f, nl = 1 / Math.hypot(gx, gy, 1);
+      const sh = (-gx * nl) * lx + (-gy * nl) * ly + nl * lz - lz, a = sh > 0 ? Math.min(.6, sh * 2) : Math.min(.7, -sh * 2), v = sh > 0 ? 255 : 0, p = i * 4; O[p] = O[p + 1] = O[p + 2] = v; O[p + 3] = Math.round(a * 255) }
+    og.putImageData(id, 0, 0);
+    const full = document.createElement('canvas'); full.width = im.width; full.height = im.height; const fg = full.getContext('2d'); fg.imageSmoothingQuality = 'high'; fg.drawImage(o, 0, 0, im.width, im.height);
+    fg.globalCompositeOperation = 'destination-in'; fg.drawImage(im, 0, 0); return VOLC[src] = full   // only where the picture itself is opaque
+  } catch (e) { return null }
 }
 function star(x, y, r1, r2, n, rot, fill, lw = 8) { ctx.beginPath(); for (let i = 0; i < n * 2; i++) { const r = i % 2 ? r1 : r2, a = rot + i * Math.PI / n; ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r) } ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); if (lw) { ctx.lineWidth = lw; ctx.strokeStyle = INK; ctx.lineJoin = 'round'; ctx.stroke() } }
 function sparkle(x, y, r, rot, fill = '#ffe15a') { if (VOX || !SYM) return; ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.beginPath(); for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); ctx.lineTo(Math.cos(a + Math.PI / 4) * r * .28, Math.sin(a + Math.PI / 4) * r * .28) } ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); ctx.lineWidth = 6; ctx.strokeStyle = INK; ctx.lineJoin = 'round'; ctx.stroke(); ctx.restore() }
@@ -147,7 +175,7 @@ function drawItem(it, t, tx, ty, size, k, rx = 0) {
   if (idx >= 0) REC[idx] = { x: tx, y: ty, size };
   const sq = 0;   // no squash & stretch either
   const fk = window.FXL && FXL.itemKey ? FXL.itemKey(CUR, idx, it) : null, srcK = fk && IM[fk] ? fk : it.src;   // framed item: the picture is drawn inside its frame
-  const baseDraw = o => drawImg(srcK, e.x, e.y + fl * size * .02, size * e.s * (o ? o.k : 1), e.r + fr + rot0 + (o ? o.dr : 0), e.a, e.bl ? `blur(${e.bl}px)` : 'none', 1 + sq, 1 - sq);
+  const baseDraw = o => drawImg(srcK, e.x, e.y + fl * size * .02, size * e.s * (o ? o.k : 1), e.r + fr + rot0 + (o ? o.dr : 0), e.a, e.bl ? `blur(${e.bl}px)` : 'none', 1 + sq, 1 - sq, true, srcK === it.src ? VOLK[it.vol != null ? it.vol : D.meta.vol != null ? D.meta.vol : 2] || 0 : 0);
   if (!EDIT && it.fx && it.fx.length && window.FXL) FXL.item(it, t, { x: e.x, y: e.y + fl * size * .02, size: size * e.s, rot: e.r + fr + rot0, a: e.a, sx: 1 + sq, sy: 1 - sq }, baseDraw);   // image-bound effects follow the picture's own motion
   else baseDraw();
   if (!EDIT) impact(t, it.t, tx, ty, size * .5, k * 13 + (CUR ? CUR.idx : 0));
@@ -671,7 +699,7 @@ window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0
 window.loadData = async (DD, only) => {   // shared by the renderer and the in-app preview (only = scene indices whose images are needed)
   D = DD; POSTER = D.meta.mode === 'poster'; VOX = POSTER || (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; VARY = Q.get('vary') !== '0' && D.meta.vary !== false; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
   D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => { srcs.add(i.src); (i.fx || []).forEach(f => { if (f && f.type === 'bubble' && f.file) srcs.add(f.file) }) }); (s.bubbles || []).forEach(b => { if (b && b.img) srcs.add(b.img) }); (s.photos || []).forEach(q => { if (q && q.src) srcs.add(q.src) }); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); if (s.photo && s.photo.src) srcs.add(s.photo.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
-  const dsrc = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; [s.photo, ...(s.photos || [])].forEach(q => { if (q && q.src && /(^|\/)bg\//.test(q.src)) { dsrc.add(flatPath(q.src)); dsrc.add(depthPath(q.src)) } }) }); for (const k in DEP) delete DEP[k];
+  const dsrc = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; [s.photo, ...(s.photos || [])].forEach(q => { if (q && q.src && /(^|\/)bg\//.test(q.src)) { dsrc.add(flatPath(q.src)); dsrc.add(depthPath(q.src)) } }) }); for (const k in DEP) delete DEP[k]; for (const k in VOLC) delete VOLC[k];
   await Promise.all([...[...srcs].map(loadImg), ...[...dsrc].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
   if (window.FXL) await FXL.prepare([...srcs]);
   mkGrain(); mkPaper(); CH.length = 0; buildCaptions(); buildBeats(); seek(0); return true

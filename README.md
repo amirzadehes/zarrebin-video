@@ -89,3 +89,4 @@ Per scene (all optional): `layers` = any number of `{kind:'text'|'stamp', text, 
 - کارگردان پوستری در `meta.music = {title, style, duration, full}` یک پرامپت Suno می‌دهد (فقط ساز، هم‌طول ویدیو، با فرازونشیب موضوع). در بازبینی بخش «🎵 موزیک این قسمت» آن را کپی می‌کنی.
 - mp3 ساخته‌شده را همان‌جا آپلود کن (`episodes/<ep>/music_own.mp3`)؛ `make_music.py` آن را به طول ویدیو تکرار/می‌برد و در انتها محو می‌کند.
 - بلندی: `meta.musicVol` (درصد، پیش‌فرض ۱۰۰) در مرحله‌ی ترکیب نهایی وزن موزیک می‌شود؛ پیش‌نمایش «دیدن کل ویدیو» هم همین بلندی را می‌شنوی.
+- `meta.vol` 0-3 (default 2) / per item `vol`: **volume shading** of cut-out library pictures. Not a warp: a height field from the picture's alpha (edge bevel + broad dome) is lit from the top left and cached as a white/black overlay (`volLayer` in `engine/v2.js`), so the outline never changes. Photos (nearly opaque) get none.
