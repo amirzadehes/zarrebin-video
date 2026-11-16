@@ -340,7 +340,8 @@ async function api(path, opt={}){
   if (opt.body) h['Content-Type']='application/json';
   let r;
   for (let k=0;;k++) {
-    r = await fetch('https://api.github.com/repos/'+S.repo+path, { ...opt, headers:h, cache:'no-store' });
+    try{ r = await fetch('https://api.github.com/repos/'+S.repo+path, { ...opt, headers:h, cache:'no-store' }); }
+    catch(ne){ const er=new Error('اتصال به GitHub قطع شد (اینترنت یا حجم زیاد فایل)'); er.status=0; er.net=true; throw er; }
     if (r.ok) break;
     let m=''; try{ m=(await r.clone().json()).message }catch(e){}
     if (k<2 && opt.method && opt.method!=='GET' && /timeout|timed out/i.test(m||'')) { await sleep(3000*(k+1)); continue; }   // GitHub sometimes times out while checking its rules for a commit: the same write usually works a moment later
@@ -561,8 +562,8 @@ async function trStart(){ const st=$('#trSt'), ep=slug($('#epName').value), f=$(
   if(TR&&TR.cuts.size&&!confirm('رونویسی دوباره، برش‌های فعلی را پاک می‌کند (کلمه‌ها عوض می‌شوند). ادامه بدهم؟')) return;
   go.disabled=true; st.className='st'; st.textContent=f?'در حال آپلود صدا…':'در حال شروع…';
   try{
-    if(f){ const ext=(f.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,''), b64=await toB64(f); let osha; try{ osha=(await api('/contents/episodes/'+ep+'/voice_user.'+ext)).sha }catch(e){}
-      await api('/contents/episodes/'+ep+'/voice_user.'+ext,{method:'PUT',body:JSON.stringify({message:'own voice: '+ep,content:b64,branch:'main',sha:osha})});
+    if(f){ const ext=(f.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,''), b64=await toB64(f); st.textContent='در حال آپلود صدا ('+(f.size/1048576).toFixed(1)+' مگابایت)…';
+      await putBig('episodes/'+ep+'/voice_user.'+ext,b64,'own voice: '+ep,t=>{st.textContent=t});
       const L=await api('/contents/episodes/'+ep); for(const x of L.filter(x=>x.type==='file'&&/^voice_user\./.test(x.name)&&x.name!=='voice_user.'+ext)){ await delFile('episodes/'+ep+'/'+x.name,x.sha,'remove old voice: '+x.name) }
       try{ $('#bOwn').value='' }catch(_){} }
     let old=''; try{ old=(await api('/contents/episodes/'+ep+'/transcribe.log')).sha }catch(e){}
@@ -626,8 +627,7 @@ async function buildVideo(mode){
     if(nt.length>20&&prev.length>20&&textOverlap(nt,prev)<.5&&!confirm('متن تازه با متن قبلیِ «'+epTitle(ep)+'» خیلی فرق دارد؛ انگار قسمت جدیدی است ولی نام انگلیسی همان قسمت قبلی مانده.\n\nاگر ادامه بدهی، صدا، صحنه‌ها و فهرست عکس‌های مورد نیاز آن قسمت با قسمت جدید جایگزین می‌شود. برای نگه داشتن قسمت قبلی، اول یک نام انگلیسی تازه بنویس.\n\nروی همین قسمت ادامه بدهم؟')){ st.className='st bad'; st.textContent='متوقف شد؛ برای قسمت جدید یک نام انگلیسی تازه بنویس.'; return } }
   try{
     if(ownF){ st.className='st'; st.textContent='در حال آپلود صدا…'; const ext=(ownF.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,'');
-      const b64=await toB64(ownF); let osha; try{ osha=(await api('/contents/episodes/'+ep+'/voice_user.'+ext)).sha }catch(e){}
-      await api('/contents/episodes/'+ep+'/voice_user.'+ext,{method:'PUT',body:JSON.stringify({message:'own voice: '+ep,content:b64,branch:'main',sha:osha})});
+      const b64=await toB64(ownF); await putBig('episodes/'+ep+'/voice_user.'+ext,b64,'own voice: '+ep,t=>{st.textContent=t});
       /* the engine takes the first voice_user.* it finds, so an old file with another extension (mp3 vs m4a) would win over the new one: remove every other one */
       try{ const L=await api('/contents/episodes/'+ep); for(const f of L.filter(x=>x.type==='file'&&/^voice_user\./.test(x.name)&&x.name!=='voice_user.'+ext)){ await delFile('episodes/'+ep+'/'+f.name,f.sha,'remove old voice: '+f.name) } }
       catch(e){ st.className='st bad'; st.textContent='ویس قبلی پاک نشد، ساخت متوقف شد: '+e.message; return }
@@ -1199,6 +1199,14 @@ let keepEpDone=false;
 function renderAll(){ if(!keepEpDone){ keepEpDone=true; renderEp(); } renderGen(); renderWant(); renderLib(); }
 
 /* ---------- upload ---------- */
+/* آپلود فایل بزرگ (تا ۲۵ مگ): هر بار sha تازه می‌گیرد و با قطع اینترنت/خطای موقت تا ۵ بار دوباره می‌فرستد */
+async function putBig(path,b64,msg,say){
+  for(let k=0;k<5;k++){
+    let sha; try{ sha=(await api('/contents/'+path)).sha }catch(e){ if(e.status&&e.status!==404) throw e }
+    try{ return await api('/contents/'+path,{method:'PUT',body:JSON.stringify({message:msg,content:b64,branch:'main',sha})}); }
+    catch(e){ if(k===4||!(e.status===0||[409,422,502,503,504].includes(e.status))) throw e; if(say) say('اتصال قطع شد؛ تلاش دوباره ('+(k+2)+' از ۵)…'); await sleep(2500*(k+1)); }
+  }
+}
 const toB64 = f => new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(f); });
 async function put(path, b64, msg){
   for(let k=0;k<4;k++){
