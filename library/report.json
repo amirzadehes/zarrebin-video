@@ -1,36 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-10 21:11:08 UTC",
-   "ok": [
-    {
-     "file": "teacher__mwb6pb1u0sc.jpg",
-     "id": "teacher",
-     "saved": "teacher__1.webp",
-     "kb": 154
-    },
-    {
-     "file": "teacher__mwb6pb2512y.jpg",
-     "id": "teacher",
-     "saved": "teacher__2.webp",
-     "kb": 154
-    },
-    {
-     "file": "teacher__mwb6pb2d23k.jpg",
-     "id": "teacher",
-     "saved": "teacher__3.webp",
-     "kb": 127
-    },
-    {
-     "file": "teacher__mwb6pb2l3o2.jpg",
-     "id": "teacher",
-     "saved": "teacher__4.webp",
-     "kb": 135
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-10 21:14:56 UTC",
    "ok": [
     {
@@ -875,6 +845,18 @@
      "id": "u-mwi96zu7",
      "saved": "u-mwi96zu7__1.webp",
      "kb": 112
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-16 20:27:53 UTC",
+   "ok": [
+    {
+     "file": "u-mwjpsz3n__mwjpsz3o.jpg",
+     "id": "u-mwjpsz3n",
+     "saved": "u-mwjpsz3n__1.webp",
+     "kb": 83
     }
    ],
    "failed": []

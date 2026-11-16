@@ -3796,6 +3796,18 @@
    ],
    "fa_tags_for": "اسکناس مالیات"
   },
+  "u-mwjpsz3n": {
+   "id": "u-mwjpsz3n",
+   "en": "grilled goose kebab",
+   "fa": "کباب غاز",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "u-mwjpsz3n__1.webp"
+   ]
+  },
   "warning-sign": {
    "id": "warning-sign",
    "en": "warning triangle with exclamation mark",
