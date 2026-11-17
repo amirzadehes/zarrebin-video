@@ -11,11 +11,11 @@ canvas{display:block;position:absolute;left:50%;top:50%;transform:translate(-50%
 #gd i{position:absolute;display:block}
 #gb{position:fixed;left:6px;top:6px;z-index:9;width:34px;height:34px;border-radius:9px;border:0;background:#000a;color:#fff;font:700 18px Vz,sans-serif;display:none;cursor:pointer}
 </style></head><body><canvas id="out"></canvas><div id="gd"></div><button id="gb" title="خط‌های راهنما">⌗</button><div id="msg">در حال آماده‌سازی…</div>
-<script src="fx.js?v=1117e"></script><script src="v2.js?v=1117e"></script>
+<script src="fx.js?v=1117f"></script><script src="v2.js?v=1117f"></script>
 <script>
 /* in-app scene preview + layout editor. ?inline=1&fmt=v|h. parent -> {type:'load'|'edit'|'adj'|'stop'}, iframe -> {type:'ready'|'layout'} */
 const msg=document.getElementById('msg'), cvs=document.getElementById('out'), au=new Audio(); au.preload='auto';
-let sc=null, si=0, raf=0, playing=false, mode='play', ptrs=new Map(), pinch0=null;
+let sc=null, si=0, raf=0, playing=false, mode='play', ptrs=new Map(), pinch0=null, keyDrag=null;   // keyDrag: the key text is being dragged
 function fit(){ const k=Math.min(innerWidth/W, innerHeight/H); cvs.style.width=(W*k)+'px'; cvs.style.height=(H*k)+'px' } addEventListener('resize',fit); fit();
 /* sound effects chosen in the app (fx of type 'sound', files in ../sfx/): played together with the voice while the scene preview runs.
    Same times as tools/make_bgfx.py: picture time (it.t) or scene start + pin.start, plus fx.start; fx.end stops it early. Level ~ the final mix (clip peak .8 x weight .8) */
@@ -42,15 +42,18 @@ async function play(){ stop(); setEdit(null); mode='play'; sfxBuild(); sfxLast=s
 const editT=()=>Math.min(sc.t1-.2, D.meta.total-.6);
 function edit(sel){ window.__sel=sel; stop(); pstate(); mode='edit'; msg.hidden=true; setEdit({sel}); setLive(true); seek(editT()); if(!liveRaf) liveRaf=requestAnimationFrame(liveLoop) }
 cvs.addEventListener('pointerdown',e=>{ if(mode!=='edit'){ if(playing) pausePlay(); else if(paused) resumePlay(); else if(sc) play(); return }
+  { const KR=e.isPrimary&&window.getKeyRec&&getKeyRec(); if(KR){ const p0=toC(e); if(Math.abs(p0.x-KR.x)<=KR.w/2+30&&Math.abs(p0.y-KR.y)<=KR.h/2+30){ cvs.setPointerCapture(e.pointerId); keyDrag={id:e.pointerId,x:e.clientX,y:e.clientY,cx:KR.x,cy:KR.y}; return } } }   // grabbing the key text (yellow frame) moves it
   if(e.isPrimary){ ptrs.clear(); pinch0=null }   // a new first finger always starts a fresh gesture (a lost pointerup must never block selecting)
   cvs.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY}); const p=toC(e); 
   if(ptrs.size===1){ const cur=currentSel(), hit=inBox(cur,p)?cur:hitTest(p); if(hit>=0&&hit!==cur){ edit(hit); post() } } if(ptrs.size===2){ const [a,b]=[...ptrs.values()]; pinch0={d:Math.hypot(a.x-b.x,a.y-b.y),sz:lay().sz||1} } });
-cvs.addEventListener('pointermove',e=>{ if(mode!=='edit'||!ptrs.has(e.pointerId)) return; const o=ptrs.get(e.pointerId), s=currentSel(); if(s<0) return; const k=W/cvs.getBoundingClientRect().width;
+cvs.addEventListener('pointermove',e=>{ if(keyDrag&&e.pointerId===keyDrag.id){ const k=W/cvs.getBoundingClientRect().width; sc.keyPos=sc.keyPos||{}; sc.keyPos[FMT]={x:+clampv((keyDrag.cx+(e.clientX-keyDrag.x)*k)/W,.05,.95).toFixed(4),y:+clampv((keyDrag.cy+(e.clientY-keyDrag.y)*k)/H,.03,.97).toFixed(4)}; seek(editT()); return }
+  if(mode!=='edit'||!ptrs.has(e.pointerId)) return; const o=ptrs.get(e.pointerId), s=currentSel(); if(s<0) return; const k=W/cvs.getBoundingClientRect().width;
   if(ptrs.size===1){ const L=lay(); L.dx=clampv((L.dx||0)+(e.clientX-o.x)*k/W,-.7,.7); L.dy=clampv((L.dy||0)+(e.clientY-o.y)*k/H,-.7,.7) }
   ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
   if(ptrs.size===2&&pinch0){ const [a,b]=[...ptrs.values()]; lay().sz=clampv(pinch0.sz*Math.hypot(a.x-b.x,a.y-b.y)/pinch0.d,.3,3) }
   seek(editT()) });
-const up=e=>{ if(ptrs.has(e.pointerId)){ ptrs.delete(e.pointerId); if(ptrs.size<2) pinch0=null; if(mode==='edit') post() } }; cvs.addEventListener('pointerup',up); cvs.addEventListener('pointercancel',up);
+const up=e=>{ if(keyDrag&&e.pointerId===keyDrag.id){ keyDrag=null; parent.postMessage({type:'layout',scene:si,kind:'key',fmt:FMT,lay:{...(sc.keyPos&&sc.keyPos[FMT]||{})}},'*'); return }
+  if(ptrs.has(e.pointerId)){ ptrs.delete(e.pointerId); if(ptrs.size<2) pinch0=null; if(mode==='edit') post() } }; cvs.addEventListener('pointerup',up); cvs.addEventListener('pointercancel',up);
 const clampv=(v,a,b)=>Math.max(a,Math.min(b,v));
 function toC(e){ const r=cvs.getBoundingClientRect(), k=W/r.width; return {x:(e.clientX-r.left)*k,y:(e.clientY-r.top)*k} }
 function currentSel(){ return window.__sel===undefined?-1:window.__sel }

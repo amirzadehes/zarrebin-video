@@ -461,32 +461,38 @@ TPL.poster = function (t, sc) {   // library pictures only (the owner places the
 };
 function posterChips(text, size, maxW, cx, top, t, t0, align, o) {   // o: {col: text colour, bg: chip colour or 'none', hl: highlight chip colour}
   o = o || {}; const ga = ctx.globalAlpha, tcol = o.col || '#fff', hcol = o.hl || ORG, chip = o.bg === 'none' ? null : (o.bg || 'rgba(14,10,7,.84)');   // headline on dark chips, *word* on an orange chip; returns its height
-  const font = `900 ${size}px Vz`, L = wrapTokens(text, font, maxW), lh = size * 1.5, rtl = D.meta.rtl, padX = size * .38; let idx = 0;
+  const font = `900 ${size}px Vz`, L = wrapTokens(text, font, maxW), lh = size * 1.5, rtl = D.meta.rtl, padX = size * .38; let idx = 0, cc = 0;
+  L.lines.forEach(ln => { ln.cs = cc; ln.ws.forEach(k => { k.cs = cc; cc += k.txt.length }) });   // o.tp < 1: typing / erasing, only the first tp * total characters are drawn
+  const shown = o.tp != null && o.tp < 1 ? Math.ceil(o.tp * cc) : Infinity;
   ctx.save(); ctx.font = font; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.direction = rtl ? 'rtl' : 'ltr';
   L.lines.forEach((ln, li) => {
-    const p = spr(t, t0 + li * .14, .55, 13); if (p <= 0) return; const y = top + lh * (li + .5), w = ln.w + 2 * padX;
+    if (shown <= ln.cs) return; const p = spr(t, t0 + li * .14, .55, 13); if (p <= 0) return; const y = top + lh * (li + .5), w = ln.w + 2 * padX;
     const right = align === 'center' ? cx + w / 2 : align === 'right' ? cx : cx - w;   // box edge: right edge of the chip for 'right'
     const x0 = align === 'center' ? cx - w / 2 : align === 'right' ? cx - w : cx;
     ctx.save(); ctx.translate((x0 + w / 2), y); ctx.scale(.85 + .15 * Math.min(p, 1.1), .85 + .15 * Math.min(p, 1.1)); ctx.globalAlpha = ga * clamp(p * 1.8);
     if (chip) { ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 5; ctx.fillStyle = chip; ctx.beginPath(); ctx.roundRect(-w / 2, -lh * .46, w, lh * .92, size * .22); ctx.fill(); ctx.shadowColor = 'transparent' }
     let x = rtl ? w / 2 - padX : -w / 2 + padX;
-    ln.ws.forEach(k => { const kw = k.w; if (rtl) x -= kw;
-      if (k.hl) { ctx.fillStyle = hcol; ctx.beginPath(); ctx.roundRect(x - size * .22, -lh * .4, kw + size * .44, lh * .8, size * .18); ctx.fill() }
-      if (!chip) { ctx.shadowColor = 'rgba(0,0,0,.8)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 3 }
-      ctx.fillStyle = tcol; ctx.fillText(k.txt, x, 3); ctx.shadowColor = 'transparent'; if (rtl) x -= L.sp; else x += kw + L.sp });
+    ln.ws.forEach(k => { const kw = k.w; if (rtl) x -= kw; const nc = Math.min(k.txt.length, shown - k.cs);
+      if (nc > 0) { const part = nc < k.txt.length, tx = part ? k.txt.slice(0, nc) : k.txt, pw = part ? ctx.measureText(tx).width : kw, xs = rtl ? x + kw - pw : x;   // a partly typed word sticks to its start edge (right edge in Persian)
+        if (k.hl) { ctx.fillStyle = hcol; ctx.beginPath(); ctx.roundRect(xs - size * .22, -lh * .4, pw + size * .44, lh * .8, size * .18); ctx.fill() }
+        if (!chip) { ctx.shadowColor = 'rgba(0,0,0,.8)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 3 }
+        ctx.fillStyle = tcol; ctx.fillText(tx, xs, 3); ctx.shadowColor = 'transparent' }
+      if (rtl) x -= L.sp; else x += kw + L.sp });
     ctx.restore(); idx++ });
   ctx.restore(); return L.lines.length * lh
 }
+let KREC = null; window.getKeyRec = () => KREC;   // where the key text is drawn in the editor: {x, y, w, h} (centre, px)
 function posterText(t, sc) {
   const lt = t - sc.t0, m = V ? 70 : 90, rtl = D.meta.rtl, kp = sc.keyPos && sc.keyPos[FMT], k = sc.keySize || 1; let y = V ? 250 : 180;
   const num = String(sc.number == null ? '' : sc.number).trim();
   if (num) { const e = spr(t, sc.t0 + .15, .5, 12), size = B * (V ? .24 : .2); ctx.save(); ctx.font = `900 ${size}px Vz`; ctx.textBaseline = 'middle'; ctx.direction = 'ltr'; ctx.textAlign = rtl ? 'right' : 'left';
     ctx.translate(rtl ? W - m : m, y + size * .55); ctx.scale(.7 + .3 * Math.min(e, 1.1), .7 + .3 * Math.min(e, 1.1)); ctx.globalAlpha = clamp(e * 1.6); ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 22; ctx.shadowOffsetY = 6; ctx.fillStyle = '#fff'; ctx.fillText(num, 0, 0); ctx.restore(); y += size * 1.12 }
   if (sc.text && tOn(sc)) {
-    const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), t0 = sc.tIn != null ? sc.tIn : sc.t0 + (num ? .5 : .3), st = { col: sc.tcol, bg: sc.tbg, hl: sc.thl }, A = sc.tAnim || 'pop', ps = lyrPose(t, t0, sc.tOut != null ? sc.tOut : 1e9, A, sc.tAnimOut);
+    const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), t0 = sc.tIn != null ? sc.tIn : sc.t0 + (num ? .5 : .3), st = { col: sc.tcol, bg: sc.tbg, hl: sc.thl }, A = sc.tAnim || 'type', AO = sc.tAnimOut || 'type', nch = sc.text.replace(/[\s*]/g, '').length, ps = EDIT ? { dx: 0, dy: 0, s: 1, al: 1, tp: 1 } : lyrPose(t, t0, sc.tOut != null ? sc.tOut : 1e9, A, AO, nch);   // key text: typed letter by letter and erased again (choose another animation in the app); in the editor it is always shown
     if (ps) { ctx.save(); ctx.translate(W / 2 + ps.dx, H / 2 + ps.dy); ctx.scale(ps.s, ps.s); ctx.translate(-W / 2, -H / 2); ctx.globalAlpha = ps.al; const tt = A === 'pop' ? t0 : t - 5;
-      if (kp) { const L = wrapTokens(sc.text, `900 ${size}px Vz`, maxW), hh = L.lines.length * size * 1.5; posterChips(sc.text, size, maxW, kp.x * W, kp.y * H - hh / 2, t, tt, 'center', st) }
-      else posterChips(sc.text, size, maxW, rtl ? W - m : m, y, t, tt, rtl ? 'right' : 'left', st)
+      st.tp = ps.tp; const L = wrapTokens(sc.text, `900 ${size}px Vz`, maxW), hh = L.lines.length * size * 1.5, bw = Math.max(...L.lines.map(l => l.w)) + 2 * size * .38;
+      if (kp) posterChips(sc.text, size, maxW, kp.x * W, kp.y * H - hh / 2, t, tt, 'center', st); else posterChips(sc.text, size, maxW, rtl ? W - m : m, y, t, tt, rtl ? 'right' : 'left', st)
+      if (EDIT) { const bx = kp ? kp.x * W : rtl ? W - m - bw / 2 : m + bw / 2, by = kp ? kp.y * H : y + hh / 2; KREC = { x: bx, y: by, w: bw, h: hh }; ctx.save(); ctx.setLineDash([22, 14]); ctx.lineWidth = 6; ctx.strokeStyle = '#ffd400'; ctx.strokeRect(bx - bw / 2 - 10, by - hh / 2 - 10, bw + 20, hh + 20); ctx.restore() }   // the editor can drag the key text (preview.html)
       ctx.restore() }
   }
   posterLayers(t, sc); posterBubbles(t, sc)
@@ -505,21 +511,23 @@ function stampSprite(text, size, col, rtl) {
   return STAMPC[key] = { cv, w, h }
 }
 /* entry / exit animation of a layer: entry 'pop' (spring) | left | right | up | down | zoom | slam | fade; exit 'fade' | left | right | up | down | zoom | none. Returns the pose or null when it is not visible */
-function lyrPose(t, t0, out, ain, aout) {
-  const d = t - t0; if (d < 0) return null; let dx = 0, dy = 0, s = 1, al = 1; const e = eio(d / .45), A = ain || 'pop';
+function lyrPose(t, t0, out, ain, aout, n) {   // n: number of characters (for the typing / erasing speed); the result's tp (0..1) is the share of the characters that are shown
+  const d = t - t0; if (d < 0) return null; let dx = 0, dy = 0, s = 1, al = 1, tp = 1; const nn = n || 20; const e = eio(d / .45), A = ain || 'pop';
   if (A === 'left') { dx = -(1 - e) * W * .8; al = clamp(d / .15) } else if (A === 'right') { dx = (1 - e) * W * .8; al = clamp(d / .15) } else if (A === 'up') { dy = -(1 - e) * H * .45; al = clamp(d / .15) } else if (A === 'down') { dy = (1 - e) * H * .45; al = clamp(d / .15) }
   else if (A === 'zoom') { s = lerp(.15, 1, Math.min(spr(t, t0, .55, 13), 1.12)); al = clamp(d / .12) }
   else if (A === 'slam') { s = d < .16 ? lerp(2.6, 1, eio(d / .16)) : 1 + .05 * Math.exp(-(d - .16) * 11) * Math.cos((d - .16) * 38); al = clamp(d / .06); if (d >= .16 && d < .42) { const q = Math.sin(d * 150) * 7 * (1 - (d - .16) / .26); dx = q; dy = q * .6 } }
   else if (A === 'fade') al = clamp(d / .35);
-  if (t > out) { const x = eio((t - out) / .35), O = aout || 'fade'; if (O === 'none' || x >= 1) return null;
+  else if (A === 'type') tp = clamp(d / Math.min(2.4, Math.max(.5, nn * .05)));   // typed letter by letter
+  if (t > out && aout === 'type') { tp = Math.min(tp, 1 - clamp((t - out) / Math.min(1.4, Math.max(.3, nn * .03)))); if (tp <= 0) return null }   // erased from the end, like the backspace key
+  else if (t > out) { const x = eio((t - out) / .35), O = aout || 'fade'; if (O === 'none' || x >= 1) return null;
     if (O === 'left') dx -= x * W * .8; else if (O === 'right') dx += x * W * .8; else if (O === 'up') dy -= x * H * .45; else if (O === 'down') dy += x * H * .45; else if (O === 'zoom') s *= lerp(1, .15, x);
     al *= (O === 'fade' || O === 'zoom') ? 1 - x : 1 - x * x * x }
-  return { dx, dy, s, al }
+  return { dx, dy, s, al, tp }
 }
 function posterLayers(t, sc) {
   (sc.layers || []).forEach(L => {
     if (!L || !String(L.text || '').trim()) return; const t0 = L.t != null ? L.t : sc.t0 + .3, out = L.out != null ? L.out : 1e9, P = (L.pos && L.pos[FMT]) || L, st = L.kind === 'stamp', A = L.anim || (st ? 'slam' : 'pop');
-    const ps = lyrPose(t, t0, out, A, L.animOut); if (!ps) return; const k = L.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? (st ? .38 : .5) : P.y) * H;
+    const ps = lyrPose(t, t0, out, A, L.animOut, String(L.text).replace(/[\s*]/g, '').length); if (!ps) return; const k = L.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? (st ? .38 : .5) : P.y) * H;
     if (L.kind === 'number') {
       const size = B * (V ? .24 : .2) * k, q = A === 'pop' ? .7 + .3 * Math.min(spr(t, t0, .5, 12), 1.1) : 1;
       ctx.save(); ctx.font = `900 ${size}px Vz`; ctx.textBaseline = 'middle'; ctx.textAlign = 'center'; ctx.direction = 'ltr'; ctx.translate(cx + ps.dx, cy + ps.dy); ctx.scale(ps.s * q, ps.s * q); ctx.globalAlpha = ps.al * (A === 'pop' ? clamp(spr(t, t0, .5, 12) * 1.6) : 1);
@@ -530,7 +538,7 @@ function posterLayers(t, sc) {
       ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.rotate((L.rot == null ? -8 : L.rot) * Math.PI / 180); ctx.scale(ps.s * q, ps.s * q); ctx.globalAlpha = ps.al * .94; ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 10; ctx.drawImage(sp.cv, -sp.w / 2, -sp.h / 2); ctx.restore(); return
     }
     const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), Lw = wrapTokens(L.text, `900 ${size}px Vz`, maxW), hh = Lw.lines.length * size * 1.5;
-    ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.scale(ps.s, ps.s); ctx.translate(-cx, -cy); ctx.globalAlpha = ps.al; posterChips(L.text, size, maxW, cx, cy - hh / 2, t, A === 'pop' ? t0 : t - 5, 'center', { col: L.col, bg: L.bg, hl: L.hl }); ctx.restore()
+    ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.scale(ps.s, ps.s); ctx.translate(-cx, -cy); ctx.globalAlpha = ps.al; posterChips(L.text, size, maxW, cx, cy - hh / 2, t, A === 'pop' ? t0 : t - 5, 'center', { col: L.col, bg: L.bg, hl: L.hl, tp: ps.tp }); ctx.restore()
   })
 }
 /* speech bubbles: sc.bubbles = [{text, shape:'speech'|'thought'|'shout'|'box', tail:'dl'|'d'|'dr'|'ul'|'u'|'ur'|'l'|'r'|'none', x,y, size, col, bg, hl, t, out, anim, animOut}] */
@@ -707,7 +715,7 @@ function zoomBlur(p) {   // the zoom punch gets short radial streaks: a few copi
   ctx.restore()
 }
 function drawScene(t, sc) {
-  CUR = sc; if (EDIT) for (const k in REC) delete REC[k]; const th = THEMES[sc.theme], lt = t - sc.t0, dur = sc.t1 - sc.t0, kc = sc.idx % 4, pc = ramp(lt, 0, dur + .6);
+  CUR = sc; KREC = null; if (EDIT) for (const k in REC) delete REC[k]; const th = THEMES[sc.theme], lt = t - sc.t0, dur = sc.t1 - sc.t0, kc = sc.idx % 4, pc = ramp(lt, 0, dur + .6);
   // camera: each scene gets its own move (push in / pull out, with a slow pan) so consecutive scenes never feel identical
   const KK = sc.kick || 'both'; let punch = 0; if (POSTER && !EDIT && (KK === 'punch' || KK === 'both')) sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .5) punch = Math.max(punch, .045 * Math.exp(-d * 8)) });
   const z = EDIT ? 1 : POSTER ? 1 + punch : (kc % 2 ? lerp(1.08, 1.0, pc) : lerp(1.0, 1.08, pc)) * (1 + beatZ(t)), px = EDIT || POSTER ? 0 : [-1, 1, 0, 0][kc] * lerp(-16, 16, pc), py = EDIT || POSTER ? 0 : [0, 0, -1, 1][kc] * lerp(-14, 14, pc);

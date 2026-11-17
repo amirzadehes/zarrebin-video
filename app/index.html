@@ -765,6 +765,7 @@ addEventListener('message',e=>{ const m=e.data||{};
   if(m.type==='audio-mismatch'){ toast('⚠️ طول صدا ('+fa(Math.round(m.a))+' ثانیه) با صحنه‌ها ('+fa(Math.round(m.t))+' ثانیه) نمی‌خواند؛ «آماده‌سازی صحنه‌ها» را دوباره بزن.',9000) }
   else if(m.type==='layout'&&RV){ const s=RV.data.scenes[m.scene]; if(!s) return; let o;
     if(m.kind==='pin'){ o=s.pins&&s.pins[m.idx]; if(!o) return; o.lay=o.lay||{}; o.lay[m.fmt]=m.lay }
+    else if(m.kind==='key'){ s.keyPos=s.keyPos||{}; s.keyPos[m.fmt]=m.lay; clearOk(s,m.fmt); syncOk(m.scene); pvOkLabel(); rvSave(); return }
     else if(m.kind==='bg'){ o=s.bg; if(!o) return; o.lay=o.lay||{}; o.lay[m.fmt]=o.lay[m.fmt]||{}; o.lay[m.fmt][m.idx]=m.lay }
     else { o=s.items[m.idx]; if(!o) return; o.lay=o.lay||{}; o.lay[m.fmt]=m.lay }
     clearOk(s,m.fmt); syncOk(m.scene); pvOkLabel(); pvSelBuild(m.sel!=null?m.sel:m.idx); rvSave() } });
@@ -1661,6 +1662,7 @@ const propFull = p => [(p.prompt||'').trim().replace(/\.*$/,'.'), POSTER_PROP_HE
 const STAMPS=[['تأیید شد','#1fa65a'],['کنسل شد','#e0352b'],['شایعه','#ff8a1f'],['تکذیب شد','#e0352b'],['تأیید نشده','#ff8a1f'],['محرمانه','#e0352b'],['فاش شد','#ff5a1f'],['ممنوع','#e0352b'],['هشدار','#e6b800'],['اثبات شد','#1fa65a'],['جعلی','#e0352b'],['خبر فوری','#e0352b'],['حقیقت','#1fa65a'],['دروغ','#e0352b'],['سانسور شد','#e0352b'],['CONFIRMED','#1fa65a'],['CANCELLED','#e0352b'],['RUMOR','#ff8a1f'],['CLASSIFIED','#e0352b'],['BREAKING','#e0352b']];
 const ATMS=[['snow','برف'],['rain','باران'],['lightning','رعد و برق'],['fog','مه'],['embers','جرقه و اخگر']];
 const ANIN=[['pop','فنری (پیش‌فرض)'],['left','از چپ'],['right','از راست'],['up','از بالا'],['down','از پایین'],['zoom','زوم'],['slam','کوبیده'],['fade','محو']];
+const ANIN_T=[...[['type','تایپ حرف‌به‌حرف (پیش‌فرض)'],['pop','فنری'],['left','از چپ'],['right','از راست'],['up','از بالا'],['down','از پایین'],['zoom','زوم'],['slam','کوبیده'],['fade','محو']]], ANOUT_T=[['type','پاک شدن حرف‌به‌حرف (بک‌اسپیس)'],['fade','محو'],['left','به چپ'],['right','به راست'],['up','به بالا'],['down','به پایین'],['zoom','کوچک‌شدن'],['none','ناگهانی']];
 const PHIN=[['fade','محو شدن'],['left','از چپ باز شود'],['right','از راست باز شود'],['up','از بالا باز شود'],['down','از پایین باز شود'],['circle','دایره‌ای باز شود'],['zoom','زوم']], PHOUT=[['fade','محو شدن'],['left','به چپ'],['right','به راست'],['up','به بالا'],['down','به پایین'],['circle','دایره‌ای بسته شود'],['zoom','زوم'],['none','ناگهانی']];
 const ANOUT=[['fade','محو'],['left','به چپ'],['right','به راست'],['up','به بالا'],['down','به پایین'],['zoom','کوچک‌شدن'],['none','ناگهانی']];
 const pSec=(cls,title)=>`<details class="pSec ${cls}"><summary>${title}</summary><div class="pSecB"></div></details>`;
@@ -1670,12 +1672,12 @@ function timeUI(host,o,K,s,defA,ch){
   const opt=(arr,cur)=>arr.map(([v,t])=>`<option value="${v}"${v===cur?' selected':''}>${t}</option>`).join('');
   const wIn=words.map(w=>`<option value="${w.t0}"${o[K.t]!=null&&Math.abs(o[K.t]-(w.t0+off))<.02?' selected':''}>${esc(w.w)}</option>`).join(''), wOut=words.map(w=>`<option value="${w.t1}"${o[K.out]!=null&&Math.abs(o[K.out]-w.t1)<.02?' selected':''}>${esc(w.w)}</option>`).join('');
   host.innerHTML=`<div class="g2"><div><label>ورود: با گفتن کلمه‌ی…</label><select class="sel tI"><option value="">ابتدای صحنه</option>${wIn}</select></div><div><label>خروج: بعد از گفتن کلمه‌ی…</label><select class="sel tO"><option value="">تا آخر صحنه</option>${wOut}</select></div></div>
-    ${K.anim?`<div class="g2"><div><label>انیمیشن ورود</label><select class="sel aI">${opt(K.ain||ANIN,o[K.anim]||defA)}</select></div><div><label>انیمیشن خروج</label><select class="sel aO">${opt(K.aout||ANOUT,o[K.animOut]||'fade')}</select></div></div>`:''}`;
+    ${K.anim?`<div class="g2"><div><label>انیمیشن ورود</label><select class="sel aI">${opt(K.ain||ANIN,o[K.anim]||defA)}</select></div><div><label>انیمیشن خروج</label><select class="sel aO">${opt(K.aout||ANOUT,o[K.animOut]||(K.dout||'fade'))}</select></div></div>`:''}`;
   const q=c=>host.querySelector(c);
   q('.tI').onchange=e=>{ if(e.target.value==='') delete o[K.t]; else o[K.t]=r2(+e.target.value+off); ch() };
   q('.tO').onchange=e=>{ if(e.target.value==='') delete o[K.out]; else o[K.out]=r2(+e.target.value); ch() };
   if(K.anim){ q('.aI').onchange=e=>{ if(e.target.value===defA) delete o[K.anim]; else o[K.anim]=e.target.value; ch() };
-    q('.aO').onchange=e=>{ if(e.target.value==='fade') delete o[K.animOut]; else o[K.animOut]=e.target.value; ch() } }
+    q('.aO').onchange=e=>{ if(e.target.value===(K.dout||'fade')) delete o[K.animOut]; else o[K.animOut]=e.target.value; ch() } }
 }
 /* small draggable position pad (x, y = centre as fractions of the frame) */
 function padUI(host,o,ch,dy){
@@ -1721,8 +1723,8 @@ function fxUI(el,s,i,box){
     host.querySelector('.kCol').innerHTML=`<div class="g3"><div><label>رنگ نوشته</label><input type="color" class="mTc"></div><div><label>رنگ کادر</label><input type="color" class="mTb"></div><div><label>رنگ کلمه‌ی مهم</label><input type="color" class="mTh"></div></div><label class="chk"><input type="checkbox" class="mNo"> بدون کادر (فقط نوشته)</label>`;
     const q=c=>host.querySelector(c); q('.mTc').value=s.tcol||'#ffffff'; q('.mTb').value=(s.tbg&&s.tbg!=='none')?s.tbg:'#0e0a07'; q('.mTh').value=s.thl||'#ff5a1f'; q('.mNo').checked=s.tbg==='none';
     q('.mTc').oninput=e=>{ s.tcol=e.target.value; ch() }; q('.mTb').oninput=e=>{ s.tbg=e.target.value; q('.mNo').checked=false; ch() }; q('.mTh').oninput=e=>{ s.thl=e.target.value; ch() }; q('.mNo').onchange=e=>{ if(e.target.checked) s.tbg='none'; else delete s.tbg; ch() };
-    timeUI(q('.kTm'),s,{t:'tIn',out:'tOut',anim:'tAnim',animOut:'tAnimOut'},s,'pop',ch);
-    q('.mRs').onclick=()=>{ ['tcol','tbg','thl','tIn','tOut','tAnim','tAnimOut'].forEach(k=>delete s[k]); q('.mTc').value='#ffffff'; q('.mTb').value='#0e0a07'; q('.mTh').value='#ff5a1f'; q('.mNo').checked=false; timeUI(q('.kTm'),s,{t:'tIn',out:'tOut',anim:'tAnim',animOut:'tAnimOut'},s,'pop',ch); ch() } } }
+    timeUI(q('.kTm'),s,{t:'tIn',out:'tOut',anim:'tAnim',animOut:'tAnimOut',ain:ANIN_T,aout:ANOUT_T,dout:'type'},s,'type',ch);
+    q('.mRs').onclick=()=>{ ['tcol','tbg','thl','tIn','tOut','tAnim','tAnimOut'].forEach(k=>delete s[k]); q('.mTc').value='#ffffff'; q('.mTb').value='#0e0a07'; q('.mTh').value='#ff5a1f'; q('.mNo').checked=false; timeUI(q('.kTm'),s,{t:'tIn',out:'tOut',anim:'tAnim',animOut:'tAnimOut',ain:ANIN_T,aout:ANOUT_T,dout:'type'},s,'type',ch); ch() } } }
   /* extra text and stamp layers */
   if(String(s.number==null?'':s.number).trim()){ (s.layers=s.layers||[]).unshift({kind:'number',text:String(s.number).trim(),x:RV.data.meta&&RV.data.meta.rtl===false?.22:.78,y:.17}); s.number=''; rvSave() }
   { const nu=box.querySelector('.num'); if(nu){ nu.hidden=true; if(nu.previousElementSibling&&nu.previousElementSibling.tagName==='LABEL') nu.previousElementSibling.hidden=true } }
