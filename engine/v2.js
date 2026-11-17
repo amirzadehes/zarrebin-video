@@ -327,8 +327,9 @@ function depthLayers(src, win) {   // win = [x0, y0, x1, y1]: the part of the pi
 }
 /* Calm edges: the 3D motion fades out towards the sides of what is on screen (meta.edge = fraction of the width that stays completely still at each side, default .2; top and bottom use half of it; 0 = off). The pulled / smeared picture shows up
    mostly at the borders, where the shift is largest and the picture has nothing to be pulled from, so there the picture simply stays flat and the 3D grows smoothly towards the middle. Returns {mx, my} per-column / per-row factors 0..1. */
+let EDG = .2;   // the calm-edge fraction of the picture being drawn (photo.edge, else meta.edge, else .2)
 function edgeMask(X) {
-  const fr = D.meta.edge != null ? +D.meta.edge : .2; if (!(fr > 0) || !X.vis) return null; const key = fr + '|' + X.vis.join(','); if (X.ek === key) return X.em;
+  const fr = EDG; if (!(fr > 0) || !X.vis) return null; const key = fr + '|' + X.vis.join(','); if (X.ek === key) return X.em;
   const { w, h } = X, v = X.vis, sm = t => { t = t < 0 ? 0 : t > 1 ? 1 : t; return t * t * (3 - 2 * t) }, line = (n, a, b, f) => { const o = new Float32Array(n), A = a * n, B = b * n, k = Math.max(1, (B - A) * f); for (let i = 0; i < n; i++) o[i] = sm(Math.min(i - A, B - i) / k); return o };
   X.ek = key; return X.em = { mx: line(w, v[0], v[2], fr), my: line(h, v[1], v[3], fr / 2) }
 }
@@ -401,7 +402,7 @@ function depthGL(PX, cx, cy, kq, pv, bl) {   // cx, cy: camera shift as fraction
   const R = glRig(); if (!R) return 0; try {
     const g = R.g, T = glTex(R, PX); if (R.cv.width !== PX.w || R.cv.height !== PX.h) { R.cv.width = PX.w; R.cv.height = PX.h } g.viewport(0, 0, PX.w, PX.h);
     g.activeTexture(g.TEXTURE0); g.bindTexture(g.TEXTURE_2D, T.c); g.activeTexture(g.TEXTURE1); g.bindTexture(g.TEXTURE_2D, T.d);
-    g.uniform2f(R.u.c, cx, cy); g.uniform1f(R.u.kq, kq); g.uniform1f(R.u.pv, pv); g.uniform1f(R.u.foc, pv); g.uniform1f(R.u.bl, bl); g.uniform1f(R.u.ar, PX.w / PX.h); { const fr = D.meta.edge != null ? +D.meta.edge : .2, v = PX.vis || [0, 0, 1, 1]; g.uniform4f(R.u.vs, v[0], v[1], v[2], v[3]); g.uniform2f(R.u.ef, PX.vis ? fr : 0, 0) }
+    g.uniform2f(R.u.c, cx, cy); g.uniform1f(R.u.kq, kq); g.uniform1f(R.u.pv, pv); g.uniform1f(R.u.foc, pv); g.uniform1f(R.u.bl, bl); g.uniform1f(R.u.ar, PX.w / PX.h); { const fr = EDG, v = PX.vis || [0, 0, 1, 1]; g.uniform4f(R.u.vs, v[0], v[1], v[2], v[3]); g.uniform2f(R.u.ef, PX.vis ? fr : 0, 0) }
     g.drawArrays(g.TRIANGLE_STRIP, 0, 4); return R.cv
   } catch (e) { GLR = null; return 0 }
 }
@@ -433,6 +434,7 @@ function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's 
   if (PX) {   // 3D: the depth bands slide by different amounts (the far band stays), a pure function of the scene progress
     const cx = EDIT ? Math.sin(TH * .8) : lerp(-1, 1, pc) * (sc.idx % 2 ? -1 : 1), cy = EDIT ? Math.sin(TH * .55) : Math.sin(pc * Math.PI * 2), amp = PA * W, ez = EDIT ? .5 * Math.sin(TH * .8 + 1) : (pc - .5) * (mo === 'out' ? -1 : 1);   // ez: dolly, the near bands grow (or shrink) faster than the far ones, with every kind of zoom
     const cm = p.cam3 || D.meta.cam3 || 1, dfl = p.dof != null ? p.dof : D.meta.dof != null ? D.meta.dof : 0;   // the 3D camera move (0 / 1 = auto: the rigid CPU warp, exactly as before the WebGL camera; the WebGL camera only runs for the explicit moves 2-6, because its ray march stretches faces and clips thin heads at soft depth edges) and soft focus
+    EDG = p.edge != null ? +p.edge : D.meta.edge != null ? +D.meta.edge : .2;
     const put = (g, ox0, oy0) => {
       let src = 0; if (cm > 1 && cm < CAMS.length) { const C = camMove(cm, pc, sc, EDIT, TH, mo); src = depthGL(PX, amp * C.cx / dw, amp * C.cy / dh, PA * 1.8 * C.ez, C.pv, [0, .004, .008, .014][dfl] || 0) }
       g.drawImage(src || depthWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez), ox0, oy0, dw, dh)

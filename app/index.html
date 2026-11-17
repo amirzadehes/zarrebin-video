@@ -1604,12 +1604,13 @@ function motionUI(){ const B=document.querySelector('#rvMot .mtB'); if(!B||!RV) 
     <div class="g2"><div><label>لرزش ریز دست‌گرفته روی عکس پس‌زمینه</label><select class="sel mtDr">${lv}</select></div><div></div></div>
     <div class="g2"><div><label>حرکت سه‌بعدی عکس پس‌زمینه (با نقشه‌ی عمق)</label><select class="sel mtC3"><option value="0">خاموش</option><option value="1">خودکار</option><option value="2">فشار به جلو</option><option value="3">عقب رفتن</option><option value="4">چرخش دور سوژه</option><option value="5">لغزش کناری</option><option value="6">بالا رفتن</option></select></div><div><label>شدت حرکت سه‌بعدی</label><select class="sel mtDp"><option value="1">کم</option><option value="2">متوسط</option><option value="3">زیاد</option></select></div></div>
     <div class="g2"><div><label>محو شدن دور تصویر</label><select class="sel mtDf">${lv}</select></div><div><label>تاری زوم هنگام ضربه</label><select class="sel mtZb">${lv}</select></div></div>
-    <div class="g2"><div><label>حجم اشیای روی صحنه (سایه‌روشن)</label><select class="sel mtVl">${lv}</select></div><div></div></div>
+    <div class="g2"><div><label>حجم اشیای روی صحنه (سایه‌روشن)</label><select class="sel mtVl">${lv}</select></div><div><label>کناره‌های ثابت (بدون سه‌بعدی)</label><select class="sel mtEg"><option value="0">خاموش</option><option value="0.1">۱۰٪ از هر طرف</option><option value="0.2">۲۰٪ از هر طرف</option><option value="0.3">۳۰٪ از هر طرف</option><option value="0.4">۴۰٪ از هر طرف</option></select></div></div>
     <p class="hint">این موارد برای همه‌ی صحنه‌ها اعمال می‌شود. برای یک صحنه‌ی خاص، لرزش ریز را در بخش «حرکت عکس» همان صحنه می‌توانی جدا عوض کنی. در پیش‌نمایش صحنه می‌بینی.</p>`;
   const sh=B.querySelector('.mtSh'), dr=B.querySelector('.mtDr'), dp=B.querySelector('.mtDp'), vl=B.querySelector('.mtVl');
   sh.checked=M.shake!==false; dr.value=String(M.drift!=null?M.drift:0); vl.value=String(M.vol!=null?M.vol:2);
   const go=()=>{ rvSave(); try{ if(!$('#pvModal').hidden) pvRefresh(pvI) }catch(e){} };
   sh.onchange=()=>{ if(sh.checked) delete M.shake; else M.shake=false; go() };
+  const eg=B.querySelector('.mtEg'); eg.value=String(M.edge!=null?M.edge:0.2); eg.onchange=()=>{ if(+eg.value===0.2) delete M.edge; else M.edge=+eg.value; go() };
   dr.onchange=()=>{ M.drift=+dr.value; go() };
   vl.onchange=()=>{ M.vol=+vl.value; go() };
   const c3=B.querySelector('.mtC3'), df=B.querySelector('.mtDf'), zb=B.querySelector('.mtZb'), dd=M.depth!=null?M.depth:2;   // one control for the 3D camera: movement + strength (movement off = no depth motion at all)
@@ -1789,7 +1790,7 @@ function fxUI(el,s,i,box){
   const CB=q0('.camSecB'); CB.innerHTML=`<div class="g2"><div><label>حرکت عکس</label><select class="sel pMot"><option value="auto">خودکار</option><option value="in">زوم به داخل</option><option value="out">زوم به بیرون</option><option value="left">حرکت به چپ</option><option value="right">حرکت به راست</option><option value="none">ثابت</option></select></div>
     <div><label>لرزش ریز پس‌زمینه</label><select class="sel dr"><option value="0">خاموش</option><option value="1">کم</option><option value="2">متوسط</option><option value="3">زیاد</option></select></div></div>
     <div class="g2"><div><label>حرکت سه‌بعدی عکس (با نقشه‌ی عمق)</label><select class="sel cm3"><option value="0">خاموش</option><option value="1">خودکار</option><option value="2">فشار به جلو</option><option value="3">عقب رفتن</option><option value="4">چرخش دور سوژه</option><option value="5">لغزش کناری</option><option value="6">بالا رفتن</option></select></div><div><label>شدت حرکت سه‌بعدی</label><select class="sel dp"><option value="1">کم</option><option value="2">متوسط</option><option value="3">زیاد</option></select></div></div>
-    <div class="g2"><div><label>محو شدن دور تصویر</label><select class="sel dof"><option value="0">خاموش</option><option value="1">کم</option><option value="2">متوسط</option><option value="3">زیاد</option></select></div><div></div></div>
+    <div class="g2"><div><label>محو شدن دور تصویر</label><select class="sel dof"><option value="0">خاموش</option><option value="1">کم</option><option value="2">متوسط</option><option value="3">زیاد</option></select></div><div><label>کناره‌های ثابت (بدون سه‌بعدی)</label><select class="sel edg"><option value="0">خاموش</option><option value="0.1">۱۰٪ از هر طرف</option><option value="0.2">۲۰٪ از هر طرف</option><option value="0.3">۳۰٪ از هر طرف</option><option value="0.4">۴۰٪ از هر طرف</option></select></div></div>
     <label>افکت دوربین هنگام ورود عکس</label><select class="sel kk"><option value="both">ضربه‌ی زوم + لرزش</option><option value="punch">فقط ضربه‌ی زوم</option><option value="shake">فقط لرزش</option><option value="none">هیچ</option></select>
     <details class="pSec" style="margin-top:8px"><summary>✏️ ویرایش متن پرامپت عکس</summary><div class="pSecB"><textarea class="pPrompt" dir="ltr"></textarea><label style="margin-top:8px">یا فقط کلیات را فارسی بنویس تا پرامپت از نو نوشته شود</label><textarea class="pHint" rows="2" placeholder="مثلاً: مردی تنها در بیابان، غروب، حال‌وهوای غمگین"></textarea><div class="row" style="margin-top:6px"><button class="pHintGo">✨ بازنویسی پرامپت با این توضیح</button></div><div class="st pHintSt"></div></div></details>`;
   const mo=CB.querySelector('.pMot'); mo.value=s.photo.motion||'auto'; mo.onchange=()=>{ if(mo.value==='auto') delete s.photo.motion; else s.photo.motion=mo.value; ch() };
@@ -1799,6 +1800,7 @@ function fxUI(el,s,i,box){
   c3.onchange=()=>{ const v=+c3.value; if(v===0){ s.photo.depth=0; s.photo.cam3=0 } else { s.photo.cam3=v; s.photo.depth=+dp.value||2 } ch() };
   dp.onchange=()=>{ if(+c3.value>0){ s.photo.depth=+dp.value; ch() } };
   df.onchange=()=>{ s.photo.dof=+df.value; ch() };
+  const eg=CB.querySelector('.edg'); eg.value=String(s.photo.edge!=null?s.photo.edge:(MM.edge!=null?MM.edge:0.2)); eg.onchange=()=>{ s.photo.edge=+eg.value; ch() };
   const kk=CB.querySelector('.kk'); kk.value=s.kick||'both'; kk.onchange=()=>{ s.kick=kk.value; ch() };
   const pr=CB.querySelector('.pPrompt'); pr.value=s.photo.prompt||''; pr.oninput=()=>{ s.photo.prompt=pr.value; rvSave() };
   CB.querySelector('.pHintGo').onclick=()=>hintFix(i,s,pr,CB.querySelector('.pHint'),CB.querySelector('.pHintGo'),CB.querySelector('.pHintSt'));
