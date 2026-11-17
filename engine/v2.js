@@ -481,6 +481,8 @@ function posterChips(text, size, maxW, cx, top, t, t0, align, o) {   // o: {col:
     ctx.restore(); idx++ });
   ctx.restore(); return L.lines.length * lh
 }
+let LREC = []; window.getLayRec = () => LREC;   // editor: where the extra text layers / bubbles are drawn [{kind, i, x, y, w, h}], draggable in the preview
+const editBox = (kind, i, x, y, w, h, col) => { LREC.push({ kind, i, x, y, w, h }); ctx.save(); ctx.setLineDash([18, 12]); ctx.lineWidth = 5; ctx.strokeStyle = col; ctx.strokeRect(x - w / 2 - 8, y - h / 2 - 8, w + 16, h + 16); ctx.restore() };
 let KREC = null; window.getKeyRec = () => KREC;   // where the key text is drawn in the editor: {x, y, w, h} (centre, px)
 function posterText(t, sc) {
   const lt = t - sc.t0, m = V ? 70 : 90, rtl = D.meta.rtl, kp = sc.keyPos && sc.keyPos[FMT], k = sc.keySize || 1; let y = V ? 250 : 180;
@@ -525,9 +527,10 @@ function lyrPose(t, t0, out, ain, aout, n) {   // n: number of characters (for t
   return { dx, dy, s, al, tp }
 }
 function posterLayers(t, sc) {
-  (sc.layers || []).forEach(L => {
+  (sc.layers || []).forEach((L, li0) => {
     if (!L || !String(L.text || '').trim()) return; const t0 = L.t != null ? L.t : sc.t0 + .3, out = L.out != null ? L.out : 1e9, P = (L.pos && L.pos[FMT]) || L, st = L.kind === 'stamp', A = L.anim || (st ? 'slam' : 'pop');
-    const ps = lyrPose(t, t0, out, A, L.animOut, String(L.text).replace(/[\s*]/g, '').length); if (!ps) return; const k = L.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? (st ? .38 : .5) : P.y) * H;
+    const ps = EDIT ? { dx: 0, dy: 0, s: 1, al: 1, tp: 1 } : lyrPose(t, t0, out, A, L.animOut, String(L.text).replace(/[\s*]/g, '').length); if (!ps) return; const k = L.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? (st ? .38 : .5) : P.y) * H;
+    if (EDIT) { let bw, bh; if (L.kind === 'number') { const z = B * (V ? .24 : .2) * k; bw = z * .62 * String(L.text).trim().length; bh = z * 1.1 } else if (st) { const sp0 = stampSprite(String(L.text).trim(), Math.round(B * .1 * k), L.col || '#e0352b', rtl); bw = sp0.w; bh = sp0.h } else { const z = B * (V ? .062 : .055) * k, W0 = wrapTokens(L.text, `900 ${z}px Vz`, W * (V ? .86 : .6)); bw = Math.max(...W0.lines.map(l => l.w)) + z * .76; bh = W0.lines.length * z * 1.5 } editBox('layer', li0, cx, cy, bw, bh, '#00e5ff') }
     if (L.kind === 'number') {
       const size = B * (V ? .24 : .2) * k, q = A === 'pop' ? .7 + .3 * Math.min(spr(t, t0, .5, 12), 1.1) : 1;
       ctx.save(); ctx.font = `900 ${size}px Vz`; ctx.textBaseline = 'middle'; ctx.textAlign = 'center'; ctx.direction = 'ltr'; ctx.translate(cx + ps.dx, cy + ps.dy); ctx.scale(ps.s * q, ps.s * q); ctx.globalAlpha = ps.al * (A === 'pop' ? clamp(spr(t, t0, .5, 12) * 1.6) : 1);
@@ -547,12 +550,12 @@ function bubblePath(shape, w, h, tail, B) {
   return { r, L, tb, T }
 }
 function posterBubbles(t, sc) {
-  (sc.bubbles || []).forEach(Bb => {
+  (sc.bubbles || []).forEach((Bb, bi0) => {
     if (!Bb || !String(Bb.text || '').trim()) return; const t0 = Bb.t != null ? Bb.t : sc.t0 + .3, out = Bb.out != null ? Bb.out : 1e9, A = Bb.anim || 'pop', P = (Bb.pos && Bb.pos[FMT]) || Bb;
-    const ps = lyrPose(t, t0, out, A, Bb.animOut); if (!ps) return; const k = Bb.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? .3 : P.y) * H, shape = Bb.shape || 'speech', tail = Bb.tail || (shape === 'box' || shape === 'shout' ? 'none' : 'dl');
+    const ps = EDIT ? { dx: 0, dy: 0, s: 1, al: 1, tp: 1 } : lyrPose(t, t0, out, A, Bb.animOut); if (!ps) return; const k = Bb.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? .3 : P.y) * H, shape = Bb.shape || 'speech', tail = Bb.tail || (shape === 'box' || shape === 'shout' ? 'none' : 'dl');
     const bim = Bb.img && IM[Bb.img];
     if (bim) {   // the owner's own bubble picture (cut out, empty); only the text is ours. Bb.tb = text area as fractions of the picture [x,y,w,h]
-      const bw = W * (V ? .56 : .3) * k, bh = bw * bim.height / bim.width, fl = !!Bb.flip, q2 = A === 'pop' ? .7 + .3 * Math.min(spr(t, t0, .5, 12), 1.1) : 1, tb = Bb.tb || [.14, .16, .72, .5], rx = fl ? 1 - tb[0] - tb[2] : tb[0];
+      const bw = W * (V ? .56 : .3) * k, bh = bw * bim.height / bim.width; if (EDIT) editBox('bubble', bi0, cx, cy, bw, bh, '#ff4fd8'); const fl = !!Bb.flip, q2 = A === 'pop' ? .7 + .3 * Math.min(spr(t, t0, .5, 12), 1.1) : 1, tb = Bb.tb || [.14, .16, .72, .5], rx = fl ? 1 - tb[0] - tb[2] : tb[0];
       ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.scale(ps.s * q2, ps.s * q2); ctx.globalAlpha = ps.al * (A === 'pop' ? clamp(spr(t, t0, .5, 12) * 1.6) : 1);
       ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.32)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 5; if (fl) ctx.scale(-1, 1); ctx.drawImage(bim, -bw / 2, -bh / 2, bw, bh); ctx.restore();
       const tw = tb[2] * bw, th = tb[3] * bh, tcx = -bw / 2 + (rx + tb[2] / 2) * bw, tcy = -bh / 2 + (tb[1] + tb[3] / 2) * bh; let fs = B * (V ? .05 : .045) * (Bb.tsz || 1) * Math.max(k, .6), Lq, lq;
@@ -564,6 +567,7 @@ function posterBubbles(t, sc) {
     }
     const size = B * (V ? .05 : .045) * k, maxW = W * (V ? .62 : .36) * Math.min(k, 1.4), font = `900 ${size}px Vz`, Lw = wrapTokens(Bb.text, font, maxW), lh = size * 1.45, pad = size * .8;
     const w = Math.max(...Lw.lines.map(l => l.w), size) + pad * 2 + (shape === 'shout' ? size * 1.2 : 0), h = Lw.lines.length * lh + pad * (shape === 'shout' ? 1.6 : 1.1), bg = Bb.bg || '#ffffff', col = Bb.col || '#17110d', ink = '#17110d', q = A === 'pop' ? .7 + .3 * Math.min(spr(t, t0, .5, 12), 1.1) : 1;
+    if (EDIT) editBox('bubble', bi0, cx, cy, w, h, '#ff4fd8');
     ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.scale(ps.s * q, ps.s * q); ctx.globalAlpha = ps.al * (A === 'pop' ? clamp(spr(t, t0, .5, 12) * 1.6) : 1); ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 5;
     ctx.lineWidth = Math.max(3, B * .005); ctx.strokeStyle = ink; ctx.fillStyle = bg; ctx.lineJoin = 'round';
     const bp = bubblePath(shape, w, h, tail === 'none' ? 'd' : tail, B), T = bp.T;
@@ -715,7 +719,7 @@ function zoomBlur(p) {   // the zoom punch gets short radial streaks: a few copi
   ctx.restore()
 }
 function drawScene(t, sc) {
-  CUR = sc; KREC = null; if (EDIT) for (const k in REC) delete REC[k]; const th = THEMES[sc.theme], lt = t - sc.t0, dur = sc.t1 - sc.t0, kc = sc.idx % 4, pc = ramp(lt, 0, dur + .6);
+  CUR = sc; KREC = null; LREC = []; if (EDIT) for (const k in REC) delete REC[k]; const th = THEMES[sc.theme], lt = t - sc.t0, dur = sc.t1 - sc.t0, kc = sc.idx % 4, pc = ramp(lt, 0, dur + .6);
   // camera: each scene gets its own move (push in / pull out, with a slow pan) so consecutive scenes never feel identical
   const KK = sc.kick || 'both'; let punch = 0; if (POSTER && !EDIT && (KK === 'punch' || KK === 'both')) sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .5) punch = Math.max(punch, .045 * Math.exp(-d * 8)) });
   const z = EDIT ? 1 : POSTER ? 1 + punch : (kc % 2 ? lerp(1.08, 1.0, pc) : lerp(1.0, 1.08, pc)) * (1 + beatZ(t)), px = EDIT || POSTER ? 0 : [-1, 1, 0, 0][kc] * lerp(-16, 16, pc), py = EDIT || POSTER ? 0 : [0, 0, -1, 1][kc] * lerp(-14, 14, pc);
