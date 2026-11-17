@@ -339,6 +339,62 @@ function depthWarp(X, ox, oy, kq) {   // X: depthLayers result; every pixel move
   }
   X.og.putImageData(X.id, 0, 0); return X.out
 }
+/* 3D camera (WebGL, optional): the same depth map as above, but the picture is seen through a real moving camera. A fragment shader marches each pixel's ray through the depth field (near = white), so near things shift more than far ones, objects hide what is behind them, and the camera can pivot about a focus plane (the subject holds still, near and far move opposite ways). Optional soft focus falls off with distance from that plane. A pure function of t, off by default (meta.cam3 / photo.cam3 = 0), and any WebGL problem falls back to the CPU warp above. */
+let GLR;
+function glRig() {
+  if (GLR !== undefined) return GLR; GLR = null;
+  try {
+    const cv = document.createElement('canvas'), g = cv.getContext('webgl', { antialias: false, alpha: false, preserveDrawingBuffer: true }); if (!g) return null;
+    const sh = (ty, src) => { const o = g.createShader(ty); g.shaderSource(o, src); g.compileShader(o); if (!g.getShaderParameter(o, g.COMPILE_STATUS)) throw new Error(g.getShaderInfoLog(o)); return o };
+    const pr = g.createProgram();
+    g.attachShader(pr, sh(g.VERTEX_SHADER, 'attribute vec2 a;varying vec2 q;void main(){q=vec2(.5+.5*a.x,.5-.5*a.y);gl_Position=vec4(a,0.,1.);}'));
+    g.attachShader(pr, sh(g.FRAGMENT_SHADER, `precision highp float;varying vec2 q;uniform sampler2D C,Dm;uniform vec2 c;uniform float kq,pv,foc,bl,ar;
+vec2 P(float h){float s=h-pv;return vec2(.5)+(q-vec2(.5)-c*s)/(1.+kq*s);}
+void main(){
+  float hit=0.,hp=1.;float gp=texture2D(Dm,P(1.)).r-1.;
+  if(gp>=0.){hit=1.;}else{
+    for(int i=1;i<=56;i++){float hc=1.-float(i)/56.;float gc=texture2D(Dm,P(hc)).r-hc;
+      if(gc>=0.){float a=hp,b=hc;for(int k=0;k<6;k++){float m=.5*(a+b);if(texture2D(Dm,P(m)).r-m>=0.)b=m;else a=m;}hit=b;break;}
+      hp=hc;}
+  }
+  vec2 pp=P(hit);vec3 col=texture2D(C,pp).rgb;
+  if(bl>0.){float r=bl*abs(texture2D(Dm,pp).r-foc);
+    if(r>.0004){vec3 acc=col;for(int k=1;k<=12;k++){float fk=float(k),an=fk*2.39996,rr=r*sqrt(fk/12.);acc+=texture2D(C,pp+vec2(cos(an),sin(an)*ar)*rr).rgb;}col=acc/13.;}}
+  gl_FragColor=vec4(col,1.);}`));
+    g.linkProgram(pr); if (!g.getProgramParameter(pr, g.LINK_STATUS)) throw new Error(g.getProgramInfoLog(pr));
+    const b = g.createBuffer(); g.bindBuffer(g.ARRAY_BUFFER, b); g.bufferData(g.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), g.STATIC_DRAW);
+    g.useProgram(pr); const al = g.getAttribLocation(pr, 'a'); g.enableVertexAttribArray(al); g.vertexAttribPointer(al, 2, g.FLOAT, false, 0, 0);
+    const u = {}; ['C', 'Dm', 'c', 'kq', 'pv', 'foc', 'bl', 'ar'].forEach(n => u[n] = g.getUniformLocation(pr, n));
+    g.uniform1i(u.C, 0); g.uniform1i(u.Dm, 1); g.pixelStorei(g.UNPACK_ALIGNMENT, 1);
+    return GLR = { cv, g, u }
+  } catch (e) { return null }
+}
+function glTex(R, PX) {   // the colour and depth textures of one picture, made once
+  if (PX.gl) return PX.gl; const g = R.g, mk = (unit, fmt, data) => { const t = g.createTexture(); g.activeTexture(g.TEXTURE0 + unit); g.bindTexture(g.TEXTURE_2D, t);
+    g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MIN_FILTER, g.LINEAR); g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MAG_FILTER, g.LINEAR); g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_S, g.CLAMP_TO_EDGE); g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_T, g.CLAMP_TO_EDGE);
+    g.texImage2D(g.TEXTURE_2D, 0, fmt, PX.w, PX.h, 0, fmt, g.UNSIGNED_BYTE, data); return t };
+  const d8 = new Uint8Array(PX.w * PX.h); for (let i = 0; i < d8.length; i++) d8[i] = Math.round(PX.d[i] * 255);
+  return PX.gl = { c: mk(0, g.RGBA, new Uint8Array(PX.P.buffer, PX.P.byteOffset, PX.P.length)), d: mk(1, g.LUMINANCE, d8) }
+}
+function depthGL(PX, cx, cy, kq, pv, bl) {   // cx, cy: camera shift as fractions of the picture width / height; kq: dolly; pv: the depth that stays still (0 = far, 1 = near); bl: soft-focus size (0 = off). Returns a canvas, or 0 to let the caller use the CPU warp
+  const R = glRig(); if (!R) return 0; try {
+    const g = R.g, T = glTex(R, PX); if (R.cv.width !== PX.w || R.cv.height !== PX.h) { R.cv.width = PX.w; R.cv.height = PX.h } g.viewport(0, 0, PX.w, PX.h);
+    g.activeTexture(g.TEXTURE0); g.bindTexture(g.TEXTURE_2D, T.c); g.activeTexture(g.TEXTURE1); g.bindTexture(g.TEXTURE_2D, T.d);
+    g.uniform2f(R.u.c, cx, cy); g.uniform1f(R.u.kq, kq); g.uniform1f(R.u.pv, pv); g.uniform1f(R.u.foc, pv); g.uniform1f(R.u.bl, bl); g.uniform1f(R.u.ar, PX.w / PX.h);
+    g.drawArrays(g.TRIANGLE_STRIP, 0, 4); return R.cv
+  } catch (e) { GLR = null; return 0 }
+}
+const CAMS = ['', 'auto', 'push', 'pull', 'orbit', 'truck', 'crane'];   // cam3 1-6
+function camMove(cm, pc, sc, EDITING, TH, mo) {   // -> {cx, cy, ez, pv}: cx / cy in units of the depth strength, ez the dolly, pv the focus plane that stays still
+  const sg = sc.idx % 2 ? -1 : 1, e = pc * pc * (3 - 2 * pc);
+  if (EDITING) return { cx: Math.sin(TH * .8), cy: .3 * Math.sin(TH * .55), ez: .5 * Math.sin(TH * .8 + 1), pv: cm === 1 ? 0 : .5 };
+  if (cm === 2) return { cx: .3 * sg * lerp(-1, 1, e), cy: 0, ez: lerp(-.6, .6, e), pv: .45 };   // push in: the subject plane holds, near grows faster than far
+  if (cm === 3) return { cx: .3 * sg * lerp(1, -1, e), cy: 0, ez: lerp(.6, -.6, e), pv: .45 };   // pull back
+  if (cm === 4) return { cx: 1.5 * sg * Math.sin((e - .5) * Math.PI), cy: .35 * Math.cos(e * Math.PI), ez: 0, pv: .55 };   // orbit about the subject plane
+  if (cm === 5) return { cx: 1.4 * sg * lerp(-1, 1, e), cy: 0, ez: 0, pv: .5 };   // truck: slide sideways
+  if (cm === 6) return { cx: 0, cy: 1.2 * lerp(-1, 1, e), ez: 0, pv: .5 };   // crane: rise (or sink)
+  return { cx: lerp(-1, 1, pc) * sg, cy: .3 * Math.sin(pc * Math.PI * 2), ez: (pc - .5) * (mo === 'out' ? -1 : 1), pv: 0 }   // auto: the old sweep, but through the real camera
+}
 function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's own, or an extra one from sc.photos) with its start/end by word and entry/exit effects
   const im = p.src && IM[p.src]; if (!im) return; const gate = gateAlways || p.t != null || p.out != null, ps0 = p.t != null ? p.t : sc.t0, pe = p.out != null ? p.out : 1e9, ENT = .75, EXT = .55;
   if (!(EDIT || (t >= ps0 - 1e-6 && t < pe + EXT))) return;
@@ -355,7 +411,11 @@ function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's 
   const dpl = p.depth != null ? p.depth : D.meta.depth != null ? D.meta.depth : 2, PA = EDIT && !LIVE ? 0 : [0, .03, .05, .075][dpl] || 0, PX = PA ? depthLayers(p.src, (() => { const kb = Math.max(W / im.width, H / im.height) * 1.1, vw = Math.min(1, W / (im.width * kb)), vh = Math.min(1, H / (im.height * kb)), x0 = (1 - vw) * fx, y0 = (1 - vh) * fy, m = .07; return [Math.max(0, x0 - m), Math.max(0, y0 - m), Math.min(1, x0 + vw + m), Math.min(1, y0 + vh + m)] })()) : 0;
   if (PX) {   // 3D: the depth bands slide by different amounts (the far band stays), a pure function of the scene progress
     const cx = EDIT ? Math.sin(TH * .8) : lerp(-1, 1, pc) * (sc.idx % 2 ? -1 : 1), cy = EDIT ? Math.sin(TH * .55) : Math.sin(pc * Math.PI * 2), amp = PA * W, ez = EDIT ? .5 * Math.sin(TH * .8 + 1) : (pc - .5) * (mo === 'out' ? -1 : 1);   // ez: dolly, the near bands grow (or shrink) faster than the far ones, with every kind of zoom
-    const put = (g, ox0, oy0) => g.drawImage(depthWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez), ox0, oy0, dw, dh);
+    const cm = p.cam3 != null ? p.cam3 : D.meta.cam3 != null ? D.meta.cam3 : 0, dfl = p.dof != null ? p.dof : D.meta.dof != null ? D.meta.dof : 0;   // real 3D camera (0 = off: exactly the CPU warp as before) and soft focus
+    const put = (g, ox0, oy0) => {
+      let src = 0; if (cm > 0 && cm < CAMS.length) { const C = camMove(cm, pc, sc, EDIT, TH, mo); src = depthGL(PX, amp * C.cx / dw, amp * C.cy / dh, PA * 1.8 * C.ez, C.pv, [0, .004, .008, .014][dfl] || 0) }
+      g.drawImage(src || depthWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez), ox0, oy0, dw, dh)
+    };
     put(ctx, x, y)
   } else ctx.drawImage(im, x, y, dw, dh);
   ctx.restore()

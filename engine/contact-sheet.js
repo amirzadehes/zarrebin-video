@@ -11,7 +11,7 @@ const srv=http.createServer((q,r)=>{const f=path.join(ROOT,decodeURIComponent(q.
  if(!f.startsWith(ROOT)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}
  r.writeHead(200,{'Content-Type':MIME[path.extname(f)]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});
 (async()=>{await new Promise(r=>srv.listen(0,'127.0.0.1',r));const port=srv.address().port;
- const opt={};if(process.env.CHROME_PATH)opt.executablePath=process.env.CHROME_PATH;
+ const opt={args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']};if(process.env.CHROME_PATH)opt.executablePath=process.env.CHROME_PATH;
  const br=await chromium.launch(opt);const v=fmt==='h'?{width:1920,height:1080}:{width:1080,height:1920};const p=await br.newPage({viewport:v});
  p.on('pageerror',e=>{console.error('PAGE ERROR',e.message);process.exit(2)});
  await p.goto(`http://127.0.0.1:${port}/engine/v2.html?ep=${ep}&fmt=${fmt}&mb=0`);await p.evaluate(()=>window.ready);

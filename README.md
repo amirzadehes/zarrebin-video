@@ -91,3 +91,10 @@ Per scene (all optional): `layers` = any number of `{kind:'text'|'stamp', text, 
 - mp3 ساخته‌شده را همان‌جا آپلود کن (`episodes/<ep>/music_own.mp3`)؛ `make_music.py` آن را به طول ویدیو تکرار/می‌برد و در انتها محو می‌کند.
 - بلندی: `meta.musicVol` (درصد، پیش‌فرض ۱۰۰) در مرحله‌ی ترکیب نهایی وزن موزیک می‌شود؛ پیش‌نمایش «دیدن کل ویدیو» هم همین بلندی را می‌شنوی.
 - `meta.vol` 0-3 (default 2) / per item `vol`: **volume shading** of cut-out library pictures. Not a warp: a height field from the picture's alpha (edge bevel + broad dome) is lit from the top left and cached as a white/black overlay (`volLayer` in `engine/v2.js`), so the outline never changes. Photos (nearly opaque) get none.
+
+### 3D camera (optional, WebGL; off by default)
+Uses the same depth maps as the parallax (`episodes/<ep>/depth/*.flat.png`) but shows the picture through a real moving camera: a fragment shader marches each pixel's ray through the depth field, so near things shift more than far ones and objects hide what is behind them. Code: `glRig` / `depthGL` / `camMove` in `engine/v2.js`; the idea of named camera moves (push, orbit, truck, crane) comes from the cinecode starter (MIT).
+- `meta.cam3` (whole episode) or `photo.cam3` (one scene): `0` off (the old CPU warp, exactly as before), `1` auto (the old sweep through the real camera), `2` push in, `3` pull back, `4` orbit about the subject plane, `5` truck sideways, `6` crane. `meta.dof` / `photo.dof` 0-3: soft focus that blurs what is far from the subject plane.
+- The strength is still the "عمق سه‌بعدی" level (`depth`); at 0 nothing moves. Objects stay rigid (flat depth maps).
+- In the app: "🎛 حرکت و لرزش تصویرها" (whole episode) and "حرکت عکس" of each scene; the scene preview shows it live.
+- Needs WebGL: `engine/render-v2.js` and `engine/contact-sheet.js` start Chrome with the SwiftShader flags. If WebGL is not available, the picture falls back to the CPU warp automatically.
