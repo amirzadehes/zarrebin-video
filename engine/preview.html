@@ -7,7 +7,10 @@
 html,body{margin:0;background:#000;height:100%;overflow:hidden}
 canvas{display:block;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);touch-action:none}
 #msg{position:fixed;inset:0;display:grid;place-items:center;color:#fff;font:700 18px Vz,sans-serif;background:#000a;text-align:center;direction:rtl}
-</style></head><body><canvas id="out"></canvas><div id="msg">در حال آماده‌سازی…</div>
+#gd{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;display:none;z-index:5}
+#gd i{position:absolute;display:block}
+#gb{position:fixed;left:6px;top:6px;z-index:9;width:34px;height:34px;border-radius:9px;border:0;background:#000a;color:#fff;font:700 18px Vz,sans-serif;display:none;cursor:pointer}
+</style></head><body><canvas id="out"></canvas><div id="gd"></div><button id="gb" title="خط‌های راهنما">⌗</button><div id="msg">در حال آماده‌سازی…</div>
 <script src="fx.js"></script><script src="v2.js"></script>
 <script>
 /* in-app scene preview + layout editor. ?inline=1&fmt=v|h. parent -> {type:'load'|'edit'|'adj'|'stop'}, iframe -> {type:'ready'|'layout'} */
@@ -78,4 +81,13 @@ addEventListener('message',async e=>{ const m=e.data||{}; if(m.type==='stop'){ s
   try{ await ld(m); await loadAudio(m,4000); play() }catch(err){ msg.textContent='خطا: '+err.message } });
 async function ld(m){ si=m.scene; await loadData(m.data,[si-1,si,si+1].filter(k=>k>=0&&k<m.data.scenes.length)); sc=D.scenes[si]; fit(); setAudio(m) }
 parent.postMessage({type:'ready'},'*');
+
+/* alignment guides (editor only, never drawn into the video): centre lines, thirds, and a 5% edge margin; the ⌗ button turns them on/off */
+const gd=document.getElementById('gd'), gb=document.getElementById('gb'); let GUIDES=true; try{ GUIDES=localStorage.getItem('pvGuides')!=='0' }catch(e){}
+const GL_=(c,st)=>`<i style="${st};background:${c}"></i>`, SOL='rgba(255,255,255,.95)', DOT='rgba(255,255,255,.55)', EDG='rgba(255,210,0,.8)';
+gd.innerHTML=GL_(SOL,'left:50%;top:0;bottom:0;width:2px;margin-left:-1px;box-shadow:0 0 0 1px #0008')+GL_(SOL,'top:50%;left:0;right:0;height:2px;margin-top:-1px;box-shadow:0 0 0 1px #0008')
+ +[1/3,2/3].map(f=>GL_(DOT,`left:${f*100}%;top:0;bottom:0;width:1px`)+GL_(DOT,`top:${f*100}%;left:0;right:0;height:1px`)).join('')
+ +[.05,.95].map(f=>GL_(EDG,`left:${f*100}%;top:0;bottom:0;width:1px`)+GL_(EDG,`top:${f*100}%;left:0;right:0;height:1px`)).join('');
+function guides(){ const on=mode==='edit'&&!!sc; gb.style.display=on?'block':'none'; gd.style.display=on&&GUIDES?'block':'none'; if(on){ gd.style.width=cvs.style.width; gd.style.height=cvs.style.height } }
+gb.onclick=()=>{ GUIDES=!GUIDES; try{ localStorage.setItem('pvGuides',GUIDES?'1':'0') }catch(e){} guides() }; setInterval(guides,150);
 </script></body></html>
