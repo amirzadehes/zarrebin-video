@@ -339,7 +339,7 @@ function depthWarp(X, ox, oy, kq) {   // X: depthLayers result; every pixel move
   }
   X.og.putImageData(X.id, 0, 0); return X.out
 }
-/* 3D camera (WebGL, optional): the same depth map as above, but the picture is seen through a real moving camera. A fragment shader marches each pixel's ray through the depth field (near = white), so near things shift more than far ones, objects hide what is behind them, and the camera can pivot about a focus plane (the subject holds still, near and far move opposite ways). Optional soft focus falls off with distance from that plane. A pure function of t, off by default (meta.cam3 / photo.cam3 = 0), and any WebGL problem falls back to the CPU warp above. */
+/* 3D camera (WebGL, optional): the same depth map as above, but the picture is seen through a real moving camera. A fragment shader marches each pixel's ray through the depth field (near = white), so near things shift more than far ones, objects hide what is behind them, and the camera can pivot about a focus plane (the subject holds still, near and far move opposite ways). Optional soft focus falls off with distance from that plane. A pure function of t. The strength is the depth level (meta.depth / photo.depth, 0 = no depth motion); meta.cam3 / photo.cam3 picks the move; any WebGL problem falls back to the CPU warp above. */
 let GLR;
 function glRig() {
   if (GLR !== undefined) return GLR; GLR = null;
@@ -411,7 +411,7 @@ function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's 
   const dpl = p.depth != null ? p.depth : D.meta.depth != null ? D.meta.depth : 2, PA = EDIT && !LIVE ? 0 : [0, .03, .05, .075][dpl] || 0, PX = PA ? depthLayers(p.src, (() => { const kb = Math.max(W / im.width, H / im.height) * 1.1, vw = Math.min(1, W / (im.width * kb)), vh = Math.min(1, H / (im.height * kb)), x0 = (1 - vw) * fx, y0 = (1 - vh) * fy, m = .07; return [Math.max(0, x0 - m), Math.max(0, y0 - m), Math.min(1, x0 + vw + m), Math.min(1, y0 + vh + m)] })()) : 0;
   if (PX) {   // 3D: the depth bands slide by different amounts (the far band stays), a pure function of the scene progress
     const cx = EDIT ? Math.sin(TH * .8) : lerp(-1, 1, pc) * (sc.idx % 2 ? -1 : 1), cy = EDIT ? Math.sin(TH * .55) : Math.sin(pc * Math.PI * 2), amp = PA * W, ez = EDIT ? .5 * Math.sin(TH * .8 + 1) : (pc - .5) * (mo === 'out' ? -1 : 1);   // ez: dolly, the near bands grow (or shrink) faster than the far ones, with every kind of zoom
-    const cm = p.cam3 != null ? p.cam3 : D.meta.cam3 != null ? D.meta.cam3 : 0, dfl = p.dof != null ? p.dof : D.meta.dof != null ? D.meta.dof : 0;   // real 3D camera (0 = off: exactly the CPU warp as before) and soft focus
+    const cm = p.cam3 || D.meta.cam3 || 1, dfl = p.dof != null ? p.dof : D.meta.dof != null ? D.meta.dof : 0;   // the 3D camera move (1 = auto when none is chosen; the CPU warp only runs when WebGL is missing) and soft focus
     const put = (g, ox0, oy0) => {
       let src = 0; if (cm > 0 && cm < CAMS.length) { const C = camMove(cm, pc, sc, EDIT, TH, mo); src = depthGL(PX, amp * C.cx / dw, amp * C.cy / dh, PA * 1.8 * C.ez, C.pv, [0, .004, .008, .014][dfl] || 0) }
       g.drawImage(src || depthWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez), ox0, oy0, dw, dh)
@@ -674,6 +674,15 @@ function tfCounter(t, sc, f) {
   for (let j = 0; j < ns; j++) draw(t - (ns > 1 ? sh * j / (ns - 1) : 0), a / (j + 1));
   ctx.restore()
 }
+let ZB;
+function zoomBlur(p) {   // the zoom punch gets short radial streaks: a few copies of the frame, each a little bigger and faded, centred on the picture (pure function of the punch strength; meta.zoomblur 0-3, default 1)
+  const lv = D.meta.zoomblur != null ? +D.meta.zoomblur : 1, k = [0, .5, 1, 1.6][lv] || 0; if (!k || p < .01) return;
+  if (!ZB || ZB.width !== W || ZB.height !== H) { ZB = document.createElement('canvas'); ZB.width = W; ZB.height = H }
+  const z = ZB.getContext('2d'); z.setTransform(1, 0, 0, 1, 0, 0); z.clearRect(0, 0, W, H); z.drawImage(cv, 0, 0);
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = .2;
+  for (let i = 1; i <= 5; i++) { const s = 1 + p * k * i / 5 * 1.3; ctx.setTransform(s, 0, 0, s, W / 2 * (1 - s), H / 2 * (1 - s)); ctx.drawImage(ZB, 0, 0) }
+  ctx.restore()
+}
 function drawScene(t, sc) {
   CUR = sc; if (EDIT) for (const k in REC) delete REC[k]; const th = THEMES[sc.theme], lt = t - sc.t0, dur = sc.t1 - sc.t0, kc = sc.idx % 4, pc = ramp(lt, 0, dur + .6);
   // camera: each scene gets its own move (push in / pull out, with a slow pan) so consecutive scenes never feel identical
@@ -685,6 +694,7 @@ function drawScene(t, sc) {
   if (POSTER) posterBg(t, sc); else if (TF) tfBg(t, sc, th, TF); else { bgLayer(t, sc, th); if (window.FXL && sc.bg && sc.bg.src) FXL.bg(t, sc) }   // optional background picture layer (engine/fx.js)
   if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, false);   // optional framed pictures pinned to the backdrop
   decor(t, sc, th); const KC = POSTER ? false : keyCustom(sc); (POSTER ? TPL.poster : (TPL[sc.tpl] || TPL.hero))(t, KC ? Object.assign(Object.create(sc), { keyOn: false }) : sc); if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, true); if (KC) keyCard(t, sc); if (POSTER) { posterAtm(t, sc); posterText(t, sc) } ctx.restore(); if (TF) tfCounter(t, sc, TF)   // pins marked 'top' (stamps, arrows) lie over the pictures
+  if (POSTER && !EDIT && punch > .01) zoomBlur(punch)
 }
 function wipePath(style, p, k) {
   const e = eio(p); ctx.beginPath();
@@ -756,7 +766,14 @@ function draw(t) {
   const T = D.meta.total; if (t > T - .5) { ctx.fillStyle = `rgba(0,0,0,${ramp(t, T - .5, T)})`; ctx.fillRect(0, 0, W, H) }
   if (t < .25) { ctx.fillStyle = `rgba(0,0,0,${1 - ramp(t, 0, .25)})`; ctx.fillRect(0, 0, W, H) }
 }
-window.frame = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0); if (MB) { draw(t + .6 / 30); octx.globalAlpha = .5; octx.drawImage(cv, 0, 0); octx.globalAlpha = 1 } };
+function busy(t) {   // a picture or word is arriving, or the scene has just changed: fast things on screen, so the motion blur gets more samples
+  const sc = D.scenes[sceneIndex(t)]; if (!sc) return false; if (t - sc.t0 < .6 && t - sc.t0 > -.1) return true;
+  const near = q => q && q.t != null && t - q.t > -.05 && t - q.t < .6; return (sc.items || []).some(near) || [sc.photo, ...(sc.photos || [])].some(near)
+}
+window.frame = function (t) {   // 180-degree-style shutter: the frame is the average of sub-frames over a short span (4 while things arrive, 2 otherwise)
+  const n = MB ? (busy(t) ? 4 : 2) : 1;
+  for (let i = 0; i < n; i++) { draw(n === 1 ? t : t + i * (.6 / 30) / (n - 1)); octx.globalAlpha = 1 / (i + 1); octx.drawImage(cv, 0, 0) } octx.globalAlpha = 1
+};
 window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
 window.loadData = async (DD, only) => {   // shared by the renderer and the in-app preview (only = scene indices whose images are needed)
   D = DD; POSTER = D.meta.mode === 'poster'; VOX = POSTER || (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; VARY = Q.get('vary') !== '0' && D.meta.vary !== false; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
