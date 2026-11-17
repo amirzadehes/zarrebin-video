@@ -322,8 +322,15 @@ function depthLayers(src, win) {   // win = [x0, y0, x1, y1]: the part of the pi
     if (fm) d = boxBlur(d, w, h, Math.max(1, Math.round(Math.max(w, h) * .0015)));   // flat map: objects are rigid pieces and the ramp beside them is already in the map, so only a hairline of smoothing (a strong blur would bend the objects again)
     else { const r = Math.max(2, Math.round(Math.max(w, h) * .0065)); for (let k = 0; k < 3; k++) d = boxBlur(d, w, h, r) }   // soft depth edges: the picture bends gently where near meets far, it never tears into layers
     const out = mk(), og = out.getContext('2d'), id = og.createImageData(w, h);
-    return DEP[key] = { w, h, P, d, out, og, id }
+    return DEP[key] = { w, h, P, d, out, og, id, vis: win && win.vis }
   } catch (e) { return 0 }
+}
+/* Calm edges: the 3D motion fades out towards the sides of what is on screen (meta.edge = fraction of the width that stays completely still at each side, default .2; top and bottom use half of it; 0 = off). The pulled / smeared picture shows up
+   mostly at the borders, where the shift is largest and the picture has nothing to be pulled from, so there the picture simply stays flat and the 3D grows smoothly towards the middle. Returns {mx, my} per-column / per-row factors 0..1. */
+function edgeMask(X) {
+  const fr = D.meta.edge != null ? +D.meta.edge : .2; if (!(fr > 0) || !X.vis) return null; const key = fr + '|' + X.vis.join(','); if (X.ek === key) return X.em;
+  const { w, h } = X, v = X.vis, sm = t => { t = t < 0 ? 0 : t > 1 ? 1 : t; return t * t * (3 - 2 * t) }, line = (n, a, b, f) => { const o = new Float32Array(n), A = a * n, B = b * n, k = Math.max(1, (B - A) * f); for (let i = 0; i < n; i++) o[i] = sm(Math.min(i - A, B - i) / k); return o };
+  X.ek = key; return X.em = { mx: line(w, v[0], v[2], fr), my: line(h, v[1], v[3], fr / 2) }
 }
 /* Bounded stretching (the principled fix for pulled / bent pictures): a pixel's shift is (ox, oy) * depth, so the picture is stretched by about shift-range * depth-gradient. Wherever a depth map falls off faster than that allows (soft model edges, thin objects, steps between pieces),
    the shift field would be pulled out like rubber. Here the depth is limited, per frame and for THIS move size, to a slope of at most meta.stretch (default .55 = the picture is never stretched more than ~1.5x anywhere): a max-dilation cone, so near things keep their exact depth
@@ -338,12 +345,12 @@ function stretchLimit(X, S) {
   X.lk = key; return o
 }
 function depthWarp(X, ox, oy, kq) {   // X: depthLayers result; every pixel moves by (ox, oy) * its depth (image px) and is scaled about the centre by 1 + kq * depth; returns the canvas
-  const { w, h, P } = X, d = stretchLimit(X, Math.max(Math.abs(ox) + Math.abs(kq) * w / 2, Math.abs(oy) + Math.abs(kq) * h / 2)), O = X.id.data, cx = w / 2, cy = h / 2, mx = w - 1, my = h - 1, n = w * h; let i = 0;
+  const { w, h, P } = X, EM = edgeMask(X), MX = EM ? EM.mx : null, MY = EM ? EM.my : null, d = stretchLimit(X, Math.max(Math.abs(ox) + Math.abs(kq) * w / 2, Math.abs(oy) + Math.abs(kq) * h / 2)), O = X.id.data, cx = w / 2, cy = h / 2, mx = w - 1, my = h - 1, n = w * h; let i = 0;
   const D = X.D || (X.D = new Float32Array(n)); D.fill(-1);   // depth as it lies AFTER the move (forward splat, nearest wins), so a small near object is found where it has moved to
-  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const f = d[y * w + x], q = 1 + kq * f, X1 = Math.round(cx + (x - cx) * q + ox * f), Y1 = Math.round(cy + (y - cy) * q + oy * f); if (X1 >= 0 && X1 < w && Y1 >= 0 && Y1 < h) { const j = Y1 * w + X1; if (f > D[j]) D[j] = f } }
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const f = d[y * w + x], m = MX ? MX[x] * MY[y] : 1, q = 1 + kq * m * f, X1 = Math.round(cx + (x - cx) * q + ox * m * f), Y1 = Math.round(cy + (y - cy) * q + oy * m * f); if (X1 >= 0 && X1 < w && Y1 >= 0 && Y1 < h) { const j = Y1 * w + X1; if (f > D[j]) D[j] = f } }
   for (let y = 0; y < h; y++) { const o = y * w; let x = 0; while (x < w) { if (D[o + x] >= 0) { x++; continue } let e = x; while (e < w && D[o + e] < 0) e++; const a = x > 0 ? D[o + x - 1] : -1, b = e < w ? D[o + e] : -1, v = a < 0 ? (b < 0 ? 0 : b) : b < 0 ? a : Math.min(a, b); for (let k = x; k < e; k++) D[o + k] = v; x = e } }   // holes (uncovered background) take the farther of their two neighbours
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++, i++) {
-    const f = D[i], q = 1 + kq * f; let sx = cx + (x - cx - ox * f) / q, sy = cy + (y - cy - oy * f) / q;
+    const f = D[i], m = MX ? MX[x] * MY[y] : 1, q = 1 + kq * m * f; let sx = cx + (x - cx - ox * m * f) / q, sy = cy + (y - cy - oy * m * f) / q;
     sx = sx < 0 ? 0 : sx > mx ? mx : sx; sy = sy < 0 ? 0 : sy > my ? my : sy;
     const x0 = sx | 0, y0 = sy | 0, x1 = x0 < mx ? x0 + 1 : x0, y1 = y0 < my ? y0 + 1 : y0, fx = sx - x0, fy = sy - y0, a = (1 - fx) * (1 - fy), b = fx * (1 - fy), c = (1 - fx) * fy, e = fx * fy,
       p00 = (y0 * w + x0) * 4, p10 = (y0 * w + x1) * 4, p01 = (y1 * w + x0) * 4, p11 = (y1 * w + x1) * 4, o = i * 4;
@@ -360,9 +367,11 @@ function glRig() {
     const sh = (ty, src) => { const o = g.createShader(ty); g.shaderSource(o, src); g.compileShader(o); if (!g.getShaderParameter(o, g.COMPILE_STATUS)) throw new Error(g.getShaderInfoLog(o)); return o };
     const pr = g.createProgram();
     g.attachShader(pr, sh(g.VERTEX_SHADER, 'attribute vec2 a;varying vec2 q;void main(){q=vec2(.5+.5*a.x,.5-.5*a.y);gl_Position=vec4(a,0.,1.);}'));
-    g.attachShader(pr, sh(g.FRAGMENT_SHADER, `precision highp float;varying vec2 q;uniform sampler2D C,Dm;uniform vec2 c;uniform float kq,pv,foc,bl,ar;
-vec2 P(float h){float s=h-pv;return vec2(.5)+(q-vec2(.5)-c*s)/(1.+kq*s);}
+    g.attachShader(pr, sh(g.FRAGMENT_SHADER, `precision highp float;varying vec2 q;uniform sampler2D C,Dm;uniform vec2 c;uniform float kq,pv,foc,bl,ar;uniform vec4 vs;uniform vec2 ef;float mk=1.;
+float sm1(float t){t=clamp(t,0.,1.);return t*t*(3.-2.*t);}
+vec2 P(float h){float s=(h-pv)*mk;return vec2(.5)+(q-vec2(.5)-c*s)/(1.+kq*s);}
 void main(){
+  if(ef.x>0.){mk=sm1(min(q.x-vs.x,vs.z-q.x)/max(.001,(vs.z-vs.x)*ef.x))*sm1(min(q.y-vs.y,vs.w-q.y)/max(.001,(vs.w-vs.y)*ef.x*.5));}
   float hit=0.,hp=1.;float gp=texture2D(Dm,P(1.)).r-1.;
   if(gp>=0.){hit=1.;}else{
     for(int i=1;i<=56;i++){float hc=1.-float(i)/56.;float gc=texture2D(Dm,P(hc)).r-hc;
@@ -376,7 +385,7 @@ void main(){
     g.linkProgram(pr); if (!g.getProgramParameter(pr, g.LINK_STATUS)) throw new Error(g.getProgramInfoLog(pr));
     const b = g.createBuffer(); g.bindBuffer(g.ARRAY_BUFFER, b); g.bufferData(g.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), g.STATIC_DRAW);
     g.useProgram(pr); const al = g.getAttribLocation(pr, 'a'); g.enableVertexAttribArray(al); g.vertexAttribPointer(al, 2, g.FLOAT, false, 0, 0);
-    const u = {}; ['C', 'Dm', 'c', 'kq', 'pv', 'foc', 'bl', 'ar'].forEach(n => u[n] = g.getUniformLocation(pr, n));
+    const u = {}; ['C', 'Dm', 'c', 'kq', 'pv', 'foc', 'bl', 'ar', 'vs', 'ef'].forEach(n => u[n] = g.getUniformLocation(pr, n));
     g.uniform1i(u.C, 0); g.uniform1i(u.Dm, 1); g.pixelStorei(g.UNPACK_ALIGNMENT, 1);
     return GLR = { cv, g, u }
   } catch (e) { return null }
@@ -392,7 +401,7 @@ function depthGL(PX, cx, cy, kq, pv, bl) {   // cx, cy: camera shift as fraction
   const R = glRig(); if (!R) return 0; try {
     const g = R.g, T = glTex(R, PX); if (R.cv.width !== PX.w || R.cv.height !== PX.h) { R.cv.width = PX.w; R.cv.height = PX.h } g.viewport(0, 0, PX.w, PX.h);
     g.activeTexture(g.TEXTURE0); g.bindTexture(g.TEXTURE_2D, T.c); g.activeTexture(g.TEXTURE1); g.bindTexture(g.TEXTURE_2D, T.d);
-    g.uniform2f(R.u.c, cx, cy); g.uniform1f(R.u.kq, kq); g.uniform1f(R.u.pv, pv); g.uniform1f(R.u.foc, pv); g.uniform1f(R.u.bl, bl); g.uniform1f(R.u.ar, PX.w / PX.h);
+    g.uniform2f(R.u.c, cx, cy); g.uniform1f(R.u.kq, kq); g.uniform1f(R.u.pv, pv); g.uniform1f(R.u.foc, pv); g.uniform1f(R.u.bl, bl); g.uniform1f(R.u.ar, PX.w / PX.h); { const fr = D.meta.edge != null ? +D.meta.edge : .2, v = PX.vis || [0, 0, 1, 1]; g.uniform4f(R.u.vs, v[0], v[1], v[2], v[3]); g.uniform2f(R.u.ef, PX.vis ? fr : 0, 0) }
     g.drawArrays(g.TRIANGLE_STRIP, 0, 4); return R.cv
   } catch (e) { GLR = null; return 0 }
 }
@@ -420,7 +429,7 @@ function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's 
   const jx = DA ? DA * (2 * jit(t, 1) + .6 * Math.sin(t * .9)) : 0, jy = DA ? DA * (2 * jit(t, 7) + .6 * Math.cos(t * .7)) : 0;
   const fx = p.fx == null ? .5 : p.fx, fy = p.fy == null ? .5 : p.fy, k = Math.max(W / im.width, H / im.height) * z, dw = im.width * k, dh = im.height * k;
   const x = clamp((W - dw) * fx + ox * W + jx, Math.min(0, W - dw), 0), y = clamp((H - dh) * fy + jy, Math.min(0, H - dh), 0);
-  const dpl = p.depth != null ? p.depth : D.meta.depth != null ? D.meta.depth : 2, PA = EDIT && !LIVE ? 0 : [0, .03, .05, .075][dpl] || 0, PX = PA ? depthLayers(p.src, (() => { const kb = Math.max(W / im.width, H / im.height) * 1.1, vw = Math.min(1, W / (im.width * kb)), vh = Math.min(1, H / (im.height * kb)), x0 = (1 - vw) * fx, y0 = (1 - vh) * fy, m = .07; return [Math.max(0, x0 - m), Math.max(0, y0 - m), Math.min(1, x0 + vw + m), Math.min(1, y0 + vh + m)] })()) : 0;
+  const dpl = p.depth != null ? p.depth : D.meta.depth != null ? D.meta.depth : 2, PA = EDIT && !LIVE ? 0 : [0, .03, .05, .075][dpl] || 0, PX = PA ? depthLayers(p.src, (() => { const kb = Math.max(W / im.width, H / im.height) * 1.1, vw = Math.min(1, W / (im.width * kb)), vh = Math.min(1, H / (im.height * kb)), x0 = (1 - vw) * fx, y0 = (1 - vh) * fy, m = .07; const r = [Math.max(0, x0 - m), Math.max(0, y0 - m), Math.min(1, x0 + vw + m), Math.min(1, y0 + vh + m)]; r.vis = [x0, y0, x0 + vw, y0 + vh]; return r })()) : 0;
   if (PX) {   // 3D: the depth bands slide by different amounts (the far band stays), a pure function of the scene progress
     const cx = EDIT ? Math.sin(TH * .8) : lerp(-1, 1, pc) * (sc.idx % 2 ? -1 : 1), cy = EDIT ? Math.sin(TH * .55) : Math.sin(pc * Math.PI * 2), amp = PA * W, ez = EDIT ? .5 * Math.sin(TH * .8 + 1) : (pc - .5) * (mo === 'out' ? -1 : 1);   // ez: dolly, the near bands grow (or shrink) faster than the far ones, with every kind of zoom
     const cm = p.cam3 || D.meta.cam3 || 1, dfl = p.dof != null ? p.dof : D.meta.dof != null ? D.meta.dof : 0;   // the 3D camera move (0 / 1 = auto: the rigid CPU warp, exactly as before the WebGL camera; the WebGL camera only runs for the explicit moves 2-6, because its ray march stretches faces and clips thin heads at soft depth edges) and soft focus
