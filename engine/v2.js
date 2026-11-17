@@ -325,8 +325,20 @@ function depthLayers(src, win) {   // win = [x0, y0, x1, y1]: the part of the pi
     return DEP[key] = { w, h, P, d, out, og, id }
   } catch (e) { return 0 }
 }
+/* Bounded stretching (the principled fix for pulled / bent pictures): a pixel's shift is (ox, oy) * depth, so the picture is stretched by about shift-range * depth-gradient. Wherever a depth map falls off faster than that allows (soft model edges, thin objects, steps between pieces),
+   the shift field would be pulled out like rubber. Here the depth is limited, per frame and for THIS move size, to a slope of at most meta.stretch (default .55 = the picture is never stretched more than ~1.5x anywhere): a max-dilation cone, so near things keep their exact depth
+   (they stay rigid) and only the farther pixels beside them slope down gently. meta.stretch = 0 turns it off. */
+function stretchLimit(X, S) {
+  const L = D.meta.stretch != null ? +D.meta.stretch : .55; if (!(L > 0) || !(S > 1)) return X.d;
+  const c = L / S, key = Math.round(c * 4000); if (X.lk === key && X.ld) return X.ld;
+  const { w, h } = X, o = X.ld || (X.ld = new Float32Array(w * h)); o.set(X.d);
+  for (let y = 0; y < h; y++) { const r = y * w; for (let x = 1; x < w; x++) { const v = o[r + x - 1] - c; if (v > o[r + x]) o[r + x] = v } for (let x = w - 2; x >= 0; x--) { const v = o[r + x + 1] - c; if (v > o[r + x]) o[r + x] = v } }
+  for (let y = 1; y < h; y++) { const r = y * w, q = r - w; for (let x = 0; x < w; x++) { const v = o[q + x] - c; if (v > o[r + x]) o[r + x] = v } }
+  for (let y = h - 2; y >= 0; y--) { const r = y * w, q = r + w; for (let x = 0; x < w; x++) { const v = o[q + x] - c; if (v > o[r + x]) o[r + x] = v } }
+  X.lk = key; return o
+}
 function depthWarp(X, ox, oy, kq) {   // X: depthLayers result; every pixel moves by (ox, oy) * its depth (image px) and is scaled about the centre by 1 + kq * depth; returns the canvas
-  const { w, h, P, d } = X, O = X.id.data, cx = w / 2, cy = h / 2, mx = w - 1, my = h - 1, n = w * h; let i = 0;
+  const { w, h, P } = X, d = stretchLimit(X, Math.max(Math.abs(ox) + Math.abs(kq) * w / 2, Math.abs(oy) + Math.abs(kq) * h / 2)), O = X.id.data, cx = w / 2, cy = h / 2, mx = w - 1, my = h - 1, n = w * h; let i = 0;
   const D = X.D || (X.D = new Float32Array(n)); D.fill(-1);   // depth as it lies AFTER the move (forward splat, nearest wins), so a small near object is found where it has moved to
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const f = d[y * w + x], q = 1 + kq * f, X1 = Math.round(cx + (x - cx) * q + ox * f), Y1 = Math.round(cy + (y - cy) * q + oy * f); if (X1 >= 0 && X1 < w && Y1 >= 0 && Y1 < h) { const j = Y1 * w + X1; if (f > D[j]) D[j] = f } }
   for (let y = 0; y < h; y++) { const o = y * w; let x = 0; while (x < w) { if (D[o + x] >= 0) { x++; continue } let e = x; while (e < w && D[o + e] < 0) e++; const a = x > 0 ? D[o + x - 1] : -1, b = e < w ? D[o + e] : -1, v = a < 0 ? (b < 0 ? 0 : b) : b < 0 ? a : Math.min(a, b); for (let k = x; k < e; k++) D[o + k] = v; x = e } }   // holes (uncovered background) take the farther of their two neighbours
