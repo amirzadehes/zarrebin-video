@@ -411,9 +411,9 @@ function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's 
   const dpl = p.depth != null ? p.depth : D.meta.depth != null ? D.meta.depth : 2, PA = EDIT && !LIVE ? 0 : [0, .03, .05, .075][dpl] || 0, PX = PA ? depthLayers(p.src, (() => { const kb = Math.max(W / im.width, H / im.height) * 1.1, vw = Math.min(1, W / (im.width * kb)), vh = Math.min(1, H / (im.height * kb)), x0 = (1 - vw) * fx, y0 = (1 - vh) * fy, m = .07; return [Math.max(0, x0 - m), Math.max(0, y0 - m), Math.min(1, x0 + vw + m), Math.min(1, y0 + vh + m)] })()) : 0;
   if (PX) {   // 3D: the depth bands slide by different amounts (the far band stays), a pure function of the scene progress
     const cx = EDIT ? Math.sin(TH * .8) : lerp(-1, 1, pc) * (sc.idx % 2 ? -1 : 1), cy = EDIT ? Math.sin(TH * .55) : Math.sin(pc * Math.PI * 2), amp = PA * W, ez = EDIT ? .5 * Math.sin(TH * .8 + 1) : (pc - .5) * (mo === 'out' ? -1 : 1);   // ez: dolly, the near bands grow (or shrink) faster than the far ones, with every kind of zoom
-    const cm = p.cam3 || D.meta.cam3 || 1, dfl = p.dof != null ? p.dof : D.meta.dof != null ? D.meta.dof : 0;   // the 3D camera move (1 = auto when none is chosen; the CPU warp only runs when WebGL is missing) and soft focus
+    const cm = p.cam3 || D.meta.cam3 || 1, dfl = p.dof != null ? p.dof : D.meta.dof != null ? D.meta.dof : 0;   // the 3D camera move (0 / 1 = auto: the rigid CPU warp, exactly as before the WebGL camera; the WebGL camera only runs for the explicit moves 2-6, because its ray march stretches faces and clips thin heads at soft depth edges) and soft focus
     const put = (g, ox0, oy0) => {
-      let src = 0; if (cm > 0 && cm < CAMS.length) { const C = camMove(cm, pc, sc, EDIT, TH, mo); src = depthGL(PX, amp * C.cx / dw, amp * C.cy / dh, PA * 1.8 * C.ez, C.pv, [0, .004, .008, .014][dfl] || 0) }
+      let src = 0; if (cm > 1 && cm < CAMS.length) { const C = camMove(cm, pc, sc, EDIT, TH, mo); src = depthGL(PX, amp * C.cx / dw, amp * C.cy / dh, PA * 1.8 * C.ez, C.pv, [0, .004, .008, .014][dfl] || 0) }
       g.drawImage(src || depthWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez), ox0, oy0, dw, dh)
     };
     put(ctx, x, y)
