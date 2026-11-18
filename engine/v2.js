@@ -646,14 +646,14 @@ function mapView(c, d, L, w, h) {
    After `hold` seconds (pin 3.2, map 4.8) it shrinks to a chip at the top that stays until `out` (default: end of the scene). x / y: centre of the whole group (fractions of the frame, draggable in the preview), size: scale. */
 function placeFx(t, sc, L, li) {
   const t0 = L.t != null ? L.t : sc.t0 + .3, end = L.out != null ? L.out : sc.t1 + .3, mp = L.style === 'map', d = EDIT ? 3.2 + (mp ? 1.4 : 0) - .3 : t - t0; if (!EDIT && (d < 0 || t > end)) return;
-  const name = String(L.text || '').trim(), P = (L.pos && L.pos[FMT]) || L, k = L.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, hold = L.hold != null ? L.hold : (mp ? 4.8 : 3.2), fade = EDIT ? 1 : clamp((end - t) / .3);
-  const g = EDIT ? 1 : (L.chip === false ? 1 : 1 - ramp(d, hold, hold + .4)), cp = EDIT ? 0 : ramp(d, hold + .1, hold + .5), ac = L.acc || ORG, tc = L.col || '#fff', nz = name ? Math.round(B * (mp ? .1 : .13) * k) : 0, dz = Math.round(B * .062 * k), ph = dz * 1.9;
+  const name = String(L.text || '').trim(), P = (L.pos && L.pos[FMT]) || L, k = L.size || 1, kt = L.tsize || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, hold = L.hold != null ? L.hold : (mp ? 4.8 : 3.2), fade = EDIT ? 1 : clamp((end - t) / .3);
+  const g = EDIT ? 1 : (L.chip === false ? 1 : 1 - ramp(d, hold, hold + .4)), cp = EDIT ? 0 : ramp(d, hold + .1, hold + .5), ac = L.acc || ORG, tc = L.col || '#fff', nz = name ? Math.round(B * (mp ? .1 : .13) * kt) : 0, dz = Math.round(B * .062 * kt), ph = dz * 1.9;
   const date = String(L.date || '').trim(), ym = date.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).match(/\d{3,4}/), yr = ym ? +ym[0] : null, fm = String(L.from || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).match(/\d{3,4}/), fy = fm ? +fm[0] : (yr != null ? yr - 100 : null), suf = date.replace(/[\d۰-۹]{3,4}/, '').trim();
   const dir = rtl ? 'rtl' : 'ltr', shadow = (b = 24) => { ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = b; ctx.shadowOffsetY = 6 }, full = yr ? faDigits(yr) + (suf ? ' ' + suf : '') : date;
-  const tw = measure(`900 ${nz}px Vz`, name), pw = measure(`900 ${dz}px Vz`, full) + dz * 2.2, TW = B * .52, cw = mp ? Math.min(B * .86 * k, W * .96) : 0, chh = cw * .56;
+  const tw = measure(`900 ${nz}px Vz`, name), pw = measure(`900 ${dz}px Vz`, full) + dz * 2.2, TW = B * .52 * k, cw = mp ? Math.min(B * .86 * k, W * .96) : 0, chh = cw * .56;
   let o0, o1, o2, o3, Hg;   // vertical layout of the group, from its top
   if (mp) { o0 = chh / 2; o1 = chh + nz * .75; o2 = o1 + nz * .55 + ph * .7; o3 = 0; Hg = date ? o2 + ph / 2 : o1 + nz * .55 }
-  else { const pr0 = B * .022; o0 = pr0; o1 = o0 + pr0 + B * .07 + nz * .62; o2 = o1 + nz * 1.05; o3 = date && yr ? o2 + ph * 1.05 : 0; Hg = date ? (yr ? o3 + 40 : o2 + ph / 2) : o1 + nz * .6 }
+  else { const pr0 = B * .022 * k; o0 = pr0; o1 = o0 + pr0 + B * .07 * k + nz * .62; o2 = o1 + nz * 1.05; o3 = date && yr ? o2 + ph * 1.05 : 0; Hg = date ? (yr ? o3 + 40 : o2 + ph / 2) : o1 + nz * .6 }
   const top = P.y == null ? (V ? 98 : 70) + 54 + 38 : P.y * H - Hg / 2, cyc = top + Hg / 2, y0 = top + o0, y1 = top + o1, y2 = top + o2, y3 = top + o3;
   if (EDIT) { const bw = Math.max(mp ? cw : 0, tw, date ? pw : 0, yr && !mp ? TW : 0) + 50; editBox('layer', li, cx, cyc, bw, Hg + 20, '#00e5ff') }
   const nameDraw = (e1) => { if (e1 <= 0 || !name) return; ctx.save(); ctx.beginPath(); const pad = nz * .3, cwid = (tw + 2 * pad) * e1; ctx.rect(rtl ? cx + tw / 2 + pad - cwid : cx - tw / 2 - pad, y1 - nz, cwid, nz * 2); ctx.clip();
@@ -677,10 +677,10 @@ function placeFx(t, sc, L, li) {
       ctx.restore();
       nameDraw(eio(ramp(d, 2.2, 2.85))); if (date) pillDraw(spr(t - t0, 2.7, .5, 13) * (EDIT ? 1 : 1), cnt(2.8, 3.9));
     } else {
-      const pr = B * .022, fall = d < .4 ? -(1 - (d / .4) * (d / .4)) * 300 : -Math.exp(-(d - .4) * 8) * Math.abs(Math.sin((d - .4) * 14)) * 26;
-      for (let j = 0; j < 3; j++) { const rd = d - (.4 + j * .22); if (rd > 0 && rd < 1.2) { ctx.save(); ctx.globalAlpha *= (1 - rd / 1.2) * .75; ctx.beginPath(); ctx.arc(cx, y0, lerp(pr, B * .3, eoc(rd / 1.2)), 0, TAU); ctx.lineWidth = 5; ctx.strokeStyle = ac; ctx.stroke(); ctx.restore() } }
+      const pr = B * .022 * k, fall = d < .4 ? -(1 - (d / .4) * (d / .4)) * 300 : -Math.exp(-(d - .4) * 8) * Math.abs(Math.sin((d - .4) * 14)) * 26;
+      for (let j = 0; j < 3; j++) { const rd = d - (.4 + j * .22); if (rd > 0 && rd < 1.2) { ctx.save(); ctx.globalAlpha *= (1 - rd / 1.2) * .75; ctx.beginPath(); ctx.arc(cx, y0, lerp(pr, B * .3 * k, eoc(rd / 1.2)), 0, TAU); ctx.lineWidth = 5; ctx.strokeStyle = ac; ctx.stroke(); ctx.restore() } }
       ctx.save(); ctx.globalAlpha *= clamp(d / .1); shadow(16); ctx.beginPath(); ctx.arc(cx, y0 + fall, pr, 0, TAU); ctx.fillStyle = ac; ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 6; ctx.strokeStyle = '#fff'; ctx.stroke(); ctx.restore();
-      const ll = B * .07 * eoc(ramp(d, .45, .8)); if (ll > 0) { ctx.beginPath(); ctx.moveTo(cx, y0 + pr + 4); ctx.lineTo(cx, y0 + pr + 4 + ll); ctx.lineWidth = 4; ctx.strokeStyle = ac; ctx.stroke() }
+      const ll = B * .07 * k * eoc(ramp(d, .45, .8)); if (ll > 0) { ctx.beginPath(); ctx.moveTo(cx, y0 + pr + 4); ctx.lineTo(cx, y0 + pr + 4 + ll); ctx.lineWidth = 4; ctx.strokeStyle = ac; ctx.stroke() }
       nameDraw(eio(ramp(d, .7, 1.35))); if (date) pillDraw(spr(d, 1.25, .5, 13), cnt(1.3, 2.4));
       if (date && yr) { const a3 = clamp((d - 1.5) / .4), mn = Math.min(fm ? fy : yr, yr), mxy = Math.max(fm ? fy : yr, yr), stp = fm ? ((mxy - mn) > 400 ? 500 : (mxy - mn) > 150 ? 100 : (mxy - mn) > 60 ? 50 : 10) : (yr >= 1000 ? 200 : 100), lo = fm ? Math.floor(mn / stp) * stp : Math.floor(yr / 100) * 100, hi = fm ? Math.max(Math.ceil(mxy / stp) * stp, lo + stp) : lo + stp, p0 = fm ? (fy - lo) / (hi - lo) : 0, pos = (yr - lo) / (hi - lo), m = lerp(p0, pos, eio(ramp(d, 1.7, 2.7))), xx = f => rtl ? cx + TW / 2 - TW * f : cx - TW / 2 + TW * f;
         if (a3 > 0) { ctx.save(); ctx.globalAlpha *= a3; shadow(10); const tl = (lw, col) => { ctx.lineWidth = lw; ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(xx(0), y3); ctx.lineTo(xx(1), y3); for (let q = 0; q <= 4; q++) { ctx.moveTo(xx(q / 4), y3 - 11); ctx.lineTo(xx(q / 4), y3 + 11) } ctx.stroke() }; ctx.lineCap = 'round'; tl(9, 'rgba(20,16,14,.75)'); tl(4, '#fff');
@@ -690,7 +690,7 @@ function placeFx(t, sc, L, li) {
     ctx.restore()
   }
   if (cp > 0 && L.chip !== false) {   // the chip that stays for the rest of the scene
-    const cz = Math.round(B * .046 * k), txt = [name, date ? full : ''].filter(Boolean).join('  ·  '), cwid = measure(`900 ${cz}px Vz`, txt) + cz * 2.6, ch = cz * 1.9, cy2 = (V ? 98 : 70) + 54 + 38 + ch / 2;
+    const cz = Math.round(B * .046 * kt), txt = [name, date ? full : ''].filter(Boolean).join('  ·  '), cwid = measure(`900 ${cz}px Vz`, txt) + cz * 2.6, ch = cz * 1.9, cy2 = (V ? 98 : 70) + 54 + 38 + ch / 2;
     ctx.save(); ctx.globalAlpha = cp * fade; ctx.translate(cx, cy2 + (1 - cp) * 24); ctx.scale(.8 + .2 * cp, .8 + .2 * cp); shadow(14); ctx.fillStyle = 'rgba(20,16,14,.68)'; ctx.beginPath(); ctx.roundRect(-cwid / 2, -ch / 2, cwid, ch, ch / 2); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.stroke();
     ctx.beginPath(); ctx.arc(rtl ? cwid / 2 - cz * 1.1 : -cwid / 2 + cz * 1.1, 0, cz * .26, 0, TAU); ctx.fillStyle = ac; ctx.fill();
     ctx.font = `900 ${cz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; ctx.fillStyle = '#fff'; ctx.fillText(txt, rtl ? -cz * .5 : cz * .5, 3); ctx.restore()
