@@ -543,23 +543,24 @@ TPL.poster = function (t, sc) {   // library pictures only (the owner places the
   const n = its.length - 1; its.slice(1).forEach((it, i) => { const a = -Math.PI / 2 + (i + .5) * TAU / Math.max(n, 1) + (n === 1 ? 2.2 : 0), rx = V ? W * .34 : W * .3, ry = V ? H * .17 : H * .24; drawItem(it, t, cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, B * .3, i + 1) })
 };
 function posterChips(text, size, maxW, cx, top, t, t0, align, o) {   // o: {col: text colour, bg: chip colour or 'none', hl: highlight chip colour}
-  o = o || {}; const ga = ctx.globalAlpha, tcol = o.col || '#fff', hcol = o.hl || ORG, chip = o.bg === 'none' ? null : (o.bg || 'rgba(14,10,7,.84)');   // headline on dark chips, *word* on an orange chip; returns its height
+  o = o || {}; const BL = o.bd != null, ga = ctx.globalAlpha, tcol = o.col || '#fff', hcol = o.hl || ORG, chip = o.bg === 'none' ? null : (o.bg || 'rgba(14,10,7,.84)');   // headline on dark chips, *word* on an orange chip; returns its height
   const font = `900 ${size}px Vz`, L = wrapTokens(text, font, maxW), lh = size * 1.5, rtl = D.meta.rtl, padX = size * .38; let idx = 0, cc = 0;
-  L.lines.forEach(ln => { ln.cs = cc; ln.ws.forEach(k => { k.cs = cc; cc += k.txt.length }) });   // o.tp < 1: typing / erasing, only the first tp * total characters are drawn
+  let wn = 0; L.lines.forEach(ln => { ln.cs = cc; ln.w0 = wn; ln.ws.forEach(k => { k.cs = cc; k.wi = wn++; cc += k.txt.length }) });   // o.bd (blur reveal): seconds since the key text started; every word fades in from blurred, one after the other   // o.tp < 1: typing / erasing, only the first tp * total characters are drawn
   const shown = o.tp != null && o.tp < 1 ? Math.ceil(o.tp * cc) : Infinity;
   ctx.save(); ctx.font = font; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.direction = rtl ? 'rtl' : 'ltr';
   L.lines.forEach((ln, li) => {
-    if (shown <= ln.cs) return; const p = spr(t, t0 + li * .14, .55, 13); if (p <= 0) return; const y = top + lh * (li + .5), w = ln.w + 2 * padX;
+    if (shown <= ln.cs) return; const p = BL ? 1 : spr(t, t0 + li * .14, .55, 13); if (p <= 0) return; const y = top + lh * (li + .5), w = ln.w + 2 * padX;
     const right = align === 'center' ? cx + w / 2 : align === 'right' ? cx : cx - w;   // box edge: right edge of the chip for 'right'
     const x0 = align === 'center' ? cx - w / 2 : align === 'right' ? cx - w : cx;
-    ctx.save(); ctx.translate((x0 + w / 2), y); ctx.scale(.85 + .15 * Math.min(p, 1.1), .85 + .15 * Math.min(p, 1.1)); ctx.globalAlpha = ga * clamp(p * 1.8);
+    ctx.save(); ctx.translate((x0 + w / 2), y); ctx.scale(.85 + .15 * Math.min(p, 1.1), .85 + .15 * Math.min(p, 1.1)); ctx.globalAlpha = ga * (BL ? ramp(o.bd - ln.w0 * .18, 0, .35) : clamp(p * 1.8));
     if (chip) { ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 5; ctx.fillStyle = chip; ctx.beginPath(); ctx.roundRect(-w / 2, -lh * .46, w, lh * .92, size * .22); ctx.fill(); ctx.shadowColor = 'transparent' }
     let x = rtl ? w / 2 - padX : -w / 2 + padX;
     ln.ws.forEach(k => { const kw = k.w; if (rtl) x -= kw; const nc = Math.min(k.txt.length, shown - k.cs);
       if (nc > 0) { const part = nc < k.txt.length, tx = part ? k.txt.slice(0, nc) : k.txt, pw = part ? ctx.measureText(tx).width : kw, xs = rtl ? x + kw - pw : x;   // a partly typed word sticks to its start edge (right edge in Persian)
+        if (BL) { const wr = eoc(ramp(o.bd - k.wi * .18, 0, .5)); ctx.save(); ctx.globalAlpha *= wr; if (wr < 1) ctx.filter = 'blur(' + ((1 - wr) * size * .3).toFixed(1) + 'px)'; ctx.translate(0, (1 - wr) * size * .25) }
         if (k.hl) { ctx.fillStyle = hcol; ctx.beginPath(); ctx.roundRect(xs - size * .22, -lh * .4, pw + size * .44, lh * .8, size * .18); ctx.fill() }
         if (!chip) { ctx.shadowColor = 'rgba(0,0,0,.8)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 3 }
-        ctx.fillStyle = tcol; ctx.fillText(tx, xs, 3); ctx.shadowColor = 'transparent' }
+        ctx.fillStyle = tcol; ctx.fillText(tx, xs, 3); ctx.shadowColor = 'transparent'; if (BL) ctx.restore() }
       if (rtl) x -= L.sp; else x += kw + L.sp });
     ctx.restore(); idx++ });
   ctx.restore(); return L.lines.length * lh
@@ -573,9 +574,9 @@ function posterText(t, sc) {
   if (num) { const e = spr(t, sc.t0 + .15, .5, 12), size = B * (V ? .24 : .2); ctx.save(); ctx.font = `900 ${size}px Vz`; ctx.textBaseline = 'middle'; ctx.direction = 'ltr'; ctx.textAlign = rtl ? 'right' : 'left';
     ctx.translate(rtl ? W - m : m, y + size * .55); ctx.scale(.7 + .3 * Math.min(e, 1.1), .7 + .3 * Math.min(e, 1.1)); ctx.globalAlpha = clamp(e * 1.6); ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 22; ctx.shadowOffsetY = 6; ctx.fillStyle = '#fff'; ctx.fillText(num, 0, 0); ctx.restore(); y += size * 1.12 }
   if (sc.text && tOn(sc)) {
-    const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), t0 = sc.tIn != null ? sc.tIn : sc.t0 + (num ? .5 : .3), st = { col: sc.tcol, bg: sc.tbg, hl: sc.thl }, A = sc.tAnim || 'type', AO = sc.tAnimOut || 'type', nch = sc.text.replace(/[\s*]/g, '').length, ps = EDIT ? { dx: 0, dy: 0, s: 1, al: 1, tp: 1 } : lyrPose(t, t0, sc.tOut != null ? sc.tOut : 1e9, A, AO, nch);   // key text: typed letter by letter and erased again (choose another animation in the app); in the editor it is always shown
+    const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), t0 = sc.tIn != null ? sc.tIn : sc.t0 + (num ? .5 : .3), st = { col: sc.tcol, bg: sc.tbg, hl: sc.thl }, A = sc.tAnim || 'blur', AO = sc.tAnimOut || (A === 'blur' ? 'fade' : 'type'), nch = sc.text.replace(/[\s*]/g, '').length, ps = EDIT ? { dx: 0, dy: 0, s: 1, al: 1, tp: 1 } : lyrPose(t, t0, sc.tOut != null ? sc.tOut : 1e9, A, AO, nch);   // key text: typed letter by letter and erased again (choose another animation in the app); in the editor it is always shown
     if (ps) { ctx.save(); ctx.translate(W / 2 + ps.dx, H / 2 + ps.dy); ctx.scale(ps.s, ps.s); ctx.translate(-W / 2, -H / 2); ctx.globalAlpha = ps.al; const tt = A === 'pop' ? t0 : t - 5;
-      st.tp = ps.tp; const L = wrapTokens(sc.text, `900 ${size}px Vz`, maxW), hh = L.lines.length * size * 1.5, bw = Math.max(...L.lines.map(l => l.w)) + 2 * size * .38;
+      st.tp = ps.tp; st.bd = !EDIT && A === 'blur' ? t - t0 : undefined; const L = wrapTokens(sc.text, `900 ${size}px Vz`, maxW), hh = L.lines.length * size * 1.5, bw = Math.max(...L.lines.map(l => l.w)) + 2 * size * .38;
       if (kp) posterChips(sc.text, size, maxW, kp.x * W, kp.y * H - hh / 2, t, tt, 'center', st); else posterChips(sc.text, size, maxW, rtl ? W - m : m, y, t, tt, rtl ? 'right' : 'left', st)
       if (EDIT) { const bx = kp ? kp.x * W : rtl ? W - m - bw / 2 : m + bw / 2, by = kp ? kp.y * H : y + hh / 2; KREC = { x: bx, y: by, w: bw, h: hh }; ctx.save(); ctx.setLineDash([22, 14]); ctx.lineWidth = 6; ctx.strokeStyle = '#ffd400'; ctx.strokeRect(bx - bw / 2 - 10, by - hh / 2 - 10, bw + 20, hh + 20); ctx.restore() }   // the editor can drag the key text (preview.html)
       ctx.restore() }
@@ -644,10 +645,12 @@ function mapView(c, d, L, w, h) {
    pin: a pin drops and rings spread, the name is revealed from the reading side, the year rolls up like an odometer while a marker slides on a small timeline.
    map: a map card zooms in from a wide view onto [lon, lat], the pin lands, then the name and the rolling year.
    After `hold` seconds (pin 3.2, map 4.8) it shrinks to a chip at the top that stays until `out` (default: end of the scene). x / y: centre of the whole group (fractions of the frame, draggable in the preview), size: scale. */
+const PIN_ICO1 = new Path2D('M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0'), PIN_ICO2 = new Path2D('M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z');
 function placeFx(t, sc, L, li) {
   const t0 = L.t != null ? L.t : sc.t0 + .3, end = L.out != null ? L.out : sc.t1 + .3, mp = L.style === 'map', d = EDIT ? 3.2 + (mp ? 1.4 : 0) - .3 : t - t0; if (!EDIT && (d < 0 || t > end)) return;
   const name = String(L.text || '').trim(), P = (L.pos && L.pos[FMT]) || L, k = L.size || 1, kt = L.tsize || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, hold = L.hold != null ? L.hold : (mp ? 4.8 : 3.2), fade = EDIT ? 1 : clamp((end - t) / .3);
-  const g = EDIT ? 1 : (L.chip === false ? 1 : 1 - ramp(d, hold, hold + .4)), cp = EDIT ? 0 : ramp(d, hold + .1, hold + .5), ac = L.acc || ORG, tc = L.col || '#fff', nz = name ? Math.round(B * (mp ? .1 : .13) * kt) : 0, dz = Math.round(B * .062 * kt), ph = dz * 1.9;
+  const BIG = L.big === true, g = !BIG ? 0 : EDIT ? 1 : (L.chip === false ? 1 : 1 - ramp(d, hold, hold + .4)), cp = !BIG ? (EDIT ? 1 : eoc(ramp(d, 0, .5))) : EDIT ? 0 : ramp(d, hold + .1, hold + .5),   // the big pin / map animation is opt-in now (L.big = true); by default only the small chip shows
+    ac = L.acc || ORG, tc = L.col || '#fff', nz = name ? Math.round(B * (mp ? .1 : .13) * kt) : 0, dz = Math.round(B * .062 * kt), ph = dz * 1.9;
   const date = String(L.date || '').trim(), ym = date.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).match(/\d{3,4}/), yr = ym ? +ym[0] : null, fm = String(L.from || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).match(/\d{3,4}/), fy = fm ? +fm[0] : (yr != null ? yr - 100 : null), suf = date.replace(/[\d۰-۹]{3,4}/, '').trim();
   const dir = rtl ? 'rtl' : 'ltr', shadow = (b = 24) => { ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = b; ctx.shadowOffsetY = 6 }, full = yr ? faDigits(yr) + (suf ? ' ' + suf : '') : date;
   const tw = measure(`900 ${nz}px Vz`, name), pw = measure(`900 ${dz}px Vz`, full) + dz * 2.2, TW = B * .52 * k, cw = mp ? Math.min(B * .86 * k, W * .96) : 0, chh = cw * .56;
@@ -655,7 +658,7 @@ function placeFx(t, sc, L, li) {
   if (mp) { o0 = chh / 2; o1 = chh + nz * .75; o2 = o1 + nz * .55 + ph * .7; o3 = 0; Hg = date ? o2 + ph / 2 : o1 + nz * .55 }
   else { const pr0 = B * .022 * k; o0 = pr0; o1 = o0 + pr0 + B * .07 * k + nz * .62; o2 = o1 + nz * 1.05; o3 = date && yr ? o2 + ph * 1.05 : 0; Hg = date ? (yr ? o3 + 40 : o2 + ph / 2) : o1 + nz * .6 }
   const top = P.y == null ? (V ? 98 : 70) + 54 + 38 : P.y * H - Hg / 2, cyc = top + Hg / 2, y0 = top + o0, y1 = top + o1, y2 = top + o2, y3 = top + o3;
-  if (EDIT) { const bw = Math.max(mp ? cw : 0, tw, date ? pw : 0, yr && !mp ? TW : 0) + 50; editBox('layer', li, cx, cyc, bw, Hg + 20, '#00e5ff') }
+  if (EDIT && BIG) { const bw = Math.max(mp ? cw : 0, tw, date ? pw : 0, yr && !mp ? TW : 0) + 50; editBox('layer', li, cx, cyc, bw, Hg + 20, '#00e5ff') }
   const nameDraw = (e1) => { if (e1 <= 0 || !name) return; ctx.save(); ctx.beginPath(); const pad = nz * .3, cwid = (tw + 2 * pad) * e1; ctx.rect(rtl ? cx + tw / 2 + pad - cwid : cx - tw / 2 - pad, y1 - nz, cwid, nz * 2); ctx.clip();
     ctx.font = `900 ${nz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; shadow(26); ctx.lineJoin = 'round'; ctx.lineWidth = nz * .14; ctx.strokeStyle = INK; ctx.strokeText(name, cx, y1); ctx.shadowColor = 'transparent'; ctx.fillStyle = tc; ctx.fillText(name, cx, y1); ctx.restore() };
   const pillDraw = (e2, cnt) => { if (e2 <= 0) return; ctx.save(); ctx.globalAlpha *= clamp(e2 * 1.6); ctx.translate(cx, y2 + (1 - Math.min(e2, 1)) * 16); shadow(18); ctx.fillStyle = 'rgba(20,16,14,.62)'; ctx.beginPath(); ctx.roundRect(-pw / 2, -ph / 2, pw, ph, ph / 2); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.stroke();
@@ -689,11 +692,13 @@ function placeFx(t, sc, L, li) {
     }
     ctx.restore()
   }
-  if (cp > 0 && L.chip !== false) {   // the chip that stays for the rest of the scene
-    const cz = Math.round(B * .046 * kt), txt = [name, date ? full : ''].filter(Boolean).join('  ·  '), cwid = measure(`900 ${cz}px Vz`, txt) + cz * 2.6, ch = cz * 1.9, cy2 = (V ? 98 : 70) + 54 + 38 + ch / 2;
-    ctx.save(); ctx.globalAlpha = cp * fade; ctx.translate(cx, cy2 + (1 - cp) * 24); ctx.scale(.8 + .2 * cp, .8 + .2 * cp); shadow(14); ctx.fillStyle = 'rgba(20,16,14,.68)'; ctx.beginPath(); ctx.roundRect(-cwid / 2, -ch / 2, cwid, ch, ch / 2); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.stroke();
-    ctx.beginPath(); ctx.arc(rtl ? cwid / 2 - cz * 1.1 : -cwid / 2 + cz * 1.1, 0, cz * .26, 0, TAU); ctx.fillStyle = ac; ctx.fill();
-    ctx.font = `900 ${cz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; ctx.fillStyle = '#fff'; ctx.fillText(txt, rtl ? -cz * .5 : cz * .5, 3); ctx.restore()
+  if (cp > 0 && L.chip !== false) {   // the small chip (pin icon + place and date); enters like the corner label: slides down a little, blurred -> sharp
+    const cz = Math.round(B * .046 * kt), txt = [name, date ? full : ''].filter(Boolean).join('  ·  '), cwid = measure(`900 ${cz}px Vz`, txt) + cz * 2.7, ch = cz * 1.9, cy2 = (V ? 98 : 70) + 54 + 38 + ch / 2, ccx = Math.max(cwid / 2 + 24, Math.min(W - cwid / 2 - 24, cx));   // fixed height at the top like before; kept inside the frame
+    if (EDIT && !BIG) editBox('layer', li, ccx, cy2, cwid, ch, '#00e5ff');
+    ctx.save(); ctx.globalAlpha = cp * fade; if (BIG) { ctx.translate(cx, cy2 + (1 - cp) * 24); ctx.scale(.8 + .2 * cp, .8 + .2 * cp) } else { ctx.translate(ccx, cy2 - (1 - cp) * 14); if (cp < 1) ctx.filter = 'blur(' + ((1 - cp) * 8).toFixed(1) + 'px)' }
+    shadow(14); ctx.fillStyle = 'rgba(20,16,14,.68)'; ctx.beginPath(); ctx.roundRect(-cwid / 2, -ch / 2, cwid, ch, ch / 2); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.stroke();
+    ctx.save(); ctx.translate(rtl ? cwid / 2 - cz * 1.15 : -cwid / 2 + cz * 1.15, -cz * .02); const ks = cz * .95 / 24; ctx.scale(ks, ks); ctx.translate(-12, -12); ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#fff'; ctx.stroke(PIN_ICO1); ctx.stroke(PIN_ICO2); ctx.restore();   // map-pin icon (Tabler outline)
+    ctx.font = `900 ${cz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; ctx.fillStyle = '#fff'; ctx.fillText(txt, rtl ? -cz * .55 : cz * .55, 3); ctx.restore()
   }
 }
 function posterLayers(t, sc) {
