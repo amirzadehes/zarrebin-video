@@ -646,9 +646,9 @@ function mapView(d, L, w, h) {
    After `hold` seconds (pin 3.2, map 4.8) it shrinks to a chip at the top that stays until `out` (default: end of the scene). x / y: centre of the whole group (fractions of the frame, draggable in the preview), size: scale. */
 function placeFx(t, sc, L, li) {
   const t0 = L.t != null ? L.t : sc.t0 + .3, end = L.out != null ? L.out : sc.t1 + .3, mp = L.style === 'map', d = EDIT ? 3.2 + (mp ? 1.4 : 0) - .3 : t - t0; if (!EDIT && (d < 0 || t > end)) return;
-  const P = (L.pos && L.pos[FMT]) || L, k = L.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cyc = (P.y == null ? (mp ? (V ? .27 : .3) : (V ? .24 : .26)) : P.y) * H, hold = L.hold != null ? L.hold : (mp ? 4.8 : 3.2), fade = EDIT ? 1 : clamp((end - t) / .3);
-  const g = EDIT ? 1 : 1 - ramp(d, hold, hold + .4), cp = EDIT ? 0 : ramp(d, hold + .1, hold + .5), ac = L.acc || ORG, tc = L.col || '#fff', nz = Math.round(B * (mp ? .1 : .13) * k), dz = Math.round(B * .062 * k), ph = dz * 1.9;
-  const name = String(L.text).trim(), date = String(L.date || '').trim(), ym = date.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).match(/\d{3,4}/), yr = ym ? +ym[0] : null, suf = date.replace(/[\d۰-۹]{3,4}/, '').trim();
+  const name = String(L.text || '').trim(), P = (L.pos && L.pos[FMT]) || L, k = L.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cyc = (P.y == null ? (mp ? (V ? .27 : .3) : (V ? .24 : .26)) : P.y) * H, hold = L.hold != null ? L.hold : (mp ? 4.8 : 3.2), fade = EDIT ? 1 : clamp((end - t) / .3);
+  const g = EDIT ? 1 : (L.chip === false ? 1 : 1 - ramp(d, hold, hold + .4)), cp = EDIT ? 0 : ramp(d, hold + .1, hold + .5), ac = L.acc || ORG, tc = L.col || '#fff', nz = name ? Math.round(B * (mp ? .1 : .13) * k) : 0, dz = Math.round(B * .062 * k), ph = dz * 1.9;
+  const date = String(L.date || '').trim(), ym = date.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).match(/\d{3,4}/), yr = ym ? +ym[0] : null, suf = date.replace(/[\d۰-۹]{3,4}/, '').trim();
   const dir = rtl ? 'rtl' : 'ltr', shadow = (b = 24) => { ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = b; ctx.shadowOffsetY = 6 }, full = yr ? faDigits(yr) + (suf ? ' ' + suf : '') : date;
   const tw = measure(`900 ${nz}px Vz`, name), pw = measure(`900 ${dz}px Vz`, full) + dz * 2.2, TW = B * .52, cw = mp ? Math.min(B * .8 * k, W * .94) : 0, chh = cw * .58;
   let o0, o1, o2, o3, Hg;   // vertical layout of the group, from its top
@@ -656,7 +656,7 @@ function placeFx(t, sc, L, li) {
   else { const pr0 = B * .022; o0 = pr0; o1 = o0 + pr0 + B * .07 + nz * .62; o2 = o1 + nz * 1.05; o3 = date && yr ? o2 + ph * 1.05 : 0; Hg = date ? (yr ? o3 + 40 : o2 + ph / 2) : o1 + nz * .6 }
   const top = cyc - Hg / 2, y0 = top + o0, y1 = top + o1, y2 = top + o2, y3 = top + o3;
   if (EDIT) { const bw = Math.max(mp ? cw : 0, tw, date ? pw : 0, yr && !mp ? TW : 0) + 50; editBox('layer', li, cx, cyc, bw, Hg + 20, '#00e5ff') }
-  const nameDraw = (e1) => { if (e1 <= 0) return; ctx.save(); ctx.beginPath(); const pad = nz * .3, cwid = (tw + 2 * pad) * e1; ctx.rect(rtl ? cx + tw / 2 + pad - cwid : cx - tw / 2 - pad, y1 - nz, cwid, nz * 2); ctx.clip();
+  const nameDraw = (e1) => { if (e1 <= 0 || !name) return; ctx.save(); ctx.beginPath(); const pad = nz * .3, cwid = (tw + 2 * pad) * e1; ctx.rect(rtl ? cx + tw / 2 + pad - cwid : cx - tw / 2 - pad, y1 - nz, cwid, nz * 2); ctx.clip();
     ctx.font = `900 ${nz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; shadow(26); ctx.lineJoin = 'round'; ctx.lineWidth = nz * .14; ctx.strokeStyle = INK; ctx.strokeText(name, cx, y1); ctx.shadowColor = 'transparent'; ctx.fillStyle = tc; ctx.fillText(name, cx, y1); ctx.restore() };
   const pillDraw = (e2, cnt) => { if (e2 <= 0) return; ctx.save(); ctx.globalAlpha *= clamp(e2 * 1.6); ctx.translate(cx, y2 + (1 - Math.min(e2, 1)) * 16); shadow(18); ctx.fillStyle = 'rgba(20,16,14,.62)'; ctx.beginPath(); ctx.roundRect(-pw / 2, -ph / 2, pw, ph, ph / 2); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.stroke();
     ctx.font = `900 ${dz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; ctx.fillStyle = '#fff'; ctx.fillText(cnt, 0, 4); ctx.restore() };
@@ -685,8 +685,8 @@ function placeFx(t, sc, L, li) {
     }
     ctx.restore()
   }
-  if (cp > 0) {   // the chip that stays for the rest of the scene
-    const cz = Math.round(B * .046 * k), txt = name + (date ? '  ·  ' + full : ''), cwid = measure(`900 ${cz}px Vz`, txt) + cz * 2.6, ch = cz * 1.9, cy2 = (V ? .135 : .15) * H;
+  if (cp > 0 && L.chip !== false) {   // the chip that stays for the rest of the scene
+    const cz = Math.round(B * .046 * k), txt = [name, date ? full : ''].filter(Boolean).join('  ·  '), cwid = measure(`900 ${cz}px Vz`, txt) + cz * 2.6, ch = cz * 1.9, cy2 = (V ? .135 : .15) * H;
     ctx.save(); ctx.globalAlpha = cp * fade; ctx.translate(cx, cy2 + (1 - cp) * 24); ctx.scale(.8 + .2 * cp, .8 + .2 * cp); shadow(14); ctx.fillStyle = 'rgba(20,16,14,.68)'; ctx.beginPath(); ctx.roundRect(-cwid / 2, -ch / 2, cwid, ch, ch / 2); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.stroke();
     ctx.beginPath(); ctx.arc(rtl ? cwid / 2 - cz * 1.1 : -cwid / 2 + cz * 1.1, 0, cz * .26, 0, TAU); ctx.fillStyle = ac; ctx.fill();
     ctx.font = `900 ${cz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; ctx.fillStyle = '#fff'; ctx.fillText(txt, rtl ? -cz * .5 : cz * .5, 3); ctx.restore()
@@ -694,7 +694,7 @@ function placeFx(t, sc, L, li) {
 }
 function posterLayers(t, sc) {
   (sc.layers || []).forEach((L, li0) => {
-    if (!L || !String(L.text || '').trim()) return; if (L.kind === 'place') { placeFx(t, sc, L, li0); return } const t0 = L.t != null ? L.t : sc.t0 + .3, out = L.out != null ? L.out : 1e9, P = (L.pos && L.pos[FMT]) || L, st = L.kind === 'stamp', A = L.anim || (st ? 'slam' : 'pop');
+    if (!L || (L.kind === 'place' ? !String(L.text || '').trim() && !String(L.date || '').trim() : !String(L.text || '').trim())) return; if (L.kind === 'place') { placeFx(t, sc, L, li0); return } const t0 = L.t != null ? L.t : sc.t0 + .3, out = L.out != null ? L.out : 1e9, P = (L.pos && L.pos[FMT]) || L, st = L.kind === 'stamp', A = L.anim || (st ? 'slam' : 'pop');
     const ps = EDIT ? { dx: 0, dy: 0, s: 1, al: 1, tp: 1 } : lyrPose(t, t0, out, A, L.animOut, String(L.text).replace(/[\s*]/g, '').length); if (!ps) return; const k = L.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? (st ? .38 : .5) : P.y) * H;
     if (EDIT) { let bw, bh; if (L.kind === 'number') { const z = B * (V ? .24 : .2) * k; bw = z * .62 * String(L.text).trim().length; bh = z * 1.1 } else if (st) { const sp0 = stampSprite(String(L.text).trim(), Math.round(B * .1 * k), L.col || '#e0352b', rtl); bw = sp0.w; bh = sp0.h } else { const z = B * (V ? .062 : .055) * k, W0 = wrapTokens(L.text, `900 ${z}px Vz`, W * (V ? .86 : .6)); bw = Math.max(...W0.lines.map(l => l.w)) + z * .76; bh = W0.lines.length * z * 1.5 } editBox('layer', li0, cx, cy, bw, bh, '#00e5ff') }
     if (L.kind === 'number') {
