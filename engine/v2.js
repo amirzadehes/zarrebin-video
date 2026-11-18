@@ -398,6 +398,7 @@ function focusBands(X, pts, band) {   // the person pointed at the main characte
   if (front < n * .02 || C.length >= 3) for (let i = 0; i < n; i++) if (band[i] === C.length + 1) band[i] = C.length;   // a few small things in front just travel with the nearest character
   return true
 }
+const HALO_R = +(Q.get('halo') || .009);   // width of that margin as a share of the picture width
 function buildLayers(X, focus) {
   const { w, h, P, d } = X, n = w * h; if (n < 64) return null; const band = new Uint8Array(n), FOC = !!focus && focusBands(X, focus, band);
   if (!FOC) { const t = otsu3(d, n); for (let i = 0; i < n; i++) band[i] = d[i] < t[0] ? 0 : d[i] < t[1] ? 1 : 2 }
@@ -410,8 +411,8 @@ function buildLayers(X, focus) {
     const isB = new Uint8Array(n), near = new Uint8Array(n), other = new Uint8Array(n); let sf = 0, sc = 0, fv = [];
     for (let i = 0; i < n; i++) { if (band[i] === b) { isB[i] = 1; fv.push(d[i]) } else if (band[i] > b) near[i] = 1; else other[i] = 1 }
     fv.sort((a, c) => a - c); const f = b === ids[0] ? fv[fv.length >> 1] : fv[Math.floor(fv.length * .9)];
-    const nearD = dilateM(near, w, h, 3), otherD = dilateM(band.map(v => v !== b ? 1 : 0), w, h, 1), valid = new Uint8Array(n), alpha = new Float32Array(n);
-    for (let i = 0; i < n; i++) { valid[i] = isB[i] && !otherD[i] && !(b === ids[0] && nearD[i]) ? 1 : 0; alpha[i] = isB[i] || (b !== top && dilateNear2(i)) ? 1 : 0 }
+    const nearD = dilateM(near, w, h, 3), nearW = b === ids[0] ? dilateM(near, w, h, Math.max(4, Math.round(w * HALO_R))) : null, otherD = dilateM(band.map(v => v !== b ? 1 : 0), w, h, 1), valid = new Uint8Array(n), alpha = new Float32Array(n);   // nearW: a wide margin around the near layers, so the back layer never keeps a rim of the character's own colours (that rim shows up as a ghost halo when the camera moves)
+    for (let i = 0; i < n; i++) { valid[i] = isB[i] && !otherD[i] && !(b === ids[0] && nearW[i]) ? 1 : 0; alpha[i] = isB[i] || (b !== top && dilateNear2(i)) ? 1 : 0 }
     function dilateNear2(i) { return nearD[i] && !other[i] }
     const rgb = inpaintRGB(P, valid, w, h); { const ch = [0, 1, 2].map(c => { const f = new Float32Array(n); for (let i = 0; i < n; i++) f[i] = rgb[i * 3 + c]; return boxBlur(boxBlur(f, w, h, 3), w, h, 3) }); for (let i = 0; i < n; i++) if (!valid[i]) { rgb[i * 3] = ch[0][i]; rgb[i * 3 + 1] = ch[1][i]; rgb[i * 3 + 2] = ch[2][i] } }   // filled areas are painted soft (a gentle blur), real pixels untouched
     const a2 = boxBlur(alpha, w, h, 1), cv = document.createElement('canvas'); cv.width = w; cv.height = h; const g = cv.getContext('2d'), im = g.createImageData(w, h), O = im.data;
