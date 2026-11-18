@@ -316,7 +316,7 @@ body[data-mode=poster] .modesw button.on{background:#ff5a1f;color:#fff;border-co
 <div id="pvModal" hidden>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvV" class="on">عمودی (اینستاگرام)</button><button id="pvH">افقی (یوتیوب)</button></div>
   <iframe id="pvFrame" src="../engine/preview.html?inline=1&v=g3&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(62vh*9/16));height:min(62vh,calc(94vw*16/9))"></iframe>
-  <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvPlay">▶ پخش</button><button id="pvPause" hidden>⏸ توقف</button><button id="pvEdit">✋ ویرایش چیدمان</button></div>
+  <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvPlay">▶ پخش</button><button id="pvPause" hidden>⏸ توقف</button><button id="pvEdit">✋ ویرایش چیدمان</button><button id="pvPlace">📍 مکان و تاریخ</button></div>
   <div class="row" id="pvTools" hidden style="justify-content:center;width:100%;margin:0"><button data-op="bigger">＋ بزرگ‌تر</button><button data-op="smaller">－ کوچک‌تر</button><button data-op="rot">⟳ چرخش</button><button data-op="reset">↺ خودکار</button></div>
   <div class="row" id="pvSel" hidden style="justify-content:center;width:100%;margin:0"></div>
   <p class="hint" id="pvHint" hidden style="margin:0;text-align:center">تصویر را از ردیف بالا انتخاب کن (یا روی خودش لمس کن) و بکش؛ با دو انگشت هم می‌شود اندازه را عوض کرد.</p>
@@ -778,6 +778,8 @@ $('#pvPlay').onclick=()=>{ if(pvPaused){ $('#pvFrame').contentWindow.postMessage
 let pvPaused=false, pvPlaying=false; function pvBtns(){ $('#pvPause').hidden=!pvPlaying; $('#pvPlay').textContent=pvPaused?'▶ ادامه':'▶ پخش' }
 $('#pvPause').onclick=()=>$('#pvFrame').contentWindow.postMessage({type:'pause'},'*');
 addEventListener('message',e=>{ const m=e.data||{}; if(m.type==='state'){ pvPlaying=!!m.playing; pvPaused=!!m.paused; pvBtns() } }); $('#pvEdit').onclick=()=>{ pvMode='edit'; pvTools(); pvGo() };
+$('#pvPlace').onclick=()=>{ if(pvI<0||!RV) return; const sc=RV.data.scenes[pvI]; (sc.layers=sc.layers||[]).push({kind:'place',text:'نام مکان',date:'۱۹۷۲ میلادی',_open:true}); rvSave();
+  const d=document.querySelector(`details.sc[data-i="${pvI}"]`); if(d){ d.querySelector('.body').innerHTML=''; fillScene(d) } pvMode='edit'; pvTools(); pvGo(); toast('مکان و تاریخ اضافه شد؛ در پیش‌نمایش بکش، یا متن و مدلش را در بخش لایه‌های همین صحنه عوض کن') };
 document.querySelectorAll('#pvTools button').forEach(b=>b.onclick=()=>$('#pvFrame').contentWindow.postMessage({type:'adj',op:b.dataset.op},'*'));
 /* after approving a scene, the next one opens in the preview and its details open in the list on the other side of the dock */
 function pvShowDetails(i){ const bx=$('#rvBox'); if(bx) bx.open=true; document.querySelectorAll('details.sc[open]').forEach(d=>{ if(+d.dataset.i!==i) d.open=false });
