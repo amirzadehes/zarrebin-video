@@ -381,13 +381,23 @@ function inpaintPushPull(P, valid, w, h) {   // push-pull: fill every pixel that
       res[i3] = r; res[i3 + 1] = g; res[i3 + 2] = b } up = { w: lw, h: lh, res } }
   return up.res
 }
-function buildLayers(X) {
-  const { w, h, P, d } = X, n = w * h; if (n < 64) return null; const t = otsu3(d, n), band = new Uint8Array(n);
-  for (let i = 0; i < n; i++) band[i] = d[i] < t[0] ? 0 : d[i] < t[1] ? 1 : 2;
+function focusBands(X, f, band) {   // the person pointed at the main character: it becomes its own layer (grown from that spot over pixels of about the same depth); whatever is nearer than it is a third layer in front, everything else is the back layer
+  const { w, h, d } = X, n = w * h, sx = Math.max(0, Math.min(w - 1, Math.round(f[0] * w))), sy = Math.max(0, Math.min(h - 1, Math.round(f[1] * h))), vs = [];
+  for (let y = Math.max(0, sy - 3); y <= Math.min(h - 1, sy + 3); y++) for (let x = Math.max(0, sx - 3); x <= Math.min(w - 1, sx + 3); x++) vs.push(d[y * w + x]); vs.sort((a, b) => a - b); const d0 = vs[vs.length >> 1], TOLF = .12, reg = new Uint8Array(n), q = new Int32Array(n); let qh = 0, qt = 0, cnt = 0;
+  const si = sy * w + sx; reg[si] = 1; q[qt++] = si;
+  while (qh < qt) { const i = q[qh++], x = i % w, y = (i / w) | 0; cnt++; for (const j of [x > 0 ? i - 1 : -1, x < w - 1 ? i + 1 : -1, y > 0 ? i - w : -1, y < h - 1 ? i + w : -1]) if (j >= 0 && !reg[j] && Math.abs(d[j] - d0) < TOLF) { reg[j] = 1; q[qt++] = j } }
+  if (cnt < n * .01) return false;
+  let front = 0; for (let i = 0; i < n; i++) { band[i] = reg[i] ? 1 : d[i] > d0 + TOLF ? 2 : 0; if (band[i] === 2) front++ }
+  if (front < n * .02) for (let i = 0; i < n; i++) if (band[i] === 2) band[i] = 1;   // a few small things in front just travel with the character
+  return true
+}
+function buildLayers(X, focus) {
+  const { w, h, P, d } = X, n = w * h; if (n < 64) return null; const band = new Uint8Array(n), FOC = !!focus && focusBands(X, focus, band);
+  if (!FOC) { const t = otsu3(d, n); for (let i = 0; i < n; i++) band[i] = d[i] < t[0] ? 0 : d[i] < t[1] ? 1 : 2 }
   const pct = (b, q) => { const hs = new Uint32Array(256); let c = 0; for (let i = 0; i < n; i++) if (band[i] === b) { hs[Math.min(255, (d[i] * 255) | 0)]++; c++ } if (!c) return 0; let a = 0; for (let v = 0; v < 256; v++) { a += hs[v]; if (a >= c * q) return v / 255 } return 1 };
-  const TOL = .07; for (let b = 2; b >= 1; b--) { const lev = pct(b, .9); for (let i = 0; i < n; i++) if (band[i] === b && d[i] < lev - TOL) band[i] = b - 1 }   // the soft ramp beside a near object belongs to the layer behind it, so no background is carried along
-  const cnt = [0, 0, 0]; for (let i = 0; i < n; i++) cnt[band[i]]++; for (let b = 2; b >= 1; b--) if (cnt[b] < n * .02) { for (let i = 0; i < n; i++) if (band[i] === b) band[i] = b - 1; cnt[b - 1] += cnt[b]; cnt[b] = 0 }
-  const ids = [0, 1, 2].filter(b => cnt[b] >= n * .02); if (ids.length < 2) return null;
+  const TOL = .07; if (!FOC) for (let b = 2; b >= 1; b--) { const lev = pct(b, .9); for (let i = 0; i < n; i++) if (band[i] === b && d[i] < lev - TOL) band[i] = b - 1 }   // the soft ramp beside a near object belongs to the layer behind it, so no background is carried along
+  const cnt = [0, 0, 0]; for (let i = 0; i < n; i++) cnt[band[i]]++; if (!FOC) for (let b = 2; b >= 1; b--) if (cnt[b] < n * .02) { for (let i = 0; i < n; i++) if (band[i] === b) band[i] = b - 1; cnt[b - 1] += cnt[b]; cnt[b] = 0 }
+  const ids = [0, 1, 2].filter(b => FOC ? cnt[b] > 0 : cnt[b] >= n * .02); if (ids.length < 2) return null;
   const L = [], top = ids[ids.length - 1];
   ids.forEach(b => {
     const isB = new Uint8Array(n), near = new Uint8Array(n), other = new Uint8Array(n); let sf = 0, sc = 0, fv = [];
@@ -402,8 +412,9 @@ function buildLayers(X) {
     g.putImageData(im, 0, 0); L.push({ cv, f })
   }); return { L }
 }
-function layersWarp(X, ox, oy, kq) {
-  const Y = X.ly !== undefined ? X.ly : (X.ly = (() => { try { return buildLayers(X) } catch (e) { return null } })()); if (!Y) return null;
+function layersWarp(X, ox, oy, kq, focus) {
+  const fk = focus ? focus.join(',') : ''; if (X.lyK !== fk) { X.lyK = fk; X.ly = undefined }
+  const Y = X.ly !== undefined ? X.ly : (X.ly = (() => { try { return buildLayers(X, focus) } catch (e) { return null } })()); if (!Y) return null;
   const { w, h } = X, g = X.og, cx = w / 2, cy = h / 2; g.clearRect(0, 0, w, h);
   Y.L.forEach((l, i) => { const q = (1 + kq * l.f) * (i === 0 ? 1.03 : 1); g.save(); g.translate(cx + ox * l.f, cy + oy * l.f); g.scale(q, q); g.translate(-cx, -cy); g.drawImage(l.cv, 0, 0); g.restore() });
   return X.out
@@ -501,7 +512,7 @@ function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's 
     DMODE = p.dmode || D.meta.dmode || 'layers';
     const put = (g, ox0, oy0) => {
       let src = 0; if (cm > 1 && cm < CAMS.length) { const C = camMove(cm, pc, sc, EDIT, TH, mo); src = depthGL(PX, amp * C.cx / dw, amp * C.cy / dh, PA * 1.8 * C.ez, C.pv, [0, .004, .008, .014][dfl] || 0) }
-      g.drawImage(src || (DMODE === 'layers' && layersWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez)) || depthWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez), ox0, oy0, dw, dh)
+      g.drawImage(src || (DMODE === 'layers' && layersWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez, Array.isArray(p.focus) ? p.focus : null)) || depthWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez), ox0, oy0, dw, dh)
     };
     put(ctx, x, y)
   } else ctx.drawImage(im, x, y, dw, dh);
