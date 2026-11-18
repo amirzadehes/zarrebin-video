@@ -694,12 +694,13 @@ function placeFx(t, sc, L, li) {
     ctx.restore()
   }
   if (cp > 0 && L.chip !== false) {   // the small chip (pin icon + place and date); enters like the corner label: slides down a little, blurred -> sharp
-    const cz = Math.round(B * .046 * kt), txt = [name, date ? full : ''].filter(Boolean).join('  ·  '), cwid = measure(`900 ${cz}px Vz`, txt) + cz * 2.7, ch = cz * 1.9, cy2 = (V ? 98 : 70) + 54 + 38 + ch / 2, ccx = Math.max(cwid / 2 + 24, Math.min(W - cwid / 2 - 24, cx));   // fixed height at the top like before; kept inside the frame
+    /* the year rolls from the start date to the end date (like the big version did); the width is fixed so the chip never jumps */
+    const cz = Math.round(B * .046 * kt), txt = [name, date ? (BIG ? full : cnt(.45, 2.1)) : ''].filter(Boolean).join('  ·  '), t0s = [name, date ? (yr ? faDigits(fy) + (suf ? ' ' + suf : '') : date) : ''].filter(Boolean).join('  ·  '), cwid = Math.max(measure(`900 ${cz}px Vz`, txt), measure(`900 ${cz}px Vz`, t0s), measure(`900 ${cz}px Vz`, [name, date ? full : ''].filter(Boolean).join('  ·  '))) + cz * 2.7, ch = cz * 1.9, cy2 = (V ? 98 : 70) + 54 + 38 + ch / 2, ccx = Math.max(cwid / 2 + 24, Math.min(W - cwid / 2 - 24, cx));   // fixed height at the top like before; kept inside the frame
     if (EDIT && !BIG) editBox('layer', li, ccx, cy2, cwid, ch, '#00e5ff');
     ctx.save(); ctx.globalAlpha = cp * fade; if (BIG) { ctx.translate(cx, cy2 + (1 - cp) * 24); ctx.scale(.8 + .2 * cp, .8 + .2 * cp) } else { ctx.translate(ccx, cy2 - (1 - cp) * 14); if (cp < 1) ctx.filter = 'blur(' + ((1 - cp) * 8).toFixed(1) + 'px)' }
     shadow(14); ctx.fillStyle = 'rgba(20,16,14,.68)'; ctx.beginPath(); ctx.roundRect(-cwid / 2, -ch / 2, cwid, ch, ch / 2); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.stroke();
-    ctx.save(); ctx.translate(rtl ? cwid / 2 - cz * 1.15 : -cwid / 2 + cz * 1.15, -cz * .02); const ks = cz * .95 / 24; ctx.scale(ks, ks); ctx.translate(-12, -12); ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#fff'; ctx.stroke(PIN_ICO1); ctx.stroke(PIN_ICO2); ctx.restore();   // map-pin icon (Tabler outline)
-    ctx.font = `900 ${cz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; ctx.fillStyle = '#fff'; ctx.fillText(txt, rtl ? -cz * .55 : cz * .55, 3); ctx.restore()
+    ctx.save(); ctx.translate(rtl ? cwid / 2 - cz * 1.15 : -cwid / 2 + cz * 1.15, -cz * .02); const ks = cz * .95 / 24; ctx.scale(ks, ks); ctx.translate(-12, -12); ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = L.acc || '#fff'; ctx.stroke(PIN_ICO1); ctx.stroke(PIN_ICO2); ctx.restore();   // map-pin icon (Tabler outline)
+    ctx.font = `900 ${cz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; ctx.fillStyle = tc; ctx.fillText(txt, rtl ? -cz * .55 : cz * .55, 3); ctx.restore()
   }
 }
 function posterLayers(t, sc) {
