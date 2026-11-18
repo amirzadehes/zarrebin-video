@@ -1,0 +1,30 @@
+name: Fetch world map
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: fetch-geo
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Natural Earth countries (world-atlas) and commit (repeat on push conflict)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch -q origin main && git reset -q --hard origin/main
+          mkdir -p assets/geo
+          curl -fsSL https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json -o assets/geo/countries-50m.json
+          python3 -c "import json;d=json.load(open('assets/geo/countries-50m.json'));assert d['objects']['countries']"
+          git add assets/geo
+          if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
+          git commit -qm "assets: world map for place effect"
+          for i in 1 2 3 4 5; do
+            git push origin HEAD:main && exit 0
+            git fetch -q origin main && git rebase -q origin/main
+          done
+          exit 1

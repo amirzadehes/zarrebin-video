@@ -1605,6 +1605,7 @@ async function pvMusicUrl(ep){ const L=await api('/contents/episodes/'+ep); cons
 function motionUI(){ const B=document.querySelector('#rvMot .mtB'); if(!B||!RV) return; const M=RV.data.meta=RV.data.meta||{};
   const lv='<option value="0">خاموش</option><option value="1">کم</option><option value="2">متوسط</option><option value="3">زیاد</option>';
   B.innerHTML=`<label><input type="checkbox" class="mtSh" style="width:auto;min-height:0"> لرزش کوتاه دوربین هنگام ورود هر تصویر</label>
+    <label><input type="checkbox" class="mtFly" style="width:auto;min-height:0"> گذر پیوسته‌ی دوربین بین صحنه‌ها (دوربین از دل تصویر قبلی رد می‌شود، بدون کات)</label>
     <div class="g2"><div><label>لرزش ریز دست‌گرفته روی عکس پس‌زمینه</label><select class="sel mtDr">${lv}</select></div><div></div></div>
     <div class="g2"><div><label>حرکت سه‌بعدی عکس پس‌زمینه (با نقشه‌ی عمق)</label><select class="sel mtC3"><option value="0">خاموش</option><option value="1">خودکار</option><option value="2">فشار به جلو</option><option value="3">عقب رفتن</option><option value="4">چرخش دور سوژه</option><option value="5">لغزش کناری</option><option value="6">بالا رفتن</option></select></div><div><label>شدت حرکت سه‌بعدی</label><select class="sel mtDp"><option value="1">کم</option><option value="2">متوسط</option><option value="3">زیاد</option></select></div></div>
     <div class="g2"><div><label>محو شدن دور تصویر</label><select class="sel mtDf">${lv}</select></div><div><label>تاری زوم هنگام ضربه</label><select class="sel mtZb">${lv}</select></div></div>
@@ -1614,6 +1615,7 @@ function motionUI(){ const B=document.querySelector('#rvMot .mtB'); if(!B||!RV) 
   sh.checked=M.shake!==false; dr.value=String(M.drift!=null?M.drift:0); vl.value=String(M.vol!=null?M.vol:2);
   const go=()=>{ rvSave(); try{ if(!$('#pvModal').hidden) pvRefresh(pvI) }catch(e){} };
   sh.onchange=()=>{ if(sh.checked) delete M.shake; else M.shake=false; go() };
+  { const fl=B.querySelector('.mtFly'); fl.checked=!!M.fly; fl.onchange=()=>{ if(fl.checked) M.fly=true; else delete M.fly; go() } }
   const dm=B.querySelector('.mtDm'); dm.value=M.dmode||'layers'; dm.onchange=()=>{ if(dm.value==='layers') delete M.dmode; else M.dmode=dm.value; go() };
   const eg=B.querySelector('.mtEg'); eg.value=String(M.edge!=null?M.edge:0.2); eg.onchange=()=>{ if(+eg.value===0.2) delete M.edge; else M.edge=+eg.value; go() };
   dr.onchange=()=>{ M.drift=+dr.value; go() };
@@ -1732,9 +1734,28 @@ function fxUI(el,s,i,box){
   /* extra text and stamp layers */
   if(String(s.number==null?'':s.number).trim()){ (s.layers=s.layers||[]).unshift({kind:'number',text:String(s.number).trim(),x:RV.data.meta&&RV.data.meta.rtl===false?.22:.78,y:.17}); s.number=''; rvSave() }
   { const nu=box.querySelector('.num'); if(nu){ nu.hidden=true; if(nu.previousElementSibling&&nu.previousElementSibling.tagName==='LABEL') nu.previousElementSibling.hidden=true } }
+  const placeItem=(y,k)=>{ const c=document.createElement('details'); c.className='pSec lyI'; if(y._open) c.open=true;
+    c.innerHTML=`<summary></summary><div class="pSecB"><div class="krow"><div class="kR"><label style="margin-top:0">نام مکان</label><input type="text" class="yT"><label>تاریخ یا سال (مثلاً ۱۵۹۸ میلادی)</label><input type="text" class="yDt"></div><div class="kmini"><label style="margin:0 0 4px;font-size:12px">جای کل مجموعه (در پیش‌نمایش هم بکش)</label><div class="yP"></div></div></div>
+      <div class="g2"><div><label>مدل</label><select class="sel yS"><option value="pin">سنجاق و خط زمانی</option><option value="map">نقشه</option></select></div><div><label>اندازه</label><input type="range" class="yZ" min="0.4" max="2" step="0.05"></div></div>
+      <div class="yMp"><div class="g2"><div><label>طول جغرافیایی (lon)</label><input type="text" class="yLo" dir="ltr" inputmode="decimal"></div><div><label>عرض جغرافیایی (lat)</label><input type="text" class="yLa" dir="ltr" inputmode="decimal"></div></div>
+        <div class="row" style="margin-top:6px"><button class="yFind">🔎 پیدا کردن مختصات از نام مکان</button></div><div class="st yFs"></div>
+        <label>میزان زوم نقشه (درجه)</label><input type="range" class="yZm" min="1" max="30" step="1"></div>
+      <div class="g2"><div><label>رنگ نوشته</label><input type="color" class="yC"></div><div><label>رنگ سنجاق</label><input type="color" class="yA"></div></div>
+      <div class="yTm"></div><button class="yD" style="margin-top:8px">حذف این مکان</button></div>`;
+    const z=x=>c.querySelector(x), sm=()=>{ z('summary').textContent='📍 '+(y.text||'—')+(y.date?' · '+y.date:'') }, mp=()=>{ z('.yMp').hidden=y.style!=='map' };
+    c.addEventListener('toggle',()=>{ y._open=c.open }); sm(); z('.yT').value=y.text||''; z('.yDt').value=y.date||''; z('.yS').value=y.style||'pin'; z('.yZ').value=y.size||1; z('.yC').value=y.col||'#ffffff'; z('.yA').value=y.acc||'#ff5a1f'; z('.yLo').value=y.lon==null?'':y.lon; z('.yLa').value=y.lat==null?'':y.lat; z('.yZm').value=y.zoom||6; mp();
+    z('.yT').oninput=e=>{ y.text=e.target.value; sm(); ch() }; z('.yDt').oninput=e=>{ y.date=e.target.value; sm(); ch() };
+    z('.yS').onchange=e=>{ if(e.target.value==='pin') delete y.style; else y.style='map'; mp(); ch() }; z('.yZ').oninput=e=>{ y.size=+e.target.value; ch() };
+    z('.yC').oninput=e=>{ y.col=e.target.value; ch() }; z('.yA').oninput=e=>{ y.acc=e.target.value; ch() }; z('.yZm').oninput=e=>{ y.zoom=+e.target.value; ch() };
+    const ll=()=>{ const lo=parseFloat(z('.yLo').value), la=parseFloat(z('.yLa').value); if(isFinite(lo)&&isFinite(la)){ y.lon=lo; y.lat=la } else { delete y.lon; delete y.lat } ch() }; z('.yLo').oninput=ll; z('.yLa').oninput=ll;
+    z('.yFind').onclick=async()=>{ const st=z('.yFs'), q=(y.text||'').replace(/\*/g,'').trim(); if(!q){ st.textContent='اول نام مکان را بنویس'; return } st.textContent='در حال جستجو…';
+      try{ const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=en&q='+encodeURIComponent(q)), j=await r.json(); if(!j.length){ st.textContent='پیدا نشد؛ مختصات را دستی بنویس'; return }
+        y.lon=+(+j[0].lon).toFixed(3); y.lat=+(+j[0].lat).toFixed(3); z('.yLo').value=y.lon; z('.yLa').value=y.lat; st.textContent='پیدا شد: '+(j[0].display_name||'').slice(0,70); ch() }catch(e){ st.textContent='اتصال برقرار نشد؛ مختصات را دستی بنویس' } };
+    padUI(z('.yP'),y,ch,.26); timeUI(z('.yTm'),y,{t:'t',out:'out'},s,'pop',ch);
+    z('.yD').onclick=()=>{ s.layers.splice(k,1); if(!s.layers.length) delete s.layers; drawL(); ch() }; return c };
   const LB=q0('.lySecB'), drawL=()=>{
-    LB.innerHTML='<div class="lyL"></div><div class="row"><button class="pri aT">+ متن</button><button class="aN">+ عدد</button><select class="sel aS" style="flex:1"><option value="">+ مهر…</option>'+STAMPS.map((x,k)=>`<option value="${k}">${esc(x[0])}</option>`).join('')+'<option value="x">مهر با نوشته‌ی دلخواه</option></select></div>';
-    const L=LB.querySelector('.lyL'); (s.layers||[]).forEach((y,k)=>{ const st=y.kind==='stamp', nm=y.kind==='number', c=document.createElement('details'); c.className='pSec lyI'; if(y._open) c.open=true;
+    LB.innerHTML='<div class="lyL"></div><div class="row"><button class="pri aT">+ متن</button><button class="aN">+ عدد</button><button class="aP">+ مکان و تاریخ</button><select class="sel aS" style="flex:1"><option value="">+ مهر…</option>'+STAMPS.map((x,k)=>`<option value="${k}">${esc(x[0])}</option>`).join('')+'<option value="x">مهر با نوشته‌ی دلخواه</option></select></div>';
+    const L=LB.querySelector('.lyL'); (s.layers||[]).forEach((y,k)=>{ if(y.kind==='place'){ L.appendChild(placeItem(y,k)); return } const st=y.kind==='stamp', nm=y.kind==='number', c=document.createElement('details'); c.className='pSec lyI'; if(y._open) c.open=true;
       c.innerHTML=`<summary></summary><div class="pSecB"><div class="krow"><div class="kR"><label style="margin-top:0">${st?'نوشته‌ی مهر':nm?'عدد یا سال':'متن (کلمه‌ی مهم را بین دو ستاره بگذار)'}</label><input type="text" class="yT"></div><div class="kmini"><label style="margin:0 0 4px;font-size:12px">جای ${st?'مهر':nm?'عدد':'متن'}</label><div class="yP"></div></div></div>
         <div class="g2"><div><label>اندازه</label><input type="range" class="yZ" min="0.4" max="3" step="0.05"></div><div>${st?'<label>چرخش</label><input type="range" class="yR" min="-25" max="25" step="1">':nm?'':'<label>رنگ کلمه‌ی مهم</label><input type="color" class="yH">'}</div></div>
         <div class="g2"><div><label>${st?'رنگ مهر':'رنگ نوشته'}</label><input type="color" class="yC"></div>${st||nm?'<div></div>':'<div><label>رنگ کادر</label><input type="color" class="yB"><label class="chk"><input type="checkbox" class="yN"> بدون کادر</label></div>'}</div>
@@ -1746,6 +1767,7 @@ function fxUI(el,s,i,box){
       padUI(z('.yP'),y,ch,st?.38:nm?.17:.5); timeUI(z('.yTm'),y,{t:'t',out:'out',anim:'anim',animOut:'animOut'},s,st?'slam':'pop',ch);
       z('.yD').onclick=()=>{ s.layers.splice(k,1); if(!s.layers.length) delete s.layers; drawL(); ch() }; L.appendChild(c) });
     LB.querySelector('.aT').onclick=()=>{ (s.layers=s.layers||[]).push({kind:'text',text:'متن تازه',x:.5,y:.5,_open:true}); drawL(); ch() };
+    LB.querySelector('.aP').onclick=()=>{ (s.layers=s.layers||[]).push({kind:'place',text:'نام مکان',date:'۱۹۷۲ میلادی',_open:true}); drawL(); ch() };
     LB.querySelector('.aN').onclick=()=>{ (s.layers=s.layers||[]).push({kind:'number',text:'۱۹۷۲',x:RV.data.meta&&RV.data.meta.rtl===false?.22:.78,y:.17,_open:true}); drawL(); ch() };
     LB.querySelector('.aS').onchange=e=>{ const v=e.target.value; if(v==='') return; const pr=v==='x'?['نوشته‌ی مهر','#e0352b']:STAMPS[+v]; (s.layers=s.layers||[]).push({kind:'stamp',text:pr[0],x:.5,y:.38,size:1,col:pr[1],rot:-8,_open:true}); drawL(); ch() };
   }; drawL();
