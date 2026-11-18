@@ -646,13 +646,15 @@ function mapView(c, d, L, w, h) {
    pin: a pin drops and rings spread, the name is revealed from the reading side, the year rolls up like an odometer while a marker slides on a small timeline.
    map: a map card zooms in from a wide view onto [lon, lat], the pin lands, then the name and the rolling year.
    After `hold` seconds (pin 3.2, map 4.8) it shrinks to a chip at the top that stays until `out` (default: end of the scene). x / y: centre of the whole group (fractions of the frame, draggable in the preview), size: scale. */
+const eio5 = p => { p = clamp(p); return p < .5 ? 16 * p ** 5 : 1 - Math.pow(-2 * p + 2, 5) / 2 };   // slow start, fast middle, slow arrival
+function curYear(shamsi) { try { if (shamsi) { const y = +new Intl.DateTimeFormat('en-u-ca-persian-nu-latn', { year: 'numeric' }).formatToParts(new Date()).find(q => q.type === 'year').value.replace(/\D/g, ''); if (y > 1300) return y } } catch (e) { } return new Date().getFullYear() - (shamsi ? 621 : 0) }
 const PIN_ICO1 = new Path2D('M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0'), PIN_ICO2 = new Path2D('M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z');
 function placeFx(t, sc, L, li) {
   const t0 = L.t != null ? L.t : sc.t0 + .3, end = L.out != null ? L.out : sc.t1 + .3, mp = L.style === 'map', d = EDIT ? 3.2 + (mp ? 1.4 : 0) - .3 : t - t0; if (!EDIT && (d < 0 || t > end)) return;
   const name = String(L.text || '').trim(), P = (L.pos && L.pos[FMT]) || L, k = L.size || 1, kt = L.tsize || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, hold = L.hold != null ? L.hold : (mp ? 4.8 : 3.2), fade = EDIT ? 1 : clamp((end - t) / .3);
   const BIG = L.big === true, g = !BIG ? 0 : EDIT ? 1 : (L.chip === false ? 1 : 1 - ramp(d, hold, hold + .4)), cp = !BIG ? (EDIT ? 1 : eoc(ramp(d, 0, .5))) : EDIT ? 0 : ramp(d, hold + .1, hold + .5),   // the big pin / map animation is opt-in now (L.big = true); by default only the small chip shows
     ac = L.acc || ORG, tc = L.col || '#fff', nz = name ? Math.round(B * (mp ? .1 : .13) * kt) : 0, dz = Math.round(B * .062 * kt), ph = dz * 1.9;
-  const date = String(L.date || '').trim(), ym = date.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).match(/\d{3,4}/), yr = ym ? +ym[0] : null, fm = String(L.from || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).match(/\d{3,4}/), fy = fm ? +fm[0] : (yr != null ? yr - 100 : null), suf = date.replace(/[\d۰-۹]{3,4}/, '').trim();
+  const CALS = L.cal === 's' || (!L.cal && /شمسی/.test(String(L.date || ''))), nowYear = curYear(CALS), date = String(L.date || '').trim(), ym = date.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).match(/\d{3,4}/), yr = ym ? +ym[0] : null, fm = String(L.from || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).match(/\d{3,4}/), fy = fm ? +fm[0] : (yr != null ? nowYear : null), suf = L.cal ? (L.cal === 's' ? 'شمسی' : 'میلادی') : date.replace(/[\d۰-۹]{3,4}/, '').trim();   // no start date = the current year (of the chosen calendar); the end of the ruler is always the current year
   const dir = rtl ? 'rtl' : 'ltr', shadow = (b = 24) => { ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = b; ctx.shadowOffsetY = 6 }, full = yr ? faDigits(yr) + (suf ? ' ' + suf : '') : date;
   const tw = measure(`900 ${nz}px Vz`, name), pw = measure(`900 ${dz}px Vz`, full) + dz * 2.2, TW = B * .52 * k, cw = mp ? Math.min(B * .86 * k, W * .96) : 0, chh = cw * .56;
   let o0, o1, o2, o3, Hg;   // vertical layout of the group, from its top
@@ -695,12 +697,23 @@ function placeFx(t, sc, L, li) {
   }
   if (cp > 0 && L.chip !== false) {   // the small chip (pin icon + place and date); enters like the corner label: slides down a little, blurred -> sharp
     /* the year rolls from the start date to the end date (like the big version did); the width is fixed so the chip never jumps */
-    const cz = Math.round(B * .046 * kt), txt = [name, date ? (BIG ? full : cnt(.45, 2.1)) : ''].filter(Boolean).join('  ·  '), t0s = [name, date ? (yr ? faDigits(fy) + (suf ? ' ' + suf : '') : date) : ''].filter(Boolean).join('  ·  '), cwid = Math.max(measure(`900 ${cz}px Vz`, txt), measure(`900 ${cz}px Vz`, t0s), measure(`900 ${cz}px Vz`, [name, date ? full : ''].filter(Boolean).join('  ·  '))) + cz * 2.7, ch = cz * 1.9, cy2 = (V ? 98 : 70) + 54 + 38 + ch / 2, ccx = Math.max(cwid / 2 + 24, Math.min(W - cwid / 2 - 24, cx));   // fixed height at the top like before; kept inside the frame
+    const cz = Math.round(B * .046 * kt), val = yr ? (EDIT ? yr : lerp(fy, yr, eio5(ramp(d, 1, 3.8)))) : null, txt = [name, date ? (BIG ? full : (yr ? faDigits(Math.round(val)) + (suf ? ' ' + suf : '') : date)) : ''].filter(Boolean).join('  ·  '), t0s = [name, date ? (yr ? faDigits(fy) + (suf ? ' ' + suf : '') : date) : ''].filter(Boolean).join('  ·  '), cwid = Math.max(measure(`900 ${cz}px Vz`, txt), measure(`900 ${cz}px Vz`, t0s), measure(`900 ${cz}px Vz`, [name, date ? full : ''].filter(Boolean).join('  ·  '))) + cz * 2.7, ch = cz * 1.9, cy2 = (V ? 98 : 70) + 54 + 38 + ch / 2, ccx = Math.max(cwid / 2 + 24, Math.min(W - cwid / 2 - 24, cx));   // fixed height at the top like before; kept inside the frame
     if (EDIT && !BIG) editBox('layer', li, ccx, cy2, cwid, ch, '#00e5ff');
     ctx.save(); ctx.globalAlpha = cp * fade; if (BIG) { ctx.translate(cx, cy2 + (1 - cp) * 24); ctx.scale(.8 + .2 * cp, .8 + .2 * cp) } else { ctx.translate(ccx, cy2 - (1 - cp) * 14); if (cp < 1) ctx.filter = 'blur(' + ((1 - cp) * 8).toFixed(1) + 'px)' }
     shadow(14); ctx.fillStyle = 'rgba(20,16,14,.68)'; ctx.beginPath(); ctx.roundRect(-cwid / 2, -ch / 2, cwid, ch, ch / 2); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.stroke();
     ctx.save(); ctx.translate(rtl ? cwid / 2 - cz * 1.15 : -cwid / 2 + cz * 1.15, -cz * .02); const ks = cz * .95 / 24; ctx.scale(ks, ks); ctx.translate(-12, -12); ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = L.acc || '#fff'; ctx.stroke(PIN_ICO1); ctx.stroke(PIN_ICO2); ctx.restore();   // map-pin icon (Tabler outline)
     ctx.font = `900 ${cz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; ctx.fillStyle = tc; ctx.fillText(txt, rtl ? -cz * .55 : cz * .55, 3); ctx.restore()
+    if (!BIG && date && yr && fy != null && fy !== yr) {   // the ruler under the chip: the dot slides from the start year to the end year at its true place; it fades out once the year has arrived
+      const ra0 = EDIT ? 1 : ramp(d, .6, 1.1), rA = EDIT ? 1 : ra0 * (1 - ramp(d, 4.6, 5.2));
+      if (rA > 0) {
+        const hiY = Math.max(nowYear, fy, yr), mnY = Math.min(fy, yr), span = hiY - mnY, stp = span > 1500 ? 500 : span > 600 ? 200 : span > 250 ? 100 : span > 120 ? 50 : span > 50 ? 20 : 10, loY = Math.floor(mnY / stp) * stp, RW = Math.min(W * .86, Math.max(cwid, W * .6)),
+          pos = v => { const f = (v - loY) / (hiY - loY); return rtl ? RW / 2 - RW * f : -RW / 2 + RW * f }, rcx = Math.max(RW / 2 + 24, Math.min(W - RW / 2 - 24, ccx));
+        ctx.save(); ctx.globalAlpha = cp * fade * rA; ctx.translate(rcx, cy2 + ch / 2 + cz * 1.05 - (1 - ra0) * 8); shadow(8); ctx.lineCap = 'round'; ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(-RW / 2, 0); ctx.lineTo(RW / 2, 0); for (let q = 0; q <= 4; q++) { const x = -RW / 2 + RW * q / 4; ctx.moveTo(x, -cz * .3); ctx.lineTo(x, cz * .3) } ctx.stroke();
+        ctx.beginPath(); ctx.arc(pos(EDIT ? yr : val), 0, cz * .3, 0, TAU); ctx.fillStyle = L.acc || ORG; ctx.fill(); ctx.shadowColor = 'transparent';
+        ctx.font = `700 ${Math.round(cz * .62)}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.direction = 'rtl'; ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.fillText(faDigits(loY), pos(loY), cz * .55); ctx.fillText(faDigits(hiY), pos(hiY), cz * .55); ctx.restore()
+      }
+    }
   }
 }
 function posterLayers(t, sc) {
