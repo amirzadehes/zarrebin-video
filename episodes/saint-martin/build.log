@@ -3,28 +3,30 @@ narration units: 80
 the owner's cuts: 35 scenes (the director only writes what each scene shows)
 model: openai/gpt-oss-120b
 rate limited, waiting 13s
-rate limited, waiting 6s
-rate limited, waiting 14s
-rate limited, waiting 12s
-rate limited, waiting 5s
-rate limited, waiting 15s
-rate limited, waiting 17s
-rate limited, waiting 16s
-rate limited, waiting 12s
-rate limited, waiting 21s
-rate limited, waiting 10s
+rate limited, waiting 29s
 rate limited, waiting 13s
-rate limited, waiting 25s
+rate limited, waiting 4s
+rate limited, waiting 14s
+rate limited, waiting 4s
+rate limited, waiting 23s
 rate limited, waiting 14s
 rate limited, waiting 15s
-rate limited, waiting 22s
-rate limited, waiting 2s
-rate limited, waiting 12s
+rate limited, waiting 24s
+rate limited, waiting 18s
+rate limited, waiting 14s
+rate limited, waiting 26s
+rate limited, waiting 18s
+rate limited, waiting 18s
+rate limited, waiting 25s
+rate limited, waiting 18s
+rate limited, waiting 8s
+rate limited, waiting 13s
+rate limited, waiting 4s
 poster scenes 35 total 261.08 | with prompt: 35
 voice check ok: voice.mp3 259.9s, timing 259.9s
 QA saint-martin: 35 صحنه، میانگین 7.5 ثانیه، بیشترین سکون تصویری 13.8 ثانیه | هشدار: 4، نکته: 1
  - ⚠ 35 از 35 صحنه هنوز عکس آپلودشده ندارند؛ با پس‌زمینه‌ی تیره ساخته می‌شوند.
  - ⚠ صحنه‌ی اول (قلاب) باید زود تصویر بیاورد (≤1.0 ثانیه) و از 6.5 ثانیه بلندتر نباشد؛ الان: 10.5 ثانیه، اولین تصویر در هیچ.
  - ⚠ 10 صحنه از 9.5 ثانیه طولانی‌ترند؛ بلندترین: صحنه‌ی 27 از ثانیه‌ی 184.1 (13.8 ثانیه). این‌ها را کوتاه‌تر ببر یا تصویر/رویداد بیشتری بگذار.
- - ⚠ 20 بازه‌ی بیشتر از 6.0 ثانیه بدون رویداد تصویری تازه (عکس یا تغییر صحنه) داریم؛ بدترین‌ها: 184 تا 198، 217 تا 229، 198 تا 209. بین این‌ها فقط ضربه‌ی دوربین می‌آید؛ بهتر است تصویر دوم یا تغییر صحنه اضافه شود.
+ - ⚠ 21 بازه‌ی بیشتر از 6.0 ثانیه بدون رویداد تصویری تازه (عکس یا تغییر صحنه) داریم؛ بدترین‌ها: 184 تا 198، 235 تا 247، 217 تا 229. بین این‌ها فقط ضربه‌ی دوربین می‌آید؛ بهتر است تصویر دوم یا تغییر صحنه اضافه شود.
  - ℹ 9 برش صحنه وسط یک کلمه شروع می‌شود (نمونه: صحنه‌ی 3 در ثانیه‌ی 22.8).
