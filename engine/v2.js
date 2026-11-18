@@ -609,30 +609,76 @@ function lyrPose(t, t0, out, ain, aout, n) {   // n: number of characters (for t
     al *= (O === 'fade' || O === 'zoom') ? 1 - x : 1 - x * x * x }
   return { dx, dy, s, al, tp }
 }
-/* PLACE + DATE layer: {kind:'place', text:'اصفهان', date:'۱۵۹۸ میلادی', t, out, hold, x, y, size, col, acc}
-   A pin drops and rings spread, the name is revealed from the reading side, the year rolls up like an odometer while a marker slides on a small timeline.
-   After `hold` seconds (default 3.2) the group shrinks to a chip at the top that stays until `out` (default: end of the scene).
-   Default position is the upper third: under the app's top bar, clear of the buttons on the right and of the subtitles. x / y are fractions of the frame. */
-function placeFx(t, sc, L) {
-  const t0 = L.t != null ? L.t : sc.t0 + .3, end = L.out != null ? L.out : sc.t1 + .3, d = t - t0; if (d < 0 || t > end) return;
-  const k = L.size || 1, rtl = D.meta.rtl, cx = (L.x == null ? .5 : L.x) * W, y0 = (L.y == null ? (V ? .2 : .26) : L.y) * H, hold = L.hold != null ? L.hold : 3.2, fade = clamp((end - t) / .3);
-  const g = 1 - ramp(d, hold, hold + .4), cp = ramp(d, hold + .1, hold + .5), ac = L.acc || ORG, tc = L.col || '#fff', nz = Math.round(B * .13 * k), dz = Math.round(B * .062 * k);
+/* world map for the 'map' style of place layers: Natural Earth countries (TopoJSON, world-atlas). Local copy assets/geo/countries-50m.json (workflow "Fetch world map"), else the jsDelivr CDN. */
+let GEO = null;
+function topoRings(topo, name) {
+  const tr = topo.transform, sc = tr ? tr.scale : [1, 1], tl = tr ? tr.translate : [0, 0];
+  const arcs = topo.arcs.map(a => { let x = 0, y = 0; return a.map(q => { if (tr) { x += q[0]; y += q[1]; return [x * sc[0] + tl[0], y * sc[1] + tl[1]] } return [q[0], q[1]] }) });
+  const arc = i => i >= 0 ? arcs[i] : arcs[~i].slice().reverse(), ring = ids => { let pts = []; ids.forEach((i, k) => { const a = arc(i); pts = pts.concat(k ? a.slice(1) : a) }); return pts };
+  const obj = topo.objects[name] || topo.objects[Object.keys(topo.objects)[0]], out = [];
+  obj.geometries.forEach(g => { if (g.type === 'Polygon') g.arcs.forEach(r => out.push(ring(r))); else if (g.type === 'MultiPolygon') g.arcs.forEach(po => po.forEach(r => out.push(ring(r)))) }); return out
+}
+async function loadGeo() {
+  if (GEO !== null) return; GEO = false;
+  for (const u of ['../assets/geo/countries-50m.json', 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json', 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json']) {
+    try { const r = await fetch(u); if (!r.ok) continue; const rings = topoRings(await r.json(), 'countries');
+      GEO = rings.map(pts => { let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; pts.forEach(q => { if (q[0] < x0) x0 = q[0]; if (q[0] > x1) x1 = q[0]; if (q[1] < y0) y0 = q[1]; if (q[1] > y1) y1 = q[1] }); return { pts, x0, x1, y0, y1 } }); return } catch (e) { }
+  }
+}
+const mercY = lat => Math.log(Math.tan(Math.PI / 4 + Math.max(-85, Math.min(85, lat)) * Math.PI / 360)) * 180 / Math.PI;
+/* the map inside a card (origin = card centre, size w x h): zooms from a wide view (L.start degrees across, default 60) to L.zoom degrees (default 6) onto [lon, lat] */
+function mapView(d, L, w, h) {
+  const lon = +L.lon, lat = +L.lat, z = eio(ramp(d, .15, 1.9)), s0 = +(L.start || 60), s1 = +(L.zoom || 6), span = Math.exp(lerp(Math.log(s0), Math.log(s1), z)), ppd = w / span;
+  const cLon = lerp(lon - s0 * .1, lon, z), cLat = lerp(lat + s0 * .05, lat, z), cY = mercY(cLat), X = q => (q - cLon) * ppd, Y = q => -(mercY(q) - cY) * ppd;
+  ctx.save(); ctx.beginPath(); ctx.roundRect(-w / 2, -h / 2, w, h, w * .04); ctx.clip(); ctx.fillStyle = '#121722'; ctx.fillRect(-w / 2, -h / 2, w, h);
+  const gs = span > 40 ? 10 : span > 14 ? 5 : span > 5 ? 2 : 1; ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.beginPath();
+  for (let q = Math.floor((cLon - span) / gs) * gs; q <= cLon + span; q += gs) { ctx.moveTo(X(q), -h / 2); ctx.lineTo(X(q), h / 2) }
+  for (let q = Math.floor((cLat - span) / gs) * gs; q <= cLat + span; q += gs) { ctx.moveTo(-w / 2, Y(q)); ctx.lineTo(w / 2, Y(q)) } ctx.stroke();
+  if (GEO) { const vx0 = cLon - (w / 2) / ppd, vx1 = cLon + (w / 2) / ppd, dy = (h / 2) / ppd, vy0 = cLat - dy * 1.3, vy1 = cLat + dy * 1.3; ctx.fillStyle = '#2b3647'; ctx.strokeStyle = '#6a7b97'; ctx.lineWidth = Math.max(1.2, w * .003); ctx.lineJoin = 'round';
+    GEO.forEach(r => { if (r.x1 < vx0 || r.x0 > vx1 || r.y1 < vy0 || r.y0 > vy1) return; ctx.beginPath(); let lx = 0, ly = 0, n = 0;
+      r.pts.forEach(q => { const x = X(q[0]), y = Y(q[1]); if (!n) { ctx.moveTo(x, y); lx = x; ly = y; n = 1 } else if (Math.abs(x - lx) + Math.abs(y - ly) > 1.5) { ctx.lineTo(x, y); lx = x; ly = y } }); ctx.closePath(); ctx.fill(); ctx.stroke() }) }
+  else if (GEO === null) loadGeo();   // not loaded yet (the editor draws again by itself)
+  ctx.restore(); return { x: X(lon), y: Y(lat) }
+}
+/* PLACE + DATE layer: {kind:'place', style:'pin'|'map', text:'اصفهان', date:'۱۵۹۸ میلادی', t, out, hold, x, y, size, col, acc, lon, lat, zoom, start}
+   pin: a pin drops and rings spread, the name is revealed from the reading side, the year rolls up like an odometer while a marker slides on a small timeline.
+   map: a map card zooms in from a wide view onto [lon, lat], the pin lands, then the name and the rolling year.
+   After `hold` seconds (pin 3.2, map 4.8) it shrinks to a chip at the top that stays until `out` (default: end of the scene). x / y: centre of the whole group (fractions of the frame, draggable in the preview), size: scale. */
+function placeFx(t, sc, L, li) {
+  const t0 = L.t != null ? L.t : sc.t0 + .3, end = L.out != null ? L.out : sc.t1 + .3, mp = L.style === 'map', d = EDIT ? 3.2 + (mp ? 1.4 : 0) - .3 : t - t0; if (!EDIT && (d < 0 || t > end)) return;
+  const P = (L.pos && L.pos[FMT]) || L, k = L.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cyc = (P.y == null ? (mp ? (V ? .27 : .3) : (V ? .24 : .26)) : P.y) * H, hold = L.hold != null ? L.hold : (mp ? 4.8 : 3.2), fade = EDIT ? 1 : clamp((end - t) / .3);
+  const g = EDIT ? 1 : 1 - ramp(d, hold, hold + .4), cp = EDIT ? 0 : ramp(d, hold + .1, hold + .5), ac = L.acc || ORG, tc = L.col || '#fff', nz = Math.round(B * (mp ? .1 : .13) * k), dz = Math.round(B * .062 * k), ph = dz * 1.9;
   const name = String(L.text).trim(), date = String(L.date || '').trim(), ym = date.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).match(/\d{3,4}/), yr = ym ? +ym[0] : null, suf = date.replace(/[\d۰-۹]{3,4}/, '').trim();
-  const dir = rtl ? 'rtl' : 'ltr', shadow = (b = 24) => { ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = b; ctx.shadowOffsetY = 6 };
+  const dir = rtl ? 'rtl' : 'ltr', shadow = (b = 24) => { ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = b; ctx.shadowOffsetY = 6 }, full = yr ? faDigits(yr) + (suf ? ' ' + suf : '') : date;
+  const tw = measure(`900 ${nz}px Vz`, name), pw = measure(`900 ${dz}px Vz`, full) + dz * 2.2, TW = B * .52, cw = mp ? Math.min(B * .8 * k, W * .94) : 0, chh = cw * .58;
+  let o0, o1, o2, o3, Hg;   // vertical layout of the group, from its top
+  if (mp) { o0 = chh / 2; o1 = chh + nz * .75; o2 = o1 + nz * .55 + ph * .7; o3 = 0; Hg = date ? o2 + ph / 2 : o1 + nz * .55 }
+  else { const pr0 = B * .022; o0 = pr0; o1 = o0 + pr0 + B * .07 + nz * .62; o2 = o1 + nz * 1.05; o3 = date && yr ? o2 + ph * 1.05 : 0; Hg = date ? (yr ? o3 + 40 : o2 + ph / 2) : o1 + nz * .6 }
+  const top = cyc - Hg / 2, y0 = top + o0, y1 = top + o1, y2 = top + o2, y3 = top + o3;
+  if (EDIT) { const bw = Math.max(mp ? cw : 0, tw, date ? pw : 0, yr && !mp ? TW : 0) + 50; editBox('layer', li, cx, cyc, bw, Hg + 20, '#00e5ff') }
+  const nameDraw = (e1) => { if (e1 <= 0) return; ctx.save(); ctx.beginPath(); const pad = nz * .3, cwid = (tw + 2 * pad) * e1; ctx.rect(rtl ? cx + tw / 2 + pad - cwid : cx - tw / 2 - pad, y1 - nz, cwid, nz * 2); ctx.clip();
+    ctx.font = `900 ${nz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; shadow(26); ctx.lineJoin = 'round'; ctx.lineWidth = nz * .14; ctx.strokeStyle = INK; ctx.strokeText(name, cx, y1); ctx.shadowColor = 'transparent'; ctx.fillStyle = tc; ctx.fillText(name, cx, y1); ctx.restore() };
+  const pillDraw = (e2, cnt) => { if (e2 <= 0) return; ctx.save(); ctx.globalAlpha *= clamp(e2 * 1.6); ctx.translate(cx, y2 + (1 - Math.min(e2, 1)) * 16); shadow(18); ctx.fillStyle = 'rgba(20,16,14,.62)'; ctx.beginPath(); ctx.roundRect(-pw / 2, -ph / 2, pw, ph, ph / 2); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.stroke();
+    ctx.font = `900 ${dz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; ctx.fillStyle = '#fff'; ctx.fillText(cnt, 0, 4); ctx.restore() };
+  const cnt = (a, b) => yr ? faDigits(Math.round(lerp(yr - 100, yr, eoc(ramp(d, a, b))))) + (suf ? ' ' + suf : '') : date;
   if (g > 0) {
     ctx.save(); ctx.globalAlpha = g * fade;
-    const pr = B * .022, fall = d < .4 ? -(1 - (d / .4) * (d / .4)) * 300 : -Math.exp(-(d - .4) * 8) * Math.abs(Math.sin((d - .4) * 14)) * 26;
-    for (let j = 0; j < 3; j++) { const rd = d - (.4 + j * .22); if (rd > 0 && rd < 1.2) { ctx.save(); ctx.globalAlpha *= (1 - rd / 1.2) * .75; ctx.beginPath(); ctx.arc(cx, y0, lerp(pr, B * .3, eoc(rd / 1.2)), 0, TAU); ctx.lineWidth = 5; ctx.strokeStyle = ac; ctx.stroke(); ctx.restore() } }
-    ctx.save(); ctx.globalAlpha *= clamp(d / .1); shadow(16); ctx.beginPath(); ctx.arc(cx, y0 + fall, pr, 0, TAU); ctx.fillStyle = ac; ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 6; ctx.strokeStyle = '#fff'; ctx.stroke(); ctx.restore();
-    const ll = B * .07 * eoc(ramp(d, .45, .8)); if (ll > 0) { ctx.beginPath(); ctx.moveTo(cx, y0 + pr + 4); ctx.lineTo(cx, y0 + pr + 4 + ll); ctx.lineWidth = 4; ctx.strokeStyle = ac; ctx.stroke() }
-    const y1 = y0 + pr + B * .07 + nz * .62, tw = measure(`900 ${nz}px Vz`, name), e1 = eio(ramp(d, .7, 1.35));
-    if (e1 > 0) { ctx.save(); ctx.beginPath(); const pad = nz * .3, cw = (tw + 2 * pad) * e1; ctx.rect(rtl ? cx + tw / 2 + pad - cw : cx - tw / 2 - pad, y1 - nz, cw, nz * 2); ctx.clip();
-      ctx.font = `900 ${nz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; shadow(26); ctx.lineJoin = 'round'; ctx.lineWidth = nz * .14; ctx.strokeStyle = INK; ctx.strokeText(name, cx, y1); ctx.shadowColor = 'transparent'; ctx.fillStyle = tc; ctx.fillText(name, cx, y1); ctx.restore() }
-    if (date) {
-      const y2 = y1 + nz * 1.05, e2 = spr(t, t0 + 1.25, .5, 13), full = yr ? faDigits(yr) + (suf ? ' ' + suf : '') : date, cnt = yr ? faDigits(Math.round(lerp(yr - 100, yr, eoc(ramp(d, 1.3, 2.4))))) + (suf ? ' ' + suf : '') : date, pw = measure(`900 ${dz}px Vz`, full) + dz * 2.2, ph = dz * 1.9;
-      if (e2 > 0) { ctx.save(); ctx.globalAlpha *= clamp(e2 * 1.6); ctx.translate(cx, y2 + (1 - Math.min(e2, 1)) * 16); shadow(18); ctx.fillStyle = 'rgba(20,16,14,.62)'; ctx.beginPath(); ctx.roundRect(-pw / 2, -ph / 2, pw, ph, ph / 2); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.stroke();
-        ctx.font = `900 ${dz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; ctx.fillStyle = '#fff'; ctx.fillText(cnt, 0, 4); ctx.restore() }
-      if (yr) { const y3 = y2 + ph * 1.05, TW = B * .52, a3 = clamp((d - 1.5) / .4), lo = Math.floor(yr / 100) * 100, hi = lo + (yr >= 1000 ? 200 : 100), pos = (yr - lo) / (hi - lo), m = eio(ramp(d, 1.7, 2.7)) * pos, xx = f => rtl ? cx + TW / 2 - TW * f : cx - TW / 2 + TW * f;
+    if (mp) {
+      const e0 = clamp(d / .3), hasLL = L.lon != null && L.lat != null && L.lon !== '' && L.lat !== '';
+      ctx.save(); ctx.globalAlpha *= e0; shadow(30); ctx.fillStyle = '#121722'; ctx.beginPath(); ctx.roundRect(cx - cw / 2, top, cw, chh, cw * .04); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.translate(cx, top + chh / 2);
+      const pt = hasLL ? mapView(d, L, cw, chh) : (() => { ctx.save(); ctx.beginPath(); ctx.roundRect(-cw / 2, -chh / 2, cw, chh, cw * .04); ctx.clip(); ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.lineWidth = 1; ctx.beginPath(); for (let q = -cw / 2; q <= cw / 2; q += cw / 10) { ctx.moveTo(q, -chh / 2); ctx.lineTo(q, chh / 2) } for (let q = -chh / 2; q <= chh / 2; q += cw / 10) { ctx.moveTo(-cw / 2, q); ctx.lineTo(cw / 2, q) } ctx.stroke(); ctx.restore(); return { x: 0, y: 0 } })();
+      const pd = d - 1.9, pr = cw * .02, fall = pd < 0 ? -9999 : pd < .3 ? -(1 - (pd / .3) * (pd / .3)) * chh * .5 : -Math.exp(-(pd - .3) * 8) * Math.abs(Math.sin((pd - .3) * 14)) * 16;
+      for (let j = 0; j < 3; j++) { const rd = pd - (.3 + j * .22); if (rd > 0 && rd < 1.2) { ctx.save(); ctx.globalAlpha *= (1 - rd / 1.2) * .8; ctx.beginPath(); ctx.arc(pt.x, pt.y, lerp(pr, cw * .2, eoc(rd / 1.2)), 0, TAU); ctx.lineWidth = 4; ctx.strokeStyle = ac; ctx.stroke(); ctx.restore() } }
+      if (pd >= 0) { ctx.beginPath(); ctx.arc(pt.x, pt.y + fall, pr, 0, TAU); ctx.fillStyle = ac; ctx.fill(); ctx.lineWidth = 5; ctx.strokeStyle = '#fff'; ctx.stroke() }
+      ctx.restore(); ctx.save(); ctx.globalAlpha *= e0; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.beginPath(); ctx.roundRect(cx - cw / 2, top, cw, chh, cw * .04); ctx.stroke(); ctx.restore();
+      nameDraw(eio(ramp(d, 2.2, 2.85))); if (date) pillDraw(spr(t - t0, 2.7, .5, 13) * (EDIT ? 1 : 1), cnt(2.8, 3.9));
+    } else {
+      const pr = B * .022, fall = d < .4 ? -(1 - (d / .4) * (d / .4)) * 300 : -Math.exp(-(d - .4) * 8) * Math.abs(Math.sin((d - .4) * 14)) * 26;
+      for (let j = 0; j < 3; j++) { const rd = d - (.4 + j * .22); if (rd > 0 && rd < 1.2) { ctx.save(); ctx.globalAlpha *= (1 - rd / 1.2) * .75; ctx.beginPath(); ctx.arc(cx, y0, lerp(pr, B * .3, eoc(rd / 1.2)), 0, TAU); ctx.lineWidth = 5; ctx.strokeStyle = ac; ctx.stroke(); ctx.restore() } }
+      ctx.save(); ctx.globalAlpha *= clamp(d / .1); shadow(16); ctx.beginPath(); ctx.arc(cx, y0 + fall, pr, 0, TAU); ctx.fillStyle = ac; ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 6; ctx.strokeStyle = '#fff'; ctx.stroke(); ctx.restore();
+      const ll = B * .07 * eoc(ramp(d, .45, .8)); if (ll > 0) { ctx.beginPath(); ctx.moveTo(cx, y0 + pr + 4); ctx.lineTo(cx, y0 + pr + 4 + ll); ctx.lineWidth = 4; ctx.strokeStyle = ac; ctx.stroke() }
+      nameDraw(eio(ramp(d, .7, 1.35))); if (date) pillDraw(spr(d, 1.25, .5, 13), cnt(1.3, 2.4));
+      if (date && yr) { const a3 = clamp((d - 1.5) / .4), lo = Math.floor(yr / 100) * 100, hi = lo + (yr >= 1000 ? 200 : 100), pos = (yr - lo) / (hi - lo), m = eio(ramp(d, 1.7, 2.7)) * pos, xx = f => rtl ? cx + TW / 2 - TW * f : cx - TW / 2 + TW * f;
         if (a3 > 0) { ctx.save(); ctx.globalAlpha *= a3; shadow(10); const tl = (lw, col) => { ctx.lineWidth = lw; ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(xx(0), y3); ctx.lineTo(xx(1), y3); for (let q = 0; q <= 4; q++) { ctx.moveTo(xx(q / 4), y3 - 11); ctx.lineTo(xx(q / 4), y3 + 11) } ctx.stroke() }; ctx.lineCap = 'round'; tl(9, 'rgba(20,16,14,.75)'); tl(4, '#fff');
           ctx.shadowColor = 'transparent'; ctx.beginPath(); ctx.arc(xx(m), y3, 13, 0, TAU); ctx.fillStyle = ac; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = '#fff'; ctx.stroke();
           ctx.font = `700 30px Vz`; ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = 'rtl'; ctx.fillText(faDigits(lo), xx(0), y3 + 34); ctx.fillText(faDigits(hi), xx(1), y3 + 34); ctx.restore() } }
@@ -640,7 +686,7 @@ function placeFx(t, sc, L) {
     ctx.restore()
   }
   if (cp > 0) {   // the chip that stays for the rest of the scene
-    const cz = Math.round(B * .046 * k), txt = name + (date ? '  ·  ' + (yr ? faDigits(yr) + (suf ? ' ' + suf : '') : date) : ''), cwid = measure(`900 ${cz}px Vz`, txt) + cz * 2.6, ch = cz * 1.9, cy2 = (V ? .135 : .15) * H;
+    const cz = Math.round(B * .046 * k), txt = name + (date ? '  ·  ' + full : ''), cwid = measure(`900 ${cz}px Vz`, txt) + cz * 2.6, ch = cz * 1.9, cy2 = (V ? .135 : .15) * H;
     ctx.save(); ctx.globalAlpha = cp * fade; ctx.translate(cx, cy2 + (1 - cp) * 24); ctx.scale(.8 + .2 * cp, .8 + .2 * cp); shadow(14); ctx.fillStyle = 'rgba(20,16,14,.68)'; ctx.beginPath(); ctx.roundRect(-cwid / 2, -ch / 2, cwid, ch, ch / 2); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.stroke();
     ctx.beginPath(); ctx.arc(rtl ? cwid / 2 - cz * 1.1 : -cwid / 2 + cz * 1.1, 0, cz * .26, 0, TAU); ctx.fillStyle = ac; ctx.fill();
     ctx.font = `900 ${cz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; ctx.fillStyle = '#fff'; ctx.fillText(txt, rtl ? -cz * .5 : cz * .5, 3); ctx.restore()
@@ -648,7 +694,7 @@ function placeFx(t, sc, L) {
 }
 function posterLayers(t, sc) {
   (sc.layers || []).forEach((L, li0) => {
-    if (!L || !String(L.text || '').trim()) return; if (L.kind === 'place') { placeFx(t, sc, L); return } const t0 = L.t != null ? L.t : sc.t0 + .3, out = L.out != null ? L.out : 1e9, P = (L.pos && L.pos[FMT]) || L, st = L.kind === 'stamp', A = L.anim || (st ? 'slam' : 'pop');
+    if (!L || !String(L.text || '').trim()) return; if (L.kind === 'place') { placeFx(t, sc, L, li0); return } const t0 = L.t != null ? L.t : sc.t0 + .3, out = L.out != null ? L.out : 1e9, P = (L.pos && L.pos[FMT]) || L, st = L.kind === 'stamp', A = L.anim || (st ? 'slam' : 'pop');
     const ps = EDIT ? { dx: 0, dy: 0, s: 1, al: 1, tp: 1 } : lyrPose(t, t0, out, A, L.animOut, String(L.text).replace(/[\s*]/g, '').length); if (!ps) return; const k = L.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? (st ? .38 : .5) : P.y) * H;
     if (EDIT) { let bw, bh; if (L.kind === 'number') { const z = B * (V ? .24 : .2) * k; bw = z * .62 * String(L.text).trim().length; bh = z * 1.1 } else if (st) { const sp0 = stampSprite(String(L.text).trim(), Math.round(B * .1 * k), L.col || '#e0352b', rtl); bw = sp0.w; bh = sp0.h } else { const z = B * (V ? .062 : .055) * k, W0 = wrapTokens(L.text, `900 ${z}px Vz`, W * (V ? .86 : .6)); bw = Math.max(...W0.lines.map(l => l.w)) + z * .76; bh = W0.lines.length * z * 1.5 } editBox('layer', li0, cx, cy, bw, bh, '#00e5ff') }
     if (L.kind === 'number') {
@@ -869,7 +915,8 @@ let FLYX = false;
 const FLY_PRE = .55, FLY_POST = .55;
 function flyOn(k) { const sc = D.scenes[k]; return k > 0 && (sc.fly != null ? !!sc.fly : (Q.get('fly') === '1' || D.meta.fly === true)) }
 function flyPre(k) { const a = D.scenes[k - 1], b = D.scenes[k]; return Math.min(FLY_PRE, Math.max(.2, (b.t0 - a.t0) * .3)) }
-function flyIndex(t) { for (let k = 1; k < D.scenes.length; k++) { const sc = D.scenes[k]; if (flyOn(k) && t >= sc.t0 - flyPre(k) && t < sc.t0 + FLY_POST) return k } return -1 }
+function flyReady(k) { const p = D.scenes[k - 1].photo; return !p || !p.src || !!IM[p.src] }
+function flyIndex(t) { for (let k = 1; k < D.scenes.length; k++) { const sc = D.scenes[k]; if (flyOn(k) && t >= sc.t0 - flyPre(k) && t < sc.t0 + FLY_POST && flyReady(k)) return k } return -1 }
 function flyFocal(sc) { const f = sc.focal; return [clamp(f && f.x != null ? f.x : .5, .4, .6) * W, clamp(f && f.y != null ? f.y : .5, .4, .6) * H] }   // default: straight ahead (centre); sc.focal may steer the camera a little
 let FLYC = null;
 /* TRUE DOLLY: the camera itself travels forward. The next picture is simply THERE, full frame, behind the leaving one. The leaving picture is cut into depth layers (back / middle / front, from its depth map);
@@ -980,6 +1027,7 @@ window.loadData = async (DD, only) => {   // shared by the renderer and the in-a
   const dsrc = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; [s.photo, ...(s.photos || [])].forEach(q => { if (q && q.src && /(^|\/)bg\//.test(q.src)) { dsrc.add(flatPath(q.src)); dsrc.add(depthPath(q.src)) } }) }); for (const k in DEP) delete DEP[k]; for (const k in VOLC) delete VOLC[k];
   await Promise.all([...[...srcs].map(loadImg), ...[...dsrc].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
   if (window.FXL) await FXL.prepare([...srcs]);
+  if (D.scenes.some(q => (q.layers || []).some(l => l && l.kind === 'place' && l.style === 'map'))) await loadGeo();
   mkGrain(); mkPaper(); CH.length = 0; buildCaptions(); buildBeats(); seek(0); return true
 };
 window.ready = Q.get('inline') ? new Promise(() => {}) : (async () => loadData(await (await fetch('../episodes/' + EP + '/scenes.json?' + Date.now())).json()))();
