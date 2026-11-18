@@ -608,9 +608,46 @@ function lyrPose(t, t0, out, ain, aout, n) {   // n: number of characters (for t
     al *= (O === 'fade' || O === 'zoom') ? 1 - x : 1 - x * x * x }
   return { dx, dy, s, al, tp }
 }
+/* PLACE + DATE layer: {kind:'place', text:'اصفهان', date:'۱۵۹۸ میلادی', t, out, hold, x, y, size, col, acc}
+   A pin drops and rings spread, the name is revealed from the reading side, the year rolls up like an odometer while a marker slides on a small timeline.
+   After `hold` seconds (default 3.2) the group shrinks to a chip at the top that stays until `out` (default: end of the scene).
+   Default position is the upper third: under the app's top bar, clear of the buttons on the right and of the subtitles. x / y are fractions of the frame. */
+function placeFx(t, sc, L) {
+  const t0 = L.t != null ? L.t : sc.t0 + .3, end = L.out != null ? L.out : sc.t1 + .3, d = t - t0; if (d < 0 || t > end) return;
+  const k = L.size || 1, rtl = D.meta.rtl, cx = (L.x == null ? .5 : L.x) * W, y0 = (L.y == null ? (V ? .2 : .26) : L.y) * H, hold = L.hold != null ? L.hold : 3.2, fade = clamp((end - t) / .3);
+  const g = 1 - ramp(d, hold, hold + .4), cp = ramp(d, hold + .1, hold + .5), ac = L.acc || ORG, tc = L.col || '#fff', nz = Math.round(B * .13 * k), dz = Math.round(B * .062 * k);
+  const name = String(L.text).trim(), date = String(L.date || '').trim(), ym = date.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).match(/\d{3,4}/), yr = ym ? +ym[0] : null, suf = date.replace(/[\d۰-۹]{3,4}/, '').trim();
+  const dir = rtl ? 'rtl' : 'ltr', shadow = (b = 24) => { ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = b; ctx.shadowOffsetY = 6 };
+  if (g > 0) {
+    ctx.save(); ctx.globalAlpha = g * fade;
+    const pr = B * .022, fall = d < .4 ? -(1 - (d / .4) * (d / .4)) * 300 : -Math.exp(-(d - .4) * 8) * Math.abs(Math.sin((d - .4) * 14)) * 26;
+    for (let j = 0; j < 3; j++) { const rd = d - (.4 + j * .22); if (rd > 0 && rd < 1.2) { ctx.save(); ctx.globalAlpha *= (1 - rd / 1.2) * .75; ctx.beginPath(); ctx.arc(cx, y0, lerp(pr, B * .3, eoc(rd / 1.2)), 0, TAU); ctx.lineWidth = 5; ctx.strokeStyle = ac; ctx.stroke(); ctx.restore() } }
+    ctx.save(); ctx.globalAlpha *= clamp(d / .1); shadow(16); ctx.beginPath(); ctx.arc(cx, y0 + fall, pr, 0, TAU); ctx.fillStyle = ac; ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 6; ctx.strokeStyle = '#fff'; ctx.stroke(); ctx.restore();
+    const ll = B * .07 * eoc(ramp(d, .45, .8)); if (ll > 0) { ctx.beginPath(); ctx.moveTo(cx, y0 + pr + 4); ctx.lineTo(cx, y0 + pr + 4 + ll); ctx.lineWidth = 4; ctx.strokeStyle = ac; ctx.stroke() }
+    const y1 = y0 + pr + B * .07 + nz * .62, tw = measure(`900 ${nz}px Vz`, name), e1 = eio(ramp(d, .7, 1.35));
+    if (e1 > 0) { ctx.save(); ctx.beginPath(); const pad = nz * .3, cw = (tw + 2 * pad) * e1; ctx.rect(rtl ? cx + tw / 2 + pad - cw : cx - tw / 2 - pad, y1 - nz, cw, nz * 2); ctx.clip();
+      ctx.font = `900 ${nz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; shadow(26); ctx.lineJoin = 'round'; ctx.lineWidth = nz * .14; ctx.strokeStyle = INK; ctx.strokeText(name, cx, y1); ctx.shadowColor = 'transparent'; ctx.fillStyle = tc; ctx.fillText(name, cx, y1); ctx.restore() }
+    if (date) {
+      const y2 = y1 + nz * 1.05, e2 = spr(t, t0 + 1.25, .5, 13), full = yr ? faDigits(yr) + (suf ? ' ' + suf : '') : date, cnt = yr ? faDigits(Math.round(lerp(yr - 100, yr, eoc(ramp(d, 1.3, 2.4))))) + (suf ? ' ' + suf : '') : date, pw = measure(`900 ${dz}px Vz`, full) + dz * 2.2, ph = dz * 1.9;
+      if (e2 > 0) { ctx.save(); ctx.globalAlpha *= clamp(e2 * 1.6); ctx.translate(cx, y2 + (1 - Math.min(e2, 1)) * 16); shadow(18); ctx.fillStyle = 'rgba(20,16,14,.62)'; ctx.beginPath(); ctx.roundRect(-pw / 2, -ph / 2, pw, ph, ph / 2); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.stroke();
+        ctx.font = `900 ${dz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; ctx.fillStyle = '#fff'; ctx.fillText(cnt, 0, 4); ctx.restore() }
+      if (yr) { const y3 = y2 + ph * 1.05, TW = B * .52, a3 = clamp((d - 1.5) / .4), lo = Math.floor(yr / 100) * 100, hi = lo + (yr >= 1000 ? 200 : 100), pos = (yr - lo) / (hi - lo), m = eio(ramp(d, 1.7, 2.7)) * pos, xx = f => rtl ? cx + TW / 2 - TW * f : cx - TW / 2 + TW * f;
+        if (a3 > 0) { ctx.save(); ctx.globalAlpha *= a3; shadow(10); const tl = (lw, col) => { ctx.lineWidth = lw; ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(xx(0), y3); ctx.lineTo(xx(1), y3); for (let q = 0; q <= 4; q++) { ctx.moveTo(xx(q / 4), y3 - 11); ctx.lineTo(xx(q / 4), y3 + 11) } ctx.stroke() }; ctx.lineCap = 'round'; tl(9, 'rgba(20,16,14,.75)'); tl(4, '#fff');
+          ctx.shadowColor = 'transparent'; ctx.beginPath(); ctx.arc(xx(m), y3, 13, 0, TAU); ctx.fillStyle = ac; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = '#fff'; ctx.stroke();
+          ctx.font = `700 30px Vz`; ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = 'rtl'; ctx.fillText(faDigits(lo), xx(0), y3 + 34); ctx.fillText(faDigits(hi), xx(1), y3 + 34); ctx.restore() } }
+    }
+    ctx.restore()
+  }
+  if (cp > 0) {   // the chip that stays for the rest of the scene
+    const cz = Math.round(B * .046 * k), txt = name + (date ? '  ·  ' + (yr ? faDigits(yr) + (suf ? ' ' + suf : '') : date) : ''), cwid = measure(`900 ${cz}px Vz`, txt) + cz * 2.6, ch = cz * 1.9, cy2 = (V ? .135 : .15) * H;
+    ctx.save(); ctx.globalAlpha = cp * fade; ctx.translate(cx, cy2 + (1 - cp) * 24); ctx.scale(.8 + .2 * cp, .8 + .2 * cp); shadow(14); ctx.fillStyle = 'rgba(20,16,14,.68)'; ctx.beginPath(); ctx.roundRect(-cwid / 2, -ch / 2, cwid, ch, ch / 2); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.stroke();
+    ctx.beginPath(); ctx.arc(rtl ? cwid / 2 - cz * 1.1 : -cwid / 2 + cz * 1.1, 0, cz * .26, 0, TAU); ctx.fillStyle = ac; ctx.fill();
+    ctx.font = `900 ${cz}px Vz`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.direction = dir; ctx.fillStyle = '#fff'; ctx.fillText(txt, rtl ? -cz * .5 : cz * .5, 3); ctx.restore()
+  }
+}
 function posterLayers(t, sc) {
   (sc.layers || []).forEach((L, li0) => {
-    if (!L || !String(L.text || '').trim()) return; const t0 = L.t != null ? L.t : sc.t0 + .3, out = L.out != null ? L.out : 1e9, P = (L.pos && L.pos[FMT]) || L, st = L.kind === 'stamp', A = L.anim || (st ? 'slam' : 'pop');
+    if (!L || !String(L.text || '').trim()) return; if (L.kind === 'place') { placeFx(t, sc, L); return } const t0 = L.t != null ? L.t : sc.t0 + .3, out = L.out != null ? L.out : 1e9, P = (L.pos && L.pos[FMT]) || L, st = L.kind === 'stamp', A = L.anim || (st ? 'slam' : 'pop');
     const ps = EDIT ? { dx: 0, dy: 0, s: 1, al: 1, tp: 1 } : lyrPose(t, t0, out, A, L.animOut, String(L.text).replace(/[\s*]/g, '').length); if (!ps) return; const k = L.size || 1, rtl = D.meta.rtl, cx = (P.x == null ? .5 : P.x) * W, cy = (P.y == null ? (st ? .38 : .5) : P.y) * H;
     if (EDIT) { let bw, bh; if (L.kind === 'number') { const z = B * (V ? .24 : .2) * k; bw = z * .62 * String(L.text).trim().length; bh = z * 1.1 } else if (st) { const sp0 = stampSprite(String(L.text).trim(), Math.round(B * .1 * k), L.col || '#e0352b', rtl); bw = sp0.w; bh = sp0.h } else { const z = B * (V ? .062 : .055) * k, W0 = wrapTokens(L.text, `900 ${z}px Vz`, W * (V ? .86 : .6)); bw = Math.max(...W0.lines.map(l => l.w)) + z * .76; bh = W0.lines.length * z * 1.5 } editBox('layer', li0, cx, cy, bw, bh, '#00e5ff') }
     if (L.kind === 'number') {
@@ -811,7 +848,7 @@ function drawScene(t, sc) {
   if (POSTER) posterBg(t, sc); else if (TF) tfBg(t, sc, th, TF); else { bgLayer(t, sc, th); if (window.FXL && sc.bg && sc.bg.src) FXL.bg(t, sc) }   // optional background picture layer (engine/fx.js)
   if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, false);   // optional framed pictures pinned to the backdrop
   decor(t, sc, th); const KC = POSTER ? false : keyCustom(sc); (POSTER ? TPL.poster : (TPL[sc.tpl] || TPL.hero))(t, KC ? Object.assign(Object.create(sc), { keyOn: false }) : sc); if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, true); if (KC) keyCard(t, sc); if (POSTER) { posterAtm(t, sc); posterText(t, sc) } ctx.restore(); if (TF) tfCounter(t, sc, TF)   // pins marked 'top' (stamps, arrows) lie over the pictures
-  if (POSTER && !EDIT && punch > .01) zoomBlur(punch)
+  if (POSTER && !EDIT && punch > .01 && !FLYX) zoomBlur(punch)
 }
 function wipePath(style, p, k) {
   const e = eio(p); ctx.beginPath();
@@ -824,7 +861,31 @@ function wipePath(style, p, k) {
 }
 const WD = .55;
 function sceneIndex(t) { let k = 0; for (let i = 0; i < D.scenes.length; i++) if (t >= D.scenes[i].t0 - .1) k = i; return k }
+/* FLY-THROUGH between scenes (instead of the wipe): the pictures sit one behind the other. The camera zooms into a point of the leaving picture (its focal point) and the next
+   picture, which lives at that point, grows until it fills the frame. Enable for the whole episode with meta.fly = true (or ?fly=1), per scene with sc.fly = true / false
+   (the scene the camera flies INTO). The focal point is read from the leaving scene: sc.focal = {x, y} (fractions) or its photo.focus[0]; default: just above the centre. meta.flyK / sc.flyK = zoom factor (default 8). */
+let FLYX = false;
+const FLY_PRE = .55, FLY_POST = .55;
+function flyOn(k) { const sc = D.scenes[k]; return k > 0 && (sc.fly != null ? !!sc.fly : (Q.get('fly') === '1' || D.meta.fly === true)) }
+function flyPre(k) { const a = D.scenes[k - 1], b = D.scenes[k]; return Math.min(FLY_PRE, Math.max(.2, (b.t0 - a.t0) * .3)) }
+function flyIndex(t) { for (let k = 1; k < D.scenes.length; k++) { const sc = D.scenes[k]; if (flyOn(k) && t >= sc.t0 - flyPre(k) && t < sc.t0 + FLY_POST) return k } return -1 }
+function flyFocal(sc) {
+  let f = sc.focal; if (!f) { const fp = sc.photo && focusPts(sc.photo.focus); if (fp && fp.length) f = { x: fp[0][0], y: fp[0][1] } }
+  return [clamp(f && f.x != null ? f.x : .5, .15, .85) * W, clamp(f && f.y != null ? f.y : .46, .2, .8) * H]
+}
+function flyDraw(t, k) {
+  const sc = D.scenes[k], pv = D.scenes[k - 1], K = +(sc.flyK || D.meta.flyK || 8), a = sc.t0 - flyPre(k), u = eio((t - a) / (flyPre(k) + FLY_POST)), S = Math.pow(K, u), kf = 1 / K;
+  const C = [W / 2, H / 2], F = flyFocal(pv), g = (1 - u) / S, cx = F[0] - (F[0] - C[0]) * g, cy = F[1] - (F[1] - C[1]) * g;   // camera centre: the focal point glides straight to the middle of the screen while the zoom grows
+  const s1 = S * kf, t0x = C[0] * (1 - S) + S * (C[0] - cx), t0y = C[1] * (1 - S) + S * (C[1] - cy), t1x = C[0] * (1 - s1) + S * (F[0] - cx), t1y = C[1] * (1 - s1) + S * (F[1] - cy);
+  FLYX = true;
+  ctx.save(); ctx.translate(t0x, t0y); ctx.scale(S, S); drawScene(t, pv); ctx.restore();
+  const q = eoc(ramp(u, 0, .22)), rw = W * q, rh = H * q, rx = (W - rw) / 2, ry = (H - rh) / 2;   // the next picture opens like a window at the focal point
+  ctx.save(); ctx.translate(t1x, t1y); ctx.scale(s1, s1); ctx.beginPath(); ctx.rect(rx, ry, rw, rh); ctx.clip(); drawScene(Math.max(t, sc.t0), sc); ctx.restore();   // before its own start the next scene is frozen at its first frame, so its picture is already there
+  ctx.save(); ctx.translate(t1x, t1y); ctx.scale(s1, s1); ctx.globalAlpha = 1 - ramp(u, .55, .95); ctx.lineWidth = 7 / s1; ctx.strokeStyle = '#fff'; ctx.strokeRect(rx, ry, rw, rh); ctx.restore();
+  FLYX = false
+}
 function world(t) {
+  const fk = flyIndex(t); if (fk > 0) return flyDraw(t, fk);
   const k = sceneIndex(t), sc = D.scenes[k], p = (t - (sc.t0 - .1)) / WD;
   if (k > 0 && p < 1) { drawScene(t, D.scenes[k - 1]); ctx.save(); wipePath(sc.wipe, p, k); ctx.clip(); drawScene(t, sc); ctx.restore();
     if (sc.wipe === 0 || sc.wipe === 5) { ctx.save(); wipePath(sc.wipe, p, k); ctx.lineWidth = 30; ctx.strokeStyle = INK; ctx.stroke(); ctx.lineWidth = 12; ctx.strokeStyle = '#fff'; ctx.stroke(); ctx.restore() } }
@@ -888,7 +949,7 @@ function busy(t) {   // a picture or word is arriving, or the scene has just cha
   const near = q => q && q.t != null && t - q.t > -.05 && t - q.t < .6; return (sc.items || []).some(near) || [sc.photo, ...(sc.photos || [])].some(near)
 }
 window.frame = function (t) {   // 180-degree-style shutter: the frame is the average of sub-frames over a short span (4 while things arrive, 2 otherwise)
-  const n = MB ? (busy(t) ? 4 : 2) : 1;
+  const n = MB && flyIndex(t) < 0 ? (busy(t) ? 4 : 2) : 1;   // no sub-frame blur inside a fly-through: the zoom is too fast and the copies would show as ghosts
   for (let i = 0; i < n; i++) { draw(n === 1 ? t : t + i * (.6 / 30) / (n - 1)); octx.globalAlpha = 1 / (i + 1); octx.drawImage(cv, 0, 0) } octx.globalAlpha = 1
 };
 window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
