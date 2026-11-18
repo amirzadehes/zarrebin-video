@@ -533,6 +533,7 @@ function posterBg(t, sc) {
   else if (!hasPic || gate) { if (sc.bgc) posterColor(t, sc); else { const g0 = ctx.createLinearGradient(0, 0, W, H); g0.addColorStop(0, '#2b2118'); g0.addColorStop(1, '#14100e'); ctx.fillStyle = g0; ctx.fillRect(-300, -300, W + 600, H + 600) } }   // gradient (or the colour background) lies beneath until the picture arrives
   if (hasPic) bgPic(p, t, sc, false);
   if (!useCol) extra.slice().sort((a, b) => (a.t == null ? sc.t0 : a.t) - (b.t == null ? sc.t0 : b.t)).forEach((q, n) => { q.mi = q.mi == null ? n + 1 : q.mi; bgPic(q, t, sc, true) })   // later pictures arrive on top of the earlier ones
+  if (FLYC && FLYC.sc === sc && FLYC.used) return;   // fly-through: the next picture carries its own vignette
   let g = ctx.createLinearGradient(0, 0, 0, H * .3); g.addColorStop(0, 'rgba(10,6,2,.55)'); g.addColorStop(1, 'rgba(10,6,2,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H * .3);
   g = ctx.createLinearGradient(0, H * (V ? .62 : .6), 0, H); g.addColorStop(0, 'rgba(10,6,2,0)'); g.addColorStop(1, 'rgba(10,6,2,.72)'); ctx.fillStyle = g; ctx.fillRect(0, H * (V ? .62 : .6), W, H);
 }
@@ -871,26 +872,23 @@ function flyPre(k) { const a = D.scenes[k - 1], b = D.scenes[k]; return Math.min
 function flyIndex(t) { for (let k = 1; k < D.scenes.length; k++) { const sc = D.scenes[k]; if (flyOn(k) && t >= sc.t0 - flyPre(k) && t < sc.t0 + FLY_POST) return k } return -1 }
 function flyFocal(sc) { const f = sc.focal; return [clamp(f && f.x != null ? f.x : .5, .4, .6) * W, clamp(f && f.y != null ? f.y : .5, .4, .6) * H] }   // default: straight ahead (centre); sc.focal may steer the camera a little
 let FLYC = null;
-/* TRUE DOLLY: the camera itself travels forward. The leaving picture is already cut into depth layers (back / middle / front, from its depth map); the next picture is one more plane far behind them.
-   Perspective: a layer at distance d appears d / (d - z) times larger when the camera has moved z forward, so the near layers rush past and out of the frame first, the far ones later; the next picture
-   (distance d2, drawn between the back layer and the nearer layers, so the foreground passes IN FRONT of it) approaches and ends exactly filling the frame. Nothing is magnified as one flat picture. */
+/* TRUE DOLLY: the camera itself travels forward. The next picture is simply THERE, full frame, behind the leaving one. The leaving picture is cut into depth layers (back / middle / front, from its depth map);
+   with the camera moving forward a layer at distance d looks d / (d - z) times larger, so the near layers rush past and out of the frame first, then the back layer; each is gone once the camera has passed it,
+   and the next picture is uncovered exactly as it will be shown, nothing is enlarged and no frame is ever visible. */
 function flyDraw(t, k) {
-  const sc = D.scenes[k], pv = D.scenes[k - 1], K = +(sc.flyK || D.meta.flyK || 8), a = sc.t0 - flyPre(k), u = eio((t - a) / (flyPre(k) + FLY_POST)), d2 = 2.6, z = d2 * (1 - 1 / K) * u;
-  const C = [W / 2, H / 2], F = flyFocal(pv), cam = [(F[0] - C[0]) * K * u, (F[1] - C[1]) * K * u], tn = Math.max(t, sc.t0);
+  const sc = D.scenes[k], pv = D.scenes[k - 1], a = sc.t0 - flyPre(k), u = eio((t - a) / (flyPre(k) + FLY_POST)), tn = Math.max(t, sc.t0);
+  const C = [W / 2, H / 2], F = flyFocal(pv), cam = [(F[0] - C[0]) * u * .8, (F[1] - C[1]) * u * .8];   // sc.focal steers the camera a little; default: straight ahead
   const pvx = Object.assign(Object.create(pv), { text: '', number: '', layers: [], bubbles: [], keyOn: false });   // the leaving picture's captions clear away as the camera starts to move
-  const drawNext = () => {
-    const s2 = d2 / (K * (d2 - z)), Xw = [C[0] + (F[0] - C[0]) * K, C[1] + (F[1] - C[1]) * K], tx = C[0] * (1 - s2) + (Xw[0] - C[0] - cam[0]) * s2, ty = C[1] * (1 - s2) + (Xw[1] - C[1] - cam[1]) * s2, keep = [CUR, KREC, LREC], fl = FLYC;
-    ctx.save(); ctx.translate(tx, ty); ctx.scale(s2, s2); ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.clip(); FLYC = null; drawScene(tn, sc); FLYC = fl; ctx.restore(); CUR = keep[0]; KREC = keep[1]; LREC = keep[2]
-  };
   FLYC = { sc: pvx, used: false, go(PX, x, y, dw, dh, kq0, ox0, oy0, focus) {
     layersWarp(PX, ox0, oy0, kq0, focus); const Y = PX.ly; if (!Y || !Y.L.length) return false; this.used = true;
-    const draw = (l, i) => {
-      const d = 1 + (1 - l.f) * 1.2; let den = d - z; if (i === 0) den = Math.max(den, .35); if (den < .06) return;   // a layer the camera has passed is gone; the back layer stays as the backdrop of the next picture
-      const s = d / den, al = i === 0 ? 1 : clamp((den - .06) / .2), q = (1 + kq0 * l.f) * (i === 0 ? 1.03 : 1);
+    const dist = l => 1 + (1 - l.f) * 1.2, edge = i => i === 0 ? .35 : .06, zend = Math.max(...Y.L.map((l, i) => dist(l) - edge(i))) + .1, z = zend * u;
+    const keep = [CUR, KREC, LREC], fl = FLYC; FLYC = null; drawScene(tn, sc); FLYC = fl; CUR = keep[0]; KREC = keep[1]; LREC = keep[2];   // the next picture, full frame, already in place
+    Y.L.forEach((l, i) => {
+      const d = dist(l), den = d - z; if (den <= edge(i)) return;   // passed by the camera
+      const s = d / den, al = clamp((den - edge(i)) / (i === 0 ? .6 : .2)), q = (1 + kq0 * l.f) * (i === 0 ? 1.03 : 1);
       ctx.save(); ctx.globalAlpha *= al; ctx.translate(C[0] * (1 - s) - cam[0] * s, C[1] * (1 - s) - cam[1] * s); ctx.scale(s, s); ctx.translate(x, y); ctx.scale(dw / PX.w, dh / PX.h);
       ctx.translate(PX.w / 2 + ox0 * l.f, PX.h / 2 + oy0 * l.f); ctx.scale(q, q); ctx.translate(-PX.w / 2, -PX.h / 2); ctx.drawImage(l.cv, 0, 0); ctx.restore()
-    };
-    Y.L.forEach((l, i) => { draw(l, i); if (i === 0) drawNext() }); return true
+    }); return true
   } };
   FLYX = true; ctx.save(); drawScene(t, pvx); ctx.restore(); const used = FLYC.used; FLYC = null;
   if (!used) { FLYX = false; return flyDrawFlat(t, k) }   // no depth map for the leaving picture: fall back to the flat zoom
