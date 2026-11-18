@@ -327,6 +327,7 @@ function depthLayers(src, win) {   // win = [x0, y0, x1, y1]: the part of the pi
 }
 /* Calm edges: the 3D motion fades out towards the sides of what is on screen (meta.edge = fraction of the width that stays completely still at each side, default .2; top and bottom use half of it; 0 = off). The pulled / smeared picture shows up
    mostly at the borders, where the shift is largest and the picture has nothing to be pulled from, so there the picture simply stays flat and the 3D grows smoothly towards the middle. Returns {mx, my} per-column / per-row factors 0..1. */
+let DMODE = 'layers';   // 3D style: 'layers' (rigid cut-out layers, nothing is stretched) or 'stretch' (the old pixel warp)
 let EDG = .2;   // the calm-edge fraction of the picture being drawn (photo.edge, else meta.edge, else .2)
 function edgeMask(X) {
   const fr = EDG; if (!(fr > 0) || !X.vis) return null; const key = fr + '|' + X.vis.join(','); if (X.ek === key) return X.em;
@@ -344,6 +345,68 @@ function stretchLimit(X, S) {
   for (let y = 1; y < h; y++) { const r = y * w, q = r - w; for (let x = 0; x < w; x++) { const v = o[q + x] - c; if (v > o[r + x]) o[r + x] = v } }
   for (let y = h - 2; y >= 0; y--) { const r = y * w, q = r + w; for (let x = 0; x < w; x++) { const v = o[q + x] - c; if (v > o[r + x]) o[r + x] = v } }
   X.lk = key; return o
+}
+/* Layered 3D ("GTA loading screen" look): instead of stretching one picture over the depth map, the picture is cut into 2-3 rigid layers by depth (multi-Otsu on the depth map). Every layer keeps its true colours; the parts that
+   a nearer layer covers are filled in behind it (push-pull inpainting), so when the camera moves the near layer slides over the far one and what it uncovers is real picture, never pulled pixels. Nothing is ever stretched. */
+function otsu3(d, n) {
+  const B = 64, hs = new Float64Array(B); for (let i = 0; i < n; i++) hs[Math.min(B - 1, (d[i] * B) | 0)]++; const Pc = new Float64Array(B), Sc = new Float64Array(B); let a = 0, b = 0;
+  for (let k = 0; k < B; k++) { a += hs[k] / n; b += k * hs[k] / n; Pc[k] = a; Sc[k] = b } let best = -1, t = [B / 3, 2 * B / 3];
+  for (let i = 1; i < B - 1; i++) for (let j = i + 1; j < B; j++) { const w0 = Pc[i - 1], w1 = Pc[j - 1] - Pc[i - 1], w2 = 1 - Pc[j - 1]; if (w0 < .02 || w1 < .02 || w2 < .02) continue; const m0 = Sc[i - 1] / w0, m1 = (Sc[j - 1] - Sc[i - 1]) / w1, m2 = (Sc[B - 1] - Sc[j - 1]) / w2, v = w0 * m0 * m0 + w1 * m1 * m1 + w2 * m2 * m2; if (v > best) { best = v; t = [i, j] } }
+  return [t[0] / B, t[1] / B]
+}
+function dilateM(m, w, h, r) {   // grow a 0/1 mask by r px (square window, separable)
+  const a = new Uint8Array(m.length), o = new Uint8Array(m.length);
+  for (let y = 0; y < h; y++) { const q = y * w; for (let x = 0; x < w; x++) { let v = 0; for (let k = Math.max(0, x - r); k <= Math.min(w - 1, x + r); k++) if (m[q + k]) { v = 1; break } a[q + x] = v } }
+  for (let x = 0; x < w; x++) for (let y = 0; y < h; y++) { let v = 0; for (let k = Math.max(0, y - r); k <= Math.min(h - 1, y + r); k++) if (a[k * w + x]) { v = 1; break } o[y * w + x] = v }
+  return o
+}
+function inpaintRGB(P, valid, w, h) {   // fill every pixel that is not valid with the colour of the NEAREST valid pixel (two-pass distance sweep), so what a near layer uncovers continues the colours right beside it; returns Float32 rgb (w*h*3)
+  const n = w * h, dist = new Float32Array(n), rgb = new Float32Array(n * 3), INF = 1e9; for (let i = 0; i < n; i++) { if (valid[i]) { dist[i] = 0; rgb[i * 3] = P[i * 4]; rgb[i * 3 + 1] = P[i * 4 + 1]; rgb[i * 3 + 2] = P[i * 4 + 2] } else dist[i] = INF }
+  const rel = (i, j, c) => { if (dist[j] + c < dist[i]) { dist[i] = dist[j] + c; rgb[i * 3] = rgb[j * 3]; rgb[i * 3 + 1] = rgb[j * 3 + 1]; rgb[i * 3 + 2] = rgb[j * 3 + 2] } };
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const i = y * w + x; if (x > 0) rel(i, i - 1, 1); if (y > 0) { rel(i, i - w, 1); if (x > 0) rel(i, i - w - 1, 1.41); if (x < w - 1) rel(i, i - w + 1, 1.41) } }
+  for (let y = h - 1; y >= 0; y--) for (let x = w - 1; x >= 0; x--) { const i = y * w + x; if (x < w - 1) rel(i, i + 1, 1); if (y < h - 1) { rel(i, i + w, 1); if (x < w - 1) rel(i, i + w + 1, 1.41); if (x > 0) rel(i, i + w - 1, 1.41) } }
+  if (dist.some(v => v >= INF)) { let r = 0, g = 0, b = 0, c = 0; for (let i = 0; i < n; i++) if (valid[i]) { r += P[i * 4]; g += P[i * 4 + 1]; b += P[i * 4 + 2]; c++ } c = c || 1; for (let i = 0; i < n; i++) if (dist[i] >= INF) { rgb[i * 3] = r / c; rgb[i * 3 + 1] = g / c; rgb[i * 3 + 2] = b / c } }
+  return rgb
+}
+function inpaintPushPull(P, valid, w, h) {   // push-pull: fill every pixel that is not valid from the valid ones around it; returns Float32 rgb (w*h*3)
+  const lv = []; let cw = w, ch = h, s = new Float32Array(w * h * 4); for (let i = 0; i < w * h; i++) { const v = valid[i] ? 1 : 0; s[i * 4] = P[i * 4] * v; s[i * 4 + 1] = P[i * 4 + 1] * v; s[i * 4 + 2] = P[i * 4 + 2] * v; s[i * 4 + 3] = v } lv.push({ w: cw, h: ch, s });
+  while (cw > 1 || ch > 1) { const nw = Math.max(1, cw >> 1), nh = Math.max(1, ch >> 1), t = new Float32Array(nw * nh * 4), pr = lv[lv.length - 1].s;
+    for (let y = 0; y < nh; y++) for (let x = 0; x < nw; x++) { let r = 0, g = 0, b = 0, wt = 0; for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 2; dx++) { const X1 = Math.min(cw - 1, x * 2 + dx), Y1 = Math.min(ch - 1, y * 2 + dy), k = (Y1 * cw + X1) * 4; r += pr[k]; g += pr[k + 1]; b += pr[k + 2]; wt += pr[k + 3] } const k2 = (y * nw + x) * 4; t[k2] = r / 4; t[k2 + 1] = g / 4; t[k2 + 2] = b / 4; t[k2 + 3] = wt / 4 }
+    lv.push({ w: nw, h: nh, s: t }); cw = nw; ch = nh }
+  let up = null;   // pull: from the coarsest level down, a pixel keeps its own colour in proportion to how well known it is and takes the rest from the level above
+  for (let L = lv.length - 1; L >= 0; L--) { const { w: lw, h: lh, s: ls } = lv[L], res = new Float32Array(lw * lh * 3);
+    for (let y = 0; y < lh; y++) for (let x = 0; x < lw; x++) { const k = (y * lw + x) * 4, wt = Math.min(1, ls[k + 3] * 1.0), i3 = (y * lw + x) * 3; let r = 0, g = 0, b = 0;
+      if (wt > 0) { r = ls[k] / ls[k + 3]; g = ls[k + 1] / ls[k + 3]; b = ls[k + 2] / ls[k + 3] } if (wt < 1 && up) { const u = up.res, fx = Math.max(0, Math.min(up.w - 1, (x + .5) / 2 - .5)), fy = Math.max(0, Math.min(up.h - 1, (y + .5) / 2 - .5)), x0 = fx | 0, y0 = fy | 0, x1 = Math.min(up.w - 1, x0 + 1), y1 = Math.min(up.h - 1, y0 + 1), ax = fx - x0, ay = fy - y0, bl = c => (u[(y0 * up.w + x0) * 3 + c] * (1 - ax) + u[(y0 * up.w + x1) * 3 + c] * ax) * (1 - ay) + (u[(y1 * up.w + x0) * 3 + c] * (1 - ax) + u[(y1 * up.w + x1) * 3 + c] * ax) * ay;   // bilinear, so the fill is smooth, never blocky
+        r = r * wt + bl(0) * (1 - wt); g = g * wt + bl(1) * (1 - wt); b = b * wt + bl(2) * (1 - wt) }
+      res[i3] = r; res[i3 + 1] = g; res[i3 + 2] = b } up = { w: lw, h: lh, res } }
+  return up.res
+}
+function buildLayers(X) {
+  const { w, h, P, d } = X, n = w * h; if (n < 64) return null; const t = otsu3(d, n), band = new Uint8Array(n);
+  for (let i = 0; i < n; i++) band[i] = d[i] < t[0] ? 0 : d[i] < t[1] ? 1 : 2;
+  const pct = (b, q) => { const hs = new Uint32Array(256); let c = 0; for (let i = 0; i < n; i++) if (band[i] === b) { hs[Math.min(255, (d[i] * 255) | 0)]++; c++ } if (!c) return 0; let a = 0; for (let v = 0; v < 256; v++) { a += hs[v]; if (a >= c * q) return v / 255 } return 1 };
+  const TOL = .07; for (let b = 2; b >= 1; b--) { const lev = pct(b, .9); for (let i = 0; i < n; i++) if (band[i] === b && d[i] < lev - TOL) band[i] = b - 1 }   // the soft ramp beside a near object belongs to the layer behind it, so no background is carried along
+  const cnt = [0, 0, 0]; for (let i = 0; i < n; i++) cnt[band[i]]++; for (let b = 2; b >= 1; b--) if (cnt[b] < n * .02) { for (let i = 0; i < n; i++) if (band[i] === b) band[i] = b - 1; cnt[b - 1] += cnt[b]; cnt[b] = 0 }
+  const ids = [0, 1, 2].filter(b => cnt[b] >= n * .02); if (ids.length < 2) return null;
+  const L = [], top = ids[ids.length - 1];
+  ids.forEach(b => {
+    const isB = new Uint8Array(n), near = new Uint8Array(n), other = new Uint8Array(n); let sf = 0, sc = 0, fv = [];
+    for (let i = 0; i < n; i++) { if (band[i] === b) { isB[i] = 1; fv.push(d[i]) } else if (band[i] > b) near[i] = 1; else other[i] = 1 }
+    fv.sort((a, c) => a - c); const f = b === ids[0] ? fv[fv.length >> 1] : fv[Math.floor(fv.length * .9)];
+    const nearD = dilateM(near, w, h, 3), otherD = dilateM(band.map(v => v !== b ? 1 : 0), w, h, 1), valid = new Uint8Array(n), alpha = new Float32Array(n);
+    for (let i = 0; i < n; i++) { valid[i] = isB[i] && !otherD[i] && !(b === ids[0] && nearD[i]) ? 1 : 0; alpha[i] = isB[i] || (b !== top && dilateNear2(i)) ? 1 : 0 }
+    function dilateNear2(i) { return nearD[i] && !other[i] }
+    const rgb = inpaintRGB(P, valid, w, h); { const ch = [0, 1, 2].map(c => { const f = new Float32Array(n); for (let i = 0; i < n; i++) f[i] = rgb[i * 3 + c]; return boxBlur(boxBlur(f, w, h, 3), w, h, 3) }); for (let i = 0; i < n; i++) if (!valid[i]) { rgb[i * 3] = ch[0][i]; rgb[i * 3 + 1] = ch[1][i]; rgb[i * 3 + 2] = ch[2][i] } }   // filled areas are painted soft (a gentle blur), real pixels untouched
+    const a2 = boxBlur(alpha, w, h, 1), cv = document.createElement('canvas'); cv.width = w; cv.height = h; const g = cv.getContext('2d'), im = g.createImageData(w, h), O = im.data;
+    for (let i = 0; i < n; i++) { O[i * 4] = rgb[i * 3]; O[i * 4 + 1] = rgb[i * 3 + 1]; O[i * 4 + 2] = rgb[i * 3 + 2]; O[i * 4 + 3] = b === ids[0] ? 255 : Math.round(Math.min(1, a2[i] * 1.15) * 255) }
+    g.putImageData(im, 0, 0); L.push({ cv, f })
+  }); return { L }
+}
+function layersWarp(X, ox, oy, kq) {
+  const Y = X.ly !== undefined ? X.ly : (X.ly = (() => { try { return buildLayers(X) } catch (e) { return null } })()); if (!Y) return null;
+  const { w, h } = X, g = X.og, cx = w / 2, cy = h / 2; g.clearRect(0, 0, w, h);
+  Y.L.forEach((l, i) => { const q = (1 + kq * l.f) * (i === 0 ? 1.03 : 1); g.save(); g.translate(cx + ox * l.f, cy + oy * l.f); g.scale(q, q); g.translate(-cx, -cy); g.drawImage(l.cv, 0, 0); g.restore() });
+  return X.out
 }
 function depthWarp(X, ox, oy, kq) {   // X: depthLayers result; every pixel moves by (ox, oy) * its depth (image px) and is scaled about the centre by 1 + kq * depth; returns the canvas
   const { w, h, P } = X, EM = edgeMask(X), MX = EM ? EM.mx : null, MY = EM ? EM.my : null, d = stretchLimit(X, Math.max(Math.abs(ox) + Math.abs(kq) * w / 2, Math.abs(oy) + Math.abs(kq) * h / 2)), O = X.id.data, cx = w / 2, cy = h / 2, mx = w - 1, my = h - 1, n = w * h; let i = 0;
@@ -435,9 +498,10 @@ function bgPic(p, t, sc, gateAlways) {   // one background picture (the scene's 
     const cx = EDIT ? Math.sin(TH * .8) : lerp(-1, 1, pc) * (sc.idx % 2 ? -1 : 1), cy = EDIT ? Math.sin(TH * .55) : Math.sin(pc * Math.PI * 2), amp = PA * W, ez = EDIT ? .5 * Math.sin(TH * .8 + 1) : (pc - .5) * (mo === 'out' ? -1 : 1);   // ez: dolly, the near bands grow (or shrink) faster than the far ones, with every kind of zoom
     const cm = p.cam3 || D.meta.cam3 || 1, dfl = p.dof != null ? p.dof : D.meta.dof != null ? D.meta.dof : 0;   // the 3D camera move (0 / 1 = auto: the rigid CPU warp, exactly as before the WebGL camera; the WebGL camera only runs for the explicit moves 2-6, because its ray march stretches faces and clips thin heads at soft depth edges) and soft focus
     EDG = p.edge != null ? +p.edge : D.meta.edge != null ? +D.meta.edge : .2;
+    DMODE = p.dmode || D.meta.dmode || 'layers';
     const put = (g, ox0, oy0) => {
       let src = 0; if (cm > 1 && cm < CAMS.length) { const C = camMove(cm, pc, sc, EDIT, TH, mo); src = depthGL(PX, amp * C.cx / dw, amp * C.cy / dh, PA * 1.8 * C.ez, C.pv, [0, .004, .008, .014][dfl] || 0) }
-      g.drawImage(src || depthWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez), ox0, oy0, dw, dh)
+      g.drawImage(src || (DMODE === 'layers' && layersWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez)) || depthWarp(PX, amp * cx * PX.w / dw, amp * .3 * cy * PX.h / dh, PA * 1.8 * ez), ox0, oy0, dw, dh)
     };
     put(ctx, x, y)
   } else ctx.drawImage(im, x, y, dw, dh);
