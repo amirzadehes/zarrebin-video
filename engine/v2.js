@@ -706,7 +706,8 @@ function placeFx(t, sc, L, li) {
     if (!BIG && date && yr && fy != null && fy !== yr) {   // the ruler under the chip: the dot slides from the start year to the end year at its true place; it fades out once the year has arrived
       const ra0 = EDIT ? 1 : ramp(d, .6, 1.1), rA = EDIT ? 1 : ra0 * (1 - ramp(d, 4.6, 5.2));
       if (rA > 0) {
-        const hiY = Math.max(nowYear, fy, yr), mnY = Math.min(fy, yr), span = hiY - mnY, stp = span > 1500 ? 500 : span > 600 ? 200 : span > 250 ? 100 : span > 120 ? 50 : span > 50 ? 20 : 10, loY = Math.floor(mnY / stp) * stp, RW = Math.min(W * .86, Math.max(cwid, W * .6)),
+        const hiY = Math.max(nowYear, fy, yr), mnY = Math.min(fy, yr), span = hiY - mnY, stp = span > 1500 ? 500 : span > 600 ? 200 : span > 250 ? 100 : span > 120 ? 50 : span > 50 ? 20 : 10, loY = Math.floor(mnY / stp) * stp, RW = cwid,   // as wide as the chip above it
+          
           pos = v => { const f = (v - loY) / (hiY - loY); return rtl ? RW / 2 - RW * f : -RW / 2 + RW * f }, rcx = Math.max(RW / 2 + 24, Math.min(W - RW / 2 - 24, ccx));
         ctx.save(); ctx.globalAlpha = cp * fade * rA; ctx.translate(rcx, cy2 + ch / 2 + cz * 1.05 - (1 - ra0) * 8); shadow(8); ctx.lineCap = 'round'; ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = 3;
         ctx.beginPath(); ctx.moveTo(-RW / 2, 0); ctx.lineTo(RW / 2, 0); for (let q = 0; q <= 4; q++) { const x = -RW / 2 + RW * q / 4; ctx.moveTo(x, -cz * .3); ctx.lineTo(x, cz * .3) } ctx.stroke();
