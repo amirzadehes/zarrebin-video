@@ -8,6 +8,24 @@
   "query": "airport terminal ambience",
   "seconds": 120
  },
+ "airport-2": {
+  "by": "Soojay",
+  "freesound_id": 319100,
+  "license": "CC0",
+  "lufs": -19.5,
+  "name": "Facturación.WAV",
+  "query": "airport terminal ambience",
+  "seconds": 59.1
+ },
+ "airport-3": {
+  "by": "ToXXuS",
+  "freesound_id": 591233,
+  "license": "CC0",
+  "lufs": -26.1,
+  "name": "terminal3.wav",
+  "query": "airport terminal ambience",
+  "seconds": 41.4
+ },
  "cafe": {
   "by": "Laggardson",
   "freesound_id": 627079,
@@ -16,6 +34,24 @@
   "name": "Diner in Virginia",
   "query": "cafe restaurant ambience chatter",
   "seconds": 120
+ },
+ "cafe-2": {
+  "by": "hz37",
+  "freesound_id": 852103,
+  "license": "CC0",
+  "lufs": -20.7,
+  "name": "Dutch restaurant busy walla coffee cups indoor Singer Laren april 2026",
+  "query": "cafe restaurant ambience chatter",
+  "seconds": 63.1
+ },
+ "cafe-3": {
+  "by": "Juan.Solo",
+  "freesound_id": 461062,
+  "license": "CC0",
+  "lufs": -25.7,
+  "name": "Ambiente bar Bizietes viernes hora del almuerzo .wav",
+  "query": "cafe restaurant ambience chatter",
+  "seconds": 90
  },
  "children-playground": {
   "by": "CheatinSloth",
@@ -35,6 +71,24 @@
   "query": "church bells distant",
   "seconds": 36.5
  },
+ "church-bells-2": {
+  "by": "tferrino",
+  "freesound_id": 634976,
+  "license": "CC0",
+  "lufs": -56.5,
+  "name": "AMB dogs barking, church bell, distant city traffic (ST)",
+  "query": "church bells distant",
+  "seconds": 90
+ },
+ "church-bells-3": {
+  "by": "richwise",
+  "freesound_id": 734644,
+  "license": "CC0",
+  "lufs": -28.9,
+  "name": "Spring at Furzey Gardens",
+  "query": "church bells distant",
+  "seconds": 90
+ },
  "city-traffic": {
   "by": "conleec",
   "freesound_id": 149935,
@@ -43,6 +97,24 @@
   "name": "AMB_Ext_Residential_Day_Stereo_002.wav",
   "query": "city traffic ambience",
   "seconds": 120
+ },
+ "city-traffic-2": {
+  "by": "Joao_Janz",
+  "freesound_id": 473723,
+  "license": "CC0",
+  "lufs": -39.0,
+  "name": "Kitchen Ambience During Daytime .wav",
+  "query": "city traffic ambience",
+  "seconds": 28.9
+ },
+ "city-traffic-3": {
+  "by": "khenshom",
+  "freesound_id": 565783,
+  "license": "CC0",
+  "lufs": -43.3,
+  "name": "Urban afternoon ambient with construction work",
+  "query": "city traffic ambience",
+  "seconds": 90
  },
  "crowd-hall": {
   "by": "IENBA",
@@ -62,6 +134,24 @@
   "query": "crowd murmur ambience",
   "seconds": 32.6
  },
+ "crowd-murmur-2": {
+  "by": "Mariayolanda511",
+  "freesound_id": 850562,
+  "license": "CC0",
+  "lufs": -21.9,
+  "name": "Walla Teatro",
+  "query": "crowd murmur ambience",
+  "seconds": 60.5
+ },
+ "crowd-murmur-3": {
+  "by": "HECKFRICKER",
+  "freesound_id": 729329,
+  "license": "CC0",
+  "lufs": -18.4,
+  "name": "Spacious Bar Ambience With Music, Medium Crowd 01",
+  "query": "crowd murmur ambience",
+  "seconds": 90
+ },
  "fire-crackle": {
   "by": "OwennewO",
   "freesound_id": 549208,
@@ -71,6 +161,24 @@
   "query": "fire crackling fireplace",
   "seconds": 28.4
  },
+ "fire-crackle-2": {
+  "by": "Poulpy2.0",
+  "freesound_id": 679405,
+  "license": "CC0",
+  "lufs": -32.3,
+  "name": "Fire close 1.wav",
+  "query": "fire crackling fireplace",
+  "seconds": 58.4
+ },
+ "fire-crackle-3": {
+  "by": "SMKoski02",
+  "freesound_id": 868895,
+  "license": "CC0",
+  "lufs": -40.3,
+  "name": "Fireplace_Outside_Fire_3",
+  "query": "fire crackling fireplace",
+  "seconds": 33.4
+ },
  "forest-birds": {
   "by": "Archos",
   "freesound_id": 468241,
@@ -79,6 +187,24 @@
   "name": "Thailand Phangan Jungle Waterfall 2",
   "query": "forest birds ambience",
   "seconds": 37.5
+ },
+ "forest-birds-2": {
+  "by": "apintofmild",
+  "freesound_id": 640187,
+  "license": "CC0",
+  "lufs": -30.3,
+  "name": "Woodland Atmos 01 03-06-2022.wav",
+  "query": "forest birds ambience",
+  "seconds": 31.2
+ },
+ "forest-birds-3": {
+  "by": "felix.blume",
+  "freesound_id": 414098,
+  "license": "CC0",
+  "lufs": -32.4,
+  "name": "Forest quiet atmosphere with some birds",
+  "query": "forest birds ambience",
+  "seconds": 90
  },
  "horse-walk": {
   "by": "craigsmith",
@@ -98,6 +224,24 @@
   "query": "kitchen cooking ambience",
   "seconds": 61.1
  },
+ "kitchen-2": {
+  "by": "Frigus_XIII",
+  "freesound_id": 554583,
+  "license": "CC0",
+  "lufs": -35.0,
+  "name": "Apartman ambience - Making tea",
+  "query": "kitchen cooking ambience",
+  "seconds": 90
+ },
+ "kitchen-3": {
+  "by": "brunoboselli",
+  "freesound_id": 512511,
+  "license": "CC0",
+  "lufs": -36.3,
+  "name": "Kitchen Ambience",
+  "query": "kitchen cooking ambience",
+  "seconds": 63.0
+ },
  "market-street": {
   "by": "felix.blume",
   "freesound_id": 705303,
@@ -106,6 +250,24 @@
   "name": "Market fair ambience with music, street seller loudspeaker far, carousel and crowd hubbub",
   "query": "market street crowd ambience",
   "seconds": 120
+ },
+ "market-street-2": {
+  "by": "bruno.auzet",
+  "freesound_id": 700436,
+  "license": "CC0",
+  "lufs": -29.7,
+  "name": "Le Cheylard outside summer market.wav",
+  "query": "market street crowd ambience",
+  "seconds": 90
+ },
+ "market-street-3": {
+  "by": "sounds_from_palestine",
+  "freesound_id": 819223,
+  "license": "CC0",
+  "lufs": -24.4,
+  "name": "Evening Bazaar Ambience at Souq Al Bashorah, Ramallah – Palestine",
+  "query": "market street crowd ambience",
+  "seconds": 90
  },
  "night-city": {
   "by": "softwalls",
@@ -116,6 +278,24 @@
   "query": "night city ambience distant traffic",
   "seconds": 120
  },
+ "night-city-2": {
+  "by": "TRP",
+  "freesound_id": 572530,
+  "license": "CC0",
+  "lufs": -23.2,
+  "name": "180912 Night city rumble quiet distant traffic roof urban residential TORONTO.flac",
+  "query": "night city ambience distant traffic",
+  "seconds": 90
+ },
+ "night-city-3": {
+  "by": "Artem_Zaitsev",
+  "freesound_id": 835896,
+  "license": "CC0",
+  "lufs": -46.8,
+  "name": "Summer Night Ambience – Heat, AC Units, Sparse Traffic",
+  "query": "night city ambience distant traffic",
+  "seconds": 88.3
+ },
  "night-crickets": {
   "by": "Daphne_in_Wonderland",
   "freesound_id": 383479,
@@ -124,6 +304,24 @@
   "name": "Crickets, very distant barks summer night.wav",
   "query": "night crickets ambience",
   "seconds": 73.4
+ },
+ "night-crickets-2": {
+  "by": "AnthonyRamirez",
+  "freesound_id": 425425,
+  "license": "CC0",
+  "lufs": -42.7,
+  "name": "AMB_Rural_Summer_Night.wav",
+  "query": "night crickets ambience",
+  "seconds": 90
+ },
+ "night-crickets-3": {
+  "by": "leonelmail",
+  "freesound_id": 579572,
+  "license": "CC0",
+  "lufs": -55.2,
+  "name": "Quiet summer night tone with steady close crickets and other animal calls 1",
+  "query": "night crickets ambience",
+  "seconds": 50.6
  },
  "office": {
   "by": "florianreichelt",
@@ -134,6 +332,24 @@
   "query": "office ambience",
   "seconds": 22.6
  },
+ "office-2": {
+  "by": "mzui",
+  "freesound_id": 203295,
+  "license": "CC0",
+  "lufs": -42.4,
+  "name": "Room Tone Office Industrial Ambience 03",
+  "query": "office ambience",
+  "seconds": 90
+ },
+ "office-3": {
+  "by": "mzui",
+  "freesound_id": 203297,
+  "license": "CC0",
+  "lufs": -49.4,
+  "name": "Room Tone Office Industrial Ambience 01",
+  "query": "office ambience",
+  "seconds": 90
+ },
  "rain-heavy": {
   "by": "Baconation",
   "freesound_id": 592483,
@@ -142,6 +358,24 @@
   "name": "Heavy Rain to Lesser",
   "query": "heavy rain ambience",
   "seconds": 20.2
+ },
+ "rain-heavy-2": {
+  "by": "EduardoAli",
+  "freesound_id": 844531,
+  "license": "CC0",
+  "lufs": -23.9,
+  "name": "Frogs After Rain - Rural Night Ambience",
+  "query": "heavy rain ambience",
+  "seconds": 74.8
+ },
+ "rain-heavy-3": {
+  "by": "khenshom",
+  "freesound_id": 503279,
+  "license": "CC0",
+  "lufs": -36.9,
+  "name": "Rain and hail fall on ground outside",
+  "query": "heavy rain ambience",
+  "seconds": 40.0
  },
  "rain-light": {
   "by": "Garuda1982",
@@ -152,6 +386,24 @@
   "query": "light rain ambience",
   "seconds": 66.0
  },
+ "rain-light-2": {
+  "by": "Artem_Zaitsev",
+  "freesound_id": 835893,
+  "license": "CC0",
+  "lufs": -47.1,
+  "name": "Light Rain with Voices",
+  "query": "light rain ambience",
+  "seconds": 90
+ },
+ "rain-light-3": {
+  "by": "hz37",
+  "freesound_id": 395685,
+  "license": "CC0",
+  "lufs": -44.4,
+  "name": "Rain city center Groningen afternoon August 2011",
+  "query": "light rain ambience",
+  "seconds": 90
+ },
  "river-stream": {
   "by": "Archos",
   "freesound_id": 468241,
@@ -160,6 +412,24 @@
   "name": "Thailand Phangan Jungle Waterfall 2",
   "query": "river stream water ambience",
   "seconds": 37.5
+ },
+ "river-stream-2": {
+  "by": "SduggySounds",
+  "freesound_id": 721616,
+  "license": "CC0",
+  "lufs": -34.7,
+  "name": "Creek Ambience",
+  "query": "river stream water ambience",
+  "seconds": 35.1
+ },
+ "river-stream-3": {
+  "by": "BonnyOrbit",
+  "freesound_id": 442475,
+  "license": "CC0",
+  "lufs": -21.6,
+  "name": "Big waterfall in forest.wav",
+  "query": "river stream water ambience",
+  "seconds": 90
  },
  "room-tone": {
   "by": "deleted_user_2104797",
@@ -170,6 +440,24 @@
   "query": "quiet room tone interior",
   "seconds": 120
  },
+ "room-tone-2": {
+  "by": "deleted_user_2104797",
+  "freesound_id": 164799,
+  "license": "CC0",
+  "lufs": -62.2,
+  "name": "INT Bathroom tone 1.wav",
+  "query": "quiet room tone interior",
+  "seconds": 90
+ },
+ "room-tone-3": {
+  "by": "IENBA",
+  "freesound_id": 761024,
+  "license": "CC0",
+  "lufs": -46.1,
+  "name": "Very Quiet Indoor Roomtone",
+  "query": "quiet room tone interior",
+  "seconds": 27.5
+ },
  "sea-waves": {
   "by": "nick121087",
   "freesound_id": 476886,
@@ -178,6 +466,24 @@
   "name": "Ocean Ambiance Night",
   "query": "ocean waves ambience",
   "seconds": 59.2
+ },
+ "sea-waves-2": {
+  "by": "seventhsamurai",
+  "freesound_id": 790352,
+  "license": "CC0",
+  "lufs": -17.9,
+  "name": "Seaside Morning Post Rain Ambience - Hambantota, Sri Lanka",
+  "query": "ocean waves ambience",
+  "seconds": 90
+ },
+ "sea-waves-3": {
+  "by": "NapierFreesound",
+  "freesound_id": 710861,
+  "license": "CC0",
+  "lufs": -37.3,
+  "name": "Ocean-Far-Away+Construction-Sound+Birds",
+  "query": "ocean waves ambience",
+  "seconds": 62.8
  },
  "storm-thunder": {
   "by": "benmerrill328",
@@ -188,6 +494,24 @@
   "query": "thunderstorm rain thunder ambience",
   "seconds": 30.3
  },
+ "storm-thunder-2": {
+  "by": "Vrymaa",
+  "freesound_id": 810880,
+  "license": "CC0",
+  "lufs": -33.7,
+  "name": "Thunder + Rain - Courtyard",
+  "query": "thunderstorm rain thunder ambience",
+  "seconds": 90
+ },
+ "storm-thunder-3": {
+  "by": "Dominik_W",
+  "freesound_id": 398592,
+  "license": "CC0",
+  "lufs": -33.6,
+  "name": "Thunderstorm, heavy rain, city, street, occasional cars passing by",
+  "query": "thunderstorm rain thunder ambience",
+  "seconds": 90
+ },
  "train-station": {
   "by": "be_a_hero_not_a_patriot",
   "freesound_id": 430984,
@@ -196,6 +520,24 @@
   "name": "metro, Warszawa, 2017, Centrum station ambience, no trains, many people, kids, Poland.wav",
   "query": "train station ambience",
   "seconds": 120
+ },
+ "train-station-2": {
+  "by": "flood-mix",
+  "freesound_id": 413386,
+  "license": "CC0",
+  "lufs": -24.2,
+  "name": "Astoria NYC - Winter City on Elevated Train Station/Air Tone - Night/Exterior",
+  "query": "train station ambience",
+  "seconds": 90
+ },
+ "train-station-3": {
+  "by": "florianreichelt",
+  "freesound_id": 451720,
+  "license": "CC0",
+  "lufs": -24.3,
+  "name": "Underground Train Station Ambience",
+  "query": "train station ambience",
+  "seconds": 21.7
  },
  "wind-cold": {
   "by": "khenshom",
@@ -206,6 +548,24 @@
   "query": "cold winter wind ambience",
   "seconds": 66.9
  },
+ "wind-cold-2": {
+  "by": "NickTayloe",
+  "freesound_id": 847069,
+  "license": "CC0",
+  "lufs": -14.4,
+  "name": "Pair of Geese",
+  "query": "cold winter wind ambience",
+  "seconds": 90
+ },
+ "wind-cold-3": {
+  "by": "giddster",
+  "freesound_id": 383403,
+  "license": "CC0",
+  "lufs": -44.1,
+  "name": "Traffic 4 (late night)",
+  "query": "cold winter wind ambience",
+  "seconds": 90
+ },
  "wind-desert": {
   "by": "Danjocross",
   "freesound_id": 579250,
@@ -215,6 +575,24 @@
   "query": "desert wind ambience",
   "seconds": 120
  },
+ "wind-desert-2": {
+  "by": "younoise",
+  "freesound_id": 682822,
+  "license": "CC0",
+  "lufs": -27.8,
+  "name": "Into Desert Glow.wav",
+  "query": "desert wind ambience",
+  "seconds": 90
+ },
+ "wind-desert-3": {
+  "by": "szegvari",
+  "freesound_id": 557552,
+  "license": "CC0",
+  "lufs": -18.5,
+  "name": "Dark Sahara Egypt",
+  "query": "desert wind ambience",
+  "seconds": 78.9
+ },
  "wind-light": {
   "by": "nickmaysoundmusic",
   "freesound_id": 523372,
@@ -223,5 +601,23 @@
   "name": "Woods_ambience_summer_UK_birds_light_wind_through_trees",
   "query": "light wind breeze ambience",
   "seconds": 120
+ },
+ "wind-light-2": {
+  "by": "roisin.gleeson",
+  "freesound_id": 653095,
+  "license": "CC0",
+  "lufs": -60.9,
+  "name": "Neighbourhood-ambience-birds-distant-traffic-breeze.WAV",
+  "query": "light wind breeze ambience",
+  "seconds": 90
+ },
+ "wind-light-3": {
+  "by": "nickmaysoundmusic",
+  "freesound_id": 523373,
+  "license": "CC0",
+  "lufs": -39.8,
+  "name": "Woods_ambience_summer_UK_birds_light_wind_through_trees_wings_flapping",
+  "query": "light wind breeze ambience",
+  "seconds": 51.8
  }
 }
