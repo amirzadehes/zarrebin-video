@@ -62,6 +62,24 @@
   "query": "applause audience clapping",
   "seconds": 31.7
  },
+ "autumn-leaves": {
+  "by": "PostProdDog",
+  "freesound_id": 537332,
+  "license": "CC0",
+  "lufs": -26.1,
+  "name": "truck passes on windy fall street distant train whistle",
+  "query": "autumn leaves rustling wind",
+  "seconds": 56.3
+ },
+ "autumn-leaves-2": {
+  "by": "gsparrysound",
+  "freesound_id": 848978,
+  "license": "CC0",
+  "lufs": -38.4,
+  "name": "Wind rustling leaves through tree Cardiff",
+  "query": "autumn leaves rustling wind",
+  "seconds": 90
+ },
  "bar-pub": {
   "by": "domasmo",
   "freesound_id": 376456,
@@ -80,6 +98,15 @@
   "query": "bar pub ambience chatter",
   "seconds": 28.5
  },
+ "bees-garden": {
+  "by": "myrinvp",
+  "freesound_id": 859809,
+  "license": "CC0",
+  "lufs": -38.2,
+  "name": "Bees gallore - garden hedge full of bees",
+  "query": "bees garden summer ambience",
+  "seconds": 73.4
+ },
  "birds-morning": {
   "by": "Synge101",
   "freesound_id": 611453,
@@ -96,6 +123,24 @@
   "lufs": -26.8,
   "name": "London Birds",
   "query": "morning birds dawn chorus",
+  "seconds": 90
+ },
+ "boat-engine": {
+  "by": "jackmichaelking",
+  "freesound_id": 559818,
+  "license": "CC0",
+  "lufs": -28.7,
+  "name": "Boat motoring past with proceeding waves hitting the embankment.WAV",
+  "query": "boat engine ambience water",
+  "seconds": 90
+ },
+ "boat-engine-2": {
+  "by": "jackmichaelking",
+  "freesound_id": 559819,
+  "license": "CC0",
+  "lufs": -25.4,
+  "name": "Accelerating out of the Marina with proceeding waves hitting embankment.WAV",
+  "query": "boat engine ambience water",
   "seconds": 90
  },
  "cafe": {
@@ -160,6 +205,33 @@
   "name": "CAR, INTERIOR, INSIDE, KEY, IGNITION, DRIVING Stereo atmos atmosphere wildtrack ambience.mp3",
   "query": "car interior driving ambience",
   "seconds": 90
+ },
+ "castle": {
+  "by": "Dani_S.T.",
+  "freesound_id": 811903,
+  "license": "CC0",
+  "lufs": -34.6,
+  "name": "AMB_INT_walla_Iglesia_Castillo_Peniscola__2506071",
+  "query": "castle interior stone ambience",
+  "seconds": 90
+ },
+ "cattle-field": {
+  "by": "vonfleisch",
+  "freesound_id": 272458,
+  "license": "CC0",
+  "lufs": -37.3,
+  "name": "Nature sounds, bells, goats, cow, birds - Kardzhali, Bulgaria",
+  "query": "cows field ambience",
+  "seconds": 90
+ },
+ "cattle-field-2": {
+  "by": "technekai",
+  "freesound_id": 728939,
+  "license": "CC0",
+  "lufs": -41.8,
+  "name": "Dartmoor morning",
+  "query": "cows field ambience",
+  "seconds": 45.7
  },
  "cave-drips": {
   "by": "clif_creates",
@@ -404,6 +476,24 @@
   "query": "dungeon dark ambience dripping",
   "seconds": 90
  },
+ "earthquake": {
+  "by": "craigsmith",
+  "freesound_id": 483287,
+  "license": "CC0",
+  "lufs": -27.7,
+  "name": "R29-03-Long Rumble for Earthquake or Explosion.wav",
+  "query": "earthquake rumble",
+  "seconds": 23.2
+ },
+ "earthquake-2": {
+  "by": "CHallSmith",
+  "freesound_id": 870683,
+  "license": "CC0",
+  "lufs": -16.5,
+  "name": "Earthquake Rumble, Low Frequency",
+  "query": "earthquake rumble",
+  "seconds": 90
+ },
  "factory": {
   "by": "CVLTIV8R",
   "freesound_id": 858786,
@@ -521,6 +611,15 @@
   "query": "frogs swamp night ambience",
   "seconds": 33.1
  },
+ "goats-hills": {
+  "by": "BonnyOrbit",
+  "freesound_id": 400785,
+  "license": "CC0",
+  "lufs": -44.1,
+  "name": "Swiss hills with animals with bells.WAV",
+  "query": "goats bells hills ambience",
+  "seconds": 32.3
+ },
  "heartbeat": {
   "by": "bassimat",
   "freesound_id": 860878,
@@ -538,6 +637,42 @@
   "name": "Paulheartbeat.wav",
   "query": "heartbeat slow",
   "seconds": 45.9
+ },
+ "helicopter": {
+  "by": "BeaconStudio",
+  "freesound_id": 861232,
+  "license": "CC0",
+  "lufs": -25.0,
+  "name": "Noise #6 helicopter rumble",
+  "query": "helicopter flying ambience",
+  "seconds": 73.2
+ },
+ "helicopter-2": {
+  "by": "SimJoo",
+  "freesound_id": 755806,
+  "license": "CC0",
+  "lufs": -41.8,
+  "name": "Walking Down a Dirt Road at Night",
+  "query": "helicopter flying ambience",
+  "seconds": 90
+ },
+ "highway": {
+  "by": "yoni75",
+  "freesound_id": 636027,
+  "license": "CC0",
+  "lufs": -48.4,
+  "name": "Field next to highway- evening",
+  "query": "highway traffic distant ambience",
+  "seconds": 78.9
+ },
+ "highway-2": {
+  "by": "memuse",
+  "freesound_id": 333086,
+  "license": "CC0",
+  "lufs": -46.3,
+  "name": "california night time suburb ambience distant traffic.wav",
+  "query": "highway traffic distant ambience",
+  "seconds": 80.4
  },
  "horse-gallop": {
   "by": "craigsmith",
@@ -584,6 +719,24 @@
   "query": "hospital ambience",
   "seconds": 90
  },
+ "ice-cracking": {
+  "by": "Vrymaa",
+  "freesound_id": 735401,
+  "license": "CC0",
+  "lufs": -26.6,
+  "name": "Ice - Fracture, roots or growing plants",
+  "query": "ice cracking frozen lake",
+  "seconds": 49.2
+ },
+ "ice-cracking-2": {
+  "by": "Vrymaa",
+  "freesound_id": 737896,
+  "license": "CC0",
+  "lufs": -17.4,
+  "name": "Ice - Lake fractures",
+  "query": "ice cracking frozen lake",
+  "seconds": 58.1
+ },
  "insects-summer": {
   "by": "RyanKingArt",
   "freesound_id": 746365,
@@ -619,6 +772,24 @@
   "name": "Bako National Park, Borneo Island, Rain Forest Ambience daytime 01.10.2013 Roland R-26 XY Mics.wav",
   "query": "jungle rainforest ambience",
   "seconds": 64.0
+ },
+ "keyboard-typing": {
+  "by": "Alex_hears_things",
+  "freesound_id": 636861,
+  "license": "CC0",
+  "lufs": -44.0,
+  "name": "Office chatter and typing.wav",
+  "query": "typing keyboard office ambience",
+  "seconds": 90
+ },
+ "keyboard-typing-2": {
+  "by": "beansqueso31",
+  "freesound_id": 223101,
+  "license": "CC0",
+  "lufs": -23.0,
+  "name": "Keyboard typing.WAV",
+  "query": "typing keyboard office ambience",
+  "seconds": 24.7
  },
  "kitchen": {
   "by": "bassimat",
@@ -692,6 +863,24 @@
   "query": "machine hum drone industrial",
   "seconds": 90
  },
+ "market-fish": {
+  "by": "Rmlbrg",
+  "freesound_id": 617062,
+  "license": "CC0",
+  "lufs": -24.3,
+  "name": "Ambience_Paris_street market at the Bastille_November 2021.wav",
+  "query": "fish market ambience",
+  "seconds": 47.1
+ },
+ "market-fish-2": {
+  "by": "laboratoriosonoridades2022",
+  "freesound_id": 673808,
+  "license": "CC0",
+  "lufs": -21.6,
+  "name": "Cleaning fish",
+  "query": "fish market ambience",
+  "seconds": 48.4
+ },
  "market-street": {
   "by": "felix.blume",
   "freesound_id": 705303,
@@ -719,6 +908,15 @@
   "query": "market street crowd ambience",
   "seconds": 90
  },
+ "mood-death": {
+  "by": "ChristmasKrumble666",
+  "freesound_id": 852390,
+  "license": "CC0",
+  "lufs": -20.9,
+  "name": "Hospital Ambiance (Final 2 Minutes Before a Peaceful Death).wav",
+  "query": "death ending dark drone",
+  "seconds": 90
+ },
  "mood-dream": {
   "by": "CVLTIV8R",
   "freesound_id": 808189,
@@ -736,6 +934,42 @@
   "name": "[\"Live\"] atmospheric melody 69 bpm (\"Piano\")",
   "query": "dreamy ambient pad dream sequence",
   "seconds": 59.1
+ },
+ "mood-mystic-drone": {
+  "by": "szegvari",
+  "freesound_id": 843126,
+  "license": "CC0",
+  "lufs": -18.2,
+  "name": "feeling of wind echoing through an old stone church or temple",
+  "query": "mystic drone meditation",
+  "seconds": 90
+ },
+ "mood-peace": {
+  "by": "jjwoosh",
+  "freesound_id": 743772,
+  "license": "CC0",
+  "lufs": -9.7,
+  "name": "peaceful ambient pad",
+  "query": "peaceful calm ambient pad",
+  "seconds": 90
+ },
+ "mood-peace-2": {
+  "by": "Vrymaa",
+  "freesound_id": 722595,
+  "license": "CC0",
+  "lufs": -13.3,
+  "name": "Triumphus I",
+  "query": "peaceful calm ambient pad",
+  "seconds": 43.4
+ },
+ "mood-sorrow": {
+  "by": "xkeril",
+  "freesound_id": 677071,
+  "license": "CC0",
+  "lufs": -22.3,
+  "name": "Airy sad drone (memories)",
+  "query": "sad melancholic ambient drone",
+  "seconds": 55.3
  },
  "mood-spirit": {
   "by": "Artem_Zaitsev",
@@ -845,6 +1079,15 @@
   "query": "office ambience",
   "seconds": 90
  },
+ "old-city": {
+  "by": "paulmessier",
+  "freesound_id": 329773,
+  "license": "CC0",
+  "lufs": -21.8,
+  "name": "medieval sounding music edinburgh.WAV",
+  "query": "old city street medieval ambience",
+  "seconds": 27.5
+ },
  "owl-night": {
   "by": "fribergmusic2024",
   "freesound_id": 719558,
@@ -862,6 +1105,24 @@
   "name": "Perfect Spooky Owls",
   "query": "owl night ambience",
   "seconds": 70.4
+ },
+ "phone-ring-room": {
+  "by": "Fupicat",
+  "freesound_id": 534123,
+  "license": "CC0",
+  "lufs": -28.4,
+  "name": "Busy Office No People Loop",
+  "query": "office ambience phones ringing",
+  "seconds": 24.1
+ },
+ "phone-ring-room-2": {
+  "by": "leonelmail",
+  "freesound_id": 579568,
+  "license": "CC0",
+  "lufs": -39.0,
+  "name": "Office ambience - call center 3",
+  "query": "office ambience phones ringing",
+  "seconds": 90
  },
  "plane-cabin": {
   "by": "triadtravelogues",
@@ -953,6 +1214,24 @@
   "query": "light rain ambience",
   "seconds": 90
  },
+ "river-night": {
+  "by": "michalhue",
+  "freesound_id": 608147,
+  "license": "CC0",
+  "lufs": -45.7,
+  "name": "Night Ambience - River",
+  "query": "river night ambience crickets",
+  "seconds": 22.5
+ },
+ "river-night-2": {
+  "by": "Vrymaa",
+  "freesound_id": 734642,
+  "license": "CC0",
+  "lufs": -40.3,
+  "name": "Night crickets",
+  "query": "river night ambience crickets",
+  "seconds": 33.6
+ },
  "river-stream": {
   "by": "Archos",
   "freesound_id": 468241,
@@ -978,6 +1257,24 @@
   "lufs": -21.6,
   "name": "Big waterfall in forest.wav",
   "query": "river stream water ambience",
+  "seconds": 90
+ },
+ "rocket-launch": {
+  "by": "klangfabrik",
+  "freesound_id": 220127,
+  "license": "CC0",
+  "lufs": -15.7,
+  "name": "shuttlelaunch.wav",
+  "query": "rocket launch rumble",
+  "seconds": 90
+ },
+ "rocket-launch-2": {
+  "by": "felix.blume",
+  "freesound_id": 613617,
+  "license": "CC0",
+  "lufs": -23.8,
+  "name": "Rocket Launch Rumble (Geofon recording)",
+  "query": "rocket launch rumble",
   "seconds": 90
  },
  "room-tone": {
@@ -1088,6 +1385,24 @@
   "query": "ocean waves ambience",
   "seconds": 62.8
  },
+ "seagulls": {
+  "by": "bruno.auzet",
+  "freesound_id": 837974,
+  "license": "CC0",
+  "lufs": -30.8,
+  "name": "Saint Nazaire rooftop ambiance",
+  "query": "seagulls ambience",
+  "seconds": 90
+ },
+ "seagulls-2": {
+  "by": "szegvari",
+  "freesound_id": 608164,
+  "license": "CC0",
+  "lufs": -15.0,
+  "name": "Sea Factory Birds Train Cars Beach Traffic Seagulls Atmo Ambience Atmosphere Cinematic Mastered.wav",
+  "query": "seagulls ambience",
+  "seconds": 90
+ },
  "server-hum": {
   "by": "SoundDesignForYou",
   "freesound_id": 646682,
@@ -1142,6 +1457,15 @@
   "query": "blizzard snow storm wind",
   "seconds": 43.9
  },
+ "snow-quiet": {
+  "by": "Kinoton",
+  "freesound_id": 719961,
+  "license": "CC0",
+  "lufs": -40.4,
+  "name": "Snowfall Ambience, City",
+  "query": "quiet snow winter night ambience",
+  "seconds": 90
+ },
  "space-hum": {
   "by": "phantastonia",
   "freesound_id": 320941,
@@ -1176,6 +1500,24 @@
   "lufs": -14.8,
   "name": "Fenway Ambience 3.m4a",
   "query": "stadium crowd ambience",
+  "seconds": 90
+ },
+ "stadium-roar": {
+  "by": "itmightgetloud",
+  "freesound_id": 829453,
+  "license": "CC0",
+  "lufs": -11.5,
+  "name": "CRWDReac-SOCCER_Millerntor Stadium Crowd Reaction Excited 01_PHILIPP FEIT_FCSP 29.546_Sound Of Sankt Pauli",
+  "query": "football stadium crowd roar",
+  "seconds": 63.1
+ },
+ "stadium-roar-2": {
+  "by": "aridtrax",
+  "freesound_id": 460515,
+  "license": "CC0",
+  "lufs": -25.1,
+  "name": "Walk from Surrey Canal Road to Surrey Quays station",
+  "query": "football stadium crowd roar",
   "seconds": 90
  },
  "storm-thunder": {
@@ -1331,6 +1673,24 @@
   "query": "train station ambience",
   "seconds": 21.7
  },
+ "tv-static": {
+  "by": "szegvari",
+  "freesound_id": 566991,
+  "license": "CC0",
+  "lufs": -32.8,
+  "name": "SDRSharp_20210407_172348Z_115199600Hz_AF",
+  "query": "tv static noise",
+  "seconds": 61.8
+ },
+ "tv-static-2": {
+  "by": "telescapes",
+  "freesound_id": 756799,
+  "license": "CC0",
+  "lufs": -19.9,
+  "name": "CRT TV_High-band VHF Scan",
+  "query": "tv static noise",
+  "seconds": 90
+ },
  "underwater": {
   "by": "deleted_user_15018884",
   "freesound_id": 693293,
@@ -1348,6 +1708,42 @@
   "name": "09 Stream, Dirty Sewer, Dark, Trickling, Burbling, Flowing, Underwater, Dive Deep 2 Freebie.wav",
   "query": "underwater ambience",
   "seconds": 30.0
+ },
+ "village-evening": {
+  "by": "soundandmelodies",
+  "freesound_id": 731228,
+  "license": "CC0",
+  "lufs": -59.5,
+  "name": "AMB-Forest,Insect,Birds,DistantRiver-PithamDeurali,Kaski,Nepal-19Jul2023,18.49.42",
+  "query": "village evening ambience",
+  "seconds": 90
+ },
+ "village-evening-2": {
+  "by": "blaukreuz",
+  "freesound_id": 539758,
+  "license": "CC0",
+  "lufs": -29.0,
+  "name": "201007_Tichindeal_GypStl_RoxanasHut_Evening_st.wav",
+  "query": "village evening ambience",
+  "seconds": 90
+ },
+ "village-night": {
+  "by": "RutgerMuller",
+  "freesound_id": 361917,
+  "license": "CC0",
+  "lufs": -17.5,
+  "name": "Japan_Kashiwa_Night_Crickets_Dogs_1_24Bit_96KHz_MS-Stereo.wav",
+  "query": "quiet village night ambience dogs",
+  "seconds": 55.8
+ },
+ "volcano": {
+  "by": "morganpurkis",
+  "freesound_id": 385098,
+  "license": "CC0",
+  "lufs": -26.5,
+  "name": "Volcano.wav",
+  "query": "volcano rumble lava ambience",
+  "seconds": 55.4
  },
  "waterfall": {
   "by": "Colonnades",
@@ -1438,6 +1834,15 @@
   "name": "Dark Sahara Egypt",
   "query": "desert wind ambience",
   "seconds": 78.9
+ },
+ "wind-door": {
+  "by": "Kinoton",
+  "freesound_id": 815100,
+  "license": "CC0",
+  "lufs": -31.3,
+  "name": "Low Wind Howling Indoor",
+  "query": "wind howling through door gap",
+  "seconds": 90
  },
  "wind-howling": {
   "by": "CalebLopez",
