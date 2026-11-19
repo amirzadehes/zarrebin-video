@@ -33,12 +33,19 @@ function sfxPoll(){ const t=au.currentTime; try{ ambPoll(t) }catch(e){} if(t>=sf
    (ambience_catalog.json has each file's loudness), so it sits under the voice exactly as in the final video. Fades: 1.2 s, 0.6 s at the very start, 2.5 s at the very end. */
 const AMB_XF=2.5, AMB_LUFS=-31; let AMBC=null, AMBP=null, AMBE={}, AMBX=null;
 function ambLoad(){ if(!AMBP) AMBP=fetch('../ambience_catalog.json?v='+Date.now()).then(r=>r.json()).then(c=>{ AMBC=c }).catch(()=>{ AMBC={} }) }
-const ambClipsOf=()=>{ const M=(typeof D!=='undefined'&&D&&D.meta)||{}; return M.amb===false?[]:(M.ambClips||[]).filter(c=>c&&c.src&&+c.t1>+c.t0) };
+/* a bed that starts / ends exactly at a scene boundary fades in / out during the camera move between the two scenes (same window as the fly-through: FLY_PRE .55 s before, FLY_POST .55 s after the boundary) */
+function ambEff(c){ const S=D.scenes||[], M=D.meta||{}; let a=+c.t0, b=+c.t1, fi=Math.min(a<=.01?1.5:AMB_XF,(b-a)/2), fo=Math.min(b>=(M.total||1e9)-.01?3:AMB_XF,(b-a)/2);
+  const bd=x=>{ for(let k=1;k<S.length;k++) if(Math.abs(+S[k].t0-x)<.15) return k; return -1 };
+  const win=k=>{ const on=S[k].fly!=null?!!S[k].fly:M.fly===true, pre=on?Math.min(.55,Math.max(.2,(+S[k].t0-(+S[k-1].t0))*.3)):.25, post=on?.55:.45; return [+S[k].t0-pre,+S[k].t0+post] };
+  let k=a>.01?bd(a):-1; if(k>0){ const w=win(k); a=w[0]; fi=w[1]-w[0] }
+  k=bd(b); if(k>0&&b<(M.total||1e9)-.01){ const w=win(k); b=w[1]; fo=w[1]-w[0] }
+  return {src:c.src,vol:c.vol,t0:a,t1:b,fi,fo} }
+const ambClipsOf=()=>{ const M=(typeof D!=='undefined'&&D&&D.meta)||{}; return M.amb===false?[]:(M.ambClips||[]).filter(c=>c&&c.src&&+c.t1>+c.t0).map(ambEff) };
 function ambEl(key,c){ let e=AMBE[key]; if(e&&e.src0===c.src) return e; if(e){ try{ e.a.pause() }catch(x){} }
   const a=new Audio('../ambience/'+encodeURIComponent(c.src)+'.mp3'); a.loop=true; a.preload='auto'; let g=null;
   try{ AMBX=AMBX||new (window.AudioContext||window.webkitAudioContext)(); g=AMBX.createGain(); AMBX.createMediaElementSource(a).connect(g).connect(AMBX.destination) }catch(x){ g=null }
   return AMBE[key]={a,g,src0:c.src,on:false} }
-function ambGain(c,t){ const d=+c.t1-+c.t0, T=D.meta.total||1e9, fi=Math.min(+c.t0<=.01?1.5:AMB_XF,d/2), fo=Math.min(+c.t1>=T-.01?3:AMB_XF,d/2), f=Math.sin(Math.PI/2*Math.min(1,Math.max(0,(t-c.t0)/fi),Math.max(0,(c.t1-t)/fo)));   // quarter-sine fades, same as ffmpeg qsin
+function ambGain(c,t){ const f=Math.sin(Math.PI/2*Math.min(1,Math.max(0,(t-c.t0)/Math.max(.05,c.fi)),Math.max(0,(c.t1-t)/Math.max(.05,c.fo))));   // quarter-sine fades, same as ffmpeg qsin
   const L=AMBC&&AMBC[c.src]&&AMBC[c.src].lufs; return Math.pow(10,(AMB_LUFS-(L==null?-25:L))/20)*(c.vol==null?100:+c.vol)/100*((D.meta.ambVol==null?100:+D.meta.ambVol)/100)*f }
 function ambPoll(t){ ambLoad(); const live=new Set();
   ambClipsOf().forEach((c,i)=>{ const key=i+':'+c.src, e0=AMBE[key];

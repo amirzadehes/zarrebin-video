@@ -48,8 +48,8 @@ def assign(ep):
         if v not in S: continue
         if clips and clips[-1]['src'] == v and clips[-1]['_last'] == i - 1: clips[-1]['t1'] = float(s_['t1']); clips[-1]['_last'] = i
         else: clips.append({'src': v, 't0': float(s_['t0']), 't1': float(s_['t1']), '_last': i})
-    for c in clips:   # beds overlap their neighbours by half a cross-fade, the very start and end stay put
-        c['t0'] = round(max(0.0, c['t0'] - XF / 2), 2) if c['t0'] > .01 else 0.0; c['t1'] = round(min(T, c['t1'] + XF / 2), 2) if c['t1'] < T - .01 else round(T, 2); c['vol'] = 100; del c['_last']
+    for c in clips:   # exact scene boundaries: the fades happen during the camera move between the scenes (see eff())
+        c['t0'] = round(c['t0'], 2); c['t1'] = round(min(T, c['t1']), 2); c['vol'] = 100; del c['_last']
     M['ambClips'] = clips
     json.dump(D, open(f'episodes/{ep}/scenes.json', 'w', encoding='utf8'), ensure_ascii=False)
     print('ambience: wrote', len(clips), 'clips:', ', '.join('%s %.0f-%.0fs' % (c['src'], c['t0'], c['t1']) for c in clips))
@@ -77,6 +77,25 @@ def bed(slug, d, gain, fade_in, fade_out, out):
     subprocess.check_call(cmd + ['-filter_complex', chain, '-map', '[o]', '-ac', '2', out])
 
 
+def eff(M, S, a, b, T):
+    """(start, end, fade-in, fade-out): a bed that starts / ends exactly at a scene boundary fades during the camera move between the two scenes
+    (fly-through window: 0.55 s before and 0.55 s after the boundary; without fly-through 0.25 s / 0.45 s). Same rule as engine/preview.html ambEff()."""
+    fi = min(1.5 if a <= .01 else XF, (b - a) / 2); fo = min(3.0 if b >= T - .01 else XF, (b - a) / 2)
+    def bd(x):
+        for k in range(1, len(S)):
+            if abs(float(S[k]['t0']) - x) < .15: return k
+        return -1
+    def win(k):
+        on = bool(S[k]['fly']) if S[k].get('fly') is not None else M.get('fly') is True
+        pre = min(.55, max(.2, (float(S[k]['t0']) - float(S[k - 1]['t0'])) * .3)) if on else .25; post = .55 if on else .45
+        return float(S[k]['t0']) - pre, float(S[k]['t0']) + post
+    k = bd(a) if a > .01 else -1
+    if k > 0: w = win(k); a, fi = w[0], w[1] - w[0]
+    k = bd(b)
+    if k > 0 and b < T - .01: w = win(k); b, fo = w[1], w[1] - w[0]
+    return a, b, fi, fo
+
+
 def build(ep):
     D = load(ep); M = D['meta']; T = float(M.get('total') or 0)
     if M.get('amb') is False: print('ambience: switched off'); return
@@ -84,14 +103,14 @@ def build(ep):
     for c in M.get('ambClips') or []:
         try: a, b, g = float(c['t0']), float(c['t1']), float(c.get('vol', 100)) / 100 * mv
         except Exception: continue
-        if c.get('src') in have and b > a and g > 0: segs.append({'slug': c['src'], 't0': a, 't1': b, 'g': g})
+        if c.get('src') in have and b > a and g > 0: segs.append({'slug': c['src'], 't0': a, 't1': b, 'g': g, 'raw': (a, b)})
     if not segs: print('ambience: no clips, no ambience.wav'); return
     if not T: T = max(s['t1'] for s in segs)
     tmp = tempfile.mkdtemp(); ins = []; fc = ''
     for k, s in enumerate(segs):
-        a = max(0.0, s['t0']); b = min(T, s['t1']); out = os.path.join(tmp, f'b{k}.wav')
+        a, b, fi, fo = eff(M, D['scenes'], s['t0'], s['t1'], T); a = max(0.0, a); b = min(T, b); out = os.path.join(tmp, f'b{k}.wav')
         if b - a < .3: continue
-        bed(s['slug'], b - a, s['g'], min(1.5 if a <= .01 else XF, (b - a) / 2), min(3.0 if b >= T - .01 else XF, (b - a) / 2), out); ins.append((out, a))   # the same fades as the in-app preview
+        bed(s['slug'], b - a, s['g'], min(fi, (b - a) / 2), min(fo, (b - a) / 2), out); ins.append((out, a))   # the same fades as the in-app preview
     for k, (f, a) in enumerate(ins): fc += f'[{k}:a]adelay={int(a * 1000)}|{int(a * 1000)}[d{k}];'
     mix = ''.join(f'[d{k}]' for k in range(len(ins)))
     fc += f'{mix}amix=inputs={len(ins)}:normalize=0:duration=longest,apad=whole_dur={T:.3f},atrim=0:{T:.3f}[o]'
