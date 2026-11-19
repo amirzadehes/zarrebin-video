@@ -80,7 +80,8 @@ def bed(slug, d, gain, fade_in, fade_out, out):
 def eff(M, S, a, b, T):
     """(start, end, fade-in, fade-out): a bed that starts / ends exactly at a scene boundary fades during the camera move between the two scenes
     (fly-through window: 0.55 s before and 0.55 s after the boundary; without fly-through 0.25 s / 0.45 s). Same rule as engine/preview.html ambEff()."""
-    fi = min(1.5 if a <= .01 else XF, (b - a) / 2); fo = min(3.0 if b >= T - .01 else XF, (b - a) / 2)
+    sh = max(.6, (b - a) * .25)   # a short clip fades over a quarter of its length at most (same as preview.html)
+    fi = min(1.5 if a <= .01 else XF, (b - a) / 2, sh); fo = min(3.0 if b >= T - .01 else XF, (b - a) / 2, sh)
     def bd(x):
         for k in range(1, len(S)):
             if abs(float(S[k]['t0']) - x) < .15: return k
