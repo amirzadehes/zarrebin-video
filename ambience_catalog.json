@@ -26,6 +26,42 @@
   "query": "airport terminal ambience",
   "seconds": 41.4
  },
+ "applause": {
+  "by": "Sadiquecat",
+  "freesound_id": 795933,
+  "license": "CC0",
+  "lufs": -22.7,
+  "name": "400 people applauding a theatre show",
+  "query": "applause audience clapping",
+  "seconds": 90
+ },
+ "applause-2": {
+  "by": "pluralz",
+  "freesound_id": 735577,
+  "license": "CC0",
+  "lufs": -13.0,
+  "name": "Clapping Large Crowd at Choir Concert 17",
+  "query": "applause audience clapping",
+  "seconds": 31.7
+ },
+ "birds-morning": {
+  "by": "Synge101",
+  "freesound_id": 611453,
+  "license": "CC0",
+  "lufs": -43.9,
+  "name": "Dawn chorus.wav",
+  "query": "morning birds dawn chorus",
+  "seconds": 90
+ },
+ "birds-morning-2": {
+  "by": "baryy",
+  "freesound_id": 409145,
+  "license": "CC0",
+  "lufs": -26.8,
+  "name": "London Birds",
+  "query": "morning birds dawn chorus",
+  "seconds": 90
+ },
  "cafe": {
   "by": "Laggardson",
   "freesound_id": 627079,
@@ -53,6 +89,42 @@
   "query": "cafe restaurant ambience chatter",
   "seconds": 90
  },
+ "campfire-night": {
+  "by": "SKrafft",
+  "freesound_id": 681367,
+  "license": "CC0",
+  "lufs": -44.6,
+  "name": "Campfire (Position 2)",
+  "query": "campfire night crackling ambience",
+  "seconds": 22.1
+ },
+ "campfire-night-2": {
+  "by": "SKrafft",
+  "freesound_id": 681366,
+  "license": "CC0",
+  "lufs": -43.8,
+  "name": "Campfire (Position 1)",
+  "query": "campfire night crackling ambience",
+  "seconds": 83.6
+ },
+ "cave-drips": {
+  "by": "clif_creates",
+  "freesound_id": 381418,
+  "license": "CC0",
+  "lufs": -19.5,
+  "name": "Water Through Drain (With Reverb).wav",
+  "query": "cave water drips reverb ambience",
+  "seconds": 65.6
+ },
+ "cave-drips-2": {
+  "by": "bassimat",
+  "freesound_id": 867586,
+  "license": "CC0",
+  "lufs": -11.9,
+  "name": "Cavern Drips, Stones and Deep Rumbles — by GLORB",
+  "query": "cave water drips reverb ambience",
+  "seconds": 90
+ },
  "children-playground": {
   "by": "CheatinSloth",
   "freesound_id": 738778,
@@ -61,6 +133,24 @@
   "name": "Outdoor Playground/Daycare Soundscape (no cars!)",
   "query": "children playing playground ambience",
   "seconds": 80.7
+ },
+ "children-playground-2": {
+  "by": "xkeril",
+  "freesound_id": 688943,
+  "license": "CC0",
+  "lufs": -44.2,
+  "name": "Spring Kids Street (AMB)",
+  "query": "children playing playground ambience",
+  "seconds": 90
+ },
+ "children-playground-3": {
+  "by": "Nielsvdb",
+  "freesound_id": 705006,
+  "license": "CC0",
+  "lufs": -22.3,
+  "name": "Indoor Playground Ambience",
+  "query": "children playing playground ambience",
+  "seconds": 90
  },
  "church-bells": {
   "by": "florianreichelt",
@@ -116,6 +206,60 @@
   "query": "city traffic ambience",
   "seconds": 90
  },
+ "clock-ticking": {
+  "by": "blaukreuz",
+  "freesound_id": 398843,
+  "license": "CC0",
+  "lufs": -47.9,
+  "name": "170720_SmallAppartment_Kitchen_F.wav",
+  "query": "clock ticking room ambience",
+  "seconds": 90
+ },
+ "clock-ticking-2": {
+  "by": "DynamicAlgorhythm",
+  "freesound_id": 264437,
+  "license": "CC0",
+  "lufs": -24.7,
+  "name": "Daydream.wav",
+  "query": "clock ticking room ambience",
+  "seconds": 48.5
+ },
+ "construction": {
+  "by": "anapb",
+  "freesound_id": 561463,
+  "license": "CC0",
+  "lufs": -29.3,
+  "name": "Ambience from 5th floor balcony in Sao Paulo Brazil traffic construction machine pile driver foundation walla",
+  "query": "construction site ambience",
+  "seconds": 90
+ },
+ "construction-2": {
+  "by": "peridactyloptrix",
+  "freesound_id": 221924,
+  "license": "CC0",
+  "lufs": -27.5,
+  "name": "Building site exterior ambience 2",
+  "query": "construction site ambience",
+  "seconds": 89.0
+ },
+ "crowd-cheering": {
+  "by": "craigsmith",
+  "freesound_id": 480765,
+  "license": "CC0",
+  "lufs": -27.7,
+  "name": "R08-54-Large Crowd Cheering at Event.wav",
+  "query": "crowd cheering roar",
+  "seconds": 27.8
+ },
+ "crowd-cheering-2": {
+  "by": "qubodup",
+  "freesound_id": 752053,
+  "license": "CC0",
+  "lufs": -23.1,
+  "name": "Standing Ovation",
+  "query": "crowd cheering roar",
+  "seconds": 90
+ },
  "crowd-hall": {
   "by": "IENBA",
   "freesound_id": 653920,
@@ -150,6 +294,42 @@
   "lufs": -18.4,
   "name": "Spacious Bar Ambience With Music, Medium Crowd 01",
   "query": "crowd murmur ambience",
+  "seconds": 90
+ },
+ "crowd-whisper": {
+  "by": "craigsmith",
+  "freesound_id": 480756,
+  "license": "CC0",
+  "lufs": -28.4,
+  "name": "R07-45-Low Murmurs.wav",
+  "query": "crowd whispering murmur indoor",
+  "seconds": 22.7
+ },
+ "dogs-distant": {
+  "by": "kyles",
+  "freesound_id": 413949,
+  "license": "CC0",
+  "lufs": -28.8,
+  "name": "street corner side street quiet night distant traffic and people and barking dog echo Cusco, Peru, South America.wav",
+  "query": "distant dogs barking ambience",
+  "seconds": 78.1
+ },
+ "dogs-distant-2": {
+  "by": "WhisperingEarth",
+  "freesound_id": 799143,
+  "license": "CC0",
+  "lufs": -31.3,
+  "name": "Morning Birdsong and Distant Dog Bark in the Park",
+  "query": "distant dogs barking ambience",
+  "seconds": 90
+ },
+ "dungeon": {
+  "by": "Kinoton",
+  "freesound_id": 516566,
+  "license": "CC0",
+  "lufs": -21.9,
+  "name": "Dark Dungeon Ambience",
+  "query": "dungeon dark ambience dripping",
   "seconds": 90
  },
  "fire-crackle": {
@@ -206,6 +386,78 @@
   "query": "forest birds ambience",
   "seconds": 90
  },
+ "forest-night": {
+  "by": "absent1010",
+  "freesound_id": 615001,
+  "license": "CC0",
+  "lufs": -31.4,
+  "name": "Frog Forest",
+  "query": "forest night ambience",
+  "seconds": 90
+ },
+ "forest-night-2": {
+  "by": "Sheyvan",
+  "freesound_id": 524287,
+  "license": "CC0",
+  "lufs": -54.8,
+  "name": "Ambience: Forest Lake at Night",
+  "query": "forest night ambience",
+  "seconds": 71.4
+ },
+ "frogs-swamp": {
+  "by": "RealSquink",
+  "freesound_id": 826445,
+  "license": "CC0",
+  "lufs": -18.9,
+  "name": "Wetlands Night - Frogs, toads, bird whistles",
+  "query": "frogs swamp night ambience",
+  "seconds": 90
+ },
+ "frogs-swamp-2": {
+  "by": "hafijur_rahman",
+  "freesound_id": 853607,
+  "license": "CC0",
+  "lufs": -21.1,
+  "name": "Summer Night in the Swamp – Authentic Frogs & Crickets Soundscape",
+  "query": "frogs swamp night ambience",
+  "seconds": 33.1
+ },
+ "heartbeat": {
+  "by": "bassimat",
+  "freesound_id": 860878,
+  "license": "CC0",
+  "lufs": -18.8,
+  "name": "Echoes of Distant Memories – Heartbeat Drone",
+  "query": "heartbeat slow",
+  "seconds": 90
+ },
+ "heartbeat-2": {
+  "by": "deleted_user_2104797",
+  "freesound_id": 152388,
+  "license": "CC0",
+  "lufs": -21.2,
+  "name": "Paulheartbeat.wav",
+  "query": "heartbeat slow",
+  "seconds": 45.9
+ },
+ "horse-gallop": {
+  "by": "craigsmith",
+  "freesound_id": 438153,
+  "license": "CC0",
+  "lufs": -27.8,
+  "name": "G17-07-Cattle Roundup.wav",
+  "query": "horse galloping",
+  "seconds": 42.1
+ },
+ "horse-gallop-2": {
+  "by": "craigsmith",
+  "freesound_id": 479784,
+  "license": "CC0",
+  "lufs": -26.6,
+  "name": "R14-31-Horse Scene.wav",
+  "query": "horse galloping",
+  "seconds": 90
+ },
  "horse-walk": {
   "by": "craigsmith",
   "freesound_id": 437103,
@@ -214,6 +466,42 @@
   "name": "G38-10-Horse Walks on Pavement.wav",
   "query": "horse walking cobblestone",
   "seconds": 83.7
+ },
+ "insects-summer": {
+  "by": "RyanKingArt",
+  "freesound_id": 746365,
+  "license": "CC0",
+  "lufs": -27.1,
+  "name": "Southern Summer Evening Ambience with Crickets 4",
+  "query": "summer insects cicadas ambience",
+  "seconds": 29.3
+ },
+ "insects-summer-2": {
+  "by": "himura.kazuto",
+  "freesound_id": 651297,
+  "license": "CC0",
+  "lufs": -20.1,
+  "name": "Sverchok on the Highway",
+  "query": "summer insects cicadas ambience",
+  "seconds": 90
+ },
+ "jungle": {
+  "by": "CHRISFOPFILMS",
+  "freesound_id": 346225,
+  "license": "CC0",
+  "lufs": -25.7,
+  "name": "Forest Ambience.wav",
+  "query": "jungle rainforest ambience",
+  "seconds": 90
+ },
+ "jungle-2": {
+  "by": "gladkiy",
+  "freesound_id": 333224,
+  "license": "CC0",
+  "lufs": -26.6,
+  "name": "Bako National Park, Borneo Island, Rain Forest Ambience daytime 01.10.2013 Roland R-26 XY Mics.wav",
+  "query": "jungle rainforest ambience",
+  "seconds": 64.0
  },
  "kitchen": {
   "by": "bassimat",
@@ -350,6 +638,24 @@
   "query": "office ambience",
   "seconds": 90
  },
+ "owl-night": {
+  "by": "fribergmusic2024",
+  "freesound_id": 719558,
+  "license": "CC0",
+  "lufs": -14.6,
+  "name": "Forest At Night Ambience",
+  "query": "owl night ambience",
+  "seconds": 30.5
+ },
+ "owl-night-2": {
+  "by": "DreamSavvyr",
+  "freesound_id": 787733,
+  "license": "CC0",
+  "lufs": -22.7,
+  "name": "Perfect Spooky Owls",
+  "query": "owl night ambience",
+  "seconds": 70.4
+ },
  "rain-heavy": {
   "by": "Baconation",
   "freesound_id": 592483,
@@ -458,6 +764,24 @@
   "query": "quiet room tone interior",
   "seconds": 27.5
  },
+ "rooster-farm": {
+  "by": "AudioPapkin",
+  "freesound_id": 815127,
+  "license": "CC0",
+  "lufs": -20.0,
+  "name": "Polish village - rooster",
+  "query": "rooster farm morning ambience",
+  "seconds": 40.5
+ },
+ "rooster-farm-2": {
+  "by": "blaukreuz",
+  "freesound_id": 240580,
+  "license": "CC0",
+  "lufs": -43.7,
+  "name": "140809_Neuenburg_Gate_Morning_F.wav",
+  "query": "rooster farm morning ambience",
+  "seconds": 90
+ },
  "sea-waves": {
   "by": "nick121087",
   "freesound_id": 476886,
@@ -484,6 +808,33 @@
   "name": "Ocean-Far-Away+Construction-Sound+Birds",
   "query": "ocean waves ambience",
   "seconds": 62.8
+ },
+ "ship-creak": {
+  "by": "JackMenhorn",
+  "freesound_id": 168717,
+  "license": "CC0",
+  "lufs": -15.7,
+  "name": "WOOD_CREAK_LEAVES_HIT_SLAM_FOOT_JACKMENHORN_OCT2012.wav",
+  "query": "wooden ship creaking ambience",
+  "seconds": 90
+ },
+ "snow-blizzard": {
+  "by": "itinerantmonk108",
+  "freesound_id": 617560,
+  "license": "CC0",
+  "lufs": -37.7,
+  "name": "city ambiance heavy snow wind.wav",
+  "query": "blizzard snow storm wind",
+  "seconds": 34.9
+ },
+ "snow-blizzard-2": {
+  "by": "itinerantmonk108",
+  "freesound_id": 617558,
+  "license": "CC0",
+  "lufs": -34.2,
+  "name": "City ambiance heavy snow strong wind bird.wav",
+  "query": "blizzard snow storm wind",
+  "seconds": 43.9
  },
  "storm-thunder": {
   "by": "benmerrill328",
@@ -512,6 +863,33 @@
   "query": "thunderstorm rain thunder ambience",
   "seconds": 90
  },
+ "sword-clash": {
+  "by": "YannSauvin",
+  "freesound_id": 778321,
+  "license": "CC0",
+  "lufs": -25.1,
+  "name": "Escrime swords hits in practice room",
+  "query": "sword fight clashing metal",
+  "seconds": 40.5
+ },
+ "thunder-distant": {
+  "by": "TRP",
+  "freesound_id": 574386,
+  "license": "CC0",
+  "lufs": -24.7,
+  "name": "Rolling thunder closer rain drops ms 77mel 190903.flac",
+  "query": "distant thunder rumble",
+  "seconds": 41.4
+ },
+ "thunder-distant-2": {
+  "by": "TRP",
+  "freesound_id": 568969,
+  "license": "CC0",
+  "lufs": -28.2,
+  "name": "200930 Thunder, distant low rolling, after storm drips, roof 5pm.flac",
+  "query": "distant thunder rumble",
+  "seconds": 90
+ },
  "train-station": {
   "by": "be_a_hero_not_a_patriot",
   "freesound_id": 430984,
@@ -538,6 +916,42 @@
   "name": "Underground Train Station Ambience",
   "query": "train station ambience",
   "seconds": 21.7
+ },
+ "underwater": {
+  "by": "deleted_user_15018884",
+  "freesound_id": 693293,
+  "license": "CC0",
+  "lufs": -15.2,
+  "name": "ATM Underwater F# (75BPM)",
+  "query": "underwater ambience",
+  "seconds": 90
+ },
+ "underwater-2": {
+  "by": "hisoul",
+  "freesound_id": 493076,
+  "license": "CC0",
+  "lufs": -27.2,
+  "name": "09 Stream, Dirty Sewer, Dark, Trickling, Burbling, Flowing, Underwater, Dive Deep 2 Freebie.wav",
+  "query": "underwater ambience",
+  "seconds": 30.0
+ },
+ "waterfall": {
+  "by": "Colonnades",
+  "freesound_id": 760050,
+  "license": "CC0",
+  "lufs": -14.6,
+  "name": "Rushing Waterfall",
+  "query": "waterfall ambience",
+  "seconds": 35.8
+ },
+ "waterfall-2": {
+  "by": "CVLTIV8R",
+  "freesound_id": 803673,
+  "license": "CC0",
+  "lufs": -31.6,
+  "name": "Mossy Waterfall Panning to Babbling Brook, Fern Canyon Redwoods.wav",
+  "query": "waterfall ambience",
+  "seconds": 90
  },
  "wind-cold": {
   "by": "khenshom",
@@ -593,6 +1007,24 @@
   "query": "desert wind ambience",
   "seconds": 78.9
  },
+ "wind-howling": {
+  "by": "CalebLopez",
+  "freesound_id": 690512,
+  "license": "CC0",
+  "lufs": -29.1,
+  "name": "Winds howl across a sun shade",
+  "query": "howling wind storm ambience",
+  "seconds": 90
+ },
+ "wind-howling-2": {
+  "by": "Qvantor",
+  "freesound_id": 877970,
+  "license": "CC0",
+  "lufs": -18.5,
+  "name": "Wind Howling, Synthesized",
+  "query": "howling wind storm ambience",
+  "seconds": 32.8
+ },
  "wind-light": {
   "by": "nickmaysoundmusic",
   "freesound_id": 523372,
@@ -619,5 +1051,23 @@
   "name": "Woods_ambience_summer_UK_birds_light_wind_through_trees_wings_flapping",
   "query": "light wind breeze ambience",
   "seconds": 51.8
+ },
+ "workshop": {
+  "by": "CapsLok",
+  "freesound_id": 181634,
+  "license": "CC0",
+  "lufs": -26.3,
+  "name": "Tools Ratchet.wav",
+  "query": "workshop tools ambience",
+  "seconds": 20.4
+ },
+ "workshop-2": {
+  "by": "nicotep",
+  "freesound_id": 559883,
+  "license": "CC0",
+  "lufs": -29.4,
+  "name": "Machines_ambiance2.wav",
+  "query": "workshop tools ambience",
+  "seconds": 56.0
  }
 }
