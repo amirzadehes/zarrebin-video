@@ -320,7 +320,7 @@ body[data-mode=poster] .modesw button.on{background:#ff5a1f;color:#fff;border-co
 
 <div id="pvModal" hidden>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvV" class="on">عمودی (اینستاگرام)</button><button id="pvH">افقی (یوتیوب)</button></div>
-  <iframe id="pvFrame" src="../engine/preview.html?inline=1&v=g14&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(62vh*9/16));height:min(62vh,calc(94vw*16/9))"></iframe>
+  <iframe id="pvFrame" src="../engine/preview.html?inline=1&v=g15&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(62vh*9/16));height:min(62vh,calc(94vw*16/9))"></iframe>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvPlay">▶ پخش</button><button id="pvPause" hidden>⏸ توقف</button><button id="pvEdit">✋ ویرایش چیدمان</button><button id="pvAmb">🌫 صدای فضا</button><button id="pvPlace">📍 مکان و تاریخ</button></div>
   <div class="row" id="pvTools" hidden style="justify-content:center;width:100%;margin:0"><button data-op="bigger">＋ بزرگ‌تر</button><button data-op="smaller">－ کوچک‌تر</button><button data-op="rot">⟳ چرخش</button><button data-op="reset">↺ خودکار</button></div>
   <div class="row" id="pvSel" hidden style="justify-content:center;width:100%;margin:0"></div>
@@ -766,7 +766,7 @@ async function pvAudioUrl(ep){
 async function pvSend(){ if(!RV||pvI<0) return; const f=$('#pvFrame').contentWindow; let audio; try{ audio=await pvAudioUrl(RV.ep) }catch(e){ toast('صدای این قسمت از مخزن گرفته نشد: '+e.message,5000); return }
   if(pvMode==='all'){ let music=null; try{ music=await pvMusicUrl(RV.ep) }catch(e){} f.postMessage({type:'playall',data:RV.data,ep:RV.ep,audio,music,musicVol:(RV.data.meta||{}).musicVol==null?100:RV.data.meta.musicVol,scene:0,at:window.__pvAt||0,sfxVol:+(($('#bSfxVol')||{}).value||65)},'*') } else if(pvMode==='edit') f.postMessage({type:'edit',data:RV.data,ep:RV.ep,audio,scene:pvI,sel:pvSelCur},'*'); else { const still=pvStill; pvStill=false; f.postMessage({type:'load',data:RV.data,ep:RV.ep,audio,scene:pvI,still},'*') } }
 function pvGo(){ if(pvReady) pvSend(); else pvQ=true }
-function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&v=g14&t='+Date.now()+'&fmt='+f; pvLayout(); pvOkLabel() }
+function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&v=g15&t='+Date.now()+'&fmt='+f; pvLayout(); pvOkLabel() }
 addEventListener('resize',()=>{ if(!$('#pvModal').hidden) pvLayout() });
 addEventListener('message',e=>{ const m=e.data||{};
   if(m.type==='ready'){ pvReady=true; if(pvQ){ pvQ=false; pvSend() } }
@@ -1782,7 +1782,7 @@ const POSTER_PROP_HEAD = 'Draw ONLY this one object and nothing else: no table, 
 const POSTER_PROP_TAIL = 'Reminder: pure flat magenta #FF00FF background everywhere, nothing but the one object described at the start.';
 const propFull = p => [(p.prompt||'').trim().replace(/\.*$/,'.'), POSTER_PROP_HEAD, POSTER_STYLE_PROP, POSTER_PROP_TAIL].filter(Boolean).join(' ');
 const STAMPS=[['تأیید شد','#1fa65a'],['کنسل شد','#e0352b'],['شایعه','#ff8a1f'],['تکذیب شد','#e0352b'],['تأیید نشده','#ff8a1f'],['محرمانه','#e0352b'],['فاش شد','#ff5a1f'],['ممنوع','#e0352b'],['هشدار','#e6b800'],['اثبات شد','#1fa65a'],['جعلی','#e0352b'],['خبر فوری','#e0352b'],['حقیقت','#1fa65a'],['دروغ','#e0352b'],['سانسور شد','#e0352b'],['CONFIRMED','#1fa65a'],['CANCELLED','#e0352b'],['RUMOR','#ff8a1f'],['CLASSIFIED','#e0352b'],['BREAKING','#e0352b']];
-const ATMS=[['snow','برف'],['rain','باران'],['lightning','رعد و برق'],['fog','مه'],['embers','جرقه و اخگر']];
+const ATMS=[['snow','برف'],['rain','باران'],['lightning','رعد و برق'],['fog','مه'],['embers','جرقه و اخگر'],['dust','ذرات گرد و غبار'],['leaves','برگ پاییزی'],['petals','گلبرگ'],['sparkle','ستاره و درخشش'],['ash','خاکستر'],['sand','طوفان شن'],['smoke','دود'],['rays','پرتو نور']];
 const ANIN=[['pop','فنری (پیش‌فرض)'],['left','از چپ'],['right','از راست'],['up','از بالا'],['down','از پایین'],['zoom','زوم'],['slam','کوبیده'],['fade','محو']];
 const ANIN_T=[...[['blur','ظهور محو به شفاف (پیش‌فرض)'],['type','تایپ حرف‌به‌حرف'],['pop','فنری'],['left','از چپ'],['right','از راست'],['up','از بالا'],['down','از پایین'],['zoom','زوم'],['slam','کوبیده'],['fade','محو']]], ANOUT_T=[['type','پاک شدن حرف‌به‌حرف (بک‌اسپیس)'],['fade','محو'],['left','به چپ'],['right','به راست'],['up','به بالا'],['down','به پایین'],['zoom','کوچک‌شدن'],['none','ناگهانی']];
 const PHIN=[['fade','محو شدن'],['left','از چپ باز شود'],['right','از راست باز شود'],['up','از بالا باز شود'],['down','از پایین باز شود'],['circle','دایره‌ای باز شود'],['zoom','زوم']], PHOUT=[['fade','محو شدن'],['left','به چپ'],['right','به راست'],['up','به بالا'],['down','به پایین'],['circle','دایره‌ای بسته شود'],['zoom','زوم'],['none','ناگهانی']];
@@ -1895,9 +1895,15 @@ function fxUI(el,s,i,box){
   /* ambience sound of this scene (loaded when the section is opened) */
   { const D2=q0('.abSec'), B2=q0('.abSecB'); let ld=false; D2.addEventListener('toggle',()=>{ if(D2.open&&!ld){ ld=true; B2.innerHTML='<p class="hint">در حال بارگذاری…</p>'; ambUI(B2,i) } }) }
   /* atmosphere */
-  const AB=q0('.atSecB'); AB.innerHTML=`<div class="atmr">${ATMS.map(a=>`<button data-a="${a[0]}" class="${(s.atm||[]).some(x=>x.type===a[0])?'on':''}">${a[1]}</button>`).join('')}</div><label>شدت</label><select class="sel atA"><option value="0.5">کم</option><option value="1">متوسط</option><option value="1.8">زیاد</option></select>`;
-  AB.querySelectorAll('.atmr button').forEach(b=>b.onclick=()=>{ const a=b.dataset.a, amt=+AB.querySelector('.atA').value; s.atm=s.atm||[]; const k=s.atm.findIndex(x=>x.type===a); if(k>=0) s.atm.splice(k,1); else s.atm.push({type:a,amt}); if(!s.atm.length) delete s.atm; b.classList.toggle('on',k<0); ch() });
-  const A0=(s.atm||[])[0]; AB.querySelector('.atA').value=A0?String(A0.amt):'1'; AB.querySelector('.atA').onchange=e=>{ (s.atm||[]).forEach(x=>x.amt=+e.target.value); ch() };
+  const AB=q0('.atSecB'), nm=t=>(ATMS.find(x=>x[0]===t)||[0,t])[1], near=(o,v)=>o.reduce((b,c)=>Math.abs(c[0]-v)<Math.abs(b[0]-v)?c:b,o[0])[0];
+  const AMT=[[.5,'کم'],[1,'متوسط'],[1.8,'زیاد']], DP=[[.6,'دور (ریز و کند)'],[1,'میانی'],[1.7,'نزدیک (درشت و تند)']], LY=[['back','پشت تصویرها (پشت اشیای جدا)'],['front','جلوی تصویرها']];
+  const atmDraw=()=>{ AB.innerHTML=`<div class="atmr">${ATMS.map(a=>`<button data-a="${a[0]}" class="${(s.atm||[]).some(x=>x.type===a[0])?'on':''}">${a[1]}</button>`).join('')}</div><div class="atL"></div><p class="hint">روی هر افکت بزنی روشن یا خاموش می‌شود. برای هر افکت شدت، فاصله (عمق) و لایه را جدا تنظیم کن: «پشت تصویرها» یعنی افکت بین عکس زمینه و اشیای جدا قرار می‌گیرد و اشیا جلوی آن می‌ایستند؛ «جلوی تصویرها» یعنی روی همه‌چیز (ولی زیر نوشته‌ها).</p>`;
+    AB.querySelectorAll('.atmr button').forEach(b=>b.onclick=()=>{ const a=b.dataset.a; s.atm=s.atm||[]; const k=s.atm.findIndex(x=>x.type===a); if(k>=0) s.atm.splice(k,1); else s.atm.push({type:a,amt:1,dp:1,layer:'front'}); if(!s.atm.length) delete s.atm; atmDraw(); ch() });
+    const L=AB.querySelector('.atL'); (s.atm||[]).forEach(x=>{ const r=document.createElement('div'); r.style.cssText='border:1px solid var(--line);border-radius:12px;padding:8px;margin:8px 0';
+      const sel=(cls,o,cur)=>`<select class="sel ${cls}">${o.map(([v,l])=>`<option value="${v}" ${String(v)===String(cur)?'selected':''}>${l}</option>`).join('')}</select>`;
+      r.innerHTML=`<label style="margin-top:0"><b>${nm(x.type)}</b></label><div class="g2"><div><label>شدت</label>${sel('aA',AMT,near(AMT,x.amt==null?1:x.amt))}</div><div><label>فاصله (عمق)</label>${sel('aD',DP,near(DP,x.dp||1))}</div></div><label>لایه</label>${sel('aL',LY,x.layer==='back'?'back':'front')}`;
+      r.querySelector('.aA').onchange=e=>{ x.amt=+e.target.value; ch() }; r.querySelector('.aD').onchange=e=>{ x.dp=+e.target.value; ch() }; r.querySelector('.aL').onchange=e=>{ x.layer=e.target.value; ch() }; L.appendChild(r) }) };
+  atmDraw();
   /* speech bubbles: the owner's own bubble pictures (library `bubbles/`), we only put the text in */
   { const BB=q0('.bbSecB');
     const drawB=async()=>{ const lib=await bubbleLib(); BB.innerHTML=`<div class="bbTop"></div><div class="bbL"></div><p class="hint">ابر را با پرامپت خودت می‌سازی و آپلود می‌کنی؛ زمینه‌ی سرخابی خودکار بریده می‌شود و جای متن تشخیص داده می‌شود. فقط متن را می‌نویسی. کلمه‌ی مهم را بین دو ستاره بگذار.</p>`;
