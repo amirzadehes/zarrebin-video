@@ -1,4 +1,22 @@
 {
+ "air-conditioner": {
+  "by": "joedeshon",
+  "freesound_id": 258094,
+  "license": "CC0",
+  "lufs": -43.3,
+  "name": "classroom_ambiance.wav",
+  "query": "air conditioner hum room",
+  "seconds": 74.3
+ },
+ "air-conditioner-2": {
+  "by": "ecfike",
+  "freesound_id": 474458,
+  "license": "CC0",
+  "lufs": -27.6,
+  "name": "Concrete Hallway with Air Conditioner",
+  "query": "air conditioner hum room",
+  "seconds": 90
+ },
  "airport": {
   "by": "dnlburnett",
   "freesound_id": 335704,
@@ -43,6 +61,24 @@
   "name": "Clapping Large Crowd at Choir Concert 17",
   "query": "applause audience clapping",
   "seconds": 31.7
+ },
+ "bar-pub": {
+  "by": "domasmo",
+  "freesound_id": 376456,
+  "license": "CC0",
+  "lufs": -24.7,
+  "name": "Pub in Cambridge",
+  "query": "bar pub ambience chatter",
+  "seconds": 90
+ },
+ "bar-pub-2": {
+  "by": "Talitha5",
+  "freesound_id": 509951,
+  "license": "CC0",
+  "lufs": -18.8,
+  "name": "Irish Pub Ambience",
+  "query": "bar pub ambience chatter",
+  "seconds": 28.5
  },
  "birds-morning": {
   "by": "Synge101",
@@ -106,6 +142,24 @@
   "name": "Campfire (Position 1)",
   "query": "campfire night crackling ambience",
   "seconds": 83.6
+ },
+ "car-interior": {
+  "by": "Daphne_in_Wonderland",
+  "freesound_id": 383474,
+  "license": "CC0",
+  "lufs": -47.7,
+  "name": "Car interior driving slow speed summer night.wav",
+  "query": "car interior driving ambience",
+  "seconds": 65.3
+ },
+ "car-interior-2": {
+  "by": "Anya_Media",
+  "freesound_id": 437457,
+  "license": "CC0",
+  "lufs": -34.1,
+  "name": "CAR, INTERIOR, INSIDE, KEY, IGNITION, DRIVING Stereo atmos atmosphere wildtrack ambience.mp3",
+  "query": "car interior driving ambience",
+  "seconds": 90
  },
  "cave-drips": {
   "by": "clif_creates",
@@ -178,6 +232,24 @@
   "name": "Spring at Furzey Gardens",
   "query": "church bells distant",
   "seconds": 90
+ },
+ "city-morning": {
+  "by": "SamuelGremaud",
+  "freesound_id": 459489,
+  "license": "CC0",
+  "lufs": -26.9,
+  "name": "GARDEN - 2",
+  "query": "city morning ambience birds traffic",
+  "seconds": 73.0
+ },
+ "city-morning-2": {
+  "by": "mycompasstv",
+  "freesound_id": 474290,
+  "license": "CC0",
+  "lufs": -58.8,
+  "name": "Birds in park - city BG",
+  "query": "city morning ambience birds traffic",
+  "seconds": 82.1
  },
  "city-traffic": {
   "by": "conleec",
@@ -332,6 +404,33 @@
   "query": "dungeon dark ambience dripping",
   "seconds": 90
  },
+ "factory": {
+  "by": "CVLTIV8R",
+  "freesound_id": 858786,
+  "license": "CC0",
+  "lufs": -28.1,
+  "name": "Robotic Excavation FX",
+  "query": "factory machinery ambience",
+  "seconds": 29.7
+ },
+ "factory-2": {
+  "by": "szegvari",
+  "freesound_id": 572440,
+  "license": "CC0",
+  "lufs": -16.1,
+  "name": "Mine Machines.wav",
+  "query": "factory machinery ambience",
+  "seconds": 38.0
+ },
+ "fan-room": {
+  "by": "andrewfordham",
+  "freesound_id": 848086,
+  "license": "CC0",
+  "lufs": -22.1,
+  "name": "hotel_plant_room",
+  "query": "fan whirring room ambience",
+  "seconds": 90
+ },
  "fire-crackle": {
   "by": "OwennewO",
   "freesound_id": 549208,
@@ -467,6 +566,24 @@
   "query": "horse walking cobblestone",
   "seconds": 83.7
  },
+ "hospital": {
+  "by": "gladkiy",
+  "freesound_id": 348110,
+  "license": "CC0",
+  "lufs": -43.9,
+  "name": "Suburban hospital ambience - Moscow region, mostly old ladies & gents calmly talking and walking around, door closes, general noises OMNI mics.wav",
+  "query": "hospital ambience",
+  "seconds": 90
+ },
+ "hospital-2": {
+  "by": "tferrino",
+  "freesound_id": 640627,
+  "license": "CC0",
+  "lufs": -37.6,
+  "name": "Pediatric Hospital - Reception / Corridor (Coimbra, Portugal)",
+  "query": "hospital ambience",
+  "seconds": 90
+ },
  "insects-summer": {
   "by": "RyanKingArt",
   "freesound_id": 746365,
@@ -530,6 +647,51 @@
   "query": "kitchen cooking ambience",
   "seconds": 63.0
  },
+ "lab": {
+  "by": "Diboz",
+  "freesound_id": 211683,
+  "license": "CC0",
+  "lufs": -18.6,
+  "name": "control_room.wav",
+  "query": "laboratory ambience electronic hum",
+  "seconds": 64.6
+ },
+ "library": {
+  "by": "kyles",
+  "freesound_id": 406497,
+  "license": "CC0",
+  "lufs": -34.0,
+  "name": "public library ground floor quiet distant voices1 echo woman heel steps around room waiting for rain to go away Gaza 2016.wav",
+  "query": "library ambience quiet",
+  "seconds": 90
+ },
+ "library-2": {
+  "by": "Hano_van_Dalen",
+  "freesound_id": 767305,
+  "license": "CC0",
+  "lufs": -52.2,
+  "name": "AMBPubl-Int_Idle Library Chatter_HvD_OwSFX_Loop",
+  "query": "library ambience quiet",
+  "seconds": 90
+ },
+ "machine-hum": {
+  "by": "sarana",
+  "freesound_id": 567148,
+  "license": "CC0",
+  "lufs": -17.7,
+  "name": "Steel mill low frequency drone",
+  "query": "machine hum drone industrial",
+  "seconds": 37.5
+ },
+ "machine-hum-2": {
+  "by": "Nielsvdb",
+  "freesound_id": 547644,
+  "license": "CC0",
+  "lufs": -16.0,
+  "name": "Rumbling Drone",
+  "query": "machine hum drone industrial",
+  "seconds": 90
+ },
  "market-street": {
   "by": "felix.blume",
   "freesound_id": 705303,
@@ -556,6 +718,51 @@
   "name": "Evening Bazaar Ambience at Souq Al Bashorah, Ramallah – Palestine",
   "query": "market street crowd ambience",
   "seconds": 90
+ },
+ "mood-dream": {
+  "by": "CVLTIV8R",
+  "freesound_id": 808189,
+  "license": "CC0",
+  "lufs": -4.8,
+  "name": "crimp top Pergullator Drone-003",
+  "query": "dreamy ambient pad dream sequence",
+  "seconds": 35.2
+ },
+ "mood-dream-2": {
+  "by": "waveplaySFX",
+  "freesound_id": 212938,
+  "license": "CC0",
+  "lufs": -18.7,
+  "name": "[\"Live\"] atmospheric melody 69 bpm (\"Piano\")",
+  "query": "dreamy ambient pad dream sequence",
+  "seconds": 59.1
+ },
+ "mood-spirit": {
+  "by": "Artem_Zaitsev",
+  "freesound_id": 837985,
+  "license": "CC0",
+  "lufs": -32.7,
+  "name": "Textural SFX – Bubbling  & Fire",
+  "query": "ghostly spirit ethereal ambience",
+  "seconds": 60.1
+ },
+ "mood-whispers": {
+  "by": "CaCtUs2003",
+  "freesound_id": 103340,
+  "license": "CC0",
+  "lufs": -18.1,
+  "name": "Dark_Ambience.wav",
+  "query": "whispers ambience ghostly voices",
+  "seconds": 90
+ },
+ "mood-whispers-2": {
+  "by": "kkenny101",
+  "freesound_id": 860847,
+  "license": "CC0",
+  "lufs": -21.8,
+  "name": "Dark Whisper Collage with Reverb",
+  "query": "whispers ambience ghostly voices",
+  "seconds": 73.9
  },
  "night-city": {
   "by": "softwalls",
@@ -655,6 +862,42 @@
   "name": "Perfect Spooky Owls",
   "query": "owl night ambience",
   "seconds": 70.4
+ },
+ "plane-cabin": {
+  "by": "triadtravelogues",
+  "freesound_id": 412003,
+  "license": "CC0",
+  "lufs": -19.0,
+  "name": "Airplane From Beijing to Moscow",
+  "query": "airplane cabin ambience",
+  "seconds": 90
+ },
+ "plane-cabin-2": {
+  "by": "FillSoko",
+  "freesound_id": 456092,
+  "license": "CC0",
+  "lufs": -15.2,
+  "name": "Airplane cabin ambience / atmosphere Airbus A330-300",
+  "query": "airplane cabin ambience",
+  "seconds": 90
+ },
+ "rain-city": {
+  "by": "szegvari",
+  "freesound_id": 581148,
+  "license": "CC0",
+  "lufs": -17.4,
+  "name": "City Rain Dark.wav",
+  "query": "rain city street ambience",
+  "seconds": 90
+ },
+ "rain-city-2": {
+  "by": "HECKFRICKER",
+  "freesound_id": 723695,
+  "license": "CC0",
+  "lufs": -22.0,
+  "name": "City Traffic, Rainy Night",
+  "query": "rain city street ambience",
+  "seconds": 90
  },
  "rain-heavy": {
   "by": "Baconation",
@@ -782,6 +1025,42 @@
   "query": "rooster farm morning ambience",
   "seconds": 90
  },
+ "school-hall": {
+  "by": "alexschmidtmeister",
+  "freesound_id": 324992,
+  "license": "CC0",
+  "lufs": -24.2,
+  "name": "High_School_Germany_Indoor_Ambience_Before_Class.wav",
+  "query": "school hallway ambience",
+  "seconds": 90
+ },
+ "school-hall-2": {
+  "by": "Bexhillcollege",
+  "freesound_id": 274213,
+  "license": "CC0",
+  "lufs": -40.8,
+  "name": "College Hallway ambience",
+  "query": "school hallway ambience",
+  "seconds": 61.4
+ },
+ "scifi-drone": {
+  "by": "Suhuy",
+  "freesound_id": 715175,
+  "license": "CC0",
+  "lufs": -16.6,
+  "name": "Spaceship Interior Background Noise",
+  "query": "sci-fi ambience drone spaceship",
+  "seconds": 54.3
+ },
+ "scifi-drone-2": {
+  "by": "cabled_mess",
+  "freesound_id": 338366,
+  "license": "CC0",
+  "lufs": -10.0,
+  "name": "Deep 07 working robotic machine",
+  "query": "sci-fi ambience drone spaceship",
+  "seconds": 27.8
+ },
  "sea-waves": {
   "by": "nick121087",
   "freesound_id": 476886,
@@ -809,6 +1088,15 @@
   "query": "ocean waves ambience",
   "seconds": 62.8
  },
+ "server-hum": {
+  "by": "SoundDesignForYou",
+  "freesound_id": 646682,
+  "license": "CC0",
+  "lufs": -35.7,
+  "name": "Server Room Ambience",
+  "query": "server room hum ambience",
+  "seconds": 60.3
+ },
  "ship-creak": {
   "by": "JackMenhorn",
   "freesound_id": 168717,
@@ -816,6 +1104,24 @@
   "lufs": -15.7,
   "name": "WOOD_CREAK_LEAVES_HIT_SLAM_FOOT_JACKMENHORN_OCT2012.wav",
   "query": "wooden ship creaking ambience",
+  "seconds": 90
+ },
+ "siren-distant": {
+  "by": "sounds_from_palestine",
+  "freesound_id": 820088,
+  "license": "CC0",
+  "lufs": -23.7,
+  "name": "Friday Night Soundwalk at Manarah Square, Ramallah",
+  "query": "distant siren city ambience",
+  "seconds": 90
+ },
+ "siren-distant-2": {
+  "by": "TRP",
+  "freesound_id": 568975,
+  "license": "CC0",
+  "lufs": -41.6,
+  "name": "201110 Distant sirens, urban, night, quiet, roof 11pm.flac",
+  "query": "distant siren city ambience",
   "seconds": 90
  },
  "snow-blizzard": {
@@ -835,6 +1141,42 @@
   "name": "City ambiance heavy snow strong wind bird.wav",
   "query": "blizzard snow storm wind",
   "seconds": 43.9
+ },
+ "space-hum": {
+  "by": "phantastonia",
+  "freesound_id": 320941,
+  "license": "CC0",
+  "lufs": -16.8,
+  "name": "pyrite5.WAV",
+  "query": "space ambience drone deep",
+  "seconds": 20.5
+ },
+ "space-hum-2": {
+  "by": "phantastonia",
+  "freesound_id": 320943,
+  "license": "CC0",
+  "lufs": -14.7,
+  "name": "pyrite8.WAV",
+  "query": "space ambience drone deep",
+  "seconds": 36.5
+ },
+ "stadium": {
+  "by": "blaukreuz",
+  "freesound_id": 212779,
+  "license": "CC0",
+  "lufs": -23.1,
+  "name": "Farmer's market front",
+  "query": "stadium crowd ambience",
+  "seconds": 66.7
+ },
+ "stadium-2": {
+  "by": "Douglas711",
+  "freesound_id": 424293,
+  "license": "CC0",
+  "lufs": -14.8,
+  "name": "Fenway Ambience 3.m4a",
+  "query": "stadium crowd ambience",
+  "seconds": 90
  },
  "storm-thunder": {
   "by": "benmerrill328",
@@ -863,6 +1205,42 @@
   "query": "thunderstorm rain thunder ambience",
   "seconds": 90
  },
+ "street-night": {
+  "by": "jhumbucker",
+  "freesound_id": 250541,
+  "license": "CC0",
+  "lufs": -47.1,
+  "name": "Ambience street binaural",
+  "query": "night street ambience quiet",
+  "seconds": 90
+ },
+ "street-night-2": {
+  "by": "brunoboselli",
+  "freesound_id": 871593,
+  "license": "CC0",
+  "lufs": -39.2,
+  "name": "Quiet Night Traffic",
+  "query": "night street ambience quiet",
+  "seconds": 70.5
+ },
+ "subway": {
+  "by": "mycompasstv",
+  "freesound_id": 458112,
+  "license": "CC0",
+  "lufs": -24.0,
+  "name": "Hong Kong subway metro underground",
+  "query": "subway metro station ambience",
+  "seconds": 34.6
+ },
+ "subway-2": {
+  "by": "florianreichelt",
+  "freesound_id": 440611,
+  "license": "CC0",
+  "lufs": -24.7,
+  "name": "train ambience",
+  "query": "subway metro station ambience",
+  "seconds": 45.7
+ },
  "sword-clash": {
   "by": "YannSauvin",
   "freesound_id": 778321,
@@ -871,6 +1249,24 @@
   "name": "Escrime swords hits in practice room",
   "query": "sword fight clashing metal",
   "seconds": 40.5
+ },
+ "tension-drone": {
+  "by": "Kronek9",
+  "freesound_id": 788070,
+  "license": "CC0",
+  "lufs": -21.5,
+  "name": "Transition to the forge",
+  "query": "dark tension drone ambience",
+  "seconds": 37.4
+ },
+ "tension-drone-2": {
+  "by": "Soparnik",
+  "freesound_id": 786902,
+  "license": "CC0",
+  "lufs": -15.8,
+  "name": "Doomed Drone",
+  "query": "dark tension drone ambience",
+  "seconds": 90
  },
  "thunder-distant": {
   "by": "TRP",
@@ -889,6 +1285,24 @@
   "name": "200930 Thunder, distant low rolling, after storm drips, roof 5pm.flac",
   "query": "distant thunder rumble",
   "seconds": 90
+ },
+ "train-ride": {
+  "by": "crashoverride6",
+  "freesound_id": 219233,
+  "license": "CC0",
+  "lufs": -23.6,
+  "name": "DC Metro - Interior 1",
+  "query": "train ride interior ambience",
+  "seconds": 90
+ },
+ "train-ride-2": {
+  "by": "gecop",
+  "freesound_id": 525058,
+  "license": "CC0",
+  "lufs": -30.5,
+  "name": "Riding Train interior recording",
+  "query": "train ride interior ambience",
+  "seconds": 66.0
  },
  "train-station": {
   "by": "be_a_hero_not_a_patriot",
@@ -951,6 +1365,24 @@
   "lufs": -31.6,
   "name": "Mossy Waterfall Panning to Babbling Brook, Fern Canyon Redwoods.wav",
   "query": "waterfall ambience",
+  "seconds": 90
+ },
+ "wind-chimes": {
+  "by": "EliasArtista",
+  "freesound_id": 840816,
+  "license": "CC0",
+  "lufs": -30.8,
+  "name": "Truc Lam Zen Monastery Wind Chimes (Short)",
+  "query": "wind chimes ambience",
+  "seconds": 25.4
+ },
+ "wind-chimes-2": {
+  "by": "itsgabbo",
+  "freesound_id": 672093,
+  "license": "CC0",
+  "lufs": -45.3,
+  "name": "Blustery Chimes",
+  "query": "wind chimes ambience",
   "seconds": 90
  },
  "wind-cold": {
