@@ -3,6 +3,7 @@
   "by": "dnlburnett",
   "freesound_id": 335704,
   "license": "CC0",
+  "lufs": -20.6,
   "name": "Sydney domestic airport terminal with announcements.wav",
   "query": "airport terminal ambience",
   "seconds": 120
@@ -11,6 +12,7 @@
   "by": "Laggardson",
   "freesound_id": 627079,
   "license": "CC0",
+  "lufs": -26.6,
   "name": "Diner in Virginia",
   "query": "cafe restaurant ambience chatter",
   "seconds": 120
@@ -19,6 +21,7 @@
   "by": "CheatinSloth",
   "freesound_id": 738778,
   "license": "CC0",
+  "lufs": -53.3,
   "name": "Outdoor Playground/Daycare Soundscape (no cars!)",
   "query": "children playing playground ambience",
   "seconds": 80.7
@@ -27,6 +30,7 @@
   "by": "florianreichelt",
   "freesound_id": 451731,
   "license": "CC0",
+  "lufs": -37.1,
   "name": "City Ambience with distant church bells",
   "query": "church bells distant",
   "seconds": 36.5
@@ -35,6 +39,7 @@
   "by": "conleec",
   "freesound_id": 149935,
   "license": "CC0",
+  "lufs": -53.0,
   "name": "AMB_Ext_Residential_Day_Stereo_002.wav",
   "query": "city traffic ambience",
   "seconds": 120
@@ -43,6 +48,7 @@
   "by": "IENBA",
   "freesound_id": 653920,
   "license": "CC0",
+  "lufs": -32.9,
   "name": "Small Crowd Walla",
   "query": "indoor crowd hall murmur ambience",
   "seconds": 28.0
@@ -51,6 +57,7 @@
   "by": "HECKFRICKER",
   "freesound_id": 729330,
   "license": "CC0",
+  "lufs": -17.0,
   "name": "Spacious Bar Ambience With Music, Medium Crowd 02",
   "query": "crowd murmur ambience",
   "seconds": 32.6
@@ -59,6 +66,7 @@
   "by": "OwennewO",
   "freesound_id": 549208,
   "license": "CC0",
+  "lufs": -43.5,
   "name": "Fireplace.wav",
   "query": "fire crackling fireplace",
   "seconds": 28.4
@@ -67,6 +75,7 @@
   "by": "Archos",
   "freesound_id": 468241,
   "license": "CC0",
+  "lufs": -25.0,
   "name": "Thailand Phangan Jungle Waterfall 2",
   "query": "forest birds ambience",
   "seconds": 37.5
@@ -75,6 +84,7 @@
   "by": "craigsmith",
   "freesound_id": 437103,
   "license": "CC0",
+  "lufs": -27.7,
   "name": "G38-10-Horse Walks on Pavement.wav",
   "query": "horse walking cobblestone",
   "seconds": 83.7
@@ -83,6 +93,7 @@
   "by": "bassimat",
   "freesound_id": 862622,
   "license": "CC0",
+  "lufs": -28.4,
   "name": "Sausages Sizzling in a Pan with Boiling Eggs Kitchen Ambience",
   "query": "kitchen cooking ambience",
   "seconds": 61.1
@@ -91,6 +102,7 @@
   "by": "felix.blume",
   "freesound_id": 705303,
   "license": "CC0",
+  "lufs": -28.5,
   "name": "Market fair ambience with music, street seller loudspeaker far, carousel and crowd hubbub",
   "query": "market street crowd ambience",
   "seconds": 120
@@ -99,6 +111,7 @@
   "by": "softwalls",
   "freesound_id": 385104,
   "license": "CC0",
+  "lufs": -33.9,
   "name": "XY_City hum_Night_River_ambience.wav",
   "query": "night city ambience distant traffic",
   "seconds": 120
@@ -107,6 +120,7 @@
   "by": "Daphne_in_Wonderland",
   "freesound_id": 383479,
   "license": "CC0",
+  "lufs": -54.6,
   "name": "Crickets, very distant barks summer night.wav",
   "query": "night crickets ambience",
   "seconds": 73.4
@@ -115,6 +129,7 @@
   "by": "florianreichelt",
   "freesound_id": 457567,
   "license": "CC0",
+  "lufs": -56.2,
   "name": "Room Ambience in a huge Skyscraper in Dubai",
   "query": "office ambience",
   "seconds": 22.6
@@ -123,6 +138,7 @@
   "by": "Baconation",
   "freesound_id": 592483,
   "license": "CC0",
+  "lufs": -47.5,
   "name": "Heavy Rain to Lesser",
   "query": "heavy rain ambience",
   "seconds": 20.2
@@ -131,6 +147,7 @@
   "by": "Garuda1982",
   "freesound_id": 582365,
   "license": "CC0",
+  "lufs": -49.0,
   "name": "cicadas with urban atmosphere in the evening with little rain",
   "query": "light rain ambience",
   "seconds": 66.0
@@ -139,6 +156,7 @@
   "by": "Archos",
   "freesound_id": 468241,
   "license": "CC0",
+  "lufs": -25.0,
   "name": "Thailand Phangan Jungle Waterfall 2",
   "query": "river stream water ambience",
   "seconds": 37.5
@@ -147,6 +165,7 @@
   "by": "deleted_user_2104797",
   "freesound_id": 164798,
   "license": "CC0",
+  "lufs": -60.3,
   "name": "INT Bathroom tone 2.wav",
   "query": "quiet room tone interior",
   "seconds": 120
@@ -155,6 +174,7 @@
   "by": "nick121087",
   "freesound_id": 476886,
   "license": "CC0",
+  "lufs": -21.3,
   "name": "Ocean Ambiance Night",
   "query": "ocean waves ambience",
   "seconds": 59.2
@@ -163,6 +183,7 @@
   "by": "benmerrill328",
   "freesound_id": 613275,
   "license": "CC0",
+  "lufs": -25.3,
   "name": "Thunder_recorded_2021_Summer.wav",
   "query": "thunderstorm rain thunder ambience",
   "seconds": 30.3
@@ -171,6 +192,7 @@
   "by": "be_a_hero_not_a_patriot",
   "freesound_id": 430984,
   "license": "CC0",
+  "lufs": -30.6,
   "name": "metro, Warszawa, 2017, Centrum station ambience, no trains, many people, kids, Poland.wav",
   "query": "train station ambience",
   "seconds": 120
@@ -179,6 +201,7 @@
   "by": "khenshom",
   "freesound_id": 714165,
   "license": "CC0",
+  "lufs": -36.0,
   "name": "Brontë Beach in winter in Sydney Australia",
   "query": "cold winter wind ambience",
   "seconds": 66.9
@@ -187,6 +210,7 @@
   "by": "Danjocross",
   "freesound_id": 579250,
   "license": "CC0",
+  "lufs": -18.1,
   "name": "Wind in Cottonwood Trees Utah MP3.mp3",
   "query": "desert wind ambience",
   "seconds": 120
@@ -195,6 +219,7 @@
   "by": "nickmaysoundmusic",
   "freesound_id": 523372,
   "license": "CC0",
+  "lufs": -38.9,
   "name": "Woods_ambience_summer_UK_birds_light_wind_through_trees",
   "query": "light wind breeze ambience",
   "seconds": 120

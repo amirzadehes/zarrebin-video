@@ -2,11 +2,10 @@
 usage: python tools/make_ambience.py assign <episode>   the director picks one bed per scene (only where the scene has no 'amb' yet) -> scenes.json
        python tools/make_ambience.py build  <episode>   mixes the beds -> episodes/<ep>/ambience.wav (stereo 44.1k, length = video length)
 
-scenes.json fields (all optional, the app edits them):
-  scene.amb      slug of a file in ambience/ ('none' = silence for this scene; missing = not chosen yet)
-  scene.ambVol   percent for this scene (default 100)
-  meta.ambVol    percent for the whole episode (default 100); meta.amb === false switches the layer off
-Neighbouring scenes with the same bed share ONE continuous clip; a change of bed cross-fades. Beds are normalised quiet (a bed under a voice)."""
+scenes.json: meta.ambClips = [{"src": slug of a file in ambience/, "t0": start s, "t1": end s, "vol": percent (default 100)}]
+  meta.ambVol = percent for the whole episode (default 100); meta.amb === false switches the layer off.
+  'assign' writes ambClips once (when the key is missing; an empty list means the owner removed them all and is kept). The owner edits the clips in the app,
+  and hears them in the preview (engine/preview.html uses the same fades and level). A change of bed cross-fades, beds are normalised quiet (a bed under a voice)."""
 import glob, json, math, os, subprocess, sys, tempfile
 
 SR = 44100
@@ -24,30 +23,36 @@ def load(ep): return json.load(open(f'episodes/{ep}/scenes.json', encoding='utf8
 def assign(ep):
     S = slugs()
     if not S: print('ambience: no beds in ambience/ yet (run the workflow "Fetch ambience beds")'); return
-    D = load(ep)
-    if D['meta'].get('amb') is False: print('ambience: switched off'); return
-    todo = [i for i, sc in enumerate(D['scenes']) if 'amb' not in sc]
-    if not todo: print('ambience: every scene already has a choice'); return
+    D = load(ep); M = D['meta']
+    if M.get('amb') is False: print('ambience: switched off'); return
+    if 'ambClips' in M: print('ambience: clips already there (' + str(len(M['ambClips'])) + '), left as the owner has them'); return
     sys.path.insert(0, os.path.dirname(__file__)); import groqlib
+    sc = D['scenes']
     def desc(i):
-        sc = D['scenes'][i]; ph = sc.get('photo') or {}
-        return '%d | %s | %s' % (i, (sc.get('text') or '')[:60], str(ph.get('prompt') or '')[:230])
+        ph = sc[i].get('photo') or {}
+        return '%d | %s | %s' % (i, (sc[i].get('text') or '')[:60], str(ph.get('prompt') or '')[:230])
     system = ('You are the sound designer of a narrated documentary-style video. For each scene choose ONE quiet ambience bed that matches the place and weather of the scene, from the list. '
               'Rules: use few distinct beds and keep the SAME bed for consecutive scenes of the same place (continuity matters more than variety); '
               'choose "none" when nothing fits or the scene is abstract/graphic; never invent names. Answer JSON only: {"scenes":[{"i":0,"amb":"slug"}]}.\nBeds: ' + ', '.join(S))
     try:
-        raw = groqlib.chat(system, 'Scenes (index | on-screen text | picture description):\n' + '\n'.join(desc(i) for i in todo), max_tokens=1500, json_mode=True, temperature=.2)
+        raw = groqlib.chat(system, 'Scenes (index | on-screen text | picture description):\n' + '\n'.join(desc(i) for i in range(len(sc))), max_tokens=1800, json_mode=True, temperature=.2)
         got = {}
         for o in groqlib.objects(raw, 'i'):
             try: got[int(o['i'])] = str(o.get('amb') or 'none').strip().lower()
             except Exception: pass
     except (Exception, SystemExit) as e:
-        print('ambience: director failed, scenes stay without a bed:', str(e)[:140]); return
-    n = 0
-    for i in todo:
-        v = got.get(i, 'none'); D['scenes'][i]['amb'] = v if v in S else 'none'; n += v in S
+        print('ambience: director failed, no clips written:', str(e)[:140]); return
+    T = float(M.get('total') or sc[-1]['t1']); clips = []
+    for i, s_ in enumerate(sc):
+        v = got.get(i, 'none')
+        if v not in S: continue
+        if clips and clips[-1]['src'] == v and clips[-1]['_last'] == i - 1: clips[-1]['t1'] = float(s_['t1']); clips[-1]['_last'] = i
+        else: clips.append({'src': v, 't0': float(s_['t0']), 't1': float(s_['t1']), '_last': i})
+    for c in clips:   # beds overlap their neighbours by half a cross-fade, the very start and end stay put
+        c['t0'] = round(max(0.0, c['t0'] - XF / 2), 2) if c['t0'] > .01 else 0.0; c['t1'] = round(min(T, c['t1'] + XF / 2), 2) if c['t1'] < T - .01 else round(T, 2); c['vol'] = 100; del c['_last']
+    M['ambClips'] = clips
     json.dump(D, open(f'episodes/{ep}/scenes.json', 'w', encoding='utf8'), ensure_ascii=False)
-    print('ambience: assigned', n, 'of', len(todo), 'scenes')
+    print('ambience: wrote', len(clips), 'clips:', ', '.join('%s %.0f-%.0fs' % (c['src'], c['t0'], c['t1']) for c in clips))
 
 
 def dur(path):
@@ -75,27 +80,25 @@ def bed(slug, d, gain, fade_in, fade_out, out):
 def build(ep):
     D = load(ep); M = D['meta']; T = float(M.get('total') or 0)
     if M.get('amb') is False: print('ambience: switched off'); return
-    have = set(slugs()); segs = []
-    for sc in D['scenes']:
-        a = sc.get('amb')
-        if not a or a == 'none' or a not in have: segs.append(None); continue
-        g = float(sc.get('ambVol', 100)) / 100 * float(M.get('ambVol', 100)) / 100
-        if segs and segs[-1] and segs[-1]['slug'] == a: segs[-1]['t1'] = float(sc['t1']); segs[-1]['g'] = (segs[-1]['g'] + g) / 2
-        else: segs.append({'slug': a, 't0': float(sc['t0']), 't1': float(sc['t1']), 'g': g})
-    segs = [s for s in segs if s and s['g'] > 0]
-    if not segs: print('ambience: nothing chosen, no ambience.wav'); return
+    have = set(slugs()); mv = float(M.get('ambVol', 100)) / 100; segs = []
+    for c in M.get('ambClips') or []:
+        try: a, b, g = float(c['t0']), float(c['t1']), float(c.get('vol', 100)) / 100 * mv
+        except Exception: continue
+        if c.get('src') in have and b > a and g > 0: segs.append({'slug': c['src'], 't0': a, 't1': b, 'g': g})
+    if not segs: print('ambience: no clips, no ambience.wav'); return
     if not T: T = max(s['t1'] for s in segs)
     tmp = tempfile.mkdtemp(); ins = []; fc = ''
     for k, s in enumerate(segs):
-        a = max(0.0, s['t0'] - XF / 2); b = min(T, s['t1'] + XF / 2); out = os.path.join(tmp, f'b{k}.wav')
-        bed(s['slug'], b - a, s['g'], XF if a > 0 else .6, XF if b < T else 2.5, out); ins.append(out)
-        fc += f'[{k}:a]adelay={int(a * 1000)}|{int(a * 1000)}[d{k}];'
-    mix = ''.join(f'[d{k}]' for k in range(len(segs)))
-    fc += f'{mix}amix=inputs={len(segs)}:normalize=0:duration=longest,apad=whole_dur={T:.3f},atrim=0:{T:.3f}[o]'
+        a = max(0.0, s['t0']); b = min(T, s['t1']); out = os.path.join(tmp, f'b{k}.wav')
+        if b - a < .3: continue
+        bed(s['slug'], b - a, s['g'], .6 if a <= .01 else XF, 2.5 if b >= T - .01 else XF, out); ins.append((out, a))   # the same fades as the in-app preview
+    for k, (f, a) in enumerate(ins): fc += f'[{k}:a]adelay={int(a * 1000)}|{int(a * 1000)}[d{k}];'
+    mix = ''.join(f'[d{k}]' for k in range(len(ins)))
+    fc += f'{mix}amix=inputs={len(ins)}:normalize=0:duration=longest,apad=whole_dur={T:.3f},atrim=0:{T:.3f}[o]'
     cmd = ['ffmpeg', '-loglevel', 'error', '-y']
-    for f in ins: cmd += ['-i', f]
+    for f, a in ins: cmd += ['-i', f]
     subprocess.check_call(cmd + ['-filter_complex', fc, '-map', '[o]', '-ac', '2', '-ar', str(SR), f'episodes/{ep}/ambience.wav'])
-    print('ambience: built', len(segs), 'continuous beds ->', f'episodes/{ep}/ambience.wav', '|', ', '.join(f"{s['slug']} {s['t0']:.0f}-{s['t1']:.0f}s" for s in segs))
+    print('ambience: built', len(ins), 'clips ->', f'episodes/{ep}/ambience.wav', '|', ', '.join(f"{s['slug']} {s['t0']:.0f}-{s['t1']:.0f}s" for s in segs))
 
 
 if __name__ == '__main__':

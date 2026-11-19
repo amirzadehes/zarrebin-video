@@ -724,7 +724,7 @@ function renderReview(){ const body=$('#rvBody'); if(!RV||!body) return; epDock(
     return `<details class="sc ${warn?'warn':''}" data-i="${i}"><summary>${sceneHead(s,i)}</summary><div class="body"></div></details>`}).join('')+
   `<div class="row" style="margin-top:12px"><button id="rvSubAll">✏️ ویرایش زیرنویس کل قسمت (املا)</button></div><details class="pSec" id="rvMot" style="margin-top:12px" open><summary>🎛 حرکت و لرزش تصویرها (کل قسمت)</summary><div class="pSecB mtB"></div></details><details class="pSec" id="rvMus" style="margin-top:12px"><summary>🎵 موزیک این قسمت (Suno و بلندی صدا)</summary><div class="pSecB mpB"></div></details><details class="pSec" id="rvAmb" style="margin-top:12px"><summary>🌫 صدای فضا (باد، جمعیت، آتش… زیر صدای راوی)</summary><div class="pSecB abB"></div></details><div class="row" style="margin-top:12px"><button id="rvAll">▶ دیدن کل ویدیو (پیش‌نمایش با صدا و افکت‌ها، قبل از ساخت نهایی)</button></div><div class="row" style="margin-top:12px"><button class="pri" id="rvGo">۳. ادامه: ساخت ویدیو با همین صحنه‌ها</button></div><div class="st" id="rvSt"></div>`;
   castUI(); updOk(); body.querySelectorAll('details.sc').forEach(d=>d.addEventListener('toggle',()=>{ if(d.open) fillScene(d) }));
-  motionUI(); musicUI(); ambUI(); $('#rvGo').onclick=rvContinue; if($('#dupGo')) $('#dupGo').onclick=dupFix; $('#rvSubAll').onclick=subAllDialog; $('#rvAll').onclick=()=>openPreview(0,'all'); body.toggleAttribute('data-poster',isPoster()); if(isPoster()&&window.posterBar) posterBar(body) }
+  motionUI(); musicUI(); ambUI(); $('#rvGo').onclick=rvContinue; if($('#dupGo')) $('#dupGo').onclick=dupFix; $('#rvSubAll').onclick=subAllDialog; $('#rvAll').onclick=()=>{ window.__pvAt=0; openPreview(0,'all') }; body.toggleAttribute('data-poster',isPoster()); if(isPoster()&&window.posterBar) posterBar(body) }
 const nz=t=>String(t||'').toLowerCase().replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/[\u200c\u064b-\u065f]/g,'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\s+/g,' ').trim();
 
 const okOf=(s,f)=>!!(s.ok&&typeof s.ok==='object'?s.ok[f]:(f==='v'&&s.ok===true));
@@ -756,7 +756,7 @@ async function pvAudioUrl(ep){
   if(!r.ok) throw new Error('HTTP '+r.status);
   const url=URL.createObjectURL(new Blob([await r.arrayBuffer()],{type:'audio/mpeg'})); if(c) URL.revokeObjectURL(c.url); PV_AUD[ep]={sha:f.sha,url}; return url }
 async function pvSend(){ if(!RV||pvI<0) return; const f=$('#pvFrame').contentWindow; let audio; try{ audio=await pvAudioUrl(RV.ep) }catch(e){ toast('صدای این قسمت از مخزن گرفته نشد: '+e.message,5000); return }
-  if(pvMode==='all'){ let music=null; try{ music=await pvMusicUrl(RV.ep) }catch(e){} f.postMessage({type:'playall',data:RV.data,ep:RV.ep,audio,music,musicVol:(RV.data.meta||{}).musicVol==null?100:RV.data.meta.musicVol,scene:0,sfxVol:+(($('#bSfxVol')||{}).value||65)},'*') } else if(pvMode==='edit') f.postMessage({type:'edit',data:RV.data,ep:RV.ep,audio,scene:pvI,sel:pvSelCur},'*'); else f.postMessage({type:'load',data:RV.data,ep:RV.ep,audio,scene:pvI},'*') }
+  if(pvMode==='all'){ let music=null; try{ music=await pvMusicUrl(RV.ep) }catch(e){} f.postMessage({type:'playall',data:RV.data,ep:RV.ep,audio,music,musicVol:(RV.data.meta||{}).musicVol==null?100:RV.data.meta.musicVol,scene:0,at:window.__pvAt||0,sfxVol:+(($('#bSfxVol')||{}).value||65)},'*') } else if(pvMode==='edit') f.postMessage({type:'edit',data:RV.data,ep:RV.ep,audio,scene:pvI,sel:pvSelCur},'*'); else f.postMessage({type:'load',data:RV.data,ep:RV.ep,audio,scene:pvI},'*') }
 function pvGo(){ if(pvReady) pvSend(); else pvQ=true }
 function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&v=g3&t='+Date.now()+'&fmt='+f; pvLayout(); pvOkLabel() }
 addEventListener('resize',()=>{ if(!$('#pvModal').hidden) pvLayout() });
@@ -1641,23 +1641,39 @@ async function musicUI(){ const B=document.querySelector('#rvMus .mpB'); if(!B||
       const pr=putChain.catch(()=>{}).then(()=>api('/contents/'+path,{method:'PUT',body:JSON.stringify({message:'own music: '+RV.ep,content:b64,branch:'main',sha})})); putChain=pr.then(()=>sleep(900),()=>sleep(900)); await pr; delete MUS_URL[RV.ep]; toast('✓ موزیک ذخیره شد'); musicUI() }catch(err){ st.className='st mSt bad'; st.textContent='✗ '+err.message } } }
 /* ===== ambience beds: one bed per scene (chosen by the director, changed here); built into the video by tools/make_ambience.py ===== */
 const AMB_FA={'wind-cold':'باد سرد زمستانی','wind-light':'نسیم ملایم','wind-desert':'باد بیابان','rain-light':'باران ملایم','rain-heavy':'باران شدید','storm-thunder':'طوفان و رعد','fire-crackle':'آتش و شعله','night-crickets':'شب و جیرجیرک','forest-birds':'جنگل و پرندگان','village-day':'روستا در روز','river-stream':'رود و آب','sea-waves':'موج دریا','crowd-murmur':'همهمه‌ی جمعیت','market-street':'بازار و خیابان شلوغ','crowd-hall':'همهمه در سالن','church-interior':'داخل کلیسا','church-bells':'ناقوس کلیسا (دور)','room-tone':'سکوت اتاق','horse-walk':'اسب و سنگفرش','army-march':'رژه‌ی سربازان','battlefield':'میدان نبرد (دور)','footsteps-snow':'قدم روی برف','city-traffic':'ترافیک شهر','cafe':'کافه و رستوران','office':'دفتر کار','kitchen':'آشپزخانه','train-station':'ایستگاه قطار','airport':'فرودگاه','night-city':'شهر در شب','children-playground':'بازی بچه‌ها'};
-async function ambUI(){ const B=document.querySelector('#rvAmb .abB'); if(!B||!RV) return; const M=RV.data.meta=RV.data.meta||{}, vol=M.ambVol==null?100:M.ambVol;
+async function ambUI(){ const B=document.querySelector('#rvAmb .abB'); if(!B||!RV) return; const M=RV.data.meta=RV.data.meta||{}, vol=M.ambVol==null?100:M.ambVol, T=+M.total||0;
   let files=[]; try{ files=((await api('/contents/ambience'))||[]).map(x=>x.name).filter(n=>/\.mp3$/i.test(n)).map(n=>n.replace(/\.mp3$/i,'')).sort((a,c)=>(AMB_FA[a]||a).localeCompare(AMB_FA[c]||c,'fa')) }catch(e){}
   if(!files.length){ B.innerHTML='<p class="hint">هنوز صدای فضایی در مخزن نیست. یک بار در گیت‌هاب بخش Actions اجرا کن: «Fetch ambience beds» (دانلود رایگان CC0 از Freesound). بعد این بخش پر می‌شود.</p>'; return }
-  const opt=cur=>`<option value="" ${!cur?'selected':''}>— انتخاب نشده (کارگردان می‌گذارد) —</option><option value="none" ${cur==='none'?'selected':''}>بدون صدای فضا</option>`+files.map(f=>`<option value="${f}" ${cur===f?'selected':''}>${AMB_FA[f]||f}</option>`).join('');
-  const vopt=v=>[[50,'کم‌تر'],[100,'عادی'],[150,'بلندتر']].map(([n,l])=>`<option value="${n}" ${(v==null?100:v)===n?'selected':''}>${l}</option>`).join('');
+  const push=()=>{ rvSave(); try{ $('#pvFrame').contentWindow.postMessage({type:'amb',clips:M.ambClips||[],vol:M.ambVol,on:M.amb!==false},'*') }catch(e){} };   // the preview hears every change at once
+  const f1=v=>Math.round(v*10)/10, sceneAt=t=>{ let k=0; RV.data.scenes.forEach((s,i)=>{ if(t>=(+s.t0||0)-.05) k=i }); return k };
   B.innerHTML=`<label style="display:flex;gap:8px;align-items:center;justify-content:flex-start"><input type="checkbox" class="abOn" style="width:auto;min-height:0"> صدای فضا در این ویدیو باشد</label>
     <label>بلندی کل صدای فضا: <b class="abVl"></b></label><input type="range" class="abVr" min="0" max="200" step="5" style="width:100%">
-    <p class="hint">صحنه‌های پشت‌سرهم با یک صدای یکسان، یک پخش پیوسته می‌شوند و تغییر صدا نرم و تدریجی است. صدا خیلی آرام زیر صدای راوی می‌نشیند. اگر بخواهی هیچ صدایی نباشد، «بدون صدای فضا» را بزن. پخش آن فقط در ساخت نهایی شنیده می‌شود، نه در پیش‌نمایش.</p>
-    <div class="abL"></div>`;
-  const on=B.querySelector('.abOn'), vr=B.querySelector('.abVr'), vl=B.querySelector('.abVl'), L=B.querySelector('.abL');
-  on.checked=M.amb!==false; on.onchange=()=>{ if(on.checked) delete M.amb; else M.amb=false; rvSave() };
-  vr.value=vol; vl.textContent=fa(vol)+'٪'; vr.oninput=()=>{ const v=+vr.value; vl.textContent=fa(v)+'٪'; if(v===100) delete M.ambVol; else M.ambVol=v; rvSave() };
-  RV.data.scenes.forEach((s,i)=>{ const r=document.createElement('div'); r.className='g2'; r.style.margin='6px 0';
-    r.innerHTML=`<div><label>صحنه ${fa(i+1)}${s.text?' — '+esc(String(s.text).slice(0,26)):''}</label><select class="sel abS">${opt(s.amb||'')}</select></div><div><label>بلندی</label><select class="sel abV">${vopt(s.ambVol)}</select></div>`;
-    r.querySelector('.abS').onchange=e=>{ if(e.target.value) s.amb=e.target.value; else delete s.amb; rvSave() };
-    r.querySelector('.abV').onchange=e=>{ const v=+e.target.value; if(v===100) delete s.ambVol; else s.ambVol=v; rvSave() };
-    L.appendChild(r) }) }
+    <div class="abBar" style="position:relative;height:16px;border-radius:8px;background:#241d18;margin:10px 0;overflow:hidden"></div>
+    <div class="abL"></div><div class="row" style="margin-top:8px"><button class="abAdd">➕ افزودن صدا</button></div>
+    <p class="hint">هر کارت یک صدای فضا روی خط زمان ویدیو است: صدا را عوض کن، شروع و پایانش را (به ثانیه) تغییر بده، بلندیش را کم یا زیاد کن، یا حذفش کن. با «▶ از اینجا» از چند ثانیه پیش از آن شروع به پخش می‌کنم؛ در «▶ دیدن کل ویدیو» هم می‌شنوی و در حین پخش تغییرها را فوراً می‌شنوی. ورود و خروج هر صدا نرم (حدود ۱ ثانیه) است. تکرار صدا در پیش‌نمایش ممکن است یک «تق» کوچک بدهد؛ در ساخت نهایی نرم به‌هم وصل می‌شود.</p>`;
+  const on=B.querySelector('.abOn'), vr=B.querySelector('.abVr'), vl=B.querySelector('.abVl'), L=B.querySelector('.abL'), bar=B.querySelector('.abBar');
+  on.checked=M.amb!==false; on.onchange=()=>{ if(on.checked) delete M.amb; else M.amb=false; push() };
+  vr.value=vol; vl.textContent=fa(vol)+'٪'; vr.oninput=()=>{ const v=+vr.value; vl.textContent=fa(v)+'٪'; if(v===100) delete M.ambVol; else M.ambVol=v; push() };
+  const clips=()=>M.ambClips=M.ambClips||[];
+  const drawBar=()=>{ bar.innerHTML=''; if(!T) return; clips().forEach((c,i)=>{ const d=document.createElement('i'); d.style.cssText=`position:absolute;top:${(i%2)*8}px;height:8px;border-radius:4px;background:${['#ffc21a','#5ec8ff','#ff7a59','#9be564','#d49bff'][i%5]};opacity:.9;left:${Math.max(0,c.t0/T*100)}%;width:${Math.max(.5,(Math.min(T,c.t1)-Math.max(0,c.t0))/T*100)}%`; d.title=AMB_FA[c.src]||c.src; bar.appendChild(d) }) };
+  const opt=cur=>files.map(f=>`<option value="${f}" ${cur===f?'selected':''}>${AMB_FA[f]||f}</option>`).join('')+(cur&&!files.includes(cur)?`<option value="${cur}" selected>${cur}</option>`:'');
+  const vopt=v=>[[0,'بی‌صدا'],[25,'خیلی کم'],[50,'کم‌تر'],[75,'کمی کم‌تر'],[100,'عادی'],[150,'بلندتر'],[200,'خیلی بلند']].map(([n,l])=>`<option value="${n}" ${(v==null?100:+v)===n?'selected':''}>${l}</option>`).join('');
+  const draw=()=>{ L.innerHTML=''; clips().forEach((c,i)=>{ const d=document.createElement('div'); d.style.cssText='border:1px solid var(--line);border-radius:12px;padding:8px;margin:8px 0';
+      const a=sceneAt(c.t0), b=sceneAt(Math.max(c.t0,c.t1-.1));
+      d.innerHTML=`<label style="margin-top:0">صدا ${fa(i+1)} <small class="abSc" style="opacity:.7"></small></label><select class="sel abS">${opt(c.src)}</select>
+        <div class="g2" style="margin-top:6px"><div><label>شروع (ثانیه)</label><input type="number" class="abT0 ltr" step="0.1" min="0" ${T?`max="${T}"`:''}></div><div><label>پایان (ثانیه)</label><input type="number" class="abT1 ltr" step="0.1" min="0" ${T?`max="${T}"`:''}></div></div>
+        <div class="g2" style="margin-top:6px"><div><label>بلندی</label><select class="sel abV">${vopt(c.vol)}</select></div><div class="row" style="align-items:end;gap:6px"><button class="abPl">▶ از اینجا</button><button class="abDl">🗑</button></div></div>`;
+      const sc=()=>{ const x=sceneAt(c.t0), y=sceneAt(Math.max(c.t0,c.t1-.1)); d.querySelector('.abSc').textContent='(صحنه '+fa(x+1)+(y>x?' تا '+fa(y+1):'')+')' }; sc();
+      const t0=d.querySelector('.abT0'), t1=d.querySelector('.abT1'); t0.value=f1(c.t0); t1.value=f1(c.t1);
+      d.querySelector('.abS').onchange=e=>{ c.src=e.target.value; drawBar(); push() };
+      t0.onchange=()=>{ let v=Math.max(0,+t0.value||0); if(T) v=Math.min(v,T); c.t0=f1(v); if(c.t1<=c.t0+.5){ c.t1=f1(Math.min(T||c.t0+8,c.t0+8)); t1.value=c.t1 } t0.value=c.t0; sc(); drawBar(); push() };
+      t1.onchange=()=>{ let v=+t1.value||0; if(T) v=Math.min(v,T); if(v<=c.t0+.5) v=c.t0+.5; c.t1=f1(v); t1.value=c.t1; sc(); drawBar(); push() };
+      d.querySelector('.abV').onchange=e=>{ const v=+e.target.value; if(v===100) delete c.vol; else c.vol=v; push() };
+      d.querySelector('.abPl').onclick=()=>{ window.__pvAt=Math.max(0,c.t0-2); openPreview(0,'all') };
+      d.querySelector('.abDl').onclick=()=>{ if(!confirm('این صدای فضا حذف شود؟')) return; clips().splice(i,1); draw(); drawBar(); push() };
+      L.appendChild(d) }); if(!clips().length) L.innerHTML='<p class="hint">صدایی روی ویدیو نیست. «➕ افزودن صدا» را بزن.</p>' };
+  B.querySelector('.abAdd').onclick=()=>{ const k=(typeof pvI==='number'&&pvI>=0&&RV.data.scenes[pvI])?pvI:0, t0=+(RV.data.scenes[k]||{}).t0||0, t1=Math.min(T||t0+8,t0+8); clips().push({src:files[0],t0:f1(t0),t1:f1(t1)}); draw(); drawBar(); push() };
+  draw(); drawBar() }
 /* ===== bubble pictures: prompt, cut-out (magenta -> transparent, text area detected), library listing ===== */
 const BUB_TYPES=[['speech','ابر حرف زدن (دم پایین‌چپ)'],['thought','ابر فکر کردن (ابری با حباب)'],['shout','ابر فریاد (دندانه‌دار)'],['caption','کادر توضیح (مستطیلی)']];
 const BUB_DESC={speech:'a classic oval comic speech bubble with a single pointed tail at the bottom left',thought:'a cloud-shaped thought bubble with three small circles trailing down to the bottom left',shout:'a jagged starburst shout bubble with spiky edges and no tail',caption:'a rectangular narration caption box with slightly irregular hand-cut paper edges and no tail'};

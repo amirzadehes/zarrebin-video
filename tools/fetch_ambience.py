@@ -52,11 +52,30 @@ def download(url, dest):
         if os.path.exists(tmp): os.remove(tmp)
 
 
+def measure(path):
+    """integrated loudness (LUFS) of a file; the in-app preview needs it to play each bed at the level of the final mix"""
+    r = subprocess.run(['ffmpeg', '-nostats', '-i', path, '-af', 'ebur128', '-f', 'null', '-'], capture_output=True, text=True)
+    m = re.findall(r'I:\s+(-?[\d.]+) LUFS', r.stderr)
+    return round(float(m[-1]), 1) if m else None
+
+
+def backfill(cat):
+    n = 0
+    for slug, v in cat.items():
+        f = os.path.join(OUT, slug + '.mp3')
+        if v.get('lufs') is None and os.path.exists(f):
+            l = measure(f)
+            if l is not None and l > -70: v['lufs'] = l; n += 1
+    return n
+
+
 def main():
-    if not KEY: sys.exit('FREESOUND_API_KEY is missing (repo Secret)')
     os.makedirs(OUT, exist_ok=True)
     try: cat = json.load(open(CATALOG, encoding='utf8'))
     except Exception: cat = {}
+    nb = backfill(cat)
+    if nb: print('loudness measured for', nb, 'existing beds'); json.dump(cat, open(CATALOG, 'w', encoding='utf8'), ensure_ascii=False, indent=1, sort_keys=True)
+    if not KEY: sys.exit('FREESOUND_API_KEY is missing (repo Secret)') if not nb else sys.exit(0)
     done = skipped = missing = 0
     for slug, q in WANTED.items():
         assert slug_ok(slug), slug
@@ -68,6 +87,7 @@ def main():
             if not res: print('no CC0 result:', slug, '|', q); missing += 1; continue
             r = res[0]; download(r['previews']['preview-hq-mp3'], dest)
             cat[slug] = {'freesound_id': r['id'], 'name': r['name'], 'by': r['username'], 'license': 'CC0', 'seconds': round(min(r['duration'], KEEP), 1), 'query': q}
+            cat[slug]['lufs'] = measure(dest)
             done += 1; print('ok', slug, r['id'], round(r['duration'], 1))
         except Exception as e:
             print('failed:', slug, str(e)[:120]); missing += 1
