@@ -6,7 +6,7 @@ scenes.json: meta.ambClips = [{"src": slug of a file in ambience/, "t0": start s
   meta.ambVol = percent for the whole episode (default 100); meta.amb === false switches the layer off.
   'assign' writes ambClips once (when the key is missing; an empty list means the owner removed them all and is kept). The owner edits the clips in the app,
   and hears them in the preview (engine/preview.html uses the same fades and level). A change of bed cross-fades, beds are normalised quiet (a bed under a voice)."""
-import glob, json, math, os, subprocess, sys, tempfile
+import re, glob, json, math, os, subprocess, sys, tempfile
 
 SR = 44100
 XF = 1.2        # cross-fade between two beds / fade at the ends (seconds)
@@ -21,7 +21,7 @@ def load(ep): return json.load(open(f'episodes/{ep}/scenes.json', encoding='utf8
 
 
 def assign(ep):
-    S = slugs()
+    S = [x for x in slugs() if not re.search(r'-\d$', x)]   # the director picks topics; the -2/-3 recordings are alternatives the owner can choose by hand
     if not S: print('ambience: no beds in ambience/ yet (run the workflow "Fetch ambience beds")'); return
     D = load(ep); M = D['meta']
     if M.get('amb') is False: print('ambience: switched off'); return
