@@ -31,14 +31,14 @@ let sfxTm=0;   // own 25 ms timer: a slow frame (big scene, weak phone) must not
 function sfxPoll(){ const t=au.currentTime; try{ ambPoll(t) }catch(e){} if(t>=sfxLast){ sfxFire(sfxLast,t+.001); sfxLast=t+.001 } else sfxLast=t }
 /* ambience beds (meta.ambClips = [{src, t0, t1, vol}], meta.ambVol, meta.amb === false = off): same fades and level as tools/make_ambience.py. A bed is normalised to -31 LUFS
    (ambience_catalog.json has each file's loudness), so it sits under the voice exactly as in the final video. Fades: 1.2 s, 0.6 s at the very start, 2.5 s at the very end. */
-const AMB_XF=1.2, AMB_LUFS=-31; let AMBC=null, AMBP=null, AMBE={}, AMBX=null;
+const AMB_XF=2.5, AMB_LUFS=-31; let AMBC=null, AMBP=null, AMBE={}, AMBX=null;
 function ambLoad(){ if(!AMBP) AMBP=fetch('../ambience_catalog.json?v='+Date.now()).then(r=>r.json()).then(c=>{ AMBC=c }).catch(()=>{ AMBC={} }) }
 const ambClipsOf=()=>{ const M=(typeof D!=='undefined'&&D&&D.meta)||{}; return M.amb===false?[]:(M.ambClips||[]).filter(c=>c&&c.src&&+c.t1>+c.t0) };
 function ambEl(key,c){ let e=AMBE[key]; if(e&&e.src0===c.src) return e; if(e){ try{ e.a.pause() }catch(x){} }
   const a=new Audio('../ambience/'+encodeURIComponent(c.src)+'.mp3'); a.loop=true; a.preload='auto'; let g=null;
   try{ AMBX=AMBX||new (window.AudioContext||window.webkitAudioContext)(); g=AMBX.createGain(); AMBX.createMediaElementSource(a).connect(g).connect(AMBX.destination) }catch(x){ g=null }
   return AMBE[key]={a,g,src0:c.src,on:false} }
-function ambGain(c,t){ const d=+c.t1-+c.t0, T=D.meta.total||1e9, fi=+c.t0<=.01?.6:Math.min(AMB_XF,d/2), fo=+c.t1>=T-.01?2.5:Math.min(AMB_XF,d/2), f=Math.min(1,Math.max(0,(t-c.t0)/fi),Math.max(0,(c.t1-t)/fo));
+function ambGain(c,t){ const d=+c.t1-+c.t0, T=D.meta.total||1e9, fi=Math.min(+c.t0<=.01?1.5:AMB_XF,d/2), fo=Math.min(+c.t1>=T-.01?3:AMB_XF,d/2), f=Math.sin(Math.PI/2*Math.min(1,Math.max(0,(t-c.t0)/fi),Math.max(0,(c.t1-t)/fo)));   // quarter-sine fades, same as ffmpeg qsin
   const L=AMBC&&AMBC[c.src]&&AMBC[c.src].lufs; return Math.pow(10,(AMB_LUFS-(L==null?-25:L))/20)*(c.vol==null?100:+c.vol)/100*((D.meta.ambVol==null?100:+D.meta.ambVol)/100)*f }
 function ambPoll(t){ ambLoad(); const live=new Set();
   ambClipsOf().forEach((c,i)=>{ const key=i+':'+c.src, e0=AMBE[key];

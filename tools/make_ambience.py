@@ -9,7 +9,7 @@ scenes.json: meta.ambClips = [{"src": slug of a file in ambience/, "t0": start s
 import re, glob, json, math, os, subprocess, sys, tempfile
 
 SR = 44100
-XF = 1.2        # cross-fade between two beds / fade at the ends (seconds)
+XF = 2.5        # soft fade in / out of every bed and cross-fade between two beds (seconds); first bed fades in over 1.5 s, last out over 3 s
 LOOP_XF = 1.5   # cross-fade inside a bed that has to be repeated
 LUFS = -31      # a bed sits well below the voice
 
@@ -73,7 +73,7 @@ def bed(slug, d, gain, fade_in, fade_out, out):
             chain += f'{last}[{k}:a]acrossfade=d={LOOP_XF}:c1=tri:c2=tri{nm};'; last = nm
         chain = chain.rstrip(';')
     fi, fo = min(fade_in, d / 2), min(fade_out, d / 2)
-    chain += f';[x]atrim=0:{d:.3f},asetpts=PTS-STARTPTS,loudnorm=I={LUFS}:TP=-6:LRA=11,volume={gain:.3f},afade=t=in:d={fi:.2f},afade=t=out:st={max(d - fo, 0):.3f}:d={fo:.2f},aresample={SR}[o]'
+    chain += f';[x]atrim=0:{d:.3f},asetpts=PTS-STARTPTS,loudnorm=I={LUFS}:TP=-6:LRA=11,volume={gain:.3f},afade=t=in:d={fi:.2f}:curve=qsin,afade=t=out:st={max(d - fo, 0):.3f}:d={fo:.2f}:curve=qsin,aresample={SR}[o]'
     subprocess.check_call(cmd + ['-filter_complex', chain, '-map', '[o]', '-ac', '2', out])
 
 
@@ -91,7 +91,7 @@ def build(ep):
     for k, s in enumerate(segs):
         a = max(0.0, s['t0']); b = min(T, s['t1']); out = os.path.join(tmp, f'b{k}.wav')
         if b - a < .3: continue
-        bed(s['slug'], b - a, s['g'], .6 if a <= .01 else XF, 2.5 if b >= T - .01 else XF, out); ins.append((out, a))   # the same fades as the in-app preview
+        bed(s['slug'], b - a, s['g'], min(1.5 if a <= .01 else XF, (b - a) / 2), min(3.0 if b >= T - .01 else XF, (b - a) / 2), out); ins.append((out, a))   # the same fades as the in-app preview
     for k, (f, a) in enumerate(ins): fc += f'[{k}:a]adelay={int(a * 1000)}|{int(a * 1000)}[d{k}];'
     mix = ''.join(f'[d{k}]' for k in range(len(ins)))
     fc += f'{mix}amix=inputs={len(ins)}:normalize=0:duration=longest,apad=whole_dur={T:.3f},atrim=0:{T:.3f}[o]'
