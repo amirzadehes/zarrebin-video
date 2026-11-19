@@ -93,8 +93,33 @@ WANTED.update({
     'street-night': 'night street ambience quiet',
     'lab': 'laboratory ambience electronic hum',
 })
+WANTED.update({
+    'mood-dream': 'dreamy ambient pad dream sequence',
+    'mood-ascension': 'ascension heavenly ethereal pad',
+    'mood-heavenly-choir': 'angelic choir ambience ethereal',
+    'mood-divine-light': 'divine light shimmer ambience',
+    'mood-vision': 'mystical vision ethereal drone',
+    'mood-spirit': 'ghostly spirit ethereal ambience',
+    'mood-whispers': 'whispers ambience ghostly voices',
+    'mood-mystic-drone': 'mystic drone meditation',
+    'mood-time-slow': 'time slow motion ambience drone',
+    'mood-memory': 'nostalgic memory ambient texture',
+    'mood-awe': 'epic awe cinematic drone',
+    'mood-sorrow': 'sad melancholic ambient drone',
+    'mood-peace': 'peaceful calm ambient pad',
+    'mood-fear': 'creepy fear tension ambience',
+    'mood-prophecy': 'mysterious prophecy ambient dark',
+    'mood-birth': 'new beginning sunrise ambient pad',
+    'mood-death': 'death ending dark drone',
+    'mood-cosmic': 'cosmic stars ambient space pad',
+    'mood-chaos-inner': 'chaotic dissonant ambience tension',
+    'mood-ethereal-wind': 'ethereal wind whisper ambience',
+    'mood-distant-bells': 'distant mystical bells ambience',
+    'mood-water-dream': 'dreamy underwater ethereal',
+})   # abstract moods: dream, ascension, spirit, awe ... (no concrete place or object)
 VARIANTS = 3   # topic, topic-2, topic-3: different recordings of the same sound (new topics 2)
 FEW = ['air-conditioner', 'applause', 'bar-pub', 'bazaar-oriental', 'beach-calm', 'birds-morning', 'blacksmith', 'campfire-night', 'car-interior', 'carriage', 'cave-drips', 'chains', 'city-morning', 'clock-ticking', 'construction', 'crowd-angry', 'crowd-cheering', 'crowd-whisper', 'desert-night', 'dogs-distant', 'dungeon', 'factory', 'fan-room', 'forest-night', 'frogs-swamp', 'harbor', 'heartbeat', 'horse-gallop', 'hospital', 'insects-summer', 'jungle', 'lab', 'library', 'machine-hum', 'mountain-wind', 'owl-night', 'plane-cabin', 'rain-city', 'rain-roof', 'rain-window', 'rooster-farm', 'school-hall', 'scifi-drone', 'server-hum', 'ship-creak', 'siren-distant', 'snow-blizzard', 'space-hum', 'stadium', 'stone-hall', 'street-night', 'subway', 'sword-clash', 'temple-interior', 'tension-drone', 'thunder-distant', 'train-ride', 'underwater', 'waterfall', 'wind-chimes', 'wind-howling', 'wind-trees', 'wolf-distant', 'workshop']
+FEW += ['mood-ascension', 'mood-awe', 'mood-birth', 'mood-chaos-inner', 'mood-cosmic', 'mood-death', 'mood-distant-bells', 'mood-divine-light', 'mood-dream', 'mood-ethereal-wind', 'mood-fear', 'mood-heavenly-choir', 'mood-memory', 'mood-mystic-drone', 'mood-peace', 'mood-prophecy', 'mood-sorrow', 'mood-spirit', 'mood-time-slow', 'mood-vision', 'mood-water-dream', 'mood-whispers']
 
 
 def slug_ok(s): return re.fullmatch(r'[a-z0-9-]+', s) is not None

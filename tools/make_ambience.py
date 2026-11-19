@@ -33,7 +33,7 @@ def assign(ep):
         return '%d | %s | %s' % (i, (sc[i].get('text') or '')[:60], str(ph.get('prompt') or '')[:230])
     system = ('You are the sound designer of a narrated documentary-style video. For each scene choose ONE quiet ambience bed that matches the place and weather of the scene, from the list. '
               'Rules: use few distinct beds and keep the SAME bed for consecutive scenes of the same place (continuity matters more than variety); '
-              'choose "none" when nothing fits or the scene is abstract/graphic; never invent names. Answer JSON only: {"scenes":[{"i":0,"amb":"slug"}]}.\nBeds: ' + ', '.join(S))
+              'beds named mood-* are for abstract moments with no real place or sound (a dream, a vision, a soul ascending, awe, grief, prophecy): use them for such scenes instead of "none"; choose "none" when nothing fits or the scene is graphic; never invent names. Answer JSON only: {"scenes":[{"i":0,"amb":"slug"}]}.\nBeds: ' + ', '.join(S))
     try:
         raw = groqlib.chat(system, 'Scenes (index | on-screen text | picture description):\n' + '\n'.join(desc(i) for i in range(len(sc))), max_tokens=1800, json_mode=True, temperature=.2)
         got = {}
