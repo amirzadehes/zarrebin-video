@@ -20,6 +20,7 @@ button.pri,.btn.pri{background:var(--acc);color:var(--acc-tx);border-color:var(-
 button:disabled{opacity:.5}
 .tabs{display:flex;gap:8px;margin:8px 0 16px;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:5}
 .tabs button{flex:1;min-height:44px}
+@media(max-width:480px){.tabs{gap:4px}.tabs button{min-width:0;padding-inline:4px;font-size:13px}}
 .tabs button.on{background:var(--acc);color:var(--acc-tx);border-color:var(--acc)}
 .cmH{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}.cmH .cmC{opacity:.6;font-size:.85em}
 #epTr.cmin>*:not(.cmH):not(.st){display:none}#epRun.cmin>.row,#epRun.cmin>p.hint{display:none}
@@ -292,12 +293,14 @@ body[data-mode=poster] .modesw button.on{background:#ff5a1f;color:#fff;border-co
   <button data-t="want">مورد نیاز</button>
   <button data-t="gen">عمومی</button>
   <button data-t="lib">کتابخانه</button>
+  <button data-t="snd">صداها</button>
 </nav>
 
 <main>
   <div id="ep"></div>
   <div id="want" hidden></div>
   <div id="gen" hidden></div>
+  <div id="snd" hidden></div>
   <div id="lib" hidden>
     <div class="card" id="libUp">
       <div class="name">افزودن چند تصویر با هم</div>
@@ -317,7 +320,7 @@ body[data-mode=poster] .modesw button.on{background:#ff5a1f;color:#fff;border-co
 
 <div id="pvModal" hidden>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvV" class="on">عمودی (اینستاگرام)</button><button id="pvH">افقی (یوتیوب)</button></div>
-  <iframe id="pvFrame" src="../engine/preview.html?inline=1&v=g12&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(62vh*9/16));height:min(62vh,calc(94vw*16/9))"></iframe>
+  <iframe id="pvFrame" src="../engine/preview.html?inline=1&v=g13&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(62vh*9/16));height:min(62vh,calc(94vw*16/9))"></iframe>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvPlay">▶ پخش</button><button id="pvPause" hidden>⏸ توقف</button><button id="pvEdit">✋ ویرایش چیدمان</button><button id="pvAmb">🌫 صدای فضا</button><button id="pvPlace">📍 مکان و تاریخ</button></div>
   <div class="row" id="pvTools" hidden style="justify-content:center;width:100%;margin:0"><button data-op="bigger">＋ بزرگ‌تر</button><button data-op="smaller">－ کوچک‌تر</button><button data-op="rot">⟳ چرخش</button><button data-op="reset">↺ خودکار</button></div>
   <div class="row" id="pvSel" hidden style="justify-content:center;width:100%;margin:0"></div>
@@ -763,7 +766,7 @@ async function pvAudioUrl(ep){
 async function pvSend(){ if(!RV||pvI<0) return; const f=$('#pvFrame').contentWindow; let audio; try{ audio=await pvAudioUrl(RV.ep) }catch(e){ toast('صدای این قسمت از مخزن گرفته نشد: '+e.message,5000); return }
   if(pvMode==='all'){ let music=null; try{ music=await pvMusicUrl(RV.ep) }catch(e){} f.postMessage({type:'playall',data:RV.data,ep:RV.ep,audio,music,musicVol:(RV.data.meta||{}).musicVol==null?100:RV.data.meta.musicVol,scene:0,at:window.__pvAt||0,sfxVol:+(($('#bSfxVol')||{}).value||65)},'*') } else if(pvMode==='edit') f.postMessage({type:'edit',data:RV.data,ep:RV.ep,audio,scene:pvI,sel:pvSelCur},'*'); else f.postMessage({type:'load',data:RV.data,ep:RV.ep,audio,scene:pvI},'*') }
 function pvGo(){ if(pvReady) pvSend(); else pvQ=true }
-function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&v=g12&t='+Date.now()+'&fmt='+f; pvLayout(); pvOkLabel() }
+function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&v=g13&t='+Date.now()+'&fmt='+f; pvLayout(); pvOkLabel() }
 addEventListener('resize',()=>{ if(!$('#pvModal').hidden) pvLayout() });
 addEventListener('message',e=>{ const m=e.data||{};
   if(m.type==='ready'){ pvReady=true; if(pvQ){ pvQ=false; pvSend() } }
@@ -1522,7 +1525,7 @@ $('#ntCopy').onclick=async()=>{ try{ await navigator.clipboard.writeText(NT); to
 $('#ntTest').onclick=async()=>{ const st=$('#ntSt'); if(!NT){ st.className='st bad'; st.textContent='نام اعلان پیدا نشد'; return } try{
   await fetch('https://ntfy.sh',{method:'POST',body:JSON.stringify({topic:NT,title:'اعلان آزمایشی ✓',message:'اعلان‌ها درست کار می‌کنند.',click:location.href})}); st.className='st ok'; st.textContent='فرستاده شد؛ اگر روی گوشی نیامد، ntfy و نام بالا را بررسی کن.' }catch(e){ st.className='st bad'; st.textContent='خطا: '+e.message } };
 $('#btnSet').onclick=()=>{ $('#settings').hidden=!$('#settings').hidden; if(!$('#settings').hidden){ loadMusic(); loadSfx(); loadNotify(); } };
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); document.body.classList.toggle('onlib',b.dataset.t==='lib'); ['want','ep','gen','lib'].forEach(t=>$('#'+t).hidden=t!==b.dataset.t); });
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b)); document.body.classList.toggle('onlib',b.dataset.t==='lib'); ['want','ep','gen','lib','snd'].forEach(t=>$('#'+t).hidden=t!==b.dataset.t); if(b.dataset.t==='snd') sndUI(); });
 if(!S.token) $('#settings').hidden=false;
 loadAll();
 </script>
@@ -1648,19 +1651,51 @@ async function musicUI(){ const B=document.querySelector('#rvMus .mpB'); if(!B||
 /* ===== ambience beds: one bed per scene (chosen by the director, changed here); built into the video by tools/make_ambience.py ===== */
 const AMB_FA={'wind-cold':'باد سرد زمستانی','wind-light':'نسیم ملایم','wind-desert':'باد بیابان','rain-light':'باران ملایم','rain-heavy':'باران شدید','storm-thunder':'طوفان و رعد','fire-crackle':'آتش و شعله','night-crickets':'شب و جیرجیرک','forest-birds':'جنگل و پرندگان','village-day':'روستا در روز','river-stream':'رود و آب','sea-waves':'موج دریا','crowd-murmur':'همهمه‌ی جمعیت','market-street':'بازار و خیابان شلوغ','crowd-hall':'همهمه در سالن','church-interior':'داخل کلیسا','church-bells':'ناقوس کلیسا (دور)','room-tone':'سکوت اتاق','horse-walk':'اسب و سنگفرش','army-march':'رژه‌ی سربازان','battlefield':'میدان نبرد (دور)','footsteps-snow':'قدم روی برف','city-traffic':'ترافیک شهر','cafe':'کافه و رستوران','office':'دفتر کار','kitchen':'آشپزخانه','train-station':'ایستگاه قطار','airport':'فرودگاه','night-city':'شهر در شب','children-playground':'بازی بچه‌ها','storm-sea':'دریای طوفانی','river-night':'رود در شب','rain-forest':'باران در جنگل','rain-tent':'باران روی چادر','wind-door':'باد از لای در','fog-silence':'مه و سکوت','sandstorm':'طوفان شن','volcano':'آتشفشان','earthquake':'زلزله','avalanche':'بهمن','ice-cracking':'ترک خوردن یخ','snow-quiet':'سکوت برفی','autumn-leaves':'برگ‌های پاییزی','bees-garden':'زنبور و باغ','crows':'کلاغ‌ها','seagulls':'مرغ دریایی','eagle-mountain':'عقاب و کوهستان','cattle-field':'گاو و چراگاه','goats-hills':'بز و زنگوله','camels-caravan':'کاروان شتر','village-evening':'عصر روستا','village-night':'شب روستا','old-city':'شهر قدیمی','castle':'قلعه','monastery':'صومعه','church-choir':'سرود کلیسا','prayer-murmur':'زمزمه‌ی دعا','funeral':'مراسم سوگ','wedding-crowd':'جشن و عروسی','war-distant':'جنگ دور','cannon-fire':'توپ و میدان جنگ','arrows':'تیر و کمان','marching-boots':'پای سربازان','prison-cell':'سلول زندان','court-hall':'دادگاه','market-fish':'بازار ماهی','tea-house':'چای‌خانه','night-owls-fire':'شب و آتش در بیابان','printing-press':'چاپخانه','telegraph':'تلگراف','radio-static':'نویز رادیو','tv-static':'نویز تلویزیون','phone-ring-room':'دفتر و تلفن','keyboard-typing':'تایپ و دفتر کار','highway':'بزرگراه','rain-car':'باران روی ماشین','boat-engine':'موتور قایق','helicopter':'هلیکوپتر','rocket-launch':'پرتاب موشک','stadium-roar':'غرش استادیوم','gym':'باشگاه','swimming-pool':'استخر','kids-laugh':'خنده‌ی بچه‌ها','baby-room':'اتاق کودک','night-hospital':'بیمارستان در شب','heart-monitor':'مانیتور قلب','mood-magic':'✨ جادو و افسون','mood-prayer':'✨ نیایش','mood-hope':'✨ امید','mood-loneliness':'✨ تنهایی','mood-revelation':'✨ الهام و آشکارشدن','mood-battle-inner':'✨ کشمکش درون','mood-journey':'✨ سفر و جست‌وجو','mood-sacred':'✨ فضای مقدس','mood-darkness':'✨ تاریکی','mood-light-dawn':'✨ طلوع روشنایی','mood-dream':'✨ رویا و خواب','mood-ascension':'✨ عروج به آسمان','mood-heavenly-choir':'✨ آواز آسمانی','mood-divine-light':'✨ نور الهی','mood-vision':'✨ مکاشفه و رؤیا','mood-spirit':'✨ روح و عالم برزخ','mood-whispers':'✨ نجواهای ناپیدا','mood-mystic-drone':'✨ زمزمه‌ی عرفانی','mood-time-slow':'✨ گذر کُند زمان','mood-memory':'✨ خاطره‌ی دور','mood-awe':'✨ شکوه و حیرت','mood-sorrow':'✨ اندوه','mood-peace':'✨ آرامش و سکون','mood-fear':'✨ ترس و دلهره','mood-prophecy':'✨ پیشگویی و راز','mood-birth':'✨ تولد و آغاز','mood-death':'✨ مرگ و پایان','mood-cosmic':'✨ کیهان و ستاره‌ها','mood-chaos-inner':'✨ آشفتگی درون','mood-ethereal-wind':'✨ باد رازآلود','mood-distant-bells':'✨ زنگ‌های دور و رازآلود','mood-water-dream':'✨ آب رویایی','wind-howling':'وزوز باد','wind-trees':'باد در درختان','mountain-wind':'باد کوهستان','rain-window':'باران روی شیشه','rain-roof':'باران روی سقف','thunder-distant':'رعد دور','snow-blizzard':'کولاک برف','cave-drips':'چکه‌ی آب در غار','waterfall':'آبشار','beach-calm':'ساحل آرام','harbor':'بندر و مرغ دریایی','ship-creak':'کشتی چوبی','underwater':'زیر آب','forest-night':'جنگل در شب','owl-night':'جغد شب','wolf-distant':'زوزه‌ی گرگ دور','birds-morning':'پرندگان صبحگاهی','rooster-farm':'خروس و مزرعه','dogs-distant':'سگ‌های دور','jungle':'جنگل استوایی','frogs-swamp':'قورباغه و مرداب','insects-summer':'حشرات تابستان','desert-night':'شب بیابان','horse-gallop':'چهارنعل اسب','carriage':'کالسکه','sword-clash':'شمشیر و نبرد','crowd-cheering':'هلهله‌ی جمعیت','crowd-angry':'جمعیت خشمگین','crowd-whisper':'نجوای جمعیت','applause':'کف زدن','bazaar-oriental':'بازار شرقی','temple-interior':'داخل معبد','stone-hall':'تالار سنگی','dungeon':'سیاهچال','chains':'زنجیر','clock-ticking':'تیک‌تاک ساعت','heartbeat':'ضربان قلب','campfire-night':'آتش کمپ در شب','blacksmith':'آهنگری','workshop':'کارگاه','construction':'ساخت‌وساز','factory':'کارخانه','machine-hum':'همهمه‌ی ماشین‌آلات','server-hum':'اتاق سرور','air-conditioner':'تهویه','fan-room':'پنکه','car-interior':'داخل ماشین','train-ride':'قطار در حرکت','subway':'مترو','plane-cabin':'کابین هواپیما','siren-distant':'آژیر دور','city-morning':'صبح شهر','rain-city':'باران در شهر','hospital':'بیمارستان','school-hall':'مدرسه','library':'کتابخانه','bar-pub':'بار و میخانه','stadium':'استادیوم','space-hum':'فضا و کیهان','scifi-drone':'فضای علمی‌تخیلی','tension-drone':'تنش و دلهره','wind-chimes':'زنگوله‌ی باد','street-night':'خیابان در شب','lab':'آزمایشگاه'};
 const AMB_META={usr:{}};   // ambience_user.json: {slug:{fa,group,lufs}} = sounds the owner added by hand
-const ambGrp=s=>(AMB_META.usr[s]&&AMB_META.usr[s].group)||String(s).replace(/-\d$/,''), ambGLabel=g=>AMB_FA[g]||(AMB_META.usr[g]&&AMB_META.usr[g].fa)||g;
-const ambName=s=>{ const u=AMB_META.usr[s], g=ambGrp(s), m=String(s).match(/-(\d)$/); if(u&&u.fa) return g!==s?ambGLabel(g)+' – '+u.fa:u.fa; return m&&AMB_FA[g]?AMB_FA[g]+' '+fa(m[1]):(AMB_FA[s]||s) };
+const ambGrp=s=>(AMB_META.usr[s]&&AMB_META.usr[s].group)||String(s).replace(/-\d$/,''), ambGLabel=g=>((AMB_META.usr._g||{})[g])||AMB_FA[g]||(AMB_META.usr[g]&&AMB_META.usr[g].fa)||g;
+const ambName=s=>{ const u=AMB_META.usr[s], g=ambGrp(s), m=String(s).match(/-(\d)$/); if(u&&u.fa) return g!==s?ambGLabel(g)+' – '+u.fa:u.fa; return m&&ambGLabel(g)!==g?ambGLabel(g)+' '+fa(m[1]):(AMB_FA[s]||s) };
 const AMB_LOCAL={};   // slug -> blob URL of a file uploaded in this session: audible at once, before the site (GitHub Pages) has published it
 function ambAudio(slug){ const au=new Audio(AMB_LOCAL[slug]||('../ambience/'+encodeURIComponent(slug)+'.mp3')); let tried=false;
   au.addEventListener('error',()=>{ if(tried||AMB_LOCAL[slug]) return; tried=true; const t=au.currentTime, on=!au.paused; au.src='https://raw.githubusercontent.com/'+S.repo+'/main/ambience/'+encodeURIComponent(slug)+'.mp3'; au.load(); if(on) au.play().catch(()=>{}) });   // new files reach the site a few minutes later: take them from GitHub meanwhile
   return au }
+/* ===== صداها: manage the ambience library (names and categories are saved in ambience_user.json, which overrides the defaults) ===== */
+async function ambSaveUsr(mut){ for(let k=0;k<4;k++){ let sha,cur={}; try{ const j=await api('/contents/ambience_user.json'); sha=j.sha; cur=JSON.parse(decB64(j)) }catch(e){} mut(cur); try{ await api('/contents/ambience_user.json',{method:'PUT',body:JSON.stringify({message:'ambience: names and categories',content:enc(JSON.stringify(cur,null,1)),branch:'main',sha})}); AMB_META.usr=cur; return }catch(e){ if(k===3) throw e; await sleep(1200) } } }
+async function sndUI(){ const R=$('#snd'); if(!R) return; R.innerHTML='<div class="card"><p class="hint">در حال بارگذاری صداها…</p></div>';
+  try{ AMB_META.usr=await readJson('ambience_user.json',{}) }catch(e){ AMB_META.usr={} }
+  let list=[]; try{ list=((await api('/contents/ambience'))||[]).filter(x=>/\.mp3$/i.test(x.name)).map(x=>({slug:x.name.replace(/\.mp3$/i,''),sha:x.sha})) }catch(e){ R.innerHTML='<div class="card"><p class="hint">خواندن صداها نشد: '+esc(e.message||e)+'</p></div>'; return }
+  const GR=new Map(); list.forEach(f=>{ const g=ambGrp(f.slug); if(!GR.has(g)) GR.set(g,[]); GR.get(g).push(f) });
+  const k2=x=>String(x.slug).startsWith('u-')?100:(+(String(x.slug).match(/-(\d)$/)||[0,1])[1]); GR.forEach(m=>m.sort((a,b)=>k2(a)-k2(b)||a.slug.localeCompare(b.slug)));
+  const GK=[...GR.keys()].sort((a,b)=>ambGLabel(a).localeCompare(ambGLabel(b),'fa'));
+  R.innerHTML=`<div class="card"><div class="name">🔊 صداهای فضا (${fa(list.length)} صدا، ${fa(GK.length)} دسته)</div><p class="hint">اینجا نام فارسی هر دسته و هر صدا را عوض می‌کنی، یک صدا را به دسته‌ی دیگر می‌بری، آن را می‌شنوی یا پاک می‌کنی. تغییر با خروج از کادر ذخیره می‌شود. نام را خالی کنی به نام پیش‌فرض برمی‌گردد. برای افزودن صدای تازه از بخش «🌫 صدای فضا» در صفحه‌ی ساخت ویدیو استفاده کن.</p><input type="search" class="sq" placeholder="جست‌وجوی نام صدا یا دسته…" style="width:100%"></div><div class="sl"></div>`;
+  const L=R.querySelector('.sl'), q=R.querySelector('.sq'); let playing=null;
+  const stopP=()=>{ if(playing){ const {au,btn}=playing; playing=null; if(btn.isConnected) btn.textContent='▶'; ambFade(au,0,500,()=>{ try{ au.pause() }catch(e){} }) } };
+  const gopts=cur=>GK.map(g=>`<option value="${g}" ${g===cur?'selected':''}>${esc(ambGLabel(g))}</option>`).join('')+'<option value="__new">➕ دسته‌ی تازه…</option>';
+  const vname=(f,k)=>(AMB_META.usr[f.slug]&&AMB_META.usr[f.slug].fa)||('نسخه '+fa(k+1));
+  const draw=()=>{ stopP(); L.innerHTML=''; const needle=q.value.trim();
+    GK.forEach(g=>{ const mem=GR.get(g)||[]; if(!mem.length) return; if(needle&&!(ambGLabel(g)+' '+mem.map((f,k)=>vname(f,k)).join(' ')).includes(needle)) return;
+      const d=document.createElement('details'); d.className='card'; d.open=!!needle;
+      d.innerHTML=`<summary style="cursor:pointer"><b class="gt"></b> <small style="opacity:.7">(${fa(mem.length)})</small></summary><label>نام دسته</label><input type="text" class="gn"><div class="gm"></div>`;
+      d.querySelector('.gt').textContent=ambGLabel(g); const gn=d.querySelector('.gn'); gn.value=ambGLabel(g);
+      gn.onchange=async()=>{ const v=gn.value.trim(); try{ await ambSaveUsr(u=>{ u._g=u._g||{}; if(v&&v!==(AMB_FA[g]||g)) u._g[g]=v; else delete u._g[g] }); toast('✓ ذخیره شد'); d.querySelector('.gt').textContent=ambGLabel(g) }catch(e){ toast('نشد: '+(e.message||e)) } };
+      const gm=d.querySelector('.gm');
+      mem.forEach((f,k)=>{ const r=document.createElement('div'); r.style.cssText='border-top:1px solid var(--line);padding:8px 0;margin-top:8px';
+        r.innerHTML=`<div class="row" style="gap:6px;align-items:center"><button class="sp" style="flex:0 0 44px">▶</button><input type="text" class="sn" style="flex:1" placeholder="نام فارسی"><button class="sd" style="flex:0 0 44px">🗑</button></div><label>دسته</label><select class="sel sg">${gopts(g)}</select>`;
+        const sn=r.querySelector('.sn'); sn.value=vname(f,k);
+        sn.onchange=async()=>{ const v=sn.value.trim(); try{ await ambSaveUsr(u=>{ const e=u[f.slug]=u[f.slug]||{}; if(v&&v!==('نسخه '+fa(k+1))) e.fa=v; else delete e.fa; if(!Object.keys(e).length) delete u[f.slug] }); toast('✓ ذخیره شد') }catch(e){ toast('نشد: '+(e.message||e)) } };
+        r.querySelector('.sg').onchange=async e=>{ let ng=e.target.value; if(ng==='__new'){ const nm=(prompt('نام فارسی دسته‌ی تازه؟')||'').trim(); if(!nm){ e.target.value=g; return } ng='g-'+Date.now().toString(36); try{ await ambSaveUsr(u=>{ u._g=u._g||{}; u._g[ng]=nm }) }catch(er){ toast('نشد: '+(er.message||er)); return } }
+          try{ await ambSaveUsr(u=>{ const en=u[f.slug]=u[f.slug]||{}; en.group=ng }); GR.get(g).splice(GR.get(g).indexOf(f),1); if(!GR.has(ng)){ GR.set(ng,[]); GK.push(ng); GK.sort((a,b)=>ambGLabel(a).localeCompare(ambGLabel(b),'fa')) } GR.get(ng).push(f); toast('✓ منتقل شد'); draw() }catch(er){ toast('نشد: '+(er.message||er)) } };
+        r.querySelector('.sd').onclick=async()=>{ if(!confirm('این صدا برای همیشه پاک شود؟ اگر در قسمتی استفاده شده باشد، آنجا بی‌صدا می‌شود.')) return; try{ await delFile('ambience/'+f.slug+'.mp3',f.sha,'ambience: delete '+f.slug); await ambSaveUsr(u=>{ delete u[f.slug] }); GR.get(g).splice(GR.get(g).indexOf(f),1); toast('پاک شد ✓'); draw() }catch(er){ toast('نشد: '+(er.message||er)) } };
+        const sp=r.querySelector('.sp'); sp.onclick=async()=>{ const was=playing&&playing.btn===sp; stopP(); if(was) return; if(!AMB_SOLO.cat) AMB_SOLO.cat=fetch('../ambience_catalog.json?v='+Date.now()).then(x=>x.json()).catch(()=>({}));
+          const cat=await AMB_SOLO.cat, Lf=(cat[f.slug]||AMB_META.usr[f.slug]||{}).lufs, au=ambAudio(f.slug); au.loop=true; au.volume=0; au.addEventListener('error',()=>{ if(au.src.indexOf('raw.githubusercontent')>-1){ toast('این صدا هنوز آماده‌ی پخش نیست؛ چند دقیقه بعد دوباره امتحان کن'); stopP() } }); playing={au,btn:sp}; sp.textContent='⏹'; au.play().catch(()=>{}); ambFade(au,Math.min(1,Math.pow(10,(-24-(Lf==null?-25:Lf))/20)),1200) };
+        gm.appendChild(r) });
+      L.appendChild(d) }); if(!L.children.length) L.innerHTML='<div class="card"><p class="hint">چیزی پیدا نشد.</p></div>' };
+  q.oninput=draw; draw() }
 const AMB_SOLO={au:null,btn:null,cat:null,v:1,tm:null};
 function ambFade(au,to,ms,done){ clearInterval(AMB_SOLO.tm); const from=au.volume, t0=Date.now(); AMB_SOLO.tm=setInterval(()=>{ const k=Math.min(1,(Date.now()-t0)/ms); try{ au.volume=Math.min(1,Math.max(0,from+(to-from)*Math.sin(Math.PI/2*k))) }catch(e){} if(k>=1){ clearInterval(AMB_SOLO.tm); done&&done() } },40) }   // soft in / out also when listening alone
 function ambSoloStop(){ const au=AMB_SOLO.au, b=AMB_SOLO.btn; AMB_SOLO.au=AMB_SOLO.btn=null; if(b&&b.isConnected) b.textContent='▶ شنیدن صدا'; if(au) ambFade(au,0,700,()=>{ try{ au.pause() }catch(e){} }) }
 async function ambUI(box,scn){ const B=box||document.querySelector('#rvAmb .abB'); if(!B||!RV) return; const S1=scn==null?null:RV.data.scenes[scn], inSc=c=>!S1||(c.t1>(+S1.t0||0)+.05&&c.t0<(+S1.t1||1e9)-.05); const M=RV.data.meta=RV.data.meta||{}, vol=M.ambVol==null?100:M.ambVol, T=+M.total||0;
   try{ AMB_META.usr=await readJson('ambience_user.json',{}) }catch(e){ AMB_META.usr={} }
   let files=[]; try{ files=((await api('/contents/ambience'))||[]).map(x=>x.name).filter(n=>/\.mp3$/i.test(n)).map(n=>n.replace(/\.mp3$/i,'')).sort((a,c)=>ambName(a).localeCompare(ambName(c),'fa')) }catch(e){}
-  const GR=new Map(); files.forEach(f=>{ const g=ambGrp(f); if(!GR.has(g)) GR.set(g,[]); GR.get(g).push(f) }); GR.forEach((m,g)=>m.sort((a,b)=>{ const k=x=>AMB_META.usr[x]?100:(+(String(x).match(/-(\d)$/)||[0,1])[1]); return k(a)-k(b) || String(a).localeCompare(b) }));
+  const GR=new Map(); files.forEach(f=>{ const g=ambGrp(f); if(!GR.has(g)) GR.set(g,[]); GR.get(g).push(f) }); GR.forEach((m,g)=>m.sort((a,b)=>{ const k=x=>String(x).startsWith('u-')?100:(+(String(x).match(/-(\d)$/)||[0,1])[1]); return k(a)-k(b) || String(a).localeCompare(b) }));
   const GK=[...GR.keys()].sort((a,b)=>ambGLabel(a).localeCompare(ambGLabel(b),'fa'));
   if(!files.length){ B.innerHTML='<p class="hint">هنوز صدای فضایی در مخزن نیست. یک بار در گیت‌هاب بخش Actions اجرا کن: «Fetch ambience beds» (دانلود رایگان CC0 از Freesound). بعد این بخش پر می‌شود.</p>'; return }
   const push=()=>{ rvSave(); try{ $('#pvFrame').contentWindow.postMessage({type:'amb',clips:M.ambClips||[],vol:M.ambVol,on:M.amb!==false},'*') }catch(e){} };   // the preview hears every change at once
