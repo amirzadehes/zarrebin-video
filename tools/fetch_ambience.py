@@ -205,6 +205,16 @@ def search(q):
     return get_json(API + '?' + urllib.parse.urlencode(params)).get('results', [])
 
 
+def search_fb(q):
+    """long queries return nothing (Freesound wants every word): fall back to the first 3, then the first 2 words"""
+    w = q.split(); tries = [q] + [' '.join(w[:n]) for n in (3, 2) if len(w) > n]
+    for t in tries:
+        res = [r for r in search(t) if str(r.get('license', '')).endswith('/zero/1.0/') and (r.get('previews') or {}).get('preview-hq-mp3')]
+        if res: return res
+        time.sleep(1.1)
+    return []
+
+
 def download(url, dest):
     tmp = dest + '.part'
     req = urllib.request.Request(url, headers={'User-Agent': 'zarrebin-video'})
@@ -252,7 +262,7 @@ def main():
         if time.time() - t_start > BUDGET: stopped = True; break
         try:
             time.sleep(1.1)   # Freesound limit: 60 requests/minute
-            res = [r for r in search(q) if r.get('license', '').endswith('/zero/1.0/') and (r.get('previews') or {}).get('preview-hq-mp3')]
+            res = search_fb(q)
             used = {v.get('freesound_id') for v in cat.values()}
             res = [r for r in res if r['id'] not in used]
             if not res: print('no CC0 result:', base, '|', q); missing += 1; continue
