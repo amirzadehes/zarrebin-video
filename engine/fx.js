@@ -310,7 +310,7 @@ window.FXL = (() => {
       const rx = Wb / 2, ry = Hb / 2, r = rectLike ? Math.min(rx / Math.max(Math.abs(dx), 1e-6), ry / Math.max(Math.abs(dy), 1e-6)) : rx * ry / Math.hypot(ry * dx, rx * dy);
       const Lt = fs * (img ? .4 : 2.3) * tl; let cx = tip.x + dx * (r + Lt), cy = tip.y + dy * (r + Lt);
       /* keep the bubble inside the safe area of the frame: work out where it lands on the canvas, move it back, convert the shift to picture space */
-      const M = ctx.getTransform(), det = M.a * M.d - M.b * M.c, c0 = CONTENT();
+      const M0 = ctx.getTransform(), M = (typeof RS === 'number' && RS !== 1) ? new DOMMatrix().scale(1 / RS).multiply(M0) : M0, det = M.a * M.d - M.b * M.c, c0 = CONTENT();   // M in logical (W x H) pixels, whatever the output scale
       if (Math.abs(det) > 1e-6) {
         const X = M.a * cx + M.c * cy + M.e, Y = M.b * cx + M.d * cy + M.f, hw = rx + 24, hh = ry + 24;
         const X2 = Math.max(c0.x0 + 30 + hw, Math.min(c0.x1 - 30 - hw, X)), Y2 = Math.max(c0.y0 + 10 + hh, Math.min(c0.y1 + 30 - hh, Y)), sx_ = X2 - X, sy_ = Y2 - Y;

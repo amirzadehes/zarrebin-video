@@ -204,8 +204,10 @@ def compile_scenes(ep, T, raw, lib, req):
     return meta, scenes
 
 def emit_plan(meta, req):
-    chunk = int(req.get('chunk', 20)); fmts = req.get('formats') or ['v', 'h']; import math
-    n = math.ceil(meta['total'] / chunk); plan = [{'f': f, 'i': i, 'a': i * chunk, 'b': min((i + 1) * chunk, meta['total'])} for f in fmts for i in range(n)]
+    chunk = int(req.get('chunk', 10)); fmts = req.get('formats') or ['v', 'h']; import math   # 10 s per parallel job (GitHub runs about 20 jobs at once)
+    hres = str(req.get('hres', '2k')).lower()   # horizontal video: '2k' (2560x1440, default) or '1080' (1920x1080); the vertical video stays 1080x1920
+    sc = lambda f: 4 / 3 if (f == 'h' and hres != '1080') else 1   # s = output resolution factor passed to engine/render-v2.js
+    n = math.ceil(meta['total'] / chunk); plan = [{'f': f, 'i': i, 'a': i * chunk, 'b': min((i + 1) * chunk, meta['total']), 's': sc(f)} for f in fmts for i in range(n)]
     gh = os.environ.get('GITHUB_OUTPUT')
     if gh: open(gh, 'a').write('matrix=' + json.dumps(plan) + '\ntotal=%s\n' % meta['total'])
 
