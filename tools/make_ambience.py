@@ -21,7 +21,7 @@ def load(ep): return json.load(open(f'episodes/{ep}/scenes.json', encoding='utf8
 
 
 def assign(ep):
-    S = [x for x in slugs() if not re.search(r'-\d$', x)]   # the director picks topics; the -2/-3 recordings are alternatives the owner can choose by hand
+    S = [x for x in slugs() if not re.search(r'-\d$', x) and not x.startswith('u-')]   # the director picks topics; the -2/-3 recordings are alternatives the owner can choose by hand
     if not S: print('ambience: no beds in ambience/ yet (run the workflow "Fetch ambience beds")'); return
     D = load(ep); M = D['meta']
     if M.get('amb') is False: print('ambience: switched off'); return

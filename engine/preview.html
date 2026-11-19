@@ -32,7 +32,7 @@ function sfxPoll(){ const t=au.currentTime; try{ ambPoll(t) }catch(e){} if(t>=sf
 /* ambience beds (meta.ambClips = [{src, t0, t1, vol}], meta.ambVol, meta.amb === false = off): same fades and level as tools/make_ambience.py. A bed is normalised to -31 LUFS
    (ambience_catalog.json has each file's loudness), so it sits under the voice exactly as in the final video. Fades: 1.2 s, 0.6 s at the very start, 2.5 s at the very end. */
 const AMB_XF=2.5, AMB_LUFS=-31; let AMBC=null, AMBP=null, AMBE={}, AMBX=null;
-function ambLoad(){ if(!AMBP) AMBP=fetch('../ambience_catalog.json?v='+Date.now()).then(r=>r.json()).then(c=>{ AMBC=c }).catch(()=>{ AMBC={} }) }
+function ambLoad(){ if(!AMBP) AMBP=Promise.all([fetch('../ambience_catalog.json?v='+Date.now()).then(r=>r.json()).catch(()=>({})),fetch('../ambience_user.json?v='+Date.now()).then(r=>r.json()).catch(()=>({}))]).then(a=>{ AMBC=Object.assign({},a[1],a[0]) }) }
 /* a bed that starts / ends exactly at a scene boundary fades in / out during the camera move between the two scenes (same window as the fly-through: FLY_PRE .55 s before, FLY_POST .55 s after the boundary) */
 function ambEff(c){ const S=D.scenes||[], M=D.meta||{}; let a=+c.t0, b=+c.t1, fi=Math.min(a<=.01?1.5:AMB_XF,(b-a)/2), fo=Math.min(b>=(M.total||1e9)-.01?3:AMB_XF,(b-a)/2);
   const bd=x=>{ for(let k=1;k<S.length;k++) if(Math.abs(+S[k].t0-x)<.15) return k; return -1 };
