@@ -89,6 +89,24 @@
   "query": "army marching soldiers footsteps",
   "seconds": 25.8
  },
+ "arrows": {
+  "by": "craigsmith",
+  "freesound_id": 438618,
+  "license": "CC0",
+  "lufs": -28.1,
+  "name": "G39-01-Arrows fly by.wav",
+  "query": "arrows flying battle ambience",
+  "seconds": 90
+ },
+ "arrows-2": {
+  "by": "martian",
+  "freesound_id": 178832,
+  "license": "CC0",
+  "lufs": -40.5,
+  "name": "funky phase whoosh pass.2.wav",
+  "query": "arrows flying battle ambience",
+  "seconds": 39.6
+ },
  "autumn-leaves": {
   "by": "PostProdDog",
   "freesound_id": 537332,
@@ -106,6 +124,24 @@
   "name": "Wind rustling leaves through tree Cardiff",
   "query": "autumn leaves rustling wind",
   "seconds": 90
+ },
+ "avalanche": {
+  "by": "Vrymaa",
+  "freesound_id": 802691,
+  "license": "CC0",
+  "lufs": -21.7,
+  "name": "Stone heavy - Scraping concrete",
+  "query": "avalanche rumble snow",
+  "seconds": 27.6
+ },
+ "avalanche-2": {
+  "by": "beautifuldaymonster1968",
+  "freesound_id": 661211,
+  "license": "CC0",
+  "lufs": -8.0,
+  "name": "THE ABERFAN NIGHTMARE.wav",
+  "query": "avalanche rumble snow",
+  "seconds": 29.9
  },
  "bar-pub": {
   "by": "domasmo",
@@ -268,6 +304,24 @@
   "name": "Campfire (Position 1)",
   "query": "campfire night crackling ambience",
   "seconds": 83.6
+ },
+ "cannon-fire": {
+  "by": "SilverIllusionist",
+  "freesound_id": 670135,
+  "license": "CC0",
+  "lufs": -15.9,
+  "name": "Laser Cannon (Type 2)",
+  "query": "cannon fire battlefield",
+  "seconds": 24.0
+ },
+ "cannon-fire-2": {
+  "by": "klangfabrik",
+  "freesound_id": 211975,
+  "license": "CC0",
+  "lufs": -16.4,
+  "name": "Laser Cannon 02.wav",
+  "query": "cannon fire battlefield",
+  "seconds": 32.1
  },
  "car-interior": {
   "by": "Daphne_in_Wonderland",
@@ -611,6 +665,24 @@
   "query": "crowd whispering murmur indoor",
   "seconds": 22.7
  },
+ "crows": {
+  "by": "Borgory",
+  "freesound_id": 651186,
+  "license": "CC0",
+  "lufs": -24.4,
+  "name": "Raven, Crow, Ravens, Cry, Scream, Rabe, Kolkrabe, Kraehe",
+  "query": "crows ravens cawing ambience",
+  "seconds": 53.5
+ },
+ "crows-2": {
+  "by": "HighPeakEmma",
+  "freesound_id": 553111,
+  "license": "CC0",
+  "lufs": -34.5,
+  "name": "Rooks in the trees - winter.m4a",
+  "query": "crows ravens cawing ambience",
+  "seconds": 64.7
+ },
  "desert-night": {
   "by": "kangaroovindaloo",
   "freesound_id": 325511,
@@ -728,6 +800,15 @@
   "query": "fire crackling fireplace",
   "seconds": 33.4
  },
+ "fog-silence": {
+  "by": "inner_most_garden",
+  "freesound_id": 763414,
+  "license": "CC0",
+  "lufs": -19.2,
+  "name": "being of light [side A]",
+  "query": "quiet fog morning ambience",
+  "seconds": 90
+ },
  "footsteps-snow": {
   "by": "Daphne_in_Wonderland",
   "freesound_id": 383489,
@@ -827,6 +908,24 @@
   "query": "goats bells hills ambience",
   "seconds": 32.3
  },
+ "gym": {
+  "by": "Pfannkuchn",
+  "freesound_id": 360629,
+  "license": "CC0",
+  "lufs": -42.5,
+  "name": "Fitness studio / Gym ambience. Weights and equipment.",
+  "query": "gym ambience weights",
+  "seconds": 90
+ },
+ "gym-2": {
+  "by": "DAVESTALKER",
+  "freesound_id": 248247,
+  "license": "CC0",
+  "lufs": -26.4,
+  "name": "Gym / Fitness Facility Ambience",
+  "query": "gym ambience weights",
+  "seconds": 60.1
+ },
  "harbor": {
   "by": "mrrap4food",
   "freesound_id": 619058,
@@ -844,6 +943,24 @@
   "name": "Ambience pond Bas-Valais Switzerland, day",
   "query": "harbor port boats ambience seagulls",
   "seconds": 90
+ },
+ "heart-monitor": {
+  "by": "vestibule-door",
+  "freesound_id": 668979,
+  "license": "CC0",
+  "lufs": -40.8,
+  "name": "heart monitor running, speeding up, flatlining.wav",
+  "query": "heart monitor beeping",
+  "seconds": 44.2
+ },
+ "heart-monitor-2": {
+  "by": "HOrvi64",
+  "freesound_id": 832259,
+  "license": "CC0",
+  "lufs": -36.6,
+  "name": "beeps02",
+  "query": "heart monitor beeping",
+  "seconds": 27.5
  },
  "heartbeat": {
   "by": "bassimat",
@@ -1016,6 +1133,24 @@
   "query": "typing keyboard office ambience",
   "seconds": 24.7
  },
+ "kids-laugh": {
+  "by": "rasfrecci_w_donna",
+  "freesound_id": 347022,
+  "license": "CC0",
+  "lufs": -30.0,
+  "name": "huinan_hopsca_brand_village_1.wav",
+  "query": "children laughing playing distant",
+  "seconds": 63.0
+ },
+ "kids-laugh-2": {
+  "by": "kyles",
+  "freesound_id": 406513,
+  "license": "CC0",
+  "lufs": -25.9,
+  "name": "ruins Palestinian children kids playing marbles in rubble of bombed apartment with adults laughing inside nearby and distant machinery table saw2 +kicking soccer ball Gaza 2016.wav",
+  "query": "children laughing playing distant",
+  "seconds": 61.9
+ },
  "kitchen": {
   "by": "bassimat",
   "freesound_id": 862622,
@@ -1133,6 +1268,24 @@
   "query": "market street crowd ambience",
   "seconds": 90
  },
+ "monastery": {
+  "by": "rucisko",
+  "freesound_id": 468041,
+  "license": "CC0",
+  "lufs": -42.5,
+  "name": "Buddhist temple hum 02",
+  "query": "monastery ambience quiet chanting distant",
+  "seconds": 90
+ },
+ "monastery-2": {
+  "by": "BonnyOrbit",
+  "freesound_id": 442541,
+  "license": "CC0",
+  "lufs": -20.0,
+  "name": "Organ in church.wav",
+  "query": "monastery ambience quiet chanting distant",
+  "seconds": 59.2
+ },
  "mood-ascension": {
   "by": "numerocuatro",
   "freesound_id": 829151,
@@ -1160,6 +1313,33 @@
   "query": "new beginning sunrise ambient pad",
   "seconds": 90
  },
+ "mood-chaos-inner": {
+  "by": "arseniiv",
+  "freesound_id": 330931,
+  "license": "CC0",
+  "lufs": -16.0,
+  "name": "alien glass birds.flac",
+  "query": "chaotic dissonant ambience tension",
+  "seconds": 27.7
+ },
+ "mood-darkness": {
+  "by": "MadGravityStudio",
+  "freesound_id": 724667,
+  "license": "CC0",
+  "lufs": -16.6,
+  "name": "MOVE THROUGH THE DARK (MP3)",
+  "query": "darkness deep drone ominous",
+  "seconds": 54.3
+ },
+ "mood-darkness-2": {
+  "by": "bassimat",
+  "freesound_id": 875050,
+  "license": "CC0",
+  "lufs": -17.0,
+  "name": "High-Current Electrical Rattling over a Dark Ambient Atmosphere",
+  "query": "darkness deep drone ominous",
+  "seconds": 56.1
+ },
  "mood-death": {
   "by": "ChristmasKrumble666",
   "freesound_id": 852390,
@@ -1167,6 +1347,15 @@
   "lufs": -20.9,
   "name": "Hospital Ambiance (Final 2 Minutes Before a Peaceful Death).wav",
   "query": "death ending dark drone",
+  "seconds": 90
+ },
+ "mood-distant-bells": {
+  "by": "Vrymaa",
+  "freesound_id": 825857,
+  "license": "CC0",
+  "lufs": -14.1,
+  "name": "Dark Mystical atmosphere - Healing / Ghostly Presence",
+  "query": "distant mystical bells ambience",
   "seconds": 90
  },
  "mood-dream": {
@@ -1186,6 +1375,15 @@
   "name": "[\"Live\"] atmospheric melody 69 bpm (\"Piano\")",
   "query": "dreamy ambient pad dream sequence",
   "seconds": 59.1
+ },
+ "mood-ethereal-wind": {
+  "by": "bassimat",
+  "freesound_id": 865145,
+  "license": "CC0",
+  "lufs": -18.6,
+  "name": "Pulsating Drones with High Frequency Wind Voices",
+  "query": "ethereal wind whisper ambience",
+  "seconds": 88.0
  },
  "mood-fear": {
   "by": "InMotionAudio",
@@ -1223,6 +1421,78 @@
   "query": "angelic choir ambience ethereal",
   "seconds": 28.5
  },
+ "mood-hope": {
+  "by": "Dpath",
+  "freesound_id": 531554,
+  "license": "CC0",
+  "lufs": -20.0,
+  "name": "Deep Ambient IDM vintage pad 80 bpm",
+  "query": "hopeful ambient pad warm",
+  "seconds": 33.0
+ },
+ "mood-hope-2": {
+  "by": "JohnLaVine333",
+  "freesound_id": 331576,
+  "license": "CC0",
+  "lufs": -10.8,
+  "name": "Amazing Shrinking Ray (1Octave)",
+  "query": "hopeful ambient pad warm",
+  "seconds": 85.3
+ },
+ "mood-journey": {
+  "by": "monosfera",
+  "freesound_id": 851635,
+  "license": "CC0",
+  "lufs": -13.9,
+  "name": "rQUAD_low-pitch_phase",
+  "query": "journey travel ambient pad",
+  "seconds": 60.8
+ },
+ "mood-journey-2": {
+  "by": "ToXXuS",
+  "freesound_id": 591234,
+  "license": "CC0",
+  "lufs": -24.5,
+  "name": "terminal2.wav",
+  "query": "journey travel ambient pad",
+  "seconds": 46.5
+ },
+ "mood-light-dawn": {
+  "by": "Kinoton",
+  "freesound_id": 347173,
+  "license": "CC0",
+  "lufs": -32.5,
+  "name": "Blackbirds at Dawn",
+  "query": "dawn light ambient pad rising",
+  "seconds": 90
+ },
+ "mood-loneliness": {
+  "by": "dhallcomposer",
+  "freesound_id": 697217,
+  "license": "CC0",
+  "lufs": -38.7,
+  "name": "Looping Gentle Wind Ambience on an Open Desert Plain.wav",
+  "query": "lonely empty ambience wind",
+  "seconds": 41.1
+ },
+ "mood-magic": {
+  "by": "opticaillusions",
+  "freesound_id": 521882,
+  "license": "CC0",
+  "lufs": -37.5,
+  "name": "Shimmering Object.wav",
+  "query": "magical shimmer sparkle ambience",
+  "seconds": 42.6
+ },
+ "mood-magic-2": {
+  "by": "Vrymaa",
+  "freesound_id": 826131,
+  "license": "CC0",
+  "lufs": -26.7,
+  "name": "Magic - Cymbal Swell 2",
+  "query": "magical shimmer sparkle ambience",
+  "seconds": 66.8
+ },
  "mood-mystic-drone": {
   "by": "szegvari",
   "freesound_id": 843126,
@@ -1249,6 +1519,15 @@
   "name": "Triumphus I",
   "query": "peaceful calm ambient pad",
   "seconds": 43.4
+ },
+ "mood-sacred": {
+  "by": "bassimat",
+  "freesound_id": 852823,
+  "license": "CC0",
+  "lufs": -13.0,
+  "name": "Ambient Celestial Divine Texture with Grains on Top",
+  "query": "sacred space reverb ambient",
+  "seconds": 64.0
  },
  "mood-sorrow": {
   "by": "xkeril",
@@ -1303,6 +1582,15 @@
   "name": "Spaceship ambiace",
   "query": "mystical vision ethereal drone",
   "seconds": 90
+ },
+ "mood-water-dream": {
+  "by": "Antenalosmusic",
+  "freesound_id": 712797,
+  "license": "CC0",
+  "lufs": -19.4,
+  "name": "Space Travel Universe",
+  "query": "dreamy underwater ethereal",
+  "seconds": 60.1
  },
  "mood-whispers": {
   "by": "CaCtUs2003",
@@ -1394,6 +1682,42 @@
   "query": "night crickets ambience",
   "seconds": 50.6
  },
+ "night-hospital": {
+  "by": "mustafejen",
+  "freesound_id": 260841,
+  "license": "CC0",
+  "lufs": -36.1,
+  "name": "kulvert.mp3",
+  "query": "hospital corridor night beeps",
+  "seconds": 90
+ },
+ "night-hospital-2": {
+  "by": "kyles",
+  "freesound_id": 451883,
+  "license": "CC0",
+  "lufs": -31.4,
+  "name": "hospital corridor low ceiling consultation rooms conversations with patients and light activity.flac",
+  "query": "hospital corridor night beeps",
+  "seconds": 90
+ },
+ "night-owls-fire": {
+  "by": "Vrymaa",
+  "freesound_id": 734665,
+  "license": "CC0",
+  "lufs": -44.5,
+  "name": "Candle & oil lamps - Lighting",
+  "query": "night camp fire owls ambience",
+  "seconds": 55.4
+ },
+ "night-owls-fire-2": {
+  "by": "Vrymaa",
+  "freesound_id": 734627,
+  "license": "CC0",
+  "lufs": -35.2,
+  "name": "Dried branches",
+  "query": "night camp fire owls ambience",
+  "seconds": 29.0
+ },
  "office": {
   "by": "florianreichelt",
   "freesound_id": 457567,
@@ -1484,6 +1808,69 @@
   "query": "airplane cabin ambience",
   "seconds": 90
  },
+ "prayer-murmur": {
+  "by": "solarpsychedelic",
+  "freesound_id": 748203,
+  "license": "CC0",
+  "lufs": -22.3,
+  "name": "whispers to the universe",
+  "query": "prayer murmur crowd ambience",
+  "seconds": 34.0
+ },
+ "printing-press": {
+  "by": "simongray",
+  "freesound_id": 490547,
+  "license": "CC0",
+  "lufs": -22.3,
+  "name": "Original Heidelberg Platen Press",
+  "query": "printing press machine ambience",
+  "seconds": 44.3
+ },
+ "printing-press-2": {
+  "by": "craigsmith",
+  "freesound_id": 675545,
+  "license": "CC0",
+  "lufs": -24.8,
+  "name": "S32-10 Old printing press; no motor noise.wav",
+  "query": "printing press machine ambience",
+  "seconds": 46.4
+ },
+ "prison-cell": {
+  "by": "bruno.auzet",
+  "freesound_id": 661642,
+  "license": "CC0",
+  "lufs": -23.9,
+  "name": "locking cell's door2.wav",
+  "query": "prison cell ambience",
+  "seconds": 32.7
+ },
+ "prison-cell-2": {
+  "by": "leonelmail",
+  "freesound_id": 330635,
+  "license": "CC0",
+  "lufs": -31.2,
+  "name": "Padlock Chain Lock Unlock",
+  "query": "prison cell ambience",
+  "seconds": 48.8
+ },
+ "radio-static": {
+  "by": "arseniiv",
+  "freesound_id": 321512,
+  "license": "CC0",
+  "lufs": -16.4,
+  "name": "fm 1.flac",
+  "query": "radio static tuning ambience",
+  "seconds": 37.6
+ },
+ "radio-static-2": {
+  "by": "DeVern",
+  "freesound_id": 462814,
+  "license": "CC0",
+  "lufs": -19.2,
+  "name": "Tuning a Interdimensional Radio.wav",
+  "query": "radio static tuning ambience",
+  "seconds": 27.4
+ },
  "rain-city": {
   "by": "szegvari",
   "freesound_id": 581148,
@@ -1500,6 +1887,24 @@
   "lufs": -22.0,
   "name": "City Traffic, Rainy Night",
   "query": "rain city street ambience",
+  "seconds": 90
+ },
+ "rain-forest": {
+  "by": "Daphne_in_Wonderland",
+  "freesound_id": 239482,
+  "license": "CC0",
+  "lufs": -29.7,
+  "name": "Hail falling on camping tent at Pelion.wav",
+  "query": "rain in forest ambience",
+  "seconds": 90
+ },
+ "rain-forest-2": {
+  "by": "Daphne_in_Wonderland",
+  "freesound_id": 239488,
+  "license": "CC0",
+  "lufs": -32.6,
+  "name": "Rain next to open window, dog barks in the distance.wav",
+  "query": "rain in forest ambience",
   "seconds": 90
  },
  "rain-heavy": {
@@ -1662,6 +2067,15 @@
   "lufs": -43.7,
   "name": "140809_Neuenburg_Gate_Morning_F.wav",
   "query": "rooster farm morning ambience",
+  "seconds": 90
+ },
+ "sandstorm": {
+  "by": "bernhoftbret",
+  "freesound_id": 843296,
+  "license": "CC0",
+  "lufs": -8.6,
+  "name": "Warbling 30",
+  "query": "sandstorm desert wind",
   "seconds": 90
  },
  "school-hall": {
@@ -1880,6 +2294,24 @@
   "query": "large stone hall ambience reverb",
   "seconds": 89.1
  },
+ "storm-sea": {
+  "by": "ghosttropic",
+  "freesound_id": 717147,
+  "license": "CC0",
+  "lufs": -24.3,
+  "name": "Short Sand Beach: Waves 4",
+  "query": "stormy sea waves ship ambience",
+  "seconds": 36.0
+ },
+ "storm-sea-2": {
+  "by": "Nordliecht",
+  "freesound_id": 828668,
+  "license": "CC0",
+  "lufs": -21.1,
+  "name": "OcanWavesIslandOfElba",
+  "query": "stormy sea waves ship ambience",
+  "seconds": 32.0
+ },
  "storm-thunder": {
   "by": "benmerrill328",
   "freesound_id": 613275,
@@ -1943,6 +2375,15 @@
   "query": "subway metro station ambience",
   "seconds": 45.7
  },
+ "swimming-pool": {
+  "by": "xkeril",
+  "freesound_id": 677263,
+  "license": "CC0",
+  "lufs": -31.3,
+  "name": "Entrance thermal baths 02",
+  "query": "swimming pool indoor ambience",
+  "seconds": 90
+ },
  "sword-clash": {
   "by": "YannSauvin",
   "freesound_id": 778321,
@@ -1951,6 +2392,42 @@
   "name": "Escrime swords hits in practice room",
   "query": "sword fight clashing metal",
   "seconds": 40.5
+ },
+ "tea-house": {
+  "by": "evanjones4",
+  "freesound_id": 346899,
+  "license": "CC0",
+  "lufs": -14.6,
+  "name": "tea-tyme!.aiff",
+  "query": "tea house cafe ambience quiet",
+  "seconds": 68.1
+ },
+ "tea-house-2": {
+  "by": "bob58",
+  "freesound_id": 351918,
+  "license": "CC0",
+  "lufs": -7.8,
+  "name": "Kettle.wav",
+  "query": "tea house cafe ambience quiet",
+  "seconds": 45.2
+ },
+ "telegraph": {
+  "by": "zmobie",
+  "freesound_id": 257877,
+  "license": "CC0",
+  "lufs": -25.9,
+  "name": "Short Wave Radio Noise 4",
+  "query": "telegraph morse ambience",
+  "seconds": 29.9
+ },
+ "telegraph-2": {
+  "by": "ok1has",
+  "freesound_id": 131030,
+  "license": "CC0",
+  "lufs": -27.3,
+  "name": "CWclicking.mp3",
+  "query": "telegraph morse ambience",
+  "seconds": 90
  },
  "tension-drone": {
   "by": "Kronek9",
@@ -2132,6 +2609,24 @@
   "query": "volcano rumble lava ambience",
   "seconds": 55.4
  },
+ "war-distant": {
+  "by": "SoundsCoolio",
+  "freesound_id": 852980,
+  "license": "CC0",
+  "lufs": -28.0,
+  "name": "Civil War Battle",
+  "query": "distant war battle explosions ambience",
+  "seconds": 29.9
+ },
+ "war-distant-2": {
+  "by": "TheBuilder15",
+  "freesound_id": 404334,
+  "license": "CC0",
+  "lufs": -13.9,
+  "name": "Firefight",
+  "query": "distant war battle explosions ambience",
+  "seconds": 20.4
+ },
  "waterfall": {
   "by": "Colonnades",
   "freesound_id": 760050,
@@ -2149,6 +2644,24 @@
   "name": "Mossy Waterfall Panning to Babbling Brook, Fern Canyon Redwoods.wav",
   "query": "waterfall ambience",
   "seconds": 90
+ },
+ "wedding-crowd": {
+  "by": "The_Sound_Side",
+  "freesound_id": 389782,
+  "license": "CC0",
+  "lufs": -20.7,
+  "name": "LEBANESE WEDDING Zaffeh - Haysa .wav",
+  "query": "wedding celebration crowd ambience",
+  "seconds": 90
+ },
+ "wedding-crowd-2": {
+  "by": "toonothing",
+  "freesound_id": 180930,
+  "license": "CC0",
+  "lufs": -15.4,
+  "name": "Crowd Noise 4 ",
+  "query": "wedding celebration crowd ambience",
+  "seconds": 36.0
  },
  "wind-chimes": {
   "by": "EliasArtista",
