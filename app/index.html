@@ -21,6 +21,8 @@ button:disabled{opacity:.5}
 .tabs{display:flex;gap:8px;margin:8px 0 16px;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:5}
 .tabs button{flex:1;min-height:44px}
 .tabs button.on{background:var(--acc);color:var(--acc-tx);border-color:var(--acc)}
+.cmH{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}.cmH .cmC{opacity:.6;font-size:.85em}
+#epTr.cmin>*:not(.cmH):not(.st){display:none}#epRun.cmin>.row,#epRun.cmin>p.hint{display:none}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
 .item{display:grid;grid-template-columns:76px 1fr;gap:12px;align-items:center}
 .thumb{width:76px;height:76px;border-radius:12px;background:repeating-conic-gradient(#2a221c 0 25%,#241d18 0 50%) 0 0/16px 16px;display:grid;place-items:center;overflow:hidden;color:var(--mut);font-size:12px}
@@ -315,7 +317,7 @@ body[data-mode=poster] .modesw button.on{background:#ff5a1f;color:#fff;border-co
 
 <div id="pvModal" hidden>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvV" class="on">عمودی (اینستاگرام)</button><button id="pvH">افقی (یوتیوب)</button></div>
-  <iframe id="pvFrame" src="../engine/preview.html?inline=1&v=g10&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(62vh*9/16));height:min(62vh,calc(94vw*16/9))"></iframe>
+  <iframe id="pvFrame" src="../engine/preview.html?inline=1&v=g11&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(62vh*9/16));height:min(62vh,calc(94vw*16/9))"></iframe>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvPlay">▶ پخش</button><button id="pvPause" hidden>⏸ توقف</button><button id="pvEdit">✋ ویرایش چیدمان</button><button id="pvAmb">🌫 صدای فضا</button><button id="pvPlace">📍 مکان و تاریخ</button></div>
   <div class="row" id="pvTools" hidden style="justify-content:center;width:100%;margin:0"><button data-op="bigger">＋ بزرگ‌تر</button><button data-op="smaller">－ کوچک‌تر</button><button data-op="rot">⟳ چرخش</button><button data-op="reset">↺ خودکار</button></div>
   <div class="row" id="pvSel" hidden style="justify-content:center;width:100%;margin:0"></div>
@@ -482,12 +484,12 @@ async function renderEp(){
       <label><input type="checkbox" id="bH" checked> یوتیوب (افقی)</label>
       <p class="hint" id="bShortNote" hidden>قسمت کوتاه: برش‌ها سریع‌تر است. پیش‌فرض فقط اینستاگرام/تیک‌تاک (عمودی) تیک خورده؛ اگر نسخه‌ی یوتیوب (افقی) هم می‌خواهی، تیکش را بزن.</p>
       <p class="hint" id="bCover"></p></div></div>
-    <div class="card" id="epTr"><div class="name">رونویسی صدا و برش صحنه‌ها</div>
+    <div class="card" id="epTr"><div class="name cmH" id="trHead">رونویسی صدا و برش صحنه‌ها<span class="cmC"></span></div>
       <p class="hint">۱) در کادر «صدای خودت» بالا فایل صدا را انتخاب کن و «رونویسی» را بزن؛ Whisper متن و زمان هر کلمه را می‌نویسد. ۲) روی کلمه‌ای که می‌خواهی صحنه‌ی تازه از آن شروع شود بزن (دوباره بزنی برش برداشته می‌شود). ۳) برش‌ها را ذخیره کن و «آماده‌سازی صحنه‌ها» را بزن؛ کارگردان فقط پرامپت عکس هر صحنه را بر اساس برش‌های تو می‌نویسد.</p>
       <div class="row"><button class="pri" id="trGo">۱. رونویسی صدا</button><button id="trOpen" hidden>✂️ برش صحنه‌ها</button></div><div class="st" id="trSt"></div>
       <label id="trUseL" hidden><input type="checkbox" id="bUseCuts"> با رونویسی و برش‌های ذخیره‌شده بساز (صدا دوباره رونویسی نمی‌شود)</label>
       <div id="trEd" hidden></div></div>
-    <div class="card" id="epRun"><div class="row"><button class="pri" id="bGo">۲. آماده‌سازی صحنه‌ها برای بازبینی</button><button id="bGoDirect">ساخت مستقیم (بدون بازبینی)</button></div><div class="st" id="bSt"></div>
+    <div class="card" id="epRun"><div class="name cmH" id="runHead">۲. آماده‌سازی صحنه‌ها<span class="cmC"></span></div><div class="row"><button class="pri" id="bGo">۲. آماده‌سازی صحنه‌ها برای بازبینی</button><button id="bGoDirect">ساخت مستقیم (بدون بازبینی)</button></div><div class="st" id="bSt"></div>
       <details id="rvBox" class="rv" style="margin-top:12px"><summary class="btn" style="display:block;text-align:center;cursor:pointer">بازبینی صحنه‌ها و تصویرها</summary><div id="rvBody"><p class="hint">بعد از «آماده‌سازی صحنه‌ها» (حدود ۲ تا ۵ دقیقه) اینجا می‌بینی هر صحنه چه نوشته‌ای و چه تصویرهایی دارد؛ می‌توانی تصویر کم یا از کتابخانه اضافه کنی و بعد ویدیو را بسازی.</p></div></details>
       <p class="hint">ساخت نهایی حدود ۱۰ تا ۳۰ دقیقه طول می‌کشد. می‌توانی اپ را ببندی؛ ویدیوی آماده در لیست زیر می‌آید.</p>
       <div id="vids"></div></div></div>
@@ -499,7 +501,7 @@ async function renderEp(){
   const cfgToggle=()=>{ ls.set('cfgMin',ls.get('cfgMin','')==='1'?'':'1'); cfgApply() };
   $('#epNewHead').onclick=epNewToggle; $('#epNewHead').onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); epNewToggle() } }; dockEp=null;
   $('#cfgHead').onclick=cfgToggle; $('#cfgHead').onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); cfgToggle() } }; cfgApply();
-  $('#bGo').onclick = ()=>buildVideo('review'); $('#bGoDirect').onclick = ()=>buildVideo('direct'); loadVids(); if(cur) loadReview(cur,true);
+  $('#bGo').onclick = ()=>{ cmSet('#epRun',false); buildVideo('review') }; $('#bGoDirect').onclick = ()=>buildVideo('direct'); loadVids(); if(cur) loadReview(cur,true);
   el.querySelectorAll('#epList .epSel').forEach(b=>b.onclick=()=>setEpisode(b.dataset.e));
   el.querySelectorAll('#epList .epDel').forEach(b=>b.onclick=()=>delEpisode(b.dataset.e));
   $('#epFaSave').onclick = async()=>{ const f=$('#epFaSt'), en=slug($('#epName').value), t=$('#epFa').value.trim(); if(!S.token){ f.className='st bad'; f.textContent='اول در تنظیمات توکن را وارد کن'; return } if(!en){ f.className='st bad'; f.textContent='اول نام انگلیسی قسمت را بنویس یا یک قسمت را انتخاب کن'; return } if(!t){ f.className='st bad'; f.textContent='نام فارسی را بنویس'; return }
@@ -550,10 +552,13 @@ function textOverlap(a,b){ const W=t=>new Set(nz(t).split(' ').filter(w=>w.lengt
 let TR=null;   /* {ep,T,cuts:Set(word numbers),tsha,csha,edit,dirty,url} */
 const encBig=t=>{ const b=new TextEncoder().encode(t); let x=''; for(let i=0;i<b.length;i+=8192) x+=String.fromCharCode.apply(null,b.subarray(i,i+8192)); return btoa(x) };
 const trMM=t=>{ t=Math.max(0,t); return fa(Math.floor(t/60))+':'+fa(String(Math.floor(t%60)).padStart(2,'0')) };
-function trInit(){ const g=$('#trGo'); if(!g) return; g.onclick=trStart; $('#trOpen').onclick=()=>{ const ep=slug($('#epName').value); if(TR&&TR.ep===ep){ $('#trEd').hidden=!$('#trEd').hidden } else trLoad(ep) }; $('#epName').addEventListener('change',()=>{ try{ trProbe() }catch(_){} }); trProbe() }
-async function trProbe(){ const card=$('#epTr'); if(!card) return; const ep=slug(($('#epName')||{}).value||''), st=$('#trSt'); TR=null; $('#trEd').hidden=true; $('#trEd').innerHTML=''; $('#trOpen').hidden=true; $('#trUseL').hidden=true; st.textContent=''; if(!ep) return;
+/* finished steps fold away: a panel with `cmin` shows only its title (tap it to open again) */
+function cmSet(sel,min){ const c=$(sel); if(!c) return; c.classList.toggle('cmin',!!min); const h=c.querySelector('.cmH .cmC'); if(h) h.textContent=min?'✓ انجام شد — برای باز کردن بزن ▾':'▴' }
+function cmInit(){ [['#epTr','#trHead'],['#epRun','#runHead']].forEach(([c,h])=>{ const e=$(h); if(e&&!e._cm){ e._cm=1; e.onclick=()=>cmSet(c,!$(c).classList.contains('cmin')) } cmSet(c,false) }) }
+function trInit(){ cmInit(); const g=$('#trGo'); if(!g) return; g.onclick=trStart; $('#trOpen').onclick=()=>{ const ep=slug($('#epName').value); if(TR&&TR.ep===ep){ $('#trEd').hidden=!$('#trEd').hidden } else trLoad(ep) }; $('#epName').addEventListener('change',()=>{ try{ trProbe() }catch(_){} }); trProbe() }
+async function trProbe(){ const card=$('#epTr'); if(!card) return; const ep=slug(($('#epName')||{}).value||''), st=$('#trSt'); TR=null; cmSet('#epTr',false); $('#trEd').hidden=true; $('#trEd').innerHTML=''; $('#trOpen').hidden=true; $('#trUseL').hidden=true; st.textContent=''; if(!ep) return;
   try{ const L=await api('/contents/episodes/'+ep), nm=(L||[]).filter(x=>x.type==='file').map(x=>x.name);
-    if(nm.includes('timing.json')&&nm.some(n=>/^voice_user\./.test(n))){ const hc=nm.includes('cuts.json'); $('#trOpen').hidden=false; $('#trUseL').hidden=false; $('#bUseCuts').checked=hc; st.className='st ok'; st.textContent=hc?'✓ رونویسی و برش‌ها موجود است؛ برای تغییر «برش صحنه‌ها» را بزن.':'✓ رونویسی موجود است؛ «برش صحنه‌ها» را بزن و برش‌ها را تعیین کن.' } }catch(e){} }
+    if(nm.includes('timing.json')&&nm.some(n=>/^voice_user\./.test(n))){ const hc=nm.includes('cuts.json'); $('#trOpen').hidden=false; $('#trUseL').hidden=false; $('#bUseCuts').checked=hc; cmSet('#epTr',hc); st.className='st ok'; st.textContent=hc?'✓ رونویسی و برش‌ها موجود است؛ برای تغییر «برش صحنه‌ها» را بزن.':'✓ رونویسی موجود است؛ «برش صحنه‌ها» را بزن و برش‌ها را تعیین کن.' } }catch(e){} }
 async function trStart(){ const st=$('#trSt'), ep=slug($('#epName').value), f=$('#bOwn').files[0], go=$('#trGo');
   if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return }
   if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس'; return }
@@ -607,7 +612,7 @@ async function trSave(){ const st=$('#trSt'); if(!TR) return; if(!S.token){ st.c
       await api('/contents/episodes/'+ep+'/narration.txt',{method:'PUT',body:JSON.stringify({message:'narration text: '+ep,content:encBig(T.sentences.map(x=>x.text).join('\n')),branch:'main',sha:nsha})}); TR.dirty=false }
     if(arr.length){ const r=await api('/contents/episodes/'+ep+'/cuts.json',{method:'PUT',body:JSON.stringify({message:'scene cuts: '+ep,content:enc(JSON.stringify({v:1,words:W.length,cuts:arr,ts:Date.now()})),branch:'main',sha:TR.csha})}); TR.csha=r.content.sha }
     else if(TR.csha){ await delFile('episodes/'+ep+'/cuts.json',TR.csha,'scene cuts removed: '+ep); TR.csha=undefined }
-    $('#bUseCuts').checked=arr.length>0; st.className='st ok'; st.textContent=arr.length?'✓ ذخیره شد: '+fa(arr.length+1)+' صحنه. حالا «۲. آماده‌سازی صحنه‌ها برای بازبینی» را بزن.':'✓ ذخیره شد (بدون برش؛ کارگردان خودش صحنه‌ها را جدا می‌کند).'
+    $('#bUseCuts').checked=arr.length>0; if(arr.length) cmSet('#epTr',true); st.className='st ok'; st.textContent=arr.length?'✓ ذخیره شد: '+fa(arr.length+1)+' صحنه. حالا «۲. آماده‌سازی صحنه‌ها برای بازبینی» را بزن.':'✓ ذخیره شد (بدون برش؛ کارگردان خودش صحنه‌ها را جدا می‌کند).'
   }catch(e){ st.className='st bad'; st.textContent='ذخیره نشد: '+e.message } }
 async function buildVideo(mode){
   const st=$('#bSt'), ep=slug($('#epName').value);
@@ -669,7 +674,7 @@ const srcId=s=>(s||'').split('/').pop().split('__')[0];
 async function loadReview(ep, quiet){ const body=$('#rvBody'); if(!body) return;
   try{ const j=await api('/contents/episodes/'+ep+'/scenes.json'); let txt=j.content&&j.content.replace(/\n/g,'')?new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))):null;
     if(!txt){ const r=await fetch(j.download_url); txt=await r.text() }
-    RV={ep, sha:j.sha, data:JSON.parse(txt), req:(await readJson('episodes/'+ep+'/request.json',{}))||{}, cast:((await readJson('episodes/'+ep+'/cast.json',{}))||{}).characters||[]}; renderReview() }catch(e){ if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
+    RV={ep, sha:j.sha, data:JSON.parse(txt), req:(await readJson('episodes/'+ep+'/request.json',{}))||{}, cast:((await readJson('episodes/'+ep+'/cast.json',{}))||{}).characters||[]}; renderReview(); cmSet('#epRun',true) }catch(e){ cmSet('#epRun',false); if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
 function thumbUrl(src){ return /^(decor|episodes)\//.test(src)?'https://raw.githubusercontent.com/'+S.repo+'/main/'+src:raw(src.replace(/^library\//,'')) }
 const pWords=p=>new Set(String(p||'').split(' Character look')[0].toLowerCase().match(/[a-z]{4,}/g)||[]);
 function badPrompts(sc){ const kept=[], bad=[]; sc.forEach((s,i)=>{ const w=pWords((s.photo||{}).prompt); if(w.size<6){ bad.push(i); return }
@@ -758,7 +763,7 @@ async function pvAudioUrl(ep){
 async function pvSend(){ if(!RV||pvI<0) return; const f=$('#pvFrame').contentWindow; let audio; try{ audio=await pvAudioUrl(RV.ep) }catch(e){ toast('صدای این قسمت از مخزن گرفته نشد: '+e.message,5000); return }
   if(pvMode==='all'){ let music=null; try{ music=await pvMusicUrl(RV.ep) }catch(e){} f.postMessage({type:'playall',data:RV.data,ep:RV.ep,audio,music,musicVol:(RV.data.meta||{}).musicVol==null?100:RV.data.meta.musicVol,scene:0,at:window.__pvAt||0,sfxVol:+(($('#bSfxVol')||{}).value||65)},'*') } else if(pvMode==='edit') f.postMessage({type:'edit',data:RV.data,ep:RV.ep,audio,scene:pvI,sel:pvSelCur},'*'); else f.postMessage({type:'load',data:RV.data,ep:RV.ep,audio,scene:pvI},'*') }
 function pvGo(){ if(pvReady) pvSend(); else pvQ=true }
-function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&v=g10&t='+Date.now()+'&fmt='+f; pvLayout(); pvOkLabel() }
+function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&v=g11&t='+Date.now()+'&fmt='+f; pvLayout(); pvOkLabel() }
 addEventListener('resize',()=>{ if(!$('#pvModal').hidden) pvLayout() });
 addEventListener('message',e=>{ const m=e.data||{};
   if(m.type==='ready'){ pvReady=true; if(pvQ){ pvQ=false; pvSend() } }
