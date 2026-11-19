@@ -1,0 +1,36 @@
+name: Fetch ambience beds
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: fetch-ambience
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Download CC0 ambience beds from Freesound and commit (repeat on push conflict)
+        env:
+          FREESOUND_API_KEY: ${{ secrets.FREESOUND_API_KEY }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch -q origin main && git reset -q --hard origin/main
+          python3 tools/fetch_ambience.py
+          git add -A ambience ambience_catalog.json
+          if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
+          git commit -qm "ambience: add CC0 ambience beds from Freesound"
+          # the download is slow, so on a push conflict only rebase the new commit (it adds new files only) instead of downloading again
+          for round in 1 2 3 4 5 6; do
+            git fetch -q origin main && git rebase -q origin/main
+            if git push -q origin HEAD:main; then echo "pushed in round $round"; exit 0; fi
+            echo "push conflict, retry"; sleep 4
+          done
+          echo "gave up after 6 rounds"; exit 1

@@ -71,6 +71,10 @@ jobs:
       - name: Quality check (retention rules, report only)
         continue-on-error: true
         run: python tools/qa_scenes.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
+      - name: Ambience beds (choose one per scene, only where none is chosen yet)
+        continue-on-error: true
+        env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
+        run: python tools/make_ambience.py assign "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
       - name: Sound effects
         if: steps.mode.outputs.review != 'true'
         env: { GROQ_API_KEY: "${{ secrets.GROQ_API_KEY }}" }
@@ -86,6 +90,10 @@ jobs:
           set -o pipefail
           python tools/make_music.py "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
           ls -la episodes/${{ steps.ep.outputs.ep }}/music.wav 2>/dev/null | tee -a build.log || true
+      - name: Ambience beds (mix)
+        if: steps.mode.outputs.review != 'true'
+        continue-on-error: true
+        run: python tools/make_ambience.py build "${{ steps.ep.outputs.ep }}" 2>&1 | tee -a build.log
       - name: Save narration, scenes and log in the repo
         if: always()
         run: |
@@ -110,6 +118,7 @@ jobs:
             episodes/${{ steps.ep.outputs.ep }}/sfx.wav
             episodes/${{ steps.ep.outputs.ep }}/bgfx.wav
             episodes/${{ steps.ep.outputs.ep }}/music.wav
+            episodes/${{ steps.ep.outputs.ep }}/ambience.wav
           retention-days: 2
   render:
     needs: prepare
@@ -167,6 +176,8 @@ jobs:
           [ -n "$sfx" ] && { inputs="$inputs -i $sfx"; n=$((n+1)); mix="$mix[$n:a]"; w="$w 0.4"; }
           bgfx=$(find episode-data -name bgfx.wav | head -1)   # background-layer / image-effect sounds (volume is set per event in scenes.json)
           [ -n "$bgfx" ] && { inputs="$inputs -i $bgfx"; n=$((n+1)); mix="$mix[$n:a]"; w="$w 0.8"; }
+          amb=$(find episode-data -name ambience.wav | head -1)   # ambience beds (already normalised quiet; level per scene / episode is set in scenes.json)
+          [ -n "$amb" ] && { inputs="$inputs -i $amb"; n=$((n+1)); mix="$mix[$n:a]"; w="$w 1.0"; }
           mv=$(python3 -c "import json,sys,glob; f=glob.glob('episode-data/**/scenes.json',recursive=True); print(float(json.load(open(f[0]))['meta'].get('musicVol',100))/100 if f else 1)" 2>/dev/null || echo 1)   # music level set in the app (percent, default 100)
           if [ -n "$mus" ]; then inputs="$inputs -i $mus"; mi=$((n+1)); n=$((n+1)); mix="$mix[mduck]"; w="$w $mv"
             fc="[1:a]asplit=2[vo][key];[$mi:a][key]sidechaincompress=threshold=0.04:ratio=3:attack=30:release=600:makeup=1[mduck];"
