@@ -62,6 +62,33 @@
   "query": "applause audience clapping",
   "seconds": 31.7
  },
+ "army-march": {
+  "by": "Jim-Bretherick",
+  "freesound_id": 663935,
+  "license": "CC0",
+  "lufs": -22.7,
+  "name": "Crunching march1.wav",
+  "query": "army marching soldiers footsteps",
+  "seconds": 90
+ },
+ "army-march-2": {
+  "by": "Link-Boy",
+  "freesound_id": 414835,
+  "license": "CC0",
+  "lufs": -12.2,
+  "name": "Here We Come.mp3",
+  "query": "army marching soldiers footsteps",
+  "seconds": 39.9
+ },
+ "army-march-3": {
+  "by": "stib",
+  "freesound_id": 240724,
+  "license": "CC0",
+  "lufs": -16.5,
+  "name": "marching-loop.aif",
+  "query": "army marching soldiers footsteps",
+  "seconds": 25.8
+ },
  "autumn-leaves": {
   "by": "PostProdDog",
   "freesound_id": 537332,
@@ -98,6 +125,51 @@
   "query": "bar pub ambience chatter",
   "seconds": 28.5
  },
+ "battlefield": {
+  "by": "NearTheAtmoshphere",
+  "freesound_id": 694371,
+  "license": "CC0",
+  "lufs": -22.9,
+  "name": "Fireworks/ Warzone 3",
+  "query": "battle distant swords crowd ambience",
+  "seconds": 43.5
+ },
+ "battlefield-2": {
+  "by": "NearTheAtmoshphere",
+  "freesound_id": 694360,
+  "license": "CC0",
+  "lufs": -22.4,
+  "name": "Fireworks/ Warzone 1",
+  "query": "battle distant swords crowd ambience",
+  "seconds": 23.6
+ },
+ "battlefield-3": {
+  "by": "conleec",
+  "freesound_id": 193701,
+  "license": "CC0",
+  "lufs": -28.5,
+  "name": "MISC_S_Fireworks_002.wav",
+  "query": "battle distant swords crowd ambience",
+  "seconds": 90
+ },
+ "beach-calm": {
+  "by": "jackmichaelking",
+  "freesound_id": 517945,
+  "license": "CC0",
+  "lufs": -24.9,
+  "name": "Ocean gentle waves on beach fizzing bubbles.wav",
+  "query": "calm beach gentle waves ambience",
+  "seconds": 39.6
+ },
+ "beach-calm-2": {
+  "by": "richwise",
+  "freesound_id": 640542,
+  "license": "CC0",
+  "lufs": -30.4,
+  "name": "Waves on the rocks",
+  "query": "calm beach gentle waves ambience",
+  "seconds": 90
+ },
  "bees-garden": {
   "by": "myrinvp",
   "freesound_id": 859809,
@@ -124,6 +196,15 @@
   "name": "London Birds",
   "query": "morning birds dawn chorus",
   "seconds": 90
+ },
+ "blacksmith": {
+  "by": "ldezem",
+  "freesound_id": 386362,
+  "license": "CC0",
+  "lufs": -29.5,
+  "name": "Power hammer - Billeter Klunz 50kg - Forging red glow full cycle",
+  "query": "blacksmith forge hammering ambience",
+  "seconds": 37.4
  },
  "boat-engine": {
   "by": "jackmichaelking",
@@ -206,6 +287,24 @@
   "query": "car interior driving ambience",
   "seconds": 90
  },
+ "carriage": {
+  "by": "bruno.auzet",
+  "freesound_id": 538438,
+  "license": "CC0",
+  "lufs": -28.0,
+  "name": "horse with old cart.wav",
+  "query": "horse carriage cart wheels cobblestone",
+  "seconds": 33.4
+ },
+ "carriage-2": {
+  "by": "thefilmbakery",
+  "freesound_id": 137843,
+  "license": "CC0",
+  "lufs": -44.6,
+  "name": "Horse and Carriage.aif",
+  "query": "horse carriage cart wheels cobblestone",
+  "seconds": 89.4
+ },
  "castle": {
   "by": "Dani_S.T.",
   "freesound_id": 811903,
@@ -250,6 +349,24 @@
   "name": "Cavern Drips, Stones and Deep Rumbles — by GLORB",
   "query": "cave water drips reverb ambience",
   "seconds": 90
+ },
+ "chains": {
+  "by": "cabled_mess",
+  "freesound_id": 571375,
+  "license": "CC0",
+  "lufs": -30.8,
+  "name": "20180427_Iron chain.wav",
+  "query": "chains rattling metal ambience",
+  "seconds": 90
+ },
+ "chains-2": {
+  "by": "kyles",
+  "freesound_id": 453383,
+  "license": "CC0",
+  "lufs": -35.8,
+  "name": "metal shop hoist chains thick rattle pull on track1.flac",
+  "query": "chains rattling metal ambience",
+  "seconds": 51.9
  },
  "children-playground": {
   "by": "CheatinSloth",
@@ -304,6 +421,33 @@
   "name": "Spring at Furzey Gardens",
   "query": "church bells distant",
   "seconds": 90
+ },
+ "church-interior": {
+  "by": "sambrewster",
+  "freesound_id": 846900,
+  "license": "CC0",
+  "lufs": -25.8,
+  "name": "Pantheon busy crowd interior 2026",
+  "query": "church interior ambience reverb",
+  "seconds": 90
+ },
+ "church-interior-2": {
+  "by": "noisymichael",
+  "freesound_id": 648415,
+  "license": "CC0",
+  "lufs": -16.8,
+  "name": "sagrada_ambience.wav",
+  "query": "church interior ambience reverb",
+  "seconds": 90
+ },
+ "church-interior-3": {
+  "by": "Dokuta_Gerovv",
+  "freesound_id": 661732,
+  "license": "CC0",
+  "lufs": -43.2,
+  "name": "Church_Indistinct_Chatter.wav",
+  "query": "church interior ambience reverb",
+  "seconds": 23.3
  },
  "city-morning": {
   "by": "SamuelGremaud",
@@ -386,6 +530,24 @@
   "query": "construction site ambience",
   "seconds": 89.0
  },
+ "crowd-angry": {
+  "by": "mglennsound",
+  "freesound_id": 725706,
+  "license": "CC0",
+  "lufs": -16.8,
+  "name": "Exp_Upset Crowd Talking_Loop_03",
+  "query": "angry crowd protest shouting",
+  "seconds": 52.4
+ },
+ "crowd-angry-2": {
+  "by": "barkenov",
+  "freesound_id": 406818,
+  "license": "CC0",
+  "lufs": -30.8,
+  "name": "crows.wav",
+  "query": "angry crowd protest shouting",
+  "seconds": 48.1
+ },
  "crowd-cheering": {
   "by": "craigsmith",
   "freesound_id": 480765,
@@ -448,6 +610,24 @@
   "name": "R07-45-Low Murmurs.wav",
   "query": "crowd whispering murmur indoor",
   "seconds": 22.7
+ },
+ "desert-night": {
+  "by": "kangaroovindaloo",
+  "freesound_id": 325511,
+  "license": "CC0",
+  "lufs": -38.2,
+  "name": "King's Hut at Night",
+  "query": "desert night ambience quiet",
+  "seconds": 90
+ },
+ "desert-night-2": {
+  "by": "british33",
+  "freesound_id": 702176,
+  "license": "CC0",
+  "lufs": -27.6,
+  "name": "BMAN PLAYA AUG24.mp3",
+  "query": "desert night ambience quiet",
+  "seconds": 90
  },
  "dogs-distant": {
   "by": "kyles",
@@ -548,6 +728,33 @@
   "query": "fire crackling fireplace",
   "seconds": 33.4
  },
+ "footsteps-snow": {
+  "by": "Daphne_in_Wonderland",
+  "freesound_id": 383489,
+  "license": "CC0",
+  "lufs": -34.3,
+  "name": "Footsteps at the edge of the sea.wav",
+  "query": "footsteps in snow",
+  "seconds": 83.4
+ },
+ "footsteps-snow-2": {
+  "by": "Daphne_in_Wonderland",
+  "freesound_id": 383490,
+  "license": "CC0",
+  "lufs": -54.3,
+  "name": "Footsteps on sand.wav",
+  "query": "footsteps in snow",
+  "seconds": 74.9
+ },
+ "footsteps-snow-3": {
+  "by": "Daphne_in_Wonderland",
+  "freesound_id": 383488,
+  "license": "CC0",
+  "lufs": -47.4,
+  "name": "Footsteps on sand next to the sea.wav",
+  "query": "footsteps in snow",
+  "seconds": 32.0
+ },
  "forest-birds": {
   "by": "Archos",
   "freesound_id": 468241,
@@ -619,6 +826,24 @@
   "name": "Swiss hills with animals with bells.WAV",
   "query": "goats bells hills ambience",
   "seconds": 32.3
+ },
+ "harbor": {
+  "by": "mrrap4food",
+  "freesound_id": 619058,
+  "license": "CC0",
+  "lufs": -32.0,
+  "name": "sitting on harbor.mp3",
+  "query": "harbor port boats ambience seagulls",
+  "seconds": 90
+ },
+ "harbor-2": {
+  "by": "YannSauvin",
+  "freesound_id": 779232,
+  "license": "CC0",
+  "lufs": -46.8,
+  "name": "Ambience pond Bas-Valais Switzerland, day",
+  "query": "harbor port boats ambience seagulls",
+  "seconds": 90
  },
  "heartbeat": {
   "by": "bassimat",
@@ -908,6 +1133,33 @@
   "query": "market street crowd ambience",
   "seconds": 90
  },
+ "mood-ascension": {
+  "by": "numerocuatro",
+  "freesound_id": 829151,
+  "license": "CC0",
+  "lufs": -12.5,
+  "name": "Angelic heaven atmosphere",
+  "query": "ascension heavenly ethereal pad",
+  "seconds": 90
+ },
+ "mood-birth": {
+  "by": "felix.blume",
+  "freesound_id": 667742,
+  "license": "CC0",
+  "lufs": -20.6,
+  "name": "Train passing, close recording with horn and bird singing, recorded in Branson, New Mexico",
+  "query": "new beginning sunrise ambient pad",
+  "seconds": 90
+ },
+ "mood-birth-2": {
+  "by": "ChristmasKrumble666",
+  "freesound_id": 695952,
+  "license": "CC0",
+  "lufs": -17.1,
+  "name": "RIVER DEATH.wav",
+  "query": "new beginning sunrise ambient pad",
+  "seconds": 90
+ },
  "mood-death": {
   "by": "ChristmasKrumble666",
   "freesound_id": 852390,
@@ -934,6 +1186,42 @@
   "name": "[\"Live\"] atmospheric melody 69 bpm (\"Piano\")",
   "query": "dreamy ambient pad dream sequence",
   "seconds": 59.1
+ },
+ "mood-fear": {
+  "by": "InMotionAudio",
+  "freesound_id": 652035,
+  "license": "CC0",
+  "lufs": -14.8,
+  "name": "DSGNStngr_DeathWhistle01_InMotionAudio_FREESampleSunday.wav",
+  "query": "creepy fear tension ambience",
+  "seconds": 24.0
+ },
+ "mood-fear-2": {
+  "by": "Loyalty_Freak_Music",
+  "freesound_id": 407476,
+  "license": "CC0",
+  "lufs": -18.6,
+  "name": "danger.mp3",
+  "query": "creepy fear tension ambience",
+  "seconds": 47.1
+ },
+ "mood-heavenly-choir": {
+  "by": "staticpony1",
+  "freesound_id": 251499,
+  "license": "CC0",
+  "lufs": -14.4,
+  "name": "Weird Dimension.wav",
+  "query": "angelic choir ambience ethereal",
+  "seconds": 56.0
+ },
+ "mood-heavenly-choir-2": {
+  "by": "CVLTIV8R",
+  "freesound_id": 814340,
+  "license": "CC0",
+  "lufs": -14.9,
+  "name": "Angelic Vocals FX",
+  "query": "angelic choir ambience ethereal",
+  "seconds": 28.5
  },
  "mood-mystic-drone": {
   "by": "szegvari",
@@ -980,6 +1268,42 @@
   "query": "ghostly spirit ethereal ambience",
   "seconds": 60.1
  },
+ "mood-time-slow": {
+  "by": "Yuval",
+  "freesound_id": 204759,
+  "license": "CC0",
+  "lufs": -19.1,
+  "name": "hinge slow motion",
+  "query": "time slow motion ambience drone",
+  "seconds": 90
+ },
+ "mood-time-slow-2": {
+  "by": "dagriggs",
+  "freesound_id": 161749,
+  "license": "CC0",
+  "lufs": -23.8,
+  "name": "Time Stretched Halo Drum",
+  "query": "time slow motion ambience drone",
+  "seconds": 90
+ },
+ "mood-vision": {
+  "by": "szegvari",
+  "freesound_id": 560618,
+  "license": "CC0",
+  "lufs": -20.3,
+  "name": "Dark Ghost House",
+  "query": "mystical vision ethereal drone",
+  "seconds": 90
+ },
+ "mood-vision-2": {
+  "by": "szegvari",
+  "freesound_id": 560617,
+  "license": "CC0",
+  "lufs": -21.0,
+  "name": "Spaceship ambiace",
+  "query": "mystical vision ethereal drone",
+  "seconds": 90
+ },
  "mood-whispers": {
   "by": "CaCtUs2003",
   "freesound_id": 103340,
@@ -997,6 +1321,24 @@
   "name": "Dark Whisper Collage with Reverb",
   "query": "whispers ambience ghostly voices",
   "seconds": 73.9
+ },
+ "mountain-wind": {
+  "by": "felix.blume",
+  "freesound_id": 160469,
+  "license": "CC0",
+  "lufs": -21.3,
+  "name": "Wind blowing in an antenna on the High Atlas mountain (Morocco).",
+  "query": "mountain wind high altitude ambience",
+  "seconds": 90
+ },
+ "mountain-wind-2": {
+  "by": "Proxima4",
+  "freesound_id": 104316,
+  "license": "CC0",
+  "lufs": -30.1,
+  "name": "High Mountain.wav",
+  "query": "mountain wind high altitude ambience",
+  "seconds": 58.9
  },
  "night-city": {
   "by": "softwalls",
@@ -1520,6 +1862,24 @@
   "query": "football stadium crowd roar",
   "seconds": 90
  },
+ "stone-hall": {
+  "by": "uniuniversal",
+  "freesound_id": 633291,
+  "license": "CC0",
+  "lufs": -49.5,
+  "name": "Walking_Up_Down_Stairs.wav",
+  "query": "large stone hall ambience reverb",
+  "seconds": 69.4
+ },
+ "stone-hall-2": {
+  "by": "CHallSmith",
+  "freesound_id": 870659,
+  "license": "CC0",
+  "lufs": -18.4,
+  "name": "USC Busy Reception Hall, Distant Walla",
+  "query": "large stone hall ambience reverb",
+  "seconds": 89.1
+ },
  "storm-thunder": {
   "by": "benmerrill328",
   "freesound_id": 613275,
@@ -1709,6 +2069,33 @@
   "query": "underwater ambience",
   "seconds": 30.0
  },
+ "village-day": {
+  "by": "sounds_from_palestine",
+  "freesound_id": 818390,
+  "license": "CC0",
+  "lufs": -37.7,
+  "name": "Street Village Ambience on a Summer Windy Day",
+  "query": "village ambience birds rooster distance",
+  "seconds": 90
+ },
+ "village-day-2": {
+  "by": "RutgerMuller",
+  "freesound_id": 361918,
+  "license": "CC0",
+  "lufs": -18.0,
+  "name": "Japan_Kashiwa_Birds_24Bit_96KHz_MS-Stereo.wav",
+  "query": "village ambience birds rooster distance",
+  "seconds": 90
+ },
+ "village-day-3": {
+  "by": "hoshisato",
+  "freesound_id": 852997,
+  "license": "CC0",
+  "lufs": -22.5,
+  "name": "Church Bells Ringing with Birds in the Background",
+  "query": "village ambience birds rooster distance",
+  "seconds": 42.1
+ },
  "village-evening": {
   "by": "soundandmelodies",
   "freesound_id": 731228,
@@ -1888,6 +2275,33 @@
   "name": "Woods_ambience_summer_UK_birds_light_wind_through_trees_wings_flapping",
   "query": "light wind breeze ambience",
   "seconds": 51.8
+ },
+ "wind-trees": {
+  "by": "Daphne_in_Wonderland",
+  "freesound_id": 239480,
+  "license": "CC0",
+  "lufs": -48.8,
+  "name": "High pitch wind noise.wav",
+  "query": "wind in trees leaves ambience",
+  "seconds": 37.7
+ },
+ "wind-trees-2": {
+  "by": "ocean.in.a.drop",
+  "freesound_id": 644915,
+  "license": "CC0",
+  "lufs": -45.7,
+  "name": "birds,wind,grassland, Shangrila in Yunnan, China",
+  "query": "wind in trees leaves ambience",
+  "seconds": 90
+ },
+ "wolf-distant": {
+  "by": "taure",
+  "freesound_id": 380156,
+  "license": "CC0",
+  "lufs": -29.4,
+  "name": "Howl_Echo.wav",
+  "query": "wolf howl distant ambience",
+  "seconds": 28.0
  },
  "workshop": {
   "by": "CapsLok",
