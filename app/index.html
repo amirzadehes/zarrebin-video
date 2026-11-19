@@ -320,7 +320,7 @@ body[data-mode=poster] .modesw button.on{background:#ff5a1f;color:#fff;border-co
 
 <div id="pvModal" hidden>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvV" class="on">عمودی (اینستاگرام)</button><button id="pvH">افقی (یوتیوب)</button></div>
-  <iframe id="pvFrame" src="../engine/preview.html?inline=1&v=g13&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(62vh*9/16));height:min(62vh,calc(94vw*16/9))"></iframe>
+  <iframe id="pvFrame" src="../engine/preview.html?inline=1&v=g14&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(62vh*9/16));height:min(62vh,calc(94vw*16/9))"></iframe>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvPlay">▶ پخش</button><button id="pvPause" hidden>⏸ توقف</button><button id="pvEdit">✋ ویرایش چیدمان</button><button id="pvAmb">🌫 صدای فضا</button><button id="pvPlace">📍 مکان و تاریخ</button></div>
   <div class="row" id="pvTools" hidden style="justify-content:center;width:100%;margin:0"><button data-op="bigger">＋ بزرگ‌تر</button><button data-op="smaller">－ کوچک‌تر</button><button data-op="rot">⟳ چرخش</button><button data-op="reset">↺ خودکار</button></div>
   <div class="row" id="pvSel" hidden style="justify-content:center;width:100%;margin:0"></div>
@@ -764,9 +764,9 @@ async function pvAudioUrl(ep){
   if(!r.ok) throw new Error('HTTP '+r.status);
   const url=URL.createObjectURL(new Blob([await r.arrayBuffer()],{type:'audio/mpeg'})); if(c) URL.revokeObjectURL(c.url); PV_AUD[ep]={sha:f.sha,url}; return url }
 async function pvSend(){ if(!RV||pvI<0) return; const f=$('#pvFrame').contentWindow; let audio; try{ audio=await pvAudioUrl(RV.ep) }catch(e){ toast('صدای این قسمت از مخزن گرفته نشد: '+e.message,5000); return }
-  if(pvMode==='all'){ let music=null; try{ music=await pvMusicUrl(RV.ep) }catch(e){} f.postMessage({type:'playall',data:RV.data,ep:RV.ep,audio,music,musicVol:(RV.data.meta||{}).musicVol==null?100:RV.data.meta.musicVol,scene:0,at:window.__pvAt||0,sfxVol:+(($('#bSfxVol')||{}).value||65)},'*') } else if(pvMode==='edit') f.postMessage({type:'edit',data:RV.data,ep:RV.ep,audio,scene:pvI,sel:pvSelCur},'*'); else f.postMessage({type:'load',data:RV.data,ep:RV.ep,audio,scene:pvI},'*') }
+  if(pvMode==='all'){ let music=null; try{ music=await pvMusicUrl(RV.ep) }catch(e){} f.postMessage({type:'playall',data:RV.data,ep:RV.ep,audio,music,musicVol:(RV.data.meta||{}).musicVol==null?100:RV.data.meta.musicVol,scene:0,at:window.__pvAt||0,sfxVol:+(($('#bSfxVol')||{}).value||65)},'*') } else if(pvMode==='edit') f.postMessage({type:'edit',data:RV.data,ep:RV.ep,audio,scene:pvI,sel:pvSelCur},'*'); else { const still=pvStill; pvStill=false; f.postMessage({type:'load',data:RV.data,ep:RV.ep,audio,scene:pvI,still},'*') } }
 function pvGo(){ if(pvReady) pvSend(); else pvQ=true }
-function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&v=g13&t='+Date.now()+'&fmt='+f; pvLayout(); pvOkLabel() }
+function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&v=g14&t='+Date.now()+'&fmt='+f; pvLayout(); pvOkLabel() }
 addEventListener('resize',()=>{ if(!$('#pvModal').hidden) pvLayout() });
 addEventListener('message',e=>{ const m=e.data||{};
   if(m.type==='ready'){ pvReady=true; if(pvQ){ pvQ=false; pvSend() } }
@@ -1059,7 +1059,7 @@ const FX_LIST=Object.keys(FXS).filter(k=>k!=='sound'&&k!=='bubble').map(k=>[k,FX
 const fxCnt=(o,snd)=>((o&&o.fx)||[]).filter(f=>f&&((f.type==='sound')===!!snd)&&f.type!=='bubble'&&(snd||FXS[f.type])).length;
 const fxBtnTxt=it=>'✨ افکت'+(fxCnt(it)?' ('+fa(fxCnt(it))+')':''), snBtnTxt=it=>'🔊 صدا'+(fxCnt(it,1)?' ('+fa(fxCnt(it,1))+')':'');
 const fxNew=t=>{ const sp=FXS[t], f={type:t,start:sp.start}; if(sp.vol) f.vol=sp.vol; (sp.sel||[]).forEach(([k,,,d])=>f[k]=d); (sp.chk||[]).forEach(([k,,d])=>f[k]=d); if(sp.color) f.color=sp.color; if(t==='steam'||t==='smoke') f.height=sp.p[1][5]; return f };
-let pvRT=null; function pvRefresh(i){ if($('#pvModal').hidden||pvI!==i) return; clearTimeout(pvRT); pvRT=setTimeout(pvGo,700) }
+let pvRT=null, pvStill=false; function pvRefresh(i){ if($('#pvModal').hidden||pvI!==i||pvMode==='all') return; clearTimeout(pvRT); pvRT=setTimeout(()=>{ if(pvMode==='play') pvStill=true; pvGo() },700) }   // an edit refreshes the picture but never starts playback
 const optsHtml=(arr,cur)=>arr.map(([v,l])=>`<option value="${v}" ${v===cur?'selected':''}>${l}</option>`).join('');
 const slRow=(key,label,min,max,step,val,o)=>{ o=o||{}; const inp=`<input type="range" data-k="${key}" ${o.sc?`data-sc="${o.sc}"`:''} data-u="${o.u||''}" min="${min}" max="${max}" step="${step}" value="${val}"><b class="sv">${fa(+(+val).toFixed(2))}${o.u||''}</b>`;
   return o.cell ? `<div class="sl2"><label>${label}</label><div class="sl2r">${inp}</div></div>` : `<div class="sl"><label>${label}</label>${inp}</div>` };   // cell: label above the slider, for the two/three-column grid
