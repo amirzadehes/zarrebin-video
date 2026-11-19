@@ -838,14 +838,17 @@ function uiPoster(t) {
   if (D.meta.footer) { ctx.globalAlpha = .55; ctx.fillStyle = '#fff'; ctx.font = '700 26px Vz'; ctx.direction = 'ltr'; ctx.textAlign = 'center'; ctx.fillText(D.meta.footer, W / 2, H - (V ? 64 : 34)) }
   ctx.restore()
 }
+const subCol = def => /^#[0-9a-f]{6}$/i.test(D.meta.subColor || '') ? D.meta.subColor : def;   // ONE colour for every scene: the speaking word and the highlighted keyword (meta.subColor)
+const onCol = hex => { const n = parseInt(hex.slice(1), 16), l = .299 * (n >> 16) + .587 * (n >> 8 & 255) + .114 * (n & 255); return l > 150 ? '#1c130b' : '#fff' };   // readable text on that colour
 function subsPoster(t, c) {
+  const SC = subCol(ORG), SCT = onCol(SC);
   const fs = V ? 62 : 54, a = clamp((t - c.t0) / .1) * clamp((c.t1 - t) / .12), rtl = D.meta.rtl, e = spr(t, c.t0, .5, 15), y = V ? 1500 : H - 130, k = .94 + .06 * Math.min(e, 1.1);
   ctx.save(); ctx.font = `700 ${fs}px Vz`; const sp = ctx.measureText(' ').width, tot = c.words.reduce((q, w) => q + w.mw, 0) + sp * (c.words.length - 1); ctx.restore();
   ctx.save(); ctx.translate(W / 2, y); ctx.scale(k, k); ctx.globalAlpha = a; ctx.font = `700 ${fs}px Vz`; ctx.direction = rtl ? 'rtl' : 'ltr'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; let x = rtl ? tot / 2 : -tot / 2;
   c.words.forEach(w => { if (rtl) x -= w.mw; const on = t >= w.t0, act = on && t < w.t1 + .04, p = spr(t, w.t0, .5, 16);
     ctx.save(); ctx.translate(x + w.mw / 2, 4);
-    if (w.kw && on) { const q = .85 + .15 * p; ctx.fillStyle = ORG; ctx.beginPath(); ctx.roundRect(-w.mw / 2 - 14, -fs * .56, (w.mw + 28), fs * 1.12, 10); ctx.fill(); ctx.fillStyle = '#fff'; ctx.scale(q, q) }
-    else { ctx.shadowColor = 'rgba(0,0,0,.85)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 3; ctx.fillStyle = act ? ORG : on ? '#fff' : 'rgba(255,255,255,.42)' }
+    if (w.kw && on) { const q = .85 + .15 * p; ctx.fillStyle = SC; ctx.beginPath(); ctx.roundRect(-w.mw / 2 - 14, -fs * .56, (w.mw + 28), fs * 1.12, 10); ctx.fill(); ctx.fillStyle = SCT; ctx.scale(q, q) }
+    else { ctx.shadowColor = 'rgba(0,0,0,.85)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 3; ctx.fillStyle = act ? SC : on ? '#fff' : 'rgba(255,255,255,.42)' }
     ctx.fillText(w.txt, -w.mw / 2, 0); ctx.restore(); if (rtl) x -= sp; else x += w.mw + sp });
   ctx.restore()
 }
@@ -1024,12 +1027,12 @@ function subs(t) {
   ctx.save(); ctx.font = `700 ${fs}px Vz`; const sp = ctx.measureText(' ').width, tot = c.words.reduce((q, w) => q + w.mw, 0) + sp * (c.words.length - 1); ctx.restore();
   card(W / 2, y, tot + 120, fs * 1.85, '#fff', rot, a, sc0);   // the paper (vox: torn paper, comic: white card); the caption is the only text of a scene now
   ctx.save(); ctx.translate(W / 2, y); ctx.rotate(rot * (VOX ? .5 : 1)); ctx.scale(sc0, sc0); ctx.globalAlpha = a; ctx.font = `700 ${fs}px Vz`; ctx.direction = rtl ? 'rtl' : 'ltr'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-  const INKC = VOX ? '#1c130b' : INK, ACC = VOX ? '#7a2e1d' : '#e0245e'; let x = rtl ? tot / 2 : -tot / 2;
+  const INKC = VOX ? '#1c130b' : INK, ACC = subCol(VOX ? '#7a2e1d' : '#e0245e'), KWF = subCol(VOX ? '#c6ff3d' : '#ff3b4a'), KWT = D.meta.subColor ? onCol(KWF) : (VOX ? INKC : '#fff'); let x = rtl ? tot / 2 : -tot / 2;
   c.words.forEach(w => { if (rtl) x -= w.mw; const on = t >= w.t0, act = on && t < w.t1 + .04, p = spr(t, w.t0, .5, 16);
     ctx.save(); ctx.translate(x + w.mw / 2, 4); const k = act ? 1 + .12 * Math.exp(-9 * (t - w.t0)) : 1; ctx.scale(k, k);
     if (w.kw && on) { const q = .85 + .15 * p;
-      if (VOX) { ctx.fillStyle = '#c6ff3d'; ctx.save(); ctx.rotate(-.015); ctx.fillRect(-w.mw / 2 - 10, -fs * .46, (w.mw + 20) * clamp(q * 1.1), fs * .92); ctx.restore(); ctx.fillStyle = INKC }
-      else { ctx.fillStyle = '#ff3b4a'; ctx.beginPath(); ctx.roundRect(-w.mw / 2 - 14, -fs * .6, w.mw + 28, fs * 1.2, 14); ctx.fill(); ctx.lineWidth = 5; ctx.strokeStyle = INK; ctx.stroke(); ctx.fillStyle = '#fff' } }
+      if (VOX) { ctx.fillStyle = KWF; ctx.save(); ctx.rotate(-.015); ctx.fillRect(-w.mw / 2 - 10, -fs * .46, (w.mw + 20) * clamp(q * 1.1), fs * .92); ctx.restore(); ctx.fillStyle = KWT }
+      else { ctx.fillStyle = KWF; ctx.beginPath(); ctx.roundRect(-w.mw / 2 - 14, -fs * .6, w.mw + 28, fs * 1.2, 14); ctx.fill(); ctx.lineWidth = 5; ctx.strokeStyle = INK; ctx.stroke(); ctx.fillStyle = KWT } }
     else ctx.fillStyle = act ? ACC : on ? INKC : (VOX ? 'rgba(28,19,11,.38)' : 'rgba(20,16,14,.38)');
     ctx.fillText(w.txt, -w.mw / 2, 0); ctx.restore();
     if (rtl) x -= sp; else x += w.mw + sp }); ctx.restore()
@@ -1069,10 +1072,18 @@ window.frame = function (t) {   // 180-degree-style shutter: the frame is the av
   for (let i = 0; i < n; i++) { draw(n === 1 ? t : t + i * (.6 / 30) / (n - 1)); octx.globalAlpha = 1 / (i + 1); octx.drawImage(cv, 0, 0) } octx.globalAlpha = 1
 };
 window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
+const FONTS = { vazirmatn: ['Vazirmatn-Bold.ttf', 'Vazirmatn-Black.ttf'], lalezar: ['Lalezar-Regular.ttf', 'Lalezar-Regular.ttf'], changa: ['Changa-Var.ttf', 'Changa-Var.ttf'], almarai: ['Almarai-Bold.ttf', 'Almarai-ExtraBold.ttf'], mirza: ['Mirza-Bold.ttf', 'Mirza-Bold.ttf'], amiri: ['Amiri-Bold.ttf', 'Amiri-Bold.ttf'], rakkas: ['Rakkas-Regular.ttf', 'Rakkas-Regular.ttf'] };
+let curFont = 'vazirmatn';   // the family name stays 'Vz' everywhere; a different meta.font just re-points it (a face added later wins over the one in the html)
+async function applyFont(key) {
+  if (!FONTS[key]) key = 'vazirmatn'; if (key === curFont) return;
+  const mk = (f, w) => new FontFace('Vz', `url(../assets/fonts/${f})`, { weight: String(w) }), fs = [mk(FONTS[key][0], 700), mk(FONTS[key][1], 900)];
+  await Promise.all(fs.map(f => f.load())); fs.forEach(f => document.fonts.add(f)); curFont = key
+}
 window.loadData = async (DD, only) => {   // shared by the renderer and the in-app preview (only = scene indices whose images are needed)
   D = DD; POSTER = D.meta.mode === 'poster'; VOX = POSTER || (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; VARY = Q.get('vary') !== '0' && D.meta.vary !== false; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
   D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => { srcs.add(i.src); (i.fx || []).forEach(f => { if (f && f.type === 'bubble' && f.file) srcs.add(f.file) }) }); (s.bubbles || []).forEach(b => { if (b && b.img) srcs.add(b.img) }); (s.photos || []).forEach(q => { if (q && q.src) srcs.add(q.src) }); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); if (s.photo && s.photo.src) srcs.add(s.photo.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
   const dsrc = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; [s.photo, ...(s.photos || [])].forEach(q => { if (q && q.src && /(^|\/)bg\//.test(q.src)) { dsrc.add(flatPath(q.src)); dsrc.add(depthPath(q.src)) } }) }); for (const k in DEP) delete DEP[k]; for (const k in VOLC) delete VOLC[k];
+  try { await applyFont(Q.get('font') || D.meta.font) } catch (e) { console.warn('font', e) }
   await Promise.all([...[...srcs].map(loadImg), ...[...dsrc].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
   if (window.FXL) await FXL.prepare([...srcs]);
   if (D.scenes.some(q => (q.layers || []).some(l => l && l.kind === 'place' && l.style === 'map'))) await loadGeo();
