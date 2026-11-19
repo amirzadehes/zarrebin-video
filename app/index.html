@@ -317,7 +317,7 @@ body[data-mode=poster] .modesw button.on{background:#ff5a1f;color:#fff;border-co
 
 <div id="pvModal" hidden>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvV" class="on">عمودی (اینستاگرام)</button><button id="pvH">افقی (یوتیوب)</button></div>
-  <iframe id="pvFrame" src="../engine/preview.html?inline=1&v=g11&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(62vh*9/16));height:min(62vh,calc(94vw*16/9))"></iframe>
+  <iframe id="pvFrame" src="../engine/preview.html?inline=1&v=g12&fmt=v" allow="autoplay" style="border:0;border-radius:14px;background:#000;width:min(94vw,calc(62vh*9/16));height:min(62vh,calc(94vw*16/9))"></iframe>
   <div class="row" style="justify-content:center;width:100%;margin:0"><button id="pvPlay">▶ پخش</button><button id="pvPause" hidden>⏸ توقف</button><button id="pvEdit">✋ ویرایش چیدمان</button><button id="pvAmb">🌫 صدای فضا</button><button id="pvPlace">📍 مکان و تاریخ</button></div>
   <div class="row" id="pvTools" hidden style="justify-content:center;width:100%;margin:0"><button data-op="bigger">＋ بزرگ‌تر</button><button data-op="smaller">－ کوچک‌تر</button><button data-op="rot">⟳ چرخش</button><button data-op="reset">↺ خودکار</button></div>
   <div class="row" id="pvSel" hidden style="justify-content:center;width:100%;margin:0"></div>
@@ -763,7 +763,7 @@ async function pvAudioUrl(ep){
 async function pvSend(){ if(!RV||pvI<0) return; const f=$('#pvFrame').contentWindow; let audio; try{ audio=await pvAudioUrl(RV.ep) }catch(e){ toast('صدای این قسمت از مخزن گرفته نشد: '+e.message,5000); return }
   if(pvMode==='all'){ let music=null; try{ music=await pvMusicUrl(RV.ep) }catch(e){} f.postMessage({type:'playall',data:RV.data,ep:RV.ep,audio,music,musicVol:(RV.data.meta||{}).musicVol==null?100:RV.data.meta.musicVol,scene:0,at:window.__pvAt||0,sfxVol:+(($('#bSfxVol')||{}).value||65)},'*') } else if(pvMode==='edit') f.postMessage({type:'edit',data:RV.data,ep:RV.ep,audio,scene:pvI,sel:pvSelCur},'*'); else f.postMessage({type:'load',data:RV.data,ep:RV.ep,audio,scene:pvI},'*') }
 function pvGo(){ if(pvReady) pvSend(); else pvQ=true }
-function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&v=g11&t='+Date.now()+'&fmt='+f; pvLayout(); pvOkLabel() }
+function pvSetFmt(f){ if(f===pvFmt&&$('#pvFrame').src.includes('fmt='+f)) return; pvFmt=f; ls.set('pvFmt',f); pvReady=false; pvQ=true; $('#pvFrame').src='../engine/preview.html?inline=1&v=g12&t='+Date.now()+'&fmt='+f; pvLayout(); pvOkLabel() }
 addEventListener('resize',()=>{ if(!$('#pvModal').hidden) pvLayout() });
 addEventListener('message',e=>{ const m=e.data||{};
   if(m.type==='ready'){ pvReady=true; if(pvQ){ pvQ=false; pvSend() } }
@@ -1650,6 +1650,10 @@ const AMB_FA={'wind-cold':'باد سرد زمستانی','wind-light':'نسیم 
 const AMB_META={usr:{}};   // ambience_user.json: {slug:{fa,group,lufs}} = sounds the owner added by hand
 const ambGrp=s=>(AMB_META.usr[s]&&AMB_META.usr[s].group)||String(s).replace(/-\d$/,''), ambGLabel=g=>AMB_FA[g]||(AMB_META.usr[g]&&AMB_META.usr[g].fa)||g;
 const ambName=s=>{ const u=AMB_META.usr[s], g=ambGrp(s), m=String(s).match(/-(\d)$/); if(u&&u.fa) return g!==s?ambGLabel(g)+' – '+u.fa:u.fa; return m&&AMB_FA[g]?AMB_FA[g]+' '+fa(m[1]):(AMB_FA[s]||s) };
+const AMB_LOCAL={};   // slug -> blob URL of a file uploaded in this session: audible at once, before the site (GitHub Pages) has published it
+function ambAudio(slug){ const au=new Audio(AMB_LOCAL[slug]||('../ambience/'+encodeURIComponent(slug)+'.mp3')); let tried=false;
+  au.addEventListener('error',()=>{ if(tried||AMB_LOCAL[slug]) return; tried=true; const t=au.currentTime, on=!au.paused; au.src='https://raw.githubusercontent.com/'+S.repo+'/main/ambience/'+encodeURIComponent(slug)+'.mp3'; au.load(); if(on) au.play().catch(()=>{}) });   // new files reach the site a few minutes later: take them from GitHub meanwhile
+  return au }
 const AMB_SOLO={au:null,btn:null,cat:null,v:1,tm:null};
 function ambFade(au,to,ms,done){ clearInterval(AMB_SOLO.tm); const from=au.volume, t0=Date.now(); AMB_SOLO.tm=setInterval(()=>{ const k=Math.min(1,(Date.now()-t0)/ms); try{ au.volume=Math.min(1,Math.max(0,from+(to-from)*Math.sin(Math.PI/2*k))) }catch(e){} if(k>=1){ clearInterval(AMB_SOLO.tm); done&&done() } },40) }   // soft in / out also when listening alone
 function ambSoloStop(){ const au=AMB_SOLO.au, b=AMB_SOLO.btn; AMB_SOLO.au=AMB_SOLO.btn=null; if(b&&b.isConnected) b.textContent='▶ شنیدن صدا'; if(au) ambFade(au,0,700,()=>{ try{ au.pause() }catch(e){} }) }
@@ -1665,7 +1669,7 @@ async function ambUI(box,scn){ const B=box||document.querySelector('#rvAmb .abB'
     <label>بلندی کل صدای فضا: <b class="abVl"></b></label><input type="range" class="abVr" min="0" max="200" step="5" style="width:100%">
     <div class="abBar" style="position:relative;height:16px;border-radius:8px;background:#241d18;margin:10px 0;overflow:hidden"></div>
     <div class="abL"></div><div class="row" style="margin-top:8px"><button class="abAdd">➕ افزودن صدا</button></div>
-    <details class="pSec abUp" style="margin-top:10px"><summary>⬆️ صدای تازه‌ی خودم را به لیست اضافه کنم</summary><div class="pSecB"><label>فایل صدا (فقط mp3، تا ۲۰ مگابایت)</label><input type="file" class="abUf" accept=".mp3,audio/mpeg"><label>نام فارسی که در لیست بیاید</label><input type="text" class="abUn" placeholder="مثلاً: آتش اجاق خانه"><label>در کدام دسته باشد؟</label><select class="sel abUg"><option value="__new">دسته‌ی تازه (با همین نام)</option>${GK.map(g=>`<option value="${g}">${ambGLabel(g)}</option>`).join('')}</select><div class="row" style="margin-top:8px"><button class="pri abUb">آپلود و افزودن به لیست</button></div><p class="hint abUs"></p></div></details>
+    <details class="pSec abUp" style="margin-top:10px"><summary>⬆️ صدای تازه‌ی خودم را به لیست اضافه کنم</summary><div class="pSecB"><label>فایل صدا (فقط mp3، تا ۲۰ مگابایت)</label><input type="file" class="abUf" accept=".mp3,audio/mpeg"><label>نام فارسی که در لیست بیاید</label><input type="text" class="abUn" placeholder="مثلاً: آتش اجاق خانه"><label>در کدام دسته باشد؟</label><select class="sel abUg"><option value="__new">دسته‌ی تازه (با همین نام)</option>${GK.map(g=>`<option value="${g}">${ambGLabel(g)}</option>`).join('')}</select><div class="row" style="margin-top:8px"><button class="pri abUb">آپلود و افزودن به لیست</button></div><div class="abPb" hidden style="height:10px;border-radius:6px;background:#241d18;overflow:hidden;margin-top:10px"><i style="display:block;height:100%;width:0;background:#ffc21a;transition:width .25s"></i></div><p class="hint abUs"></p></div></details>
     <p class="hint">هر کارت یک صدای فضا روی ویدیو است: صدا را عوض کن، شروع و پایانش را با کلمه‌های راوی تعیین کن (مثل بقیه‌ی چیزها)، بلندیش را کم یا زیاد کن یا حذفش کن. «▶ شنیدن صدا» فقط خود صدا را همین‌جا پخش می‌کند. در «▶ دیدن کل ویدیو» صدا زیر صدای راوی شنیده می‌شود و تغییرها را فوراً می‌شنوی. ورود و خروج هر صدا نرم است؛ اگر صدایی تا «آخر صحنه» برود یا از «ابتدای صحنه» شروع شود، هم‌زمان با حرکت دوربین بین دو سکانس آرام محو یا وارد می‌شود، و در غیر این‌صورت حدود ۲٫۵ ثانیه. تکرار صدا در پیش‌نمایش ممکن است یک «تق» کوچک بدهد؛ در ساخت نهایی نرم به‌هم وصل می‌شود.</p>`;
   const on=B.querySelector('.abOn'), vr=B.querySelector('.abVr'), vl=B.querySelector('.abVl'), L=B.querySelector('.abL'), bar=B.querySelector('.abBar');
   on.checked=M.amb!==false; on.onchange=()=>{ if(on.checked) delete M.amb; else M.amb=false; push() };
@@ -1694,20 +1698,25 @@ async function ambUI(box,scn){ const B=box||document.querySelector('#rvAmb .abB'
       t1.onchange=()=>{ let v=+t1.value; if(T) v=Math.min(v,T); if(v<=c.t0+.5) v=c.t0+.5; c.t1=f1(v); draw(); drawBar(); push() };
       d.querySelector('.abV').onchange=e=>{ const v=+e.target.value; if(v===100) delete c.vol; else c.vol=v; push() };
       const pl=d.querySelector('.abPl'); pl.onclick=async()=>{ const was=AMB_SOLO.btn===pl; ambSoloStop(); if(was) return; if(!AMB_SOLO.cat) AMB_SOLO.cat=fetch('../ambience_catalog.json?v='+Date.now()).then(r=>r.json()).catch(()=>({}));
-        const cat=await AMB_SOLO.cat, L=(cat[c.src]||AMB_META.usr[c.src]||{}).lufs, au=new Audio('../ambience/'+encodeURIComponent(c.src)+'.mp3'); au.loop=true;   // only the sound, no preview window; level as in the mix, lifted so it is audible without the voice
-        const vMax=Math.min(1,Math.pow(10,(-24-(L==null?-25:L))/20)*(c.vol==null?100:+c.vol)/100*((M.ambVol==null?100:+M.ambVol)/100)); au.volume=0; AMB_SOLO.v=vMax; AMB_SOLO.au=au; AMB_SOLO.btn=pl; pl.textContent='⏹ توقف'; au.onended=ambSoloStop; au.play().catch(()=>ambSoloStop()); ambFade(au,vMax,2000) };
+        const cat=await AMB_SOLO.cat, L=(cat[c.src]||AMB_META.usr[c.src]||{}).lufs, au=ambAudio(c.src); au.loop=true;   // only the sound, no preview window; level as in the mix, lifted so it is audible without the voice
+        const vMax=Math.min(1,Math.pow(10,(-24-(L==null?-25:L))/20)*(c.vol==null?100:+c.vol)/100*((M.ambVol==null?100:+M.ambVol)/100)); au.volume=0; AMB_SOLO.v=vMax; AMB_SOLO.au=au; AMB_SOLO.btn=pl; pl.textContent='⏹ توقف'; au.onended=ambSoloStop; au.addEventListener('error',()=>{ if(au.src.indexOf('raw.githubusercontent')>-1){ toast('این صدا هنوز آماده‌ی پخش نیست؛ چند دقیقه بعد دوباره امتحان کن'); ambSoloStop() } }); au.play().catch(()=>{}); ambFade(au,vMax,2000) };
       d.querySelector('.abDl').onclick=()=>{ if(!confirm('این صدای فضا حذف شود؟')) return; clips().splice(i,1); draw(); drawBar(); push() };
       L.appendChild(d) }); if(!L.children.length) L.innerHTML='<p class="hint">'+(S1?'روی این صحنه صدای فضایی نیست. «➕ افزودن صدا» را بزن.':'صدایی روی ویدیو نیست. «➕ افزودن صدا» را بزن.')+'</p>' };
   B.querySelector('.abAdd').onclick=()=>{ const k=S1?scn:((typeof pvI==='number'&&pvI>=0&&RV.data.scenes[pvI])?pvI:0), t0=+(RV.data.scenes[k]||{}).t0||0, t1=S1?(+S1.t1||t0+8):Math.min(T||t0+8,t0+8); clips().push({src:GR.get(GK[0])[0],t0:f1(t0),t1:f1(t1)}); draw(); drawBar(); push() };
   const UP=B.querySelector('.abUp'), ust=UP.querySelector('.abUs');
   UP.querySelector('.abUb').onclick=async()=>{ const f=UP.querySelector('.abUf').files[0], nm=UP.querySelector('.abUn').value.trim(), g=UP.querySelector('.abUg').value;
     if(!f||!nm){ ust.textContent='فایل mp3 و نام فارسی را بده.'; return } if(!/\.mp3$/i.test(f.name)){ ust.textContent='فقط فایل mp3 قبول است.'; return } if(f.size>20*1048576){ ust.textContent='فایل از ۲۰ مگابایت بیشتر است؛ کوتاه‌ترش کن.'; return }
-    try{ ust.textContent='در حال خواندن فایل…'; const buf=await f.arrayBuffer(); let lufs=null;
+    const pb=UP.querySelector('.abPb'), pi=pb.firstElementChild, step=(pct,t)=>{ pb.hidden=false; pi.style.width=pct+'%'; ust.textContent=fa(Math.round(pct))+'٪ — '+t }, ub=UP.querySelector('.abUb'); ub.disabled=true;
+    try{ step(3,'خواندن فایل…'); const buf=await f.arrayBuffer(); let lufs=null; step(12,'سنجش بلندی صدا…');
       try{ const ac=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,44100,44100), ab=await ac.decodeAudioData(buf.slice(0)), ch=ab.getChannelData(0); let q=0,n=0; for(let k=0;k<ch.length;k+=7){ q+=ch[k]*ch[k]; n++ } lufs=Math.round((10*Math.log10(q/n+1e-12)-.7)*10)/10 }catch(e){}   // rough loudness for the preview; the final mix measures it exactly
-      const slug='u-'+Date.now().toString(36), u8=new Uint8Array(buf); let bin=''; for(let k=0;k<u8.length;k+=32768) bin+=String.fromCharCode.apply(null,u8.subarray(k,k+32768));
-      ust.textContent='در حال آپلود…'; await api('/contents/ambience/'+slug+'.mp3',{method:'PUT',body:JSON.stringify({message:'ambience: sound added by hand '+slug,content:btoa(bin),branch:'main'})});
+      const slug='u-'+Date.now().toString(36), u8=new Uint8Array(buf); step(20,'آماده‌سازی برای ارسال…'); let bin=''; for(let k=0;k<u8.length;k+=32768) bin+=String.fromCharCode.apply(null,u8.subarray(k,k+32768));
+      const body=JSON.stringify({message:'ambience: sound added by hand '+slug,content:btoa(bin),branch:'main'}); step(25,'ارسال فایل به گیت‌هاب…');
+      await new Promise((ok,bad)=>{ const x=new XMLHttpRequest(); x.open('PUT','https://api.github.com/repos/'+S.repo+'/contents/ambience/'+slug+'.mp3'); x.setRequestHeader('Accept','application/vnd.github+json'); x.setRequestHeader('Authorization','Bearer '+S.token); x.setRequestHeader('Content-Type','application/json');
+        x.upload.onprogress=e=>{ if(e.lengthComputable) step(25+55*e.loaded/e.total,'ارسال فایل به گیت‌هاب…') }; x.onload=()=>x.status<300?ok():bad(new Error((()=>{ try{ return JSON.parse(x.responseText).message }catch(_){ return 'HTTP '+x.status } })())); x.onerror=()=>bad(new Error('اتصال قطع شد')); x.send(body) });
+      AMB_LOCAL[slug]=URL.createObjectURL(f); step(85,'ثبت نام فارسی در لیست…');
       for(let k=0;k<3;k++){ let sha,cur={}; try{ const j=await api('/contents/ambience_user.json'); sha=j.sha; cur=JSON.parse(decB64(j)) }catch(e){} cur[slug]={fa:nm,group:g==='__new'?slug:g,lufs}; try{ await api('/contents/ambience_user.json',{method:'PUT',body:JSON.stringify({message:'ambience: names',content:enc(JSON.stringify(cur,null,1)),branch:'main',sha})}); AMB_META.usr=cur; break }catch(e){ if(k===2) throw e; await sleep(1500) } }
-      toast('✓ به لیست اضافه شد (چند دقیقه بعد در پیش‌نمایش هم شنیده می‌شود)'); await ambUI(box,scn) }catch(e){ ust.textContent='نشد: '+(e.message||e) } };
+      step(100,'تمام شد ✓');
+      toast('✓ به لیست اضافه شد (چند دقیقه بعد در پیش‌نمایش هم شنیده می‌شود)'); await ambUI(box,scn) }catch(e){ ub.disabled=false; pb.hidden=true; ust.textContent='نشد: '+(e.message||e) } };
   draw(); drawBar() }
 /* ===== bubble pictures: prompt, cut-out (magenta -> transparent, text area detected), library listing ===== */
 const BUB_TYPES=[['speech','ابر حرف زدن (دم پایین‌چپ)'],['thought','ابر فکر کردن (ابری با حباب)'],['shout','ابر فریاد (دندانه‌دار)'],['caption','کادر توضیح (مستطیلی)']];
