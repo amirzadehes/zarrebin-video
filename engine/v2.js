@@ -5,7 +5,8 @@ const Q = new URLSearchParams(location.search);
 const EP = Q.get('ep'), FMT = Q.get('fmt') === 'h' ? 'h' : 'v', MB = Q.get('mb') !== '0';
 const V = FMT === 'v', W = V ? 1080 : 1920, H = V ? 1920 : 1080, B = 1080, TAU = Math.PI * 2, INK = '#14100e';
 const out = document.getElementById('out'), cv = document.createElement('canvas');
-out.width = cv.width = W; out.height = cv.height = H;
+const RS = Math.max(1, Math.min(2, +(Q.get('scale') || 1) || 1)), LAYMAX = Math.max(600, +(Q.get('lay') || 1100) || 1100);   // RS: output resolution factor (4/3 = 2560x1440 for the horizontal video); everything is still drawn in the logical W x H space
+out.width = cv.width = Math.round(W * RS); out.height = cv.height = Math.round(H * RS);
 const ctx = cv.getContext('2d'), octx = out.getContext('2d');
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x)), lerp = (a, b, p) => a + (b - a) * p, ramp = (t, a, b) => clamp((t - a) / (b - a));
 const eio = p => { p = clamp(p); return p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2 };
@@ -70,7 +71,10 @@ function applyPalette(meta) {
     if (bases) bases.forEach((b, i) => { THEMES[i] = comicTheme(b) }) }
 }
 let D = null; const IM = {};
-function loadImg(src) { return new Promise(r => { const i = new Image(); i.onload = () => { IM[src] = i; r() }; i.onerror = () => { if (i.dataset.r) return r(); i.dataset.r = 1; i.src = 'https://raw.githubusercontent.com/amirzadehes/zarrebin-video/main/' + src }; i.src = '../' + src }) }
+const RAWB = 'https://raw.githubusercontent.com/amirzadehes/zarrebin-video/main/'; window.MISSING = [];
+function loadImg(src) {   // a picture that fails to load is tried again (this server, GitHub raw, once more with a cache-buster) before it counts as missing; render-v2.js reads window.MISSING
+  return new Promise(r => { const u = [() => '../' + src, () => RAWB + src, () => '../' + src + '?r=' + Date.now(), () => RAWB + src + '?r=' + Date.now()]; let k = 0;
+    const go = () => { const i = new Image(); i.onload = () => { IM[src] = i; r() }; i.onerror = () => { if (++k >= u.length) { if (!MISSING.includes(src)) MISSING.push(src); return r() } setTimeout(go, 250 * k) }; i.src = u[k]() }; go() }) }
 
 /* ---------- primitives ---------- */
 function drawImg(src, x, y, size, rot = 0, a = 1, filter = 'none', sx = 1, sy = 1, shadow = true, vol = 0) {
@@ -301,6 +305,10 @@ function phReveal(e, kind, sw) {   // clip/alpha/scale for the background pictur
 }
 /* 3D depth (parallax): scenes/<ep>/depth/<name>.flat.png (made by tools/make_depth.py, white = near; every object is ONE flat depth, so it moves as a rigid piece and is never bent). The photo is warped as ONE continuous picture: every pixel slides by an amount that follows its own
    depth, so near things move more than far things and there are no separate layers, no seams and no repaired background showing at the sides of objects. A pure function of t. */
+/* the 3D layers of a picture are expensive to build, so they stay in DEP between loads of the preview; a tiny fingerprint of the picture and of its depth map tells when a file was replaced */
+const FPM = new WeakMap();
+function fpOf(im) { if (!im) return ''; let f = FPM.get(im); if (f) return f; try { const c = document.createElement('canvas'); c.width = c.height = 8; const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(im, 0, 0, 8, 8); const a = g.getImageData(0, 0, 8, 8).data; let h = im.width * 31 + im.height; for (let i = 0; i < a.length; i++) h = (h * 33 + a[i]) | 0; f = String(h) } catch (e) { f = 'x' } FPM.set(im, f); return f }
+function depKeep() { for (const k in DEP) { const e = DEP[k]; if (!e || e.fp !== fpOf(IM[e.src]) + '|' + fpOf(IM[flatPath(e.src)] || IM[depthPath(e.src)])) delete DEP[k] } }
 const DEP = {}, depthPath = s => s.replace(/(^|\/)bg\//, '$1depth/').replace(/\.[a-z0-9]+$/i, '.png'), flatPath = s => depthPath(s).replace(/\.png$/, '.flat.png');   // .flat.png: rigid regions + ramp (tools/make_depth.py); .png: raw model output, the fallback
 function boxBlur(a, w, h, r) {   // separable box blur of a float field (edge-clamped), r px
   if (r < 1) return a; const t = new Float32Array(a.length), n = 2 * r + 1;
@@ -309,9 +317,9 @@ function boxBlur(a, w, h, r) {   // separable box blur of a float field (edge-cl
   return a
 }
 function depthLayers(src, win) {   // win = [x0, y0, x1, y1]: the part of the picture that is on screen (fractions); the depth is stretched over THAT part, so a close-up crop still has full near-far range
-  const key = win ? src + '|' + win.map(v => v.toFixed(2)).join(',') : src; if (DEP[key] !== undefined) return DEP[key]; DEP[key] = 0; const im = IM[src], fm = IM[flatPath(src)], dm = fm || IM[depthPath(src)]; if (!im || !dm || !('filter' in ctx)) return 0;
+  const key = (win ? src + '|' + win.map(v => v.toFixed(2)).join(',') : src) + (LIVE ? '|L' : ''); if (DEP[key] !== undefined) return DEP[key];   // the live editor works at a smaller size, so it has its own entries DEP[key] = 0; const im = IM[src], fm = IM[flatPath(src)], dm = fm || IM[depthPath(src)]; if (!im || !dm || !('filter' in ctx)) return 0;
   try {
-    const m = Math.min(1, (LIVE ? 720 : 1100) / Math.max(im.width, im.height)), w = Math.max(2, Math.round(im.width * m)), h = Math.max(2, Math.round(im.height * m)), n = w * h;   // the live preview works smaller to stay smooth
+    const m = Math.min(1, (LIVE ? 720 : LAYMAX) / Math.max(im.width, im.height)), w = Math.max(2, Math.round(im.width * m)), h = Math.max(2, Math.round(im.height * m)), n = w * h;   // the live preview works smaller to stay smooth
     const mk = () => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c };
     const cI = mk(), gI = cI.getContext('2d', { willReadFrequently: true }); gI.drawImage(im, 0, 0, w, h); const P = gI.getImageData(0, 0, w, h).data;
     const cD = mk(), gD = cD.getContext('2d', { willReadFrequently: true }); gD.filter = 'blur(2px)'; gD.drawImage(dm, 0, 0, w, h); const Q = gD.getImageData(0, 0, w, h).data;
@@ -322,7 +330,7 @@ function depthLayers(src, win) {   // win = [x0, y0, x1, y1]: the part of the pi
     if (fm) d = boxBlur(d, w, h, Math.max(1, Math.round(Math.max(w, h) * .0015)));   // flat map: objects are rigid pieces and the ramp beside them is already in the map, so only a hairline of smoothing (a strong blur would bend the objects again)
     else { const r = Math.max(2, Math.round(Math.max(w, h) * .0065)); for (let k = 0; k < 3; k++) d = boxBlur(d, w, h, r) }   // soft depth edges: the picture bends gently where near meets far, it never tears into layers
     const out = mk(), og = out.getContext('2d'), id = og.createImageData(w, h);
-    return DEP[key] = { w, h, P, d, out, og, id, vis: win && win.vis }
+    return DEP[key] = { w, h, P, d, out, og, id, vis: win && win.vis, src, fp: fpOf(im) + '|' + fpOf(dm) }
   } catch (e) { return 0 }
 }
 /* Calm edges: the 3D motion fades out towards the sides of what is on screen (meta.edge = fraction of the width that stays completely still at each side, default .2; top and bottom use half of it; 0 = off). The pulled / smeared picture shows up
@@ -930,10 +938,10 @@ function tfCounter(t, sc, f) {
 let ZB;
 function zoomBlur(p) {   // the zoom punch gets short radial streaks: a few copies of the frame, each a little bigger and faded, centred on the picture (pure function of the punch strength; meta.zoomblur 0-3, default 1)
   const lv = D.meta.zoomblur != null ? +D.meta.zoomblur : 1, k = [0, .5, 1, 1.6][lv] || 0; if (!k || p < .01) return;
-  if (!ZB || ZB.width !== W || ZB.height !== H) { ZB = document.createElement('canvas'); ZB.width = W; ZB.height = H }
-  const z = ZB.getContext('2d'); z.setTransform(1, 0, 0, 1, 0, 0); z.clearRect(0, 0, W, H); z.drawImage(cv, 0, 0);
-  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = .2;
-  for (let i = 1; i <= 5; i++) { const s = 1 + p * k * i / 5 * 1.3; ctx.setTransform(s, 0, 0, s, W / 2 * (1 - s), H / 2 * (1 - s)); ctx.drawImage(ZB, 0, 0) }
+  if (!ZB || ZB.width !== cv.width || ZB.height !== cv.height) { ZB = document.createElement('canvas'); ZB.width = cv.width; ZB.height = cv.height }
+  const z = ZB.getContext('2d'); z.setTransform(1, 0, 0, 1, 0, 0); z.clearRect(0, 0, ZB.width, ZB.height); z.drawImage(cv, 0, 0);
+  ctx.save(); ctx.setTransform(RS, 0, 0, RS, 0, 0); ctx.globalAlpha = .2;
+  for (let i = 1; i <= 5; i++) { const s = 1 + p * k * i / 5 * 1.3; ctx.setTransform(s * RS, 0, 0, s * RS, W / 2 * (1 - s) * RS, H / 2 * (1 - s) * RS); ctx.drawImage(ZB, 0, 0, W, H) }
   ctx.restore()
 }
 function drawScene(t, sc) {
@@ -1059,7 +1067,7 @@ function grain(t) { if (!GR.length) return; if (!GRP) GRP = GR.map(c => ctx.crea
 function finish(t) { grain(t); const v = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .5, W / 2, H / 2, Math.max(W, H) * .75); v.addColorStop(0, 'rgba(10,6,20,0)'); v.addColorStop(1, 'rgba(10,6,20,' + (VOX ? .16 : .4) + ')'); ctx.fillStyle = v; ctx.fillRect(0, 0, W, H) }
 
 function draw(t) {
-  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'none';
+  ctx.setTransform(RS, 0, 0, RS, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'none';
   world(t); ui(t); subs(t); finish(t);
   const T = D.meta.total; if (t > T - .5) { ctx.fillStyle = `rgba(0,0,0,${ramp(t, T - .5, T)})`; ctx.fillRect(0, 0, W, H) }
   if (t < .25) { ctx.fillStyle = `rgba(0,0,0,${1 - ramp(t, 0, .25)})`; ctx.fillRect(0, 0, W, H) }
@@ -1072,6 +1080,10 @@ window.frame = function (t) {   // 180-degree-style shutter: the frame is the av
   const n = MB && flyIndex(t) < 0 ? (busy(t) ? 4 : 2) : 1;   // no sub-frame blur inside a fly-through: the zoom is too fast and the copies would show as ghosts
   for (let i = 0; i < n; i++) { draw(n === 1 ? t : t + i * (.6 / 30) / (n - 1)); octx.globalAlpha = 1 / (i + 1); octx.drawImage(cv, 0, 0) } octx.globalAlpha = 1
 };
+window.prewarm = async (idx, cb) => {   // build the 3D layers of the given scenes (all by default) one scene at a time, so the first play does not stall on them (a stall makes the audio-clocked preview jump over scenes)
+  const ks = idx || D.scenes.map((_, i) => i); let n = 0;
+  for (const k of ks) { const sc = D.scenes[k]; if (!sc) continue; try { draw(sc.t0 + (sc.t1 - sc.t0) * .6); if (flyOn(k)) { draw(sc.t0 - .05); draw(sc.t0 + .3) } } catch (e) { console.warn('prewarm', k, e) } n++; /* the second and third draw go through the fly-through into this scene */ if (cb) cb(n, ks.length); await new Promise(r => setTimeout(r, 0)) }
+};
 window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
 const FONTS = { vazirmatn: ['Vazirmatn-Bold.ttf', 'Vazirmatn-Black.ttf'], lalezar: ['Lalezar-Regular.ttf', 'Lalezar-Regular.ttf'], changa: ['Changa-Var.ttf', 'Changa-Var.ttf'], almarai: ['Almarai-Bold.ttf', 'Almarai-ExtraBold.ttf'], mirza: ['Mirza-Bold.ttf', 'Mirza-Bold.ttf'], amiri: ['Amiri-Bold.ttf', 'Amiri-Bold.ttf'], rakkas: ['Rakkas-Regular.ttf', 'Rakkas-Regular.ttf'] };
 let curFont = 'vazirmatn';   // the family name stays 'Vz' everywhere; a different meta.font just re-points it (a face added later wins over the one in the html)
@@ -1083,9 +1095,9 @@ async function applyFont(key) {
 window.loadData = async (DD, only) => {   // shared by the renderer and the in-app preview (only = scene indices whose images are needed)
   D = DD; POSTER = D.meta.mode === 'poster'; VOX = POSTER || (Q.get('style') || D.meta.style) === 'vox'; SYM = Q.get('symbols') === '1' || D.meta.symbols === true; VARY = Q.get('vary') !== '0' && D.meta.vary !== false; TITLES = Q.get('titles') === '1' || D.meta.titles === true; applyPalette({ ...D.meta, ...(Q.get('palette') ? { palette: Q.get('palette') } : {}), ...(Q.get('base') ? { base: '#' + Q.get('base') } : {}) });
   D.scenes.forEach((s, i) => { s.idx = i }); const srcs = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; (s.items || []).forEach(i => { srcs.add(i.src); (i.fx || []).forEach(f => { if (f && f.type === 'bubble' && f.file) srcs.add(f.file) }) }); (s.bubbles || []).forEach(b => { if (b && b.img) srcs.add(b.img) }); (s.photos || []).forEach(q => { if (q && q.src) srcs.add(q.src) }); (s.decor || []).forEach(d => srcs.add(d)); if (s.bg && s.bg.src) srcs.add(s.bg.src); if (s.photo && s.photo.src) srcs.add(s.photo.src); (s.pins || []).forEach(p => { if (p && p.src) srcs.add(p.src) }) });
-  const dsrc = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; [s.photo, ...(s.photos || [])].forEach(q => { if (q && q.src && /(^|\/)bg\//.test(q.src)) { dsrc.add(flatPath(q.src)); dsrc.add(depthPath(q.src)) } }) }); for (const k in DEP) delete DEP[k]; for (const k in VOLC) delete VOLC[k];
+  const dsrc = new Set(); D.scenes.forEach((s, i) => { if (only && !only.includes(i)) return; [s.photo, ...(s.photos || [])].forEach(q => { if (q && q.src && /(^|\/)bg\//.test(q.src)) { dsrc.add(flatPath(q.src)); dsrc.add(depthPath(q.src)) } }) }); for (const k in VOLC) delete VOLC[k];
   try { await applyFont(Q.get('font') || D.meta.font) } catch (e) { console.warn('font', e) }
-  await Promise.all([...[...srcs].map(loadImg), ...[...dsrc].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready;
+  await Promise.all([...[...srcs].map(loadImg), ...[...dsrc].map(loadImg), document.fonts.load('900 40px Vz'), document.fonts.load('700 40px Vz')]); await document.fonts.ready; depKeep();
   if (window.FXL) await FXL.prepare([...srcs]);
   if (D.scenes.some(q => (q.layers || []).some(l => l && l.kind === 'place' && l.style === 'map'))) await loadGeo();
   mkGrain(); mkPaper(); CH.length = 0; buildCaptions(); buildBeats(); seek(0); return true
