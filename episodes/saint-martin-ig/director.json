@@ -1,0 +1,243 @@
+[
+ {
+  "from": 0,
+  "to": 1,
+  "elements": [
+   "children holding lanterns",
+   "Roman soldier"
+  ],
+  "props": [
+   {
+    "fa": "فانوس",
+    "word": "فانوس",
+    "prompt": "a small handheld lantern with a brass metal body, clear glass panes, a warm amber glow emanating from the candle inside, and a short wooden handle"
+   },
+   {
+    "fa": "کباب غاز",
+    "word": "کباب غازه",
+    "prompt": "a golden‑brown roasted goose with crisp, glossy skin, glistening juices, resting on a rustic wooden platter"
+   }
+  ],
+  "more": [],
+  "prompt": "A twilight French village street at night, misty cold air surrounds a group of children standing behind a young Roman soldier wearing a half‑red, half‑blue military cloak; the soldier looks toward the camera, his face illuminated by ambient light, cinematic wide shot centered on the soldier and children.",
+  "kicker": "",
+  "text": "چرا مارتین این کارو کرد؟",
+  "number": "",
+  "kw": [
+   "سنت مارتین",
+   "فانوس"
+  ]
+ },
+ {
+  "from": 2,
+  "to": 3,
+  "elements": [
+   "Roman soldier"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "Close‑up of a teenage Roman soldier in a plain rough tunic and simple cloak, standing alone on a dimly lit cobblestone road; his solemn face looks forward, cold night atmosphere, low angle.",
+  "kicker": "",
+  "text": "این سرباز کیه؟",
+  "number": "",
+  "kw": [
+   "سرباز رومی",
+   "شخصیت"
+  ]
+ },
+ {
+  "from": 4,
+  "to": 4,
+  "elements": [
+   "young Roman soldier"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "Portrait of Young Martin, an 18‑year‑old Roman soldier with a lean athletic build, olive skin, short dark‑brown hair, clean‑shaven, wearing a bronze‑studded leather cuirass, pteruges skirt, sandals, short sword at the hip, and a long red‑brown military cloak, standing under a starry sky, gentle smile.",
+  "kicker": "MARTIN · 3RD CENTURY",
+  "text": "مارتین کی بود؟",
+  "number": "",
+  "kw": [
+   "مارتین",
+   "سرباز"
+  ]
+ },
+ {
+  "from": 5,
+  "to": 7,
+  "elements": [
+   "The Beggar",
+   "cold night France"
+  ],
+  "props": [
+   {
+    "fa": "شنل رومی",
+    "word": "شنل",
+    "prompt": "A richly textured Roman military cloak, half red and half blue, split down the middle, the torn edges frayed, lying on a cold stone ground, illuminated by a faint lantern glow."
+   },
+   {
+    "fa": "شمشیر",
+    "word": "شمشیر",
+    "prompt": "A short Roman sword with a bronze hilt, blade gleaming faintly in the cold night, resting beside the split cloak on the ground."
+   }
+  ],
+  "more": [],
+  "prompt": "A shivering beggar, gaunt and barefoot, wrapped in tattered rags, standing in a cold French night; beside him, Young Martin, an 18‑year‑old Roman soldier, holds a split piece of his red‑brown cloak that glows warm as he hands it to the beggar, cinematic close‑up centered on the exchange.",
+  "kicker": "",
+  "text": "گدا و شنل نصف شد",
+  "number": "",
+  "kw": [
+   "گدا",
+   "شنل",
+   "شب"
+  ]
+ },
+ {
+  "from": 8,
+  "to": 10,
+  "elements": [
+   "young Roman soldier",
+   "children holding lanterns"
+  ],
+  "props": [
+   {
+    "fa": "فانوس",
+    "word": "فانوس",
+    "prompt": "a small handheld lantern with a brass metal body, clear glass panes, a warm amber glow emanating from the candle inside, and a short wooden handle"
+   }
+  ],
+  "more": [],
+  "prompt": "A modern reenactor dressed in an exact replica of a 3rd‑century Roman soldier uniform, standing in a parade formation, cutting a replica cloak in half; behind him, a line of children follow, their brass lanterns creating a trail of warm glow on the pavement, bright daylight fading to dusk, cinematic medium shot.",
+  "kicker": "",
+  "text": "امروزه هم تکرار میشه",
+  "number": "",
+  "kw": [
+   "رژ",
+   "فانوس",
+   "شنل"
+  ]
+ },
+ {
+  "from": 11,
+  "to": 11,
+  "elements": [],
+  "props": [],
+  "more": [],
+  "prompt": "An abstract composition of a question mark formed by floating lantern lights against a dark night sky, evoking curiosity, soft focus, gentle bokeh, cinematic mood.",
+  "kicker": "",
+  "text": "چرا یازده نوامر؟",
+  "number": "",
+  "kw": [
+   "یازده نوامر"
+  ]
+ },
+ {
+  "from": 12,
+  "to": 14,
+  "elements": [
+   "Saint Martin",
+   "day of death"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A dimly lit 3rd‑century French village at night, twilight sky heavy with mist. Elderly Bishop Martin, a frail 75‑year‑old man with white hair, short beard, deep wrinkles, wearing a plain dark‑brown monk's robe and a simple wooden cross, stands solemnly before a stone memorial marking his martyrdom. A faint lantern glow flickers nearby, casting soft shadows.",
+  "kicker": "SAINT MARTIN · DEATH DAY",
+  "text": "روز *مرگ* مارتین",
+  "number": "",
+  "kw": [
+   "مارتین",
+   "مرگ",
+   "قدیسه"
+  ]
+ },
+ {
+  "from": 15,
+  "to": 15,
+  "elements": [
+   "Saint Martin's Day",
+   "agricultural year end",
+   "Lent"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A bright early autumn French countryside, fields golden under a low sun. Children in simple tunics carry lanterns, their faces lit with curiosity, while a distant church bell rings, linking the celebrations of Saint Martin's Day with the end of the harvest and the start of the forty‑day Lenten fast.",
+  "kicker": "SAINT MARTIN DAY",
+  "text": "سنت *مارتین* و روزه",
+  "number": "",
+  "kw": [
+   "سنت مارتین",
+   "روز آخر سال",
+   "روزه"
+  ]
+ },
+ {
+  "from": 16,
+  "to": 18,
+  "elements": [
+   "tax payment",
+   "goat meat",
+   "Lent fasting"
+  ],
+  "props": [
+   {
+    "fa": "قاز",
+    "word": "قاز",
+    "prompt": "A large, sturdy iron cauldron with a matte black finish, thick curved handles on each side, a rounded belly, and a slightly flared rim; the metal surface shows subtle burn marks and a faint sheen from recent use."
+   }
+  ],
+  "more": [],
+  "prompt": "A rustic medieval market square at dusk, villagers in coarse clothes gather around a wooden table, handing over coins as tax payment. Lantern light illuminates their weary faces as a banner with faded ink hangs above, hinting at the Lenten season.",
+  "kicker": "GOAT TAX",
+  "text": "قاز *مالیات* و روزه",
+  "number": "",
+  "kw": [
+   "قاز",
+   "مالیات",
+   "روزه"
+  ]
+ },
+ {
+  "from": 19,
+  "to": 20,
+  "elements": [
+   "Saint Martin's legacy",
+   "goat kebab"
+  ],
+  "props": [
+   {
+    "fa": "کباب قاز",
+    "word": "کباب قاز",
+    "prompt": "Juicy, caramelized pieces of meat skewered on a metal spit, resting on a sizzling cauldron; the meat is browned with charred edges, glistening with a thin layer of oil, and speckled with herbs, while faint wisps of steam rise from the hot surface."
+   }
+  ],
+  "more": [],
+  "prompt": "A close‑up of a wooden platter on a stone table, its surface reflecting warm firelight. Behind it, an old parchment depicts Saint Martin sharing his cloak, symbolizing his charitable legacy, while the golden glow emphasizes the historic connection.",
+  "kicker": "LEGACY OF MARTIN",
+  "text": "یادگار *سرباز* مهربان",
+  "number": "",
+  "kw": [
+   "سرباز مهربان",
+   "قاز",
+   "یادگار"
+  ]
+ },
+ {
+  "from": 21,
+  "to": 22,
+  "elements": [
+   "YouTube channel",
+   "viewer interaction"
+  ],
+  "props": [],
+  "more": [],
+  "prompt": "A modern smartphone screen held by a hand, displaying a YouTube video thumbnail titled 'Saint Martin Legend Explained'. The background shows a soft‑focus medieval illustration of Martin cutting his cloak, blended with contemporary UI elements like a play button and comment box, illuminated by the screen's light.",
+  "kicker": "YOUTUBE EXPLAINER",
+  "text": "ویدیو *یوتیوب* ما",
+  "number": "",
+  "kw": [
+   "یوتیوب",
+   "سنت مارتین",
+   "ویدیو"
+  ]
+ }
+]
