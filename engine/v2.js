@@ -318,7 +318,8 @@ function boxBlur(a, w, h, r) {   // separable box blur of a float field (edge-cl
 }
 function depthLayers(src, win) {   // win = [x0, y0, x1, y1]: the part of the picture that is on screen (fractions); the depth is stretched over THAT part, so a close-up crop still has full near-far range
   const key = (win ? src + '|' + win.map(v => v.toFixed(2)).join(',') : src) + (LIVE ? '|L' : ''); if (DEP[key] !== undefined) return DEP[key];   // the live editor works at a smaller size, so it has its own entries
-  DEP[key] = 0; const im = IM[src], fm = IM[flatPath(src)], dm = fm || IM[depthPath(src)]; if (!im || !dm || !('filter' in ctx)) return 0;
+  const im = IM[src], fm = IM[flatPath(src)], dm = fm || IM[depthPath(src)]; if (!im || !dm || !('filter' in ctx)) return 0;   // no depth map (yet): nothing is remembered, so the 3D starts as soon as the file is there
+  DEP[key] = 0;
   try {
     const m = Math.min(1, (LIVE ? 720 : LAYMAX) / Math.max(im.width, im.height)), w = Math.max(2, Math.round(im.width * m)), h = Math.max(2, Math.round(im.height * m)), n = w * h;   // the live preview works smaller to stay smooth
     const mk = () => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c };

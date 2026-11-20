@@ -120,8 +120,44 @@ jobs:
             episodes/${{ steps.ep.outputs.ep }}/music.wav
             episodes/${{ steps.ep.outputs.ep }}/ambience.wav
           retention-days: 2
-  render:
+  check3d:
+    # Is the 3D (depth) effect really visible in every scene that should have it? Waits a few minutes for depth maps that are still being made (workflow "Depth maps"), then warns on the phone. Never fails the build.
     needs: prepare
+    if: needs.prepare.outputs.review != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: npm install --no-audit --no-fund
+      - uses: actions/download-artifact@v4
+        with: { name: episode-data, path: episode-data }
+      - name: 3D check
+        env: { CHROME_PATH: /usr/bin/google-chrome }
+        run: |
+          ep="${{ needs.prepare.outputs.ep }}"
+          cp episode-data/scenes.json episodes/$ep/scenes.json 2>/dev/null || cp episode-data/*/scenes.json episodes/$ep/scenes.json 2>/dev/null || true
+          fm=$(python3 -c "import json;print(' '.join(json.load(open('episodes/$ep/request.json')).get('formats') or ['v']))")
+          msg=""
+          for f in $fm; do
+            for round in 1 2 3 4 5 6; do
+              node engine/probe3d.js "$ep" "$f" probe_$f.json && break
+              # only missing depth maps: the "Depth maps" workflow may still be running, so fetch the newest maps and look again
+              python3 -c "import json,sys;r=json.load(open('probe_$f.json'));sys.exit(0 if r['bad'] and all(s['verdict']=='NO-DEPTH-MAP' for s in r['scenes'] if s['n'] in r['bad']) else 1)" || break
+              [ "$round" = 6 ] && break
+              git fetch -q --depth=1 origin main && git checkout -q origin/main -- episodes/$ep/depth episodes/$ep/bg episodes/$ep/cards 2>/dev/null || true
+              sleep 40
+            done
+            b=$(python3 -c "import json;r=json.load(open('probe_$f.json'));print('، '.join(str(n) for n in r['bad']))" 2>/dev/null || true)
+            [ -n "$b" ] && msg="$msg [$f] $b"
+          done
+          if [ -n "$msg" ]; then echo "::warning::3D missing in scenes:$msg"; python3 tools/notify.py "⚠️ سه‌بعدی بعضی صحنه‌ها کار نمی‌کند" "$ep: صحنه‌ی$msg (نقشه‌ی عمق ساخته نشده یا افکت دیده نمی‌شود)"; else echo "3D OK"; fi
+          exit 0
+  render:
+    needs: [prepare, check3d]
     if: needs.prepare.outputs.review != 'true'
     runs-on: ubuntu-latest
     strategy:
@@ -145,6 +181,7 @@ jobs:
         run: |
           ep="${{ needs.prepare.outputs.ep }}"
           cp episode-data/scenes.json episodes/$ep/scenes.json 2>/dev/null || cp episode-data/*/scenes.json episodes/$ep/scenes.json
+          git fetch -q --depth=1 origin main && git checkout -q origin/main -- episodes/$ep/depth episodes/$ep/bg episodes/$ep/cards 2>/dev/null || true   # depth maps / pictures that arrived after this build started
           mkdir -p out
           # engine/render-v2.js stops with an error when a picture of the repo did not load (exit 3) or the chunk has the wrong number of frames (exit 4): such a chunk is rendered again, never published
           ok=0; for attempt in 1 2 3; do
