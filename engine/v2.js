@@ -562,7 +562,9 @@ function posterChips(text, size, maxW, cx, top, t, t0, align, o) {   // o: {col:
     const right = align === 'center' ? cx + w / 2 : align === 'right' ? cx : cx - w;   // box edge: right edge of the chip for 'right'
     const x0 = align === 'center' ? cx - w / 2 : align === 'right' ? cx - w : cx;
     ctx.save(); ctx.translate((x0 + w / 2), y); ctx.scale(.85 + .15 * Math.min(p, 1.1), .85 + .15 * Math.min(p, 1.1)); ctx.globalAlpha = ga * (BL ? ramp(o.bd - ln.w0 * .18, 0, .35) : clamp(p * 1.8));
-    if (chip) { ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 5; ctx.fillStyle = chip; ctx.beginPath(); ctx.roundRect(-w / 2, -lh * .46, w, lh * .92, size * .22); ctx.fill(); ctx.shadowColor = 'transparent' }
+    if (chip) { let cw = w, cx0 = -w / 2, ca = 1;   // o.chipFx 'fixed' = the whole chip appears first (the old way); otherwise it grows with the text, so it follows the same effect (typing, blur reveal)
+      if (o.chipFx !== 'fixed' && (BL || shown < Infinity)) { let a = 0, b = 0; ln.ws.forEach(k => { a += (BL ? eoc(ramp(o.bd - k.wi * .18, 0, .5)) : clamp((shown - k.cs) / Math.max(1, k.txt.length))) * k.w; b += k.w }); const f = b ? a / b : 1; cw = 2 * padX + f * (w - 2 * padX); cx0 = rtl ? w / 2 - cw : -w / 2; ca = clamp(f * 8) }
+      if (ca > 0) { ctx.save(); ctx.globalAlpha *= ca; ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 5; ctx.fillStyle = chip; ctx.beginPath(); ctx.roundRect(cx0, -lh * .46, cw, lh * .92, size * .22); ctx.fill(); ctx.restore() } }
     let x = rtl ? w / 2 - padX : -w / 2 + padX;
     ln.ws.forEach(k => { const kw = k.w; if (rtl) x -= kw; const nc = Math.min(k.txt.length, shown - k.cs);
       if (nc > 0) { const part = nc < k.txt.length, tx = part ? k.txt.slice(0, nc) : k.txt, pw = part ? ctx.measureText(tx).width : kw, xs = rtl ? x + kw - pw : x;   // a partly typed word sticks to its start edge (right edge in Persian)
@@ -583,7 +585,7 @@ function posterText(t, sc) {
   if (num) { const e = spr(t, sc.t0 + .15, .5, 12), size = B * (V ? .24 : .2); ctx.save(); ctx.font = `900 ${size}px Vz`; ctx.textBaseline = 'middle'; ctx.direction = 'ltr'; ctx.textAlign = rtl ? 'right' : 'left';
     ctx.translate(rtl ? W - m : m, y + size * .55); ctx.scale(.7 + .3 * Math.min(e, 1.1), .7 + .3 * Math.min(e, 1.1)); ctx.globalAlpha = clamp(e * 1.6); ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 22; ctx.shadowOffsetY = 6; ctx.fillStyle = '#fff'; ctx.fillText(num, 0, 0); ctx.restore(); y += size * 1.12 }
   if (sc.text && tOn(sc)) {
-    const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), t0 = sc.tIn != null ? sc.tIn : sc.t0 + (num ? .5 : .3), st = { col: sc.tcol, bg: sc.tbg, hl: sc.thl }, A = sc.tAnim || 'blur', AO = sc.tAnimOut || (A === 'blur' ? 'fade' : 'type'), nch = sc.text.replace(/[\s*]/g, '').length, ps = EDIT ? { dx: 0, dy: 0, s: 1, al: 1, tp: 1 } : lyrPose(t, t0, sc.tOut != null ? sc.tOut : 1e9, A, AO, nch);   // key text: typed letter by letter and erased again (choose another animation in the app); in the editor it is always shown
+    const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), t0 = sc.tIn != null ? sc.tIn : sc.t0 + (num ? .5 : .3), st = { col: sc.tcol, bg: sc.tbg, hl: sc.thl, chipFx: sc.tchip }, A = sc.tAnim || 'blur', AO = sc.tAnimOut || (A === 'blur' ? 'fade' : 'type'), nch = sc.text.replace(/[\s*]/g, '').length, ps = EDIT ? { dx: 0, dy: 0, s: 1, al: 1, tp: 1 } : lyrPose(t, t0, sc.tOut != null ? sc.tOut : 1e9, A, AO, nch);   // key text: typed letter by letter and erased again (choose another animation in the app); in the editor it is always shown
     if (ps) { ctx.save(); ctx.translate(W / 2 + ps.dx, H / 2 + ps.dy); ctx.scale(ps.s, ps.s); ctx.translate(-W / 2, -H / 2); ctx.globalAlpha = ps.al; const tt = A === 'pop' ? t0 : t - 5;
       st.tp = ps.tp; st.bd = !EDIT && A === 'blur' ? t - t0 : undefined; const L = wrapTokens(sc.text, `900 ${size}px Vz`, maxW), hh = L.lines.length * size * 1.5, bw = Math.max(...L.lines.map(l => l.w)) + 2 * size * .38;
       if (kp) posterChips(sc.text, size, maxW, kp.x * W, kp.y * H - hh / 2, t, tt, 'center', st); else posterChips(sc.text, size, maxW, rtl ? W - m : m, y, t, tt, rtl ? 'right' : 'left', st)
@@ -594,12 +596,14 @@ function posterText(t, sc) {
 }
 /* extra layers (any number per scene): {kind:'text'|'stamp', text, t, out, x, y (centre, fractions of the frame), size (multiplier), col, bg ('none' = no chip), hl, rot (deg, stamps)} */
 const STAMPC = {};
-function stampSprite(text, size, col, rtl) {
-  const key = text + '|' + size + '|' + col + '|' + rtl; if (STAMPC[key]) return STAMPC[key];
+function stampSprite(text, size, col, rtl, solid) {   // solid: a filled colour plate with the text and an inner line punched out (the picture shows through them)
+  const key = text + '|' + size + '|' + col + '|' + rtl + (solid ? '|solid' : ''); if (STAMPC[key]) return STAMPC[key];
   const cv = document.createElement('canvas'), c = cv.getContext('2d'), font = `900 ${size}px Vz`; c.font = font; const tw = c.measureText(text).width, padX = size * .6, padY = size * .42, pad = size * .2;
   const w = Math.ceil(tw + padX * 2 + pad * 2), h = Math.ceil(size * 1 + padY * 2 + pad * 2); cv.width = w; cv.height = h; c.font = font; c.direction = rtl ? 'rtl' : 'ltr'; c.textAlign = 'center'; c.textBaseline = 'middle';
-  c.strokeStyle = col; c.fillStyle = col; c.lineWidth = size * .09; c.beginPath(); c.roundRect(pad, pad, w - 2 * pad, h - 2 * pad, size * .16); c.stroke();
-  c.lineWidth = size * .03; c.beginPath(); c.roundRect(pad + size * .15, pad + size * .15, w - 2 * pad - size * .3, h - 2 * pad - size * .3, size * .1); c.stroke(); c.fillText(text, w / 2, h / 2 + size * .04);
+  c.strokeStyle = col; c.fillStyle = col;
+  if (solid) { c.beginPath(); c.roundRect(pad, pad, w - 2 * pad, h - 2 * pad, size * .16); c.fill(); c.globalCompositeOperation = 'destination-out'; c.lineWidth = size * .035; c.beginPath(); c.roundRect(pad + size * .13, pad + size * .13, w - 2 * pad - size * .26, h - 2 * pad - size * .26, size * .1); c.stroke(); c.fillText(text, w / 2, h / 2 + size * .04) }
+  else { c.lineWidth = size * .09; c.beginPath(); c.roundRect(pad, pad, w - 2 * pad, h - 2 * pad, size * .16); c.stroke();
+    c.lineWidth = size * .03; c.beginPath(); c.roundRect(pad + size * .15, pad + size * .15, w - 2 * pad - size * .3, h - 2 * pad - size * .3, size * .1); c.stroke(); c.fillText(text, w / 2, h / 2 + size * .04) }
   c.globalCompositeOperation = 'destination-out';   // worn ink: random specks and a few scratches punched out (fixed seed, so every frame is identical)
   for (let j = 0; j < 140; j++) { c.globalAlpha = .35 + .6 * hz(j * 3.3); c.beginPath(); c.arc(hz(j * 1.7) * w, hz(j * 2.9 + 5) * h, 1 + hz(j * 4.3) * size * .045, 0, TAU); c.fill() }
   c.globalAlpha = .55; c.lineWidth = 2; for (let j = 0; j < 7; j++) { c.beginPath(); const x = hz(j * 8.1) * w, y = hz(j * 6.2) * h; c.moveTo(x, y); c.lineTo(x + (hz(j * 9) - .5) * size * 1.6, y + (hz(j * 7) - .5) * size * .5); c.stroke() }
@@ -737,11 +741,11 @@ function posterLayers(t, sc) {
       ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 22; ctx.shadowOffsetY = 6; ctx.fillStyle = L.col || '#fff'; ctx.fillText(String(L.text).trim(), 0, 0); ctx.restore(); return
     }
     if (st) {
-      const sp = stampSprite(String(L.text).trim(), Math.round(B * .1 * k), L.col || '#e0352b', rtl), q = A === 'pop' ? .6 + .4 * Math.min(spr(t, t0, .5, 14), 1.15) : 1;
+      const sp = stampSprite(String(L.text).trim(), Math.round(B * .1 * k), L.col || '#e0352b', rtl, !!L.solid), q = A === 'pop' ? .6 + .4 * Math.min(spr(t, t0, .5, 14), 1.15) : 1;
       ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.rotate((L.rot == null ? -8 : L.rot) * Math.PI / 180); ctx.scale(ps.s * q, ps.s * q); ctx.globalAlpha = ps.al * .94; ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 10; ctx.drawImage(sp.cv, -sp.w / 2, -sp.h / 2); ctx.restore(); return
     }
     const size = B * (V ? .062 : .055) * k, maxW = W * (V ? .86 : .6), Lw = wrapTokens(L.text, `900 ${size}px Vz`, maxW), hh = Lw.lines.length * size * 1.5;
-    ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.scale(ps.s, ps.s); ctx.translate(-cx, -cy); ctx.globalAlpha = ps.al; posterChips(L.text, size, maxW, cx, cy - hh / 2, t, A === 'pop' ? t0 : t - 5, 'center', { col: L.col, bg: L.bg, hl: L.hl, tp: ps.tp }); ctx.restore()
+    ctx.save(); ctx.translate(cx + ps.dx, cy + ps.dy); ctx.scale(ps.s, ps.s); ctx.translate(-cx, -cy); ctx.globalAlpha = ps.al; posterChips(L.text, size, maxW, cx, cy - hh / 2, t, A === 'pop' ? t0 : t - 5, 'center', { col: L.col, bg: L.bg, hl: L.hl, tp: ps.tp, chipFx: L.chipFx }); ctx.restore()
   })
 }
 /* speech bubbles: sc.bubbles = [{text, shape:'speech'|'thought'|'shout'|'box', tail:'dl'|'d'|'dr'|'ul'|'u'|'ur'|'l'|'r'|'none', x,y, size, col, bg, hl, t, out, anim, animOut}] */
