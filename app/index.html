@@ -69,6 +69,23 @@ dialog::backdrop{background:transparent}
 #pvModal{position:fixed;inset:var(--tabsB,0px) 0 0 0;background:#000e;z-index:60;display:grid;place-items:center;align-content:center;gap:8px;overflow:auto}
 #pvModal[hidden]{display:none!important}
 .rv details.sc{border:1px solid var(--line);border-radius:12px;margin:8px 0;background:#17120f}
+#rvSrc .fk{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;margin:8px 0;padding:8px;background:#17120f}
+#rvSrc .fk.on{border-color:#3f9b5e}
+#rvSrc .fk img,#rvSrc .fkNo{width:64px;height:64px;object-fit:cover;border-radius:8px;flex:0 0 auto;background:#0004;display:flex;align-items:center;justify-content:center}
+#rvSrc .fkT{flex:1;min-width:0;font-size:13px;line-height:1.7}
+#rvSrc .fkTm{color:var(--mut);font-size:12px}
+#rvSrc .fkN{color:var(--mut);font-size:12px}
+#rvSrc .fkR{gap:6px;margin-top:4px;flex-wrap:wrap}
+#rvSrc .fkSel{flex:1 1 150px;min-width:0;background:#241b15;color:inherit;border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit}
+#rvSrc .fkGo{flex:0 0 auto}
+#rvBody.forked{display:grid;grid-template-columns:minmax(0,1fr);gap:0 14px}
+@media (min-width:1024px){
+  #rvBody.forked{grid-template-columns:400px minmax(0,1fr)}
+  #rvBody.forked>*{grid-column:2}
+  #rvBody.forked>#rvSrc{grid-column:1;grid-row:1/span 80;position:sticky;top:8px;align-self:start;max-height:calc(100vh - 16px);overflow:auto}
+  body.pvdock #rvBody.forked{grid-template-columns:minmax(0,1fr)}
+  body.pvdock #rvBody.forked>#rvSrc{grid-column:1;grid-row:auto;position:static;max-height:none;order:99}
+}
 .rv details.sc>summary{padding:10px 12px;cursor:pointer;list-style:none;font-size:14px;line-height:1.7}
 .rv details.sc>summary::-webkit-details-marker{display:none}
 .rv .sc.warn{border-color:#c0562f}
@@ -685,7 +702,7 @@ const srcId=s=>(s||'').split('/').pop().split('__')[0];
 async function loadReview(ep, quiet){ const body=$('#rvBody'); if(!body) return;
   try{ const j=await api('/contents/episodes/'+ep+'/scenes.json'); let txt=j.content&&j.content.replace(/\n/g,'')?new TextDecoder().decode(Uint8Array.from(atob(j.content.replace(/\n/g,'')),c=>c.charCodeAt(0))):null;
     if(!txt){ const r=await fetch(j.download_url); txt=await r.text() }
-    RV={ep, sha:j.sha, data:JSON.parse(txt), req:(await readJson('episodes/'+ep+'/request.json',{}))||{}, cast:((await readJson('episodes/'+ep+'/cast.json',{}))||{}).characters||[]}; renderReview(); cmSet('#epRun',true) }catch(e){ cmSet('#epRun',false); if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
+    RV={ep, sha:j.sha, data:JSON.parse(txt), req:(await readJson('episodes/'+ep+'/request.json',{}))||{}, cast:((await readJson('episodes/'+ep+'/cast.json',{}))||{}).characters||[]}; await forkLoad(); renderReview(); cmSet('#epRun',true) }catch(e){ cmSet('#epRun',false); if(!quiet) body.innerHTML='<p class="hint">صحنه‌ای پیدا نشد؛ اول «آماده‌سازی صحنه‌ها» را بزن.</p>' } }
 function thumbUrl(src){ return /^(decor|episodes)\//.test(src)?'https://raw.githubusercontent.com/'+S.repo+'/main/'+src:raw(src.replace(/^library\//,'')) }
 const pWords=p=>new Set(String(p||'').split(' Character look')[0].toLowerCase().match(/[a-z]{4,}/g)||[]);
 function badPrompts(sc){ const kept=[], bad=[]; sc.forEach((s,i)=>{ const w=pWords((s.photo||{}).prompt); if(w.size<6){ bad.push(i); return }
@@ -740,7 +757,59 @@ function renderReview(){ const body=$('#rvBody'); if(!RV||!body) return; epDock(
     return `<details class="sc ${warn?'warn':''}" data-i="${i}"><summary>${sceneHead(s,i)}</summary><div class="body"></div></details>`}).join('')+
   `<div class="row" style="margin-top:12px"><button id="rvSubAll">✏️ ویرایش زیرنویس کل قسمت (املا)</button></div><details class="pSec" id="rvTxt" style="margin-top:12px"><summary>🔤 ظاهر نوشته‌ها (فونت و رنگ زیرنویس، کل قسمت)</summary><div class="pSecB txB"></div></details><details class="pSec" id="rvMot" style="margin-top:12px" open><summary>🎛 حرکت و لرزش تصویرها (کل قسمت)</summary><div class="pSecB mtB"></div></details><details class="pSec" id="rvMus" style="margin-top:12px"><summary>🎵 موزیک این قسمت (Suno و بلندی صدا)</summary><div class="pSecB mpB"></div></details><details class="pSec" id="rvAmb" style="margin-top:12px"><summary>🌫 صدای فضا (باد، جمعیت، آتش… زیر صدای راوی)</summary><div class="pSecB abB"></div></details><div class="row" style="margin-top:12px"><button id="rvAll">▶ دیدن کل ویدیو (پیش‌نمایش با صدا و افکت‌ها، قبل از ساخت نهایی)</button></div><div class="row" style="margin-top:12px"><button class="pri" id="rvGo">۳. ادامه: ساخت ویدیو با همین صحنه‌ها</button></div><div class="st" id="rvSt"></div>`;
   castUI(); updOk(); body.querySelectorAll('details.sc').forEach(d=>d.addEventListener('toggle',()=>{ if(d.open) fillScene(d) }));
-  txtUI(); motionUI(); musicUI(); ambUI(); $('#rvGo').onclick=rvContinue; if($('#dupGo')) $('#dupGo').onclick=dupFix; $('#rvSubAll').onclick=subAllDialog; $('#rvAll').onclick=()=>{ window.__pvAt=0; openPreview(0,'all') }; body.toggleAttribute('data-poster',isPoster()); if(isPoster()&&window.posterBar) posterBar(body) }
+  txtUI(); motionUI(); musicUI(); ambUI(); $('#rvGo').onclick=rvContinue; if($('#dupGo')) $('#dupGo').onclick=dupFix; $('#rvSubAll').onclick=subAllDialog; $('#rvAll').onclick=()=>{ window.__pvAt=0; openPreview(0,'all') }; body.toggleAttribute('data-poster',isPoster()); if(isPoster()&&window.posterBar) posterBar(body); forkUI(body) }
+/* ---------- نسخه‌ی اینستاگرام: قسمت یوتیوب کنار صحنه‌های اینستاگرام؛ «اتصال» تنظیم‌های یک صحنه‌ی یوتیوب را در یک صحنه‌ی اینستاگرام کپی می‌کند ----------
+   episodes/<ig>/fork.json = {from: <قسمت یوتیوب>} (ساخته‌ی forkStart؛ workflow «Fork episode» تصویرها را در پوشه‌ی جدید کپی می‌کند). زمان‌ها همیشه از صدای اینستاگرام می‌آیند: هر زمانِ داخل صحنه‌ی یوتیوب به بازه‌ی صحنه‌ی اینستاگرام نگاشت می‌شود.
+   اتصال هیچ‌چیز در قسمت یوتیوب را عوض نمی‌کند و فقط صحنه‌ی اینستاگرام را بازنویسی می‌کند؛ meta.links = {شماره‌ی صحنه‌ی اینستاگرام: شماره‌ی صحنه‌ی یوتیوب} برای ادامه‌ی کار در روز بعد. */
+async function forkLoad(){ RV.fork=null; RV.src=null; try{ const f=await readJson('episodes/'+RV.ep+'/fork.json',null); if(!f||!f.from) return; RV.fork=f; const j=await api('/contents/episodes/'+f.from+'/scenes.json'); const txt=j.content&&j.content.replace(/\n/g,'')?decB64(j):await (await fetch(j.download_url)).text(); RV.src={ep:f.from,data:JSON.parse(txt)} }catch(e){ RV.src=null } }
+function forkMap(o,a0,a1,b0,b1){   /* هر زمان داخل یک صحنه (بازه‌ی a0..a1) به بازه‌ی b0..b1 می‌رود */
+  const k=(b1-b0)/Math.max(.01,a1-a0), m=t=>+Math.min(b1,Math.max(b0,b0+(t-a0)*k)).toFixed(3);
+  ['tIn','tOut'].forEach(f=>{ if(typeof o[f]==='number') o[f]=m(o[f]) });
+  ['props','layers','items','atm','photos'].forEach(f=>(o[f]||[]).forEach(x=>{ if(x&&typeof x.t==='number') x.t=m(x.t) })) }
+function forkAmb(ys,ds,sm){   /* صدای محیط: کلیپ‌های صحنه‌ی یوتیوب جای کلیپ‌های این صحنه‌ی اینستاگرام می‌نشینند */
+  const M=RV.data.meta, k=(ds.t1-ds.t0)/Math.max(.01,ys.t1-ys.t0), keep=(M.ambClips||[]).filter(c=>{ const mid=(c.t0+c.t1)/2; return !(mid>=ds.t0&&mid<ds.t1) });
+  (sm.ambClips||[]).forEach(c=>{ const t0=Math.max(c.t0,ys.t0), t1=Math.min(c.t1,ys.t1); if(t1-t0<.3) return; keep.push(Object.assign({},c,{t0:+(ds.t0+(t0-ys.t0)*k).toFixed(2),t1:+(ds.t0+(t1-ys.t0)*k).toFixed(2)})) });
+  M.ambClips=keep.sort((a,b)=>a.t0-b.t0) }
+async function forkLink(yi,ii){
+  const SD=RV.src.data, ys=SD.scenes[yi], ds=RV.data.scenes[ii]; if(!ys||!ds) return;
+  const o=JSON.parse(JSON.stringify(ys).split('episodes/'+RV.src.ep+'/').join('episodes/'+RV.ep+'/'));
+  forkMap(o,ys.t0,ys.t1,ds.t0,ds.t1); o.t0=ds.t0; o.t1=ds.t1; o.ok={v:false,h:false};
+  RV.data.scenes[ii]=o; forkAmb(ys,ds,SD.meta||{}); const L=(RV.data.meta.links=RV.data.meta.links||{}); Object.keys(L).forEach(k=>{ if(L[k]===yi&&+k!==ii) delete L[k] }); L[ii]=yi;
+  const d=document.querySelector(`details.sc[data-i="${ii}"]`); if(d){ d.querySelector('summary').innerHTML=sceneHead(o,ii); d.classList.toggle('warn',noPic(o)); if(d.open){ d.querySelector('.body').innerHTML=''; fillScene(d) } }
+  updOk(); rvSave();
+  const miss=[]; await Promise.all([...new Set((JSON.stringify(o).match(/episodes\/[^"]+\.(?:jpe?g|png|webp)/gi)||[]))].map(async p=>{ try{ await api('/contents/'+p) }catch(e){ miss.push(p) } }));
+  if(miss.length) toast('این تصویرها در پوشه‌ی اینستاگرام نیست؛ «کپی دوباره‌ی تصویرها» را بزن: '+miss.slice(0,2).map(x=>x.split('/').pop()).join('، '),6500) }
+function forkUI(body){
+  const go=$('#rvGo'), row=go&&go.closest('.row');
+  if(!RV.fork){ body.classList.remove('forked'); if(row){ row.insertAdjacentHTML('beforebegin','<div class="row" style="margin-top:12px"><button id="rvFork">📲 ساخت نسخه‌ی اینستاگرام از این قسمت</button></div><div class="st" id="rvForkSt"></div>'); $('#rvFork').onclick=forkStart } return }
+  body.classList.add('forked'); const SD=RV.src&&RV.src.data, host=body.querySelector('#rvSrc'); if(host) host.remove();
+  if(!SD){ body.insertAdjacentHTML('afterbegin','<div id="rvSrc" class="card"><p class="hint">قسمت یوتیوب «'+epTitle(RV.fork.from)+'» پیدا نشد.</p></div>'); return }
+  const L=RV.data.meta.links||{}, back={}, IG=RV.data.scenes; Object.keys(L).forEach(k=>{ back[L[k]]=+k });
+  const nr=(D,s)=>(D.words||[]).filter(w=>w.t0>=s.t0-.02&&w.t0<s.t1-.02).map(w=>w.w).join(' '), igN=IG.map(s=>narr(s)), shortT=(t,n)=>t.length>n?t.slice(0,n)+'…':t;
+  const cards=SD.scenes.map((ys,yi)=>{ const nt=nr(SD,ys), pic=(ys.photo&&ys.photo.src)||((ys.photos||[]).find(x=>x&&x.src)||{}).src||((ys.items||[]).find(x=>x&&x.src)||{}).src||'';
+    let best=-1, bs=0; igN.forEach((t,i)=>{ const o=textOverlap(nt,t); if(nt&&t&&o>bs){ bs=o; best=i } }); const cur=back[yi]!=null?back[yi]:(bs>=.3?best:-1);
+    return `<div class="fk${back[yi]!=null?' on':''}" data-y="${yi}">${pic?`<img loading="lazy" src="${thumbUrl(pic)}" alt="">`:'<div class="fkNo">—</div>'}<div class="fkT"><b>${fa(yi+1)}</b> · ${(ys.text||ys.kicker||'').replace(/\*/g,'')||'—'} <span class="fkTm">${fa(Math.round(ys.t0))}–${fa(Math.round(ys.t1))}ث</span><div class="fkN">${shortT(nt,90)}</div><div class="row fkR"><select class="fkSel"><option value="">صحنه‌ی اینستاگرام…</option>${IG.map((s,i)=>`<option value="${i}"${i===cur?' selected':''}>${fa(i+1)}${back[yi]===i?' ✓':(i===cur?' (پیشنهاد)':'')} — ${shortT(igN[i],24)}</option>`).join('')}</select><button class="fkGo">اتصال</button></div></div></div>` }).join('');
+  body.insertAdjacentHTML('afterbegin',`<details id="rvSrc" class="card"${matchMedia('(min-width:1024px)').matches?' open':''}><summary class="btn" style="display:block;text-align:center;cursor:pointer">📺 صحنه‌های یوتیوب (مرجع): ${epTitle(RV.src.ep)}</summary><p class="hint">در هر کارت، صحنه‌ی اینستاگرام را انتخاب کن و «اتصال» بزن؛ عکس، متن کلیدی، برچسب، صدای محیط، افکت و قالب کپی می‌شود و زمان‌ها از صدای اینستاگرام می‌ماند. قسمت یوتیوب عوض نمی‌شود.</p><div class="row" style="margin:6px 0"><button id="fkResync" title="اگر بعد از ساخت نسخه‌ی اینستاگرام در یوتیوب عکس تازه‌ای گذاشتی">🔄 کپی دوباره‌ی تصویرها</button></div>${cards}</details>`);
+  body.querySelectorAll('#rvSrc .fk').forEach(c=>{ const sel=c.querySelector('.fkSel'), btn=c.querySelector('.fkGo'); btn.onclick=async()=>{ if(sel.value===''){ toast('اول صحنه‌ی اینستاگرام را انتخاب کن'); return } const ii=+sel.value, yi=+c.dataset.y; if(okOf(RV.data.scenes[ii],'v')&&!confirm('صحنه‌ی '+fa(ii+1)+' اینستاگرام تأیید شده بود؛ با اتصال بازنویسی می‌شود. ادامه بدهم؟')) return; await forkLink(yi,ii); forkUI(body); toast('✓ صحنه‌ی '+fa(yi+1)+' یوتیوب به صحنه‌ی '+fa(ii+1)+' اینستاگرام وصل شد') } });
+  const rs=$('#fkResync'); if(rs) rs.onclick=()=>forkStart(true) }
+async function forkStart(resync){
+  const st=$('#rvForkSt')||$('#rvSt'), src=resync===true?RV.fork.from:RV.ep, nm=resync===true?RV.ep:src.replace(/-ig$/,'')+'-ig', say=(c,t)=>{ if(st){ st.className='st '+c; st.textContent=t } else toast(t,5000) };
+  if(!S.token) return say('bad','اول توکن را در تنظیمات وارد کن');
+  let exists=false; try{ await api('/contents/episodes/'+nm+'/fork.json'); exists=true }catch(e){}
+  if(!resync&&exists){ if(confirm('قسمت «'+nm+'» از قبل هست. به آن بروم؟')){ setEpisode(nm); await loadReview(nm,true) } return }
+  if(!resync&&!confirm('یک قسمت تازه به نام «'+nm+'» ساخته می‌شود و تصویرهای همین قسمت در آن کپی می‌شود (حدود ۱ دقیقه). ادامه بدهم؟')) return;
+  say('','در حال ساخت قسمت اینستاگرام…');
+  try{ let old=''; try{ old=(await api('/contents/episodes/'+nm+'/fork.log')).sha }catch(e){}
+    let sha; try{ sha=(await api('/contents/episodes/'+nm+'/fork.json')).sha }catch(e){}
+    await api('/contents/episodes/'+nm+'/fork.json',{method:'PUT',body:JSON.stringify({message:'fork episode: '+nm,content:enc(JSON.stringify({from:src,ts:Date.now()})),branch:'main',sha})});
+    if(!resync) await saveTitle(nm,epTitle(src)+' – اینستاگرام');
+    for(let k=0;k<45;k++){ await sleep(8000); let lg=null; try{ lg=await api('/contents/episodes/'+nm+'/fork.log') }catch(e){}
+      if(lg&&lg.sha!==old){ const t=decB64(lg); if(!/^OK/.test(t)) return say('bad','کپی ناموفق بود: '+t.split('\n')[0].slice(0,200));
+        if(resync) return say('ok','✓ تصویرها دوباره کپی شد');
+        S.eps=[...new Set([...(S.eps||[]),nm])]; try{ renderEpLabels() }catch(_){} setEpisode(nm); const v=$('#bV'), h=$('#bH'); if(v) v.checked=true; if(h) h.checked=false;
+        say('ok','✓ قسمت «'+nm+'» ساخته شد و فقط «عمودی» روشن است. حالا بالا در کادر «صدای خودت» صدای کوتاه را انتخاب کن و «گوش دادن و بررسی صحنه» را بزن؛ بعد صحنه‌های یوتیوب کنار صحنه‌ها می‌آید.'); try{ $('#bOwn').scrollIntoView({behavior:'smooth',block:'center'}) }catch(_){} return } }
+    say('bad','هنوز آماده نشد؛ کمی بعد دوباره امتحان کن (تب Actions گیت‌هاب را ببین).')
+  }catch(e){ say('bad','خطا: '+e.message) } }
 const nz=t=>String(t||'').toLowerCase().replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/[\u200c\u064b-\u065f]/g,'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\s+/g,' ').trim();
 
 const okOf=(s,f)=>!!(s.ok&&typeof s.ok==='object'?s.ok[f]:(f==='v'&&s.ok===true));

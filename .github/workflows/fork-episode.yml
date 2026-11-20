@@ -1,0 +1,39 @@
+name: Fork episode
+on:
+  push:
+    branches: [main]
+    paths: ['episodes/*/fork.json']
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: new episode folder name (episodes/<name>/fork.json must exist)
+        required: true
+permissions:
+  contents: write
+concurrency:
+  group: fork-episode
+  cancel-in-progress: false
+jobs:
+  fork:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Copy the pictures of the source episode
+        env:
+          EP_INPUT: ${{ github.event.inputs.episode }}
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$EP_INPUT" ]; then eps="$EP_INPUT"; else eps=$(git diff --name-only HEAD~1 HEAD -- 'episodes/*/fork.json' | cut -d/ -f2 | sort -u); fi
+          [ -n "$eps" ] || { echo "no episode"; exit 0; }
+          for round in 1 2 3 4 5 6; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            for ep in $eps; do python tools/fork_episode.py "$ep" || true; done
+            git add -A
+            if git diff --cached --quiet; then echo "no change"; exit 0; fi
+            git commit -qm "fork episode: $eps"
+            if git push -q origin main; then echo pushed; exit 0; fi; sleep 4
+          done; exit 1
