@@ -1,0 +1,69 @@
+{
+ "characters": [
+  {
+   "fa": "مارتین نوجوان",
+   "en": "Teenage Martin",
+   "aliases": [
+    "teenage Martin",
+    "young recruit"
+   ],
+   "base": "male, 15 years old, thin slim boy, olive skin, short dark-brown hair, clean-shaven, a distinctive straight nose and calm dark eyes, earnest face; same face and bone structure as Young Martin",
+   "outfits": "plain rough tunic, plain cloak, sandals, no armor, no weapon",
+   "when": "وقتی پانزده‌ساله مجبور به سربازی شد"
+  },
+  {
+   "fa": "مارتین سرباز جوان",
+   "en": "Young Martin",
+   "aliases": [
+    "young Roman soldier",
+    "the young soldier",
+    "Roman soldier Martin"
+   ],
+   "base": "male, 18 years old, lean athletic build, olive skin, short dark-brown hair, clean-shaven, a distinctive straight nose and calm dark eyes, gentle compassionate face",
+   "outfits": "bronze-studded leather cuirass, pteruges skirt, sandals, short sword at the hip, long red-brown military cloak",
+   "when": "از هجده‌سالگی تا ترک ارتش؛ ماجرای شنل و گدا و خواب مسیح"
+  },
+  {
+   "fa": "مارتین، اسقف پیر",
+   "en": "Elderly Bishop Martin",
+   "aliases": [
+    "Bishop Martin",
+    "old Martin"
+   ],
+   "base": "male, about 75 years old, white hair and short white beard, deep wrinkles, thin and slightly stooped, same nose, eyes and bone structure as Young Martin",
+   "outfits": "plain dark-brown monk's robe with the hood down, a simple wooden cross on a cord, a bishop's staff",
+   "when": "راهب و اسقف تور، مرگ و خاک‌سپاری"
+  },
+  {
+   "fa": "گدا",
+   "en": "The Beggar",
+   "aliases": [
+    "beggar"
+   ],
+   "base": "male, about 40 years old, gaunt very thin, pale skin, hollow cheeks, long unkempt grey-brown hair, scraggly beard, trembling from cold",
+   "outfits": "tattered ragged cloth rags, barefoot",
+   "when": "شب سرد شهر آمین"
+  },
+  {
+   "fa": "مسیح",
+   "en": "Christ",
+   "aliases": [
+    "Jesus"
+   ],
+   "base": "male, about 33 years old, long dark-brown hair parted in the middle, short beard, warm kind eyes, calm gentle expression",
+   "outfits": "simple white-cream robe, soft golden glow around him",
+   "when": "خواب مارتین"
+  },
+  {
+   "fa": "پدر مارتین",
+   "en": "Martin's father",
+   "aliases": [
+    "Roman officer",
+    "the officer father"
+   ],
+   "base": "male, about 45 years old, broad-shouldered, short grey-streaked hair, firm square jaw, a scar over the left eyebrow, stern proud face",
+   "outfits": "polished bronze breastplate, crested helmet with a red plume, red military cloak, leather boots",
+   "when": "پدر افسر ارتش روم"
+  }
+ ]
+}
