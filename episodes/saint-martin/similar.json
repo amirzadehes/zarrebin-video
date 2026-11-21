@@ -10,21 +10,17 @@
   "roman-helmet"
  ],
  "roman-shield-4c": [
-  "shield"
+  "shield",
+  "shield-check"
  ],
  "live-goose-19c": [
-  "goose",
-  "roast-goose"
+  "goose"
  ],
  "roasted-goose-19c": [
-  "roast-goose",
-  "goose"
+  "roast-goose"
  ],
  "lantern-19c": [
   "lantern"
- ],
- "bonfire-19c": [
-  "fire"
  ],
  "coin-denarius-4c": [
   "money-coins"
