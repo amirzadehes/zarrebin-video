@@ -17,8 +17,7 @@
   "roast-goose"
  ],
  "roasted-goose-19c": [
-  "roast-goose",
-  "goose"
+  "roast-goose"
  ],
  "lantern-19c": [
   "lantern"
@@ -27,9 +26,6 @@
   "fire"
  ],
  "coin-denarius-4c": [
-  "money-coins",
-  "money-bag",
-  "banknotes",
-  "euro-sign"
+  "money-coins"
  ]
 }
