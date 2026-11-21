@@ -1,18 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-12 09:52:24 UTC",
-   "ok": [
-    {
-     "file": "banner__mwddbk303w6.jpg",
-     "id": "banner",
-     "saved": "banner__4.webp",
-     "kb": 281
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-12 09:53:37 UTC",
    "ok": [
     {
@@ -723,6 +711,18 @@
      "id": "u-mwqysdow",
      "saved": "u-mwqysdow__1.webp",
      "kb": 48
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-21 22:22:50 UTC",
+   "ok": [
+    {
+     "file": "u-mwqz41nn__mwqz41nn.jpg",
+     "id": "u-mwqz41nn",
+     "saved": "u-mwqz41nn__1.webp",
+     "kb": 26
     }
    ],
    "failed": []
