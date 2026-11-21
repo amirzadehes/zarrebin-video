@@ -647,7 +647,7 @@ async function buildVideo(mode){
   if(S.mode==='poster'&&mode==='direct'){ st.className='st bad'; st.textContent='در حالت پوستر اول باید عکس صحنه‌ها را آپلود کنی؛ از «۲. آماده‌سازی صحنه‌ها» شروع کن.'; return; }
   if(!S.token){ st.className='st bad'; st.textContent='اول در تنظیمات توکن را وارد کن'; return; }
   if(!ep){ st.className='st bad'; st.textContent='نام قسمت را بنویس (همان که متن را با آن فرستادی)'; return; }
-  const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
+  const formats=[$('#bV').checked&&'v',$('#bH').checked&&'h'].filter(Boolean); if(/-ig$/.test(ep)&&formats.length>1) formats.splice(0,formats.length,'v'); if(!formats.length){ st.className='st bad'; st.textContent='حداقل یک حالت را انتخاب کن'; return; }
   /* an own-voice episode does not need a pasted script: the recording itself (Whisper) is the text. Only a computer-voice episode needs script.txt */
   const useTr=!$('#bOwn').files[0]&&!!$('#bUseCuts')&&$('#bUseCuts').checked&&!$('#bUseCuts').closest('[hidden]');   // saved transcript (+ the owner's cuts) of this episode
   if(!$('#bOwn').files[0]&&!useTr){ try{ await api('/contents/episodes/'+ep+'/script.txt'); }catch(e){ st.className='st bad'; st.textContent='برای این قسمت هنوز متنی فرستاده نشده؛ اول ویس خودت را انتخاب کن و «۱. رونویسی صدا» را بزن.'; return; } }
@@ -1299,7 +1299,7 @@ async function rvContinue(){ const st=$('#rvSt'); const rq=await readJson('episo
   const np=isPoster()?RV.data.scenes.filter(noPic).length:0; if(np&&!confirm(fa(np)+' صحنه هنوز عکس ندارد و با پس‌زمینه‌ی تیره ساخته می‌شود. ادامه بدهم؟')) return; if(!S.token){ st.className='st bad'; st.textContent='اول توکن را وارد کن'; return }
   clearTimeout(rvT); st.className='st'; st.textContent='در حال ذخیره‌ی صحنه‌ها…'; if(!(await rvPush())) return;
   let req=await readJson('episodes/'+RV.ep+'/request.json',null); if(!req){ st.className='st bad'; st.textContent='درخواست ساخت پیدا نشد'; return }
-  req.review=false; req.use_plan=true; req.ts=Date.now(); let sha; try{ sha=(await api('/contents/episodes/'+RV.ep+'/request.json')).sha }catch(e){}
+  if(/-ig$/.test(RV.ep)) req.formats=['v']; req.review=false; req.use_plan=true; req.ts=Date.now(); let sha; try{ sha=(await api('/contents/episodes/'+RV.ep+'/request.json')).sha }catch(e){}
   try{ await api('/contents/episodes/'+RV.ep+'/request.json',{method:'PUT',body:JSON.stringify({message:'build video (reviewed): '+RV.ep,content:enc(JSON.stringify(req)),branch:'main',sha})});
     st.className='st ok'; st.textContent='ساخت ویدیو شروع شد؛ حدود ۱۰ تا ۳۰ دقیقه. می‌توانی اپ را ببندی.'; setTimeout(buildStatus,6000); setTimeout(buildStatus,20000);
     for(let k=0;k<90;k++){ await sleep(30000); const before=$('#vids')?.textContent.length||0; await loadVids(); if(($('#vids')?.textContent.length||0)!==before){ st.textContent='ویدیو آماده شد!'; return } }
