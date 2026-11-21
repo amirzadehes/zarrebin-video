@@ -3928,6 +3928,28 @@
    ],
    "fa_tags_for": "فلفل تای"
   },
+  "u-mwqypic7": {
+   "id": "u-mwqypic7",
+   "en": "habanero pepper",
+   "fa": "فلفل هابانرو",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "u-mwqypic7__1.webp"
+   ]
+  },
+  "u-mwqyq6ji": {
+   "id": "u-mwqyq6ji",
+   "en": "u mwqyq6ji",
+   "fa": "",
+   "tags": [],
+   "has_text_in_image": false,
+   "variants": [
+    "u-mwqyq6ji__1.webp"
+   ]
+  },
   "warning-sign": {
    "id": "warning-sign",
    "en": "warning triangle with exclamation mark",
