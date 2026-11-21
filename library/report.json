@@ -1,30 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-12 09:41:44 UTC",
-   "ok": [
-    {
-     "file": "goose__mwdcym9v00k.jpg",
-     "id": "goose",
-     "saved": "goose__1.webp",
-     "kb": 130
-    },
-    {
-     "file": "goose__mwdcymad12f.jpg",
-     "id": "goose",
-     "saved": "goose__2.webp",
-     "kb": 90
-    },
-    {
-     "file": "goose__mwdcymap2zj.jpg",
-     "id": "goose",
-     "saved": "goose__3.webp",
-     "kb": 89
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-12 09:42:17 UTC",
    "ok": [
     {
@@ -795,6 +771,18 @@
      "id": "u-mwjr31dv",
      "saved": "u-mwjr31dv__1.webp",
      "kb": 104
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-21 21:56:06 UTC",
+   "ok": [
+    {
+     "file": "u-mwqy540r__mwqy540r.jpg",
+     "id": "u-mwqy540r",
+     "saved": "u-mwqy540r__1.webp",
+     "kb": 39
     }
    ],
    "failed": []
