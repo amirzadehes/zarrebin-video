@@ -4014,12 +4014,20 @@
   "u-mwqzroos": {
    "id": "u-mwqzroos",
    "en": "u mwqzroos",
-   "fa": "",
+   "fa": "کتابخانه",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "u-mwqzroos__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "کتاب",
+    "کتابخانه",
+    "مطالعه",
+    "منابع",
+    "اطلاعات"
+   ],
+   "fa_tags_for": "کتابخانه"
   },
   "warning-sign": {
    "id": "warning-sign",
