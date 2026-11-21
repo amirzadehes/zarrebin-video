@@ -3884,6 +3884,18 @@
    ],
    "fa_tags_for": "بلبل"
   },
+  "u-mwqyiu41": {
+   "id": "u-mwqyiu41",
+   "en": "pepper",
+   "fa": "فلفل",
+   "tags": [
+    "mine"
+   ],
+   "has_text_in_image": false,
+   "variants": [
+    "u-mwqyiu41__1.webp"
+   ]
+  },
   "warning-sign": {
    "id": "warning-sign",
    "en": "warning triangle with exclamation mark",
