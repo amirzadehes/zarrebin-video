@@ -1,30 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-12 09:51:57 UTC",
-   "ok": [
-    {
-     "file": "banner__mwddbk2b07a.jpg",
-     "id": "banner",
-     "saved": "banner__1.webp",
-     "kb": 239
-    },
-    {
-     "file": "banner__mwddbk2j121.jpg",
-     "id": "banner",
-     "saved": "banner__2.webp",
-     "kb": 265
-    },
-    {
-     "file": "banner__mwddbk2q2i1.jpg",
-     "id": "banner",
-     "saved": "banner__3.webp",
-     "kb": 276
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-12 09:52:24 UTC",
    "ok": [
     {
@@ -735,6 +711,18 @@
      "id": "u-mwqyq6ji",
      "saved": "u-mwqyq6ji__1.webp",
      "kb": 45
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-21 22:13:43 UTC",
+   "ok": [
+    {
+     "file": "u-mwqysdow__mwqysdow.jpg",
+     "id": "u-mwqysdow",
+     "saved": "u-mwqysdow__1.webp",
+     "kb": 48
     }
    ],
    "failed": []
