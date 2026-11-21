@@ -13,10 +13,12 @@
   "shield"
  ],
  "live-goose-19c": [
-  "goose"
+  "goose",
+  "roast-goose"
  ],
  "roasted-goose-19c": [
-  "roast-goose"
+  "roast-goose",
+  "goose"
  ],
  "lantern-19c": [
   "lantern"
