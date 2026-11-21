@@ -1,8 +1,4 @@
 {
- "roman-cloak-4c": [
-  "cloak",
-  "half-cloak"
- ],
  "roman-sword-4c": [
   "sword"
  ],
@@ -17,7 +13,8 @@
   "roast-goose"
  ],
  "roasted-goose-19c": [
-  "roast-goose"
+  "roast-goose",
+  "goose"
  ],
  "lantern-19c": [
   "lantern"
