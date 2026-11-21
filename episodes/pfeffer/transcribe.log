@@ -1,0 +1,6 @@
+model: openai/gpt-oss-120b
+cleanup skipped: line count mismatch 81 89
+own voice: seconds 266.3 sentences 89 words 719
+transcript ready: words 719 sentences 89 seconds 266.28
+
+ts=1795292983
