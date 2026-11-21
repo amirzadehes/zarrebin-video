@@ -1,6 +1,7 @@
 {
  "roman-cloak-4c": [
-  "roman-helmet"
+  "cloak",
+  "half-cloak"
  ],
  "roman-sword-4c": [
   "sword"
@@ -25,8 +26,8 @@
  ],
  "coin-denarius-4c": [
   "money-coins",
-  "cash",
   "banknotes",
+  "cash",
   "euro-sign"
  ]
 }
