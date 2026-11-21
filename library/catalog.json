@@ -4013,21 +4013,22 @@
   },
   "u-mwqzroos": {
    "id": "u-mwqzroos",
-   "en": "u mwqzroos",
-   "fa": "کتابخانه",
+   "en": "lion",
+   "fa": "شیر",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "u-mwqzroos__1.webp"
    ],
    "fa_tags": [
-    "کتاب",
-    "کتابخانه",
-    "مطالعه",
-    "منابع",
-    "اطلاعات"
+    "حیوان",
+    "جانور",
+    "گربه‌سانان",
+    "شکارچی",
+    "افریقا",
+    "سرافراز"
    ],
-   "fa_tags_for": "کتابخانه"
+   "fa_tags_for": "شیر"
   },
   "warning-sign": {
    "id": "warning-sign",
