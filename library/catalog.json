@@ -3938,17 +3938,35 @@
    "has_text_in_image": false,
    "variants": [
     "u-mwqypic7__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "فلفل",
+    "هابنرو",
+    "تند",
+    "ادویه",
+    "خوراکی",
+    "سبزیجات"
+   ],
+   "fa_tags_for": "فلفل هابانرو"
   },
   "u-mwqyq6ji": {
    "id": "u-mwqyq6ji",
    "en": "u mwqyq6ji",
-   "fa": "",
+   "fa": "نام نامشخص",
    "tags": [],
    "has_text_in_image": false,
    "variants": [
     "u-mwqyq6ji__1.webp"
-   ]
+   ],
+   "fa_tags": [
+    "نامشخص",
+    "دسته‌بندی نامشخص",
+    "منبع",
+    "داده",
+    "کتابخانه",
+    "اطلاعات"
+   ],
+   "fa_tags_for": "نام نامشخص"
   },
   "warning-sign": {
    "id": "warning-sign",
