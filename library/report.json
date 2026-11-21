@@ -1,30 +1,6 @@
 {
  "runs": [
   {
-   "time": "2026-11-12 09:48:14 UTC",
-   "ok": [
-    {
-     "file": "bishop__mwdd6siw0kr.jpg",
-     "id": "bishop",
-     "saved": "bishop__1.webp",
-     "kb": 198
-    },
-    {
-     "file": "bishop__mwdd6sjf1p2.jpg",
-     "id": "bishop",
-     "saved": "bishop__2.webp",
-     "kb": 160
-    },
-    {
-     "file": "bishop__mwdd6sjy2bp.jpg",
-     "id": "bishop",
-     "saved": "bishop__3.webp",
-     "kb": 236
-    }
-   ],
-   "failed": []
-  },
-  {
    "time": "2026-11-12 09:49:57 UTC",
    "ok": [
     {
@@ -765,6 +741,18 @@
      "id": "u-mwqyiu41",
      "saved": "u-mwqyiu41__1.webp",
      "kb": 68
+    }
+   ],
+   "failed": []
+  },
+  {
+   "time": "2026-11-21 22:09:55 UTC",
+   "ok": [
+    {
+     "file": "u-mwqyn9ns__mwqyn9ns.jpg",
+     "id": "u-mwqyn9ns",
+     "saved": "u-mwqyn9ns__1.webp",
+     "kb": 22
     }
    ],
    "failed": []
