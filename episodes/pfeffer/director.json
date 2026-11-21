@@ -3,39 +3,40 @@
   "from": 0,
   "to": 1,
   "elements": [
-   "pepper"
+   "person eating chili"
   ],
-  "props": [],
+  "props": [
+   {
+    "fa": "فلفل",
+    "word": "فلفل",
+    "prompt": "A fresh red chili pepper, glossy skin, slightly wrinkled surface, vivid crimson color, tapering shape about 10 cm long, with a small green stem tip, sitting alone."
+   }
+  ],
   "more": [],
-  "prompt": "A vivid red-hot chili pepper floating in front of a stylized silhouette of a human mouth, with subtle heat-wave ripples emanating from the pepper toward the mouth, warm desert lighting, centered composition, close-up view.",
-  "kicker": "",
+  "prompt": "A close‑up of an open mouth with lips slightly parting, a shimmering heat‑wave ripple hovering above them, warm amber lighting and shallow depth of field focusing on the mouth.",
+  "kicker": "EARLY 20TH C",
   "text": "چرا *دهن* داغ می‌شود؟",
   "number": "",
   "kw": [
-   "فلفل",
    "دهن",
-   "داغ"
+   "داغ",
+   "فلفل"
   ]
  },
  {
   "from": 2,
   "to": 4,
   "elements": [
-   "pepper"
+   "person tasting chili"
   ],
-  "props": [
-   {
-    "fa": "فلفل قرمز",
-    "word": "فلفل",
-    "prompt": "A fresh red chili pepper, glossy smooth skin, slightly curved, about 5 cm long, vivid scarlet color with subtle ridges, the tip slightly pointed, captured in close‑up with natural lighting highlighting its sheen."
-   }
-  ],
+  "props": [],
   "more": [],
-  "prompt": "The same bright red chili pepper shown alone, its surface glistening, against a neutral background, emphasizing its spiciness as an abstract concept, warm lighting, centered.",
-  "kicker": "",
-  "text": "فلفل *درد* می‌آورد",
+  "prompt": "An adult with wide eyes and a subtle frown, hand raised as if holding something hot, indoor lab lighting casting a warm glow on the face.",
+  "kicker": "EARLY 20TH C",
+  "text": "توندی فلفل *درد* دارد",
   "number": "",
   "kw": [
+   "توندی",
    "فلفل",
    "درد"
   ]
@@ -44,56 +45,60 @@
   "from": 5,
   "to": 6,
   "elements": [
-   "human mouth",
+   "mouth receptor",
    "skin receptor"
   ],
   "props": [],
   "more": [],
-  "prompt": "An illustrated cross‑section of a human mouth and cheek skin, highlighting a tiny heat‑receptor nerve ending glowing faintly, soft pastel colors, educational infographic style, centered on the receptor area.",
-  "kicker": "",
-  "text": "گیرندهٔ *گرما* در دهن",
+  "prompt": "A stylized microscopic scene inside a human mouth and skin showing a tiny bell‑shaped heat receptor glowing orange, surrounded by muted tissue tones.",
+  "kicker": "EARLY 20TH C",
+  "text": "گیرندهٔ *گرما* در بدن",
   "number": "",
   "kw": [
    "گیرنده",
-   "دهن",
-   "گرما"
+   "گرما",
+   "بدن"
   ]
  },
  {
   "from": 7,
   "to": 8,
   "elements": [
-   "hot tea",
-   "soup",
-   "human mouth"
+   "person drinking hot tea"
   ],
-  "props": [],
+  "props": [
+   {
+    "fa": "چای",
+    "word": "چای",
+    "prompt": "A steaming cup of tea, white porcelain, delicate handle, light amber liquid, thin wisps of steam rising, placed on a simple saucer."
+   }
+  ],
   "more": [],
-  "prompt": "A steaming cup of tea beside a bowl of soup, both emitting visible heat waves, aimed at a stylized human mouth silhouette that looks surprised, warm amber lighting, side‑by‑side composition, infographic feel.",
-  "kicker": "",
-  "text": "چای یا *سوپ* داغ؟",
+  "prompt": "A person sipping a steaming beverage from a porcelain cup, visible steam rising, the heat receptor in the mouth illuminated like a lantern, warm indoor lighting highlighting the face.",
+  "kicker": "EARLY 20TH C",
+  "text": "چای *داغ* چه می‌کند؟",
   "number": "",
   "kw": [
    "چای",
-   "سوپ",
-   "داغ"
+   "داغ",
+   "مغز"
   ]
  },
  {
   "from": 9,
   "to": 10,
   "elements": [
-   "capsaicin molecule",
-   "pepper"
+   "capsaicin molecule"
   ],
   "props": [],
   "more": [],
-  "prompt": "A close‑up of a bright red chili pepper with a semi‑transparent overlay showing the chemical structure of a capsaicin molecule attached to the pepper skin, glowing orange highlights, scientific illustration style, centered.",
-  "kicker": "",
-  "text": "ماده *کپسایسین* چیست؟",
+  "prompt": "An anthropomorphic red capsicum molecule with spiky edges floating in air, attaching to a glowing bell‑shaped heat receptor, set against a neutral background.",
+  "kicker": "EARLY 20TH C",
+  "text": "مادهٔ *کپسایسین*",
   "number": "",
   "kw": [
    "کپسایسین",
+   "ماده",
    "فلفل"
   ]
  },
@@ -101,14 +106,13 @@
   "from": 11,
   "to": 12,
   "elements": [
-   "brain",
-   "mouth"
+   "brain"
   ],
   "props": [],
   "more": [],
-  "prompt": "An artistic diagram of a human brain connected by a glowing neural pathway to a stylized mouth, the pathway pulsing with heat‑like light, cool background with warm accents, centered, educational infographic style.",
-  "kicker": "",
-  "text": "مغز *فکر* می‌کند داغ است",
+  "prompt": "A stylized human brain with an internal fire‑like glow at the region of the heat receptor, cool blue laboratory background and cinematic lighting suggesting imagined heat.",
+  "kicker": "EARLY 20TH C",
+  "text": "مغز فکر می‌کند *داغ* است",
   "number": "",
   "kw": [
    "مغز",
@@ -119,14 +123,17 @@
  {
   "from": 13,
   "to": 13,
-  "elements": [],
+  "elements": [
+   "chili pepper"
+  ],
   "props": [],
   "more": [],
-  "prompt": "A close‑up illustration of a bright red hot pepper floating against a dark background, with stylized heat‑wave lines radiating outward to represent the mysterious capsaicin inside.",
+  "prompt": "A single ripe red chili pepper rests on a dark surface, illuminated by warm golden light that creates subtle heat‑wave ripples rising from its skin.",
   "kicker": "",
-  "text": "چرا فلفل *ماده* می‌سازه؟",
+  "text": "چرا فلفل *این ماده* را تولید می‌کنه؟",
   "number": "",
   "kw": [
+   "چرا",
    "فلفل",
    "ماده"
   ]
@@ -135,19 +142,26 @@
   "from": 14,
   "to": 18,
   "elements": [
-   "Desert bird",
-   "Mouse",
-   "wild pepper plant"
+   "wild chili peppers",
+   "desert birds",
+   "mice",
+   "Arizona desert"
   ],
-  "props": [],
+  "props": [
+   {
+    "fa": "دانه فلفل",
+    "word": "دونه",
+    "prompt": "A single ripe chili pepper seed, glossy deep red skin with a tiny pointed tip, smooth texture, slightly translucent, lying on a neutral background"
+   }
+  ],
   "more": [],
-  "prompt": "In a warm desert setting, a small bright‑feathered bird perches on a green wild pepper plant, pecking at a red pepper without flinching, while a tiny brown mouse nearby nibbles another pepper, its eyes squinting in pain, with a subtle heat haze around the mouse’s mouth.",
+  "prompt": "A bright Arizona desert scene at midday: scattered wild chili peppers lie on cracked soil. Small colorful birds with vivid red and green feathers hop onto the peppers, pecking eagerly, while tiny brown mice scurry nearby, turning away in disgust. The sun casts long shadows and a gentle dust haze fills the air.",
   "kicker": "",
-  "text": "پرنده‌ها *بی‌ضرر* می‌خورند، موش‌ها نه",
+  "text": "پرنده‌ها *می‌خورند*، موش‌ها نه",
   "number": "",
   "kw": [
-   "پرنده",
-   "موش",
+   "پرنده‌ها",
+   "موش‌ها",
    "فلفل"
   ]
  },
@@ -155,262 +169,304 @@
   "from": 19,
   "to": 19,
   "elements": [
-   "Desert bird",
-   "wild pepper seed"
+   "scientist",
+   "desert birds",
+   "pepper seeds"
   ],
   "props": [
    {
     "fa": "دانه فلفل",
     "word": "دونه",
-    "prompt": "A single dried pepper seed, small and oval, deep reddish‑brown with a glossy surface, fine ridged texture along its length, a tiny pointed tip, and a subtle pale hilum spot where it was attached to the fruit."
+    "prompt": "A single ripe chili pepper seed, glossy deep red skin with a tiny pointed tip, smooth texture, slightly translucent, lying on a neutral background"
    }
   ],
   "more": [],
-  "prompt": "An educational side‑by‑side panel shows a desert bird gently swallowing a whole pepper, then the pepper rolling away across the sand, with arrows indicating its dispersal path.",
+  "prompt": "A 1910s‑style laboratory with wooden benches; a bespectacled scientist in a white coat watches through a window as desert birds outside carry intact pepper seeds that tumble onto the floor, illustrating seed dispersal.",
   "kicker": "",
-  "text": "پرنده‌ها *دانه* را سالم می‌دورند",
+  "text": "محققان *دیدند* پرنده‌ها دانه‌اش را سالم می‌خورند",
   "number": "",
   "kw": [
-   "دانه",
-   "پرنده"
+   "محققان",
+   "پرنده‌ها",
+   "دانه"
   ]
  },
  {
   "from": 20,
   "to": 20,
   "elements": [
-   "Mouse",
-   "wild pepper seed"
+   "mouse",
+   "pepper seed",
+   "desert floor"
   ],
   "props": [
    {
     "fa": "دانه فلفل",
     "word": "دونه",
-    "prompt": "A single dried pepper seed, small and oval, deep reddish‑brown with a glossy surface, fine ridged texture along its length, a tiny pointed tip, and a subtle pale hilum spot where it was attached to the fruit."
+    "prompt": "A single ripe chili pepper seed, glossy deep red skin with a tiny pointed tip, smooth texture, slightly translucent, lying on a neutral background"
    }
   ],
   "more": [],
-  "prompt": "A contrasting panel depicts a small brown mouse chewing a pepper, its mouth burning, and the crushed pepper falling flat on the sand without bouncing, highlighted by a subtle heat‑wave visual.",
+  "prompt": "A close‑up view of a tiny brown mouse on the desert floor, its whiskers trembling as it gnaws a bright red pepper seed. The seed cracks open, spilling its interior, and the mouse looks distressed, emphasizing the destruction of the seed.",
   "kicker": "",
-  "text": "موش‌ها *دانه* را می‌کُند",
+  "text": "موش‌ها *دانه را* می‌کُندند",
   "number": "",
   "kw": [
+   "موش‌ها",
    "دانه",
-   "موش"
+   "کُندند"
   ]
  },
  {
   "from": 21,
   "to": 24,
   "elements": [
-   "Capsaicin receptor"
+   "bird",
+   "pepper",
+   "capsaicin receptor"
   ],
   "props": [],
   "more": [],
-  "prompt": "A stylized diagram of a human tongue receptor cell highlighted in red with a faint glow indicating activation, beside a bird whose receptor remains untouched and a mouse whose receptor glows, illustrating that birds do not feel capsaicin’s spiciness.",
+  "prompt": "A vivid illustration of a small desert bird perched on a pepper plant, pecking at a red pepper. Around the bird’s beak, a soft blue aura represents the lack of heat sensation, while a glowing red capsaicin molecule hovers nearby, showing that the bird’s receptors do not react to it.",
   "kicker": "",
-  "text": "گیرنده *کپسایسین* در پرنده کار نمی‌کند",
+  "text": "پرنده‌ها *حس نمی‌کنند* سوزش",
   "number": "",
   "kw": [
-   "گیرنده",
-   "کپسایسین",
-   "پرنده"
+   "پرنده‌ها",
+   "حس",
+   "سوزش"
   ]
  },
  {
   "from": 25,
   "to": 26,
   "elements": [
-   "William Wilbur‑Scoville",
+   "Wilbertscofield",
    "white lab coat",
-   "pepper extract spoon"
+   "tiny spoon",
+   "pepper extract"
   ],
   "props": [
    {
-    "fa": "استخراج فلفل",
-    "word": "pepper extract",
-    "prompt": "A tiny spoon‑size droplet of bright red pepper extract, viscous and glossy, shimmering with a faint oily sheen, suspended in a clear glass vial, the liquid forming a perfect hemispherical bead with a delicate surface tension ripple."
+    "fa": "قاشق کوچک",
+    "word": "قاشق",
+    "prompt": "A tiny metal spoon, polished silver, slender handle, shallow rounded bowl, reflecting light, placed upright"
    }
   ],
   "more": [],
-  "prompt": "Mid‑20th‑century American laboratory scene with William Wilbur‑Scoville, a middle‑aged man in a crisp white lab coat, holding a tiny spoon of pepper extract up to his eye, while a simple chart of dilution steps labeled with numbers is displayed behind him.",
-  "kicker": "SCOVILLE · 1912",
-  "text": "چطور *اسکویل* داره اندازه می‌گیره؟",
+  "prompt": "An early‑20th‑century American pharmacy lab: elderly Wilbertscofield, a male pharmacist in a crisp white lab coat, stands at a wooden counter, his expression focused as he prepares a simple measurement method with a drop of red pepper extract.",
+  "kicker": "WILBERTSCOFIELD · 1912",
+  "text": "سال *1912* روش ساده‌اش",
   "number": "1912",
   "kw": [
-   "اسکویل",
-   "دما",
-   "فلفل"
+   "سال",
+   "روش",
+   "ساده"
   ]
  },
  {
   "from": 27,
   "to": 28,
   "elements": [
-   "William Wilbur-Scoville",
-   "pepper extract"
+   "Wilbertscofield",
+   "pepper extract",
+   "laboratory flask"
   ],
   "props": [
    {
-    "fa": "قاشق چای خوری",
-    "word": "قاشق چای خوری",
-    "prompt": "A small, polished wooden teaspoon with a smooth, slightly curved handle, light brown color, and a shallow oval bowl, glossy finish."
+    "fa": "قاشق چای‌خوری",
+    "word": "قاشق",
+    "prompt": "A small, delicate teaspoon made of polished stainless steel, with a smooth, slightly curved bowl and a slender handle featuring a subtle brushed texture; the metal surface reflects light with a soft silvery sheen."
    },
    {
-    "fa": "زرف",
+    "fa": "ظرف",
     "word": "زرف",
-    "prompt": "A modest ceramic bowl, matte white with a subtle ivory glaze, shallow depth, smooth rim, and a simple rounded shape."
+    "prompt": "A simple, shallow ceramic bowl, matte white with a faint speckled glaze, rounded edges and a gentle lip, appearing lightweight and suitable for holding liquid."
    }
   ],
   "more": [],
-  "prompt": "Middle‑aged William Wilbur‑Scoville in a crisp white lab coat stands at a wooden lab bench, holding a tiny spoon filled with vivid red pepper extract, while a clear glass beaker of water sits beside him; soft desert‑light streams through a window, casting gentle shadows.",
-  "kicker": "SCOVILLE TEST",
-  "text": "چطور *قاشق* را رقیق می‌کنیم؟",
+  "prompt": "An elderly male pharmacist, Wilbertscofield, wearing a crisp white lab coat, stands at a wooden lab bench. He holds a tiny metal teaspoon filled with bright red chili pepper extract and slowly pours it into a clear glass beaker filled with water. Warm amber light highlights the swirling red droplets as they mix, with a subtle heat‑wave ripple around the beaker.",
+  "kicker": "WILBERTSCOFIELD · 1912",
+  "text": "قاشقِ *فلفل* در آزمایش",
   "number": "",
   "kw": [
-   "قاشق",
-   "فلفل",
-   "آب"
+   "pepper",
+   "water",
+   "lab"
   ]
  },
  {
   "from": 29,
   "to": 29,
   "elements": [
-   "William Wilbur-Scoville"
+   "Wilbertscofield",
+   "laboratory flask",
+   "water"
   ],
-  "props": [],
+  "props": [
+   {
+    "fa": "قوطی آب بزرگ",
+    "word": "آب",
+    "prompt": "A clear glass jug of water, about half full, reflecting soft laboratory lighting, with condensation droplets on its surface"
+   }
+  ],
   "more": [],
-  "prompt": "William Wilbur‑Scoville leans over the same bench, slowly adding clear water from a graduated cylinder into the beaker, his focused eyes watching the dilution process; the background shows a faint heat‑wave ripple visualizing spiciness decreasing.",
-  "kicker": "DILUTION",
-  "text": "هر چه *آب* بیشتر، تندی کمتر!",
+  "prompt": "Wilbertscofield, still in his white coat, leans over the same beaker, now adding a stream of clear water from a large glass jug. The water swirls around the red pepper particles, creating a brighter, more diluted mixture. His face shows a thoughtful expression as he watches the solution become less intense, captured in a close‑up side view.",
+  "kicker": "WILBERTSCOFIELD · 1912",
+  "text": "چند *آب* اضافه می‌کنیم؟",
   "number": "",
   "kw": [
-   "آب",
-   "رقیق",
-   "تندی"
+   "water",
+   "dilution",
+   "pepper"
   ]
  },
  {
   "from": 30,
   "to": 31,
   "elements": [
-   "William Wilbur-Scoville"
+   "Wilbertscofield",
+   "pepper powder"
   ],
   "props": [],
   "more": [],
-  "prompt": "William points to a chalkboard sketch of a pepper labeled “0 Scoville units”, indicating a completely mild pepper that requires no water dilution; the board is illuminated by warm amber light, emphasizing the zero‑heat concept.",
-  "kicker": "ZERO SCOVILLE",
-  "text": "فلفل *دلمه‌ای* صفر؟",
+  "prompt": "Wilbertscofield holds up a small pile of dry, vivid red chili powder on a white ceramic dish, with no water in sight. The laboratory background is blurred, focusing on the bright pepper dust that seems to glow against the dark lab surface, emphasizing that no dilution is needed. He points at it with a slender finger, captured from a frontal perspective.",
+  "kicker": "WILBERTSCOFIELD · 1912",
+  "text": "فلفل *صفر* درجه؟",
   "number": "",
   "kw": [
-   "صفر",
-   "فلفل",
-   "دلمه‌ای"
+   "pepper",
+   "zero",
+   "dilution"
   ]
  },
  {
   "from": 32,
   "to": 34,
   "elements": [
-   "William Wilbur-Scoville"
+   "Wilbertscofield",
+   "pepper extract",
+   "large water container"
   ],
-  "props": [],
+  "props": [
+   {
+    "fa": "بشکه آب بزرگ",
+    "word": "آب",
+    "prompt": "A massive translucent water tank, about twenty‑five liters, with subtle ripples on the surface, reflecting a warm laboratory glow"
+   }
+  ],
   "more": [],
-  "prompt": "William holds up a dried cayenne pepper labeled “5,000 Scoville units” and gestures to a large glass container; a caption shows that one teaspoon must be dissolved in roughly 25‑liters of water to neutralize its heat, with a faint steam effect illustrating the dilution.",
-  "kicker": "CAYENNE 5K",
-  "text": "پینو حدود *پنج هزار* واحد!",
-  "number": "5000",
+  "prompt": "Wilbertscofield stands beside a large, cylindrical water tank holding roughly twenty‑five liters of clear water. He drops a single teaspoon of fiery red pepper extract into the tank, and a bright plume of red vapor rises, indicating the intense heat level of the 'Pino' pepper. The scene is bathed in warm amber light, with the tank centered and the pharmacist’s focused gaze directed at the swirling mixture.",
+  "kicker": "WILBERTSCOFIELD · 1912",
+  "text": "پینو *پنج هزار* واحد تند!",
+  "number": "",
   "kw": [
-   "پینو",
-   "واحد",
-   "آب"
+   "Pino",
+   "heat",
+   "water"
   ]
  },
  {
   "from": 35,
   "to": 36,
   "elements": [
-   "William Wilbur-Scoville"
+   "Wilbertscofield",
+   "pepper extract",
+   "multiple water barrels"
   ],
-  "props": [],
+  "props": [
+   {
+    "fa": "باریل‌های آب",
+    "word": "آب",
+    "prompt": "Several stacked wooden barrels, each holding hundreds of liters of water, with a rustic texture and faint water sheen"
+   }
+  ],
   "more": [],
-  "prompt": "William displays a fiery red Thai pepper marked “50,000–600,000 Scoville units”; beside it a massive water tank graphic indicates several hundred liters of water needed for dilution, the scene bathed in a subtle red glow to convey extreme heat.",
-  "kicker": "THAI PEPPER",
-  "text": "فلفل *تای* تا شش صد هزار!",
-  "number": "600000",
+  "prompt": "Wilbertscofield now works with a series of large wooden barrels, each containing several hundred liters of water. He adds a spoonful of the extremely hot 'Thai' pepper extract into the first barrel, and a vivid red mist erupts, illustrating the massive dilution required for such a potent pepper. The camera looks over his shoulder, showing the rows of barrels and the bright red plume against a dusty lab backdrop.",
+  "kicker": "WILBERTSCOFIELD · 1912",
+  "text": "فلفل *تای* تا چند صد هزار؟",
+  "number": "",
   "kw": [
-   "تای",
-   "واحد",
-   "آب"
+   "Thai",
+   "heat",
+   "dilution"
   ]
  },
  {
   "from": 37,
   "to": 37,
   "elements": [
-   "William Wilbur-Scoville"
+   "Wilbertscofield",
+   "pepper extract",
+   "huge water source"
   ],
-  "props": [],
+  "props": [
+   {
+    "fa": "منبع آب هزار لیتری",
+    "word": "آب",
+    "prompt": "A massive open pool of water, about a thousand liters, shimmering under a soft light, with gentle ripples"
+   }
+  ],
   "more": [],
-  "prompt": "William points to a towering illustration of a habanero pepper rated “100,000–350,000 Scoville units”; a schematic shows a thousand‑liter water source required to erase its heat, with a faint heat‑wave aura radiating from the pepper’s tip.",
-  "kicker": "HABANERO",
-  "text": "برای *هابانه* هزار لیتر آب لازم است",
+  "prompt": "Wilbertscofield stands before an enormous open pool holding roughly a thousand liters of water, the ultimate dilution vessel for the ultra‑hot 'Habane' pepper. He gently drops a single spoonful of the deep red extract, and a towering column of fiery vapor rises, emphasizing the extreme heat that only such a vast amount of water can tame. The scene is illuminated with a dramatic backlight, highlighting the contrast between the calm water and the intense red plume.",
+  "kicker": "WILBERTSCOFIELD · 1912",
+  "text": "حابانه *هزار لیتر* آب لازم!",
   "number": "",
   "kw": [
-   "هابانه",
-   "آب",
-   "واحد"
+   "Habane",
+   "heat",
+   "water"
   ]
  },
  {
   "from": 38,
   "to": 38,
   "elements": [
-   "ghost pepper",
-   "water"
+   "capsaicin powder"
   ],
   "props": [
    {
-    "fa": "فلفل",
+    "fa": "فلفل گوست",
     "word": "فلفل",
-    "prompt": "A vivid red-hot chili pepper, glossy skin with fine wrinkles, tapering shape about 10 cm long, bright orange interior visible when cut, glistening with a thin layer of natural oil."
+    "prompt": "A vivid red chili pepper, glossy skin with subtle ridges, slightly curved, fresh and plump, showing tiny seeds near the tip, illuminated with warm light."
    }
   ],
   "more": [],
-  "prompt": "A single ghost pepper, deep red and glossy, sits on a rustic wooden slab beside an enormous transparent tank overflowing with clear water, warm earthy desert light highlighting the scale of “one million units.”",
-  "kicker": "GHOST PEPPER · MILLIONS",
-  "text": "فلفل *یک میلیون* واحد؟",
+  "prompt": "A close‑up of a white laboratory bench in 1912, illuminated by soft yellow light; a fine metallic spoon rests on the bench, its tip holding a vivid red speck of capsaicin powder that looks like a tiny glowing ember, the surrounding lab tools are blurred, focus on the spoon and the fiery speck",
+  "kicker": "LAB · 1912",
+  "text": "چقدر *قوی*ه فلفل؟",
   "number": "",
   "kw": [
-   "فلفل",
-   "یک میلیون",
-   "آب"
+   "یک میلیون واحد",
+   "پنج هزار لیتر"
   ]
  },
  {
   "from": 39,
   "to": 41,
   "elements": [
-   "world's hottest peppers",
-   "carolina reaper"
+   "hot chili peppers"
   ],
   "props": [
    {
+    "fa": "فلفل گوست",
+    "word": "فلفل",
+    "prompt": "A vivid red chili pepper, glossy skin with subtle ridges, slightly curved, fresh and plump, showing tiny seeds near the tip, illuminated with warm light."
+   },
+   {
     "fa": "قاشق",
     "word": "قاشق",
-    "prompt": "A tiny stainless‑steel teaspoon, polished surface reflecting light, smooth rounded bowl about 2 cm deep, slender handle with a subtle engraved pattern."
+    "prompt": "A small metal teaspoon, polished silver, slender handle, shallow bowl, reflecting light, placed on a neutral surface."
    }
   ],
   "more": [],
-  "prompt": "Two extreme peppers rest side‑by‑side on a sand‑colored desert surface under a soft amber glow: a fiery orange ghost pepper labeled “World’s hottest” and a massive red Carolina Reaper labeled “~2 million units.”",
-  "kicker": "HOT PEPPERS · SCALE",
-  "text": "تندترین *فلفل* دنیا",
+  "prompt": "A scientific illustration style scene showing three varieties of extremely hot chili peppers arranged on a vintage wooden tray, each labeled with Persian script indicating millions of units of heat, the background is a muted laboratory wall with faint chalk drawings, warm red glow emanates from the peppers highlighting their intensity",
+  "kicker": "PEPPER VARIETIES",
+  "text": "چند *واحد* تند؟",
   "number": "",
   "kw": [
-   "تندترین",
-   "فلفل",
-   "دنیای"
+   "دو میلیون واحد",
+   "ده هزار لیتر"
   ]
  },
  {
@@ -421,191 +477,163 @@
   ],
   "props": [
    {
-    "fa": "بودر سفید",
+    "fa": "پودر کپسایسین",
     "word": "بودور",
-    "prompt": "Fine white powdered capsaicin, ultra‑fine granular texture, snow‑like particles shimmering slightly, resting in a small glass vial with a clear label."
+    "prompt": "Fine white powder, silky texture, sparkling slightly, scattered in a tiny pile, with delicate grains catching soft light."
    }
   ],
   "more": [],
-  "prompt": "A close‑up of white, powdery capsaisin on a matte black lab tray, with a faint heat‑wave aura radiating from it and warm desert tones in the background.",
-  "kicker": "CAPSAICIN · POWDER",
-  "text": "بودور *سفید* خالص",
+  "prompt": "A detailed macro view of pure white capsaicin powder as a fine, snow‑like dust floating in a beam of light, each particle sparkling like tiny crystals, the laboratory setting is hinted by blurred glass beakers, emphasizing the purity and potency of the substance",
+  "kicker": "CAPSAICIN PURE",
+  "text": "بودور *سفید* چیه؟",
   "number": "",
   "kw": [
-   "پودر",
-   "کپسایسین",
-   "سفید"
+   "16 میلیون واحد"
   ]
  },
  {
   "from": 45,
   "to": 47,
   "elements": [
-   "spoonful of extract",
-   "large water pool"
+   "large water tank"
   ],
   "props": [],
   "more": [],
-  "prompt": "Bright red pepper extract spreads across the surface of a vast shallow pool of water that stretches like a small swimming pool, the desert sunlight creating sparkling highlights on the rippling water.",
-  "kicker": "DILUTION · POOL",
-  "text": "یک *قاشق* در 80 هزار لیتر",
+  "prompt": "A wide shot of a modest early‑20th‑century laboratory with a small rectangular pool filled with clear water, the surface reflecting soft light; a single spoonful of capsaicin powder is being slowly dissolved, creating a subtle red swirl in the otherwise blue‑tinted water, conveying the massive dilution ratio",
+  "kicker": "DILUTION POOL",
+  "text": "یک *استخر* کوچیک؟",
   "number": "",
   "kw": [
-   "قاشق",
-   "آب",
-   "استخر"
+   "80 هزار لیتر"
   ]
  },
  {
   "from": 48,
   "to": 49,
   "elements": [
-   "very hot pepper"
+   "person eating hot pepper"
   ],
   "props": [],
   "more": [],
-  "prompt": "An extremely hot pepper glows red with a subtle heat aura against a blurred desert background, emphasizing its imagined extreme spiciness.",
-  "kicker": "HOT CHALLENGE",
-  "text": "اگر *فلفل* خیلی تند بخوری؟",
+  "prompt": "A dramatic illustration of a person in 1910s attire biting into an exaggeratedly large, fiery red chili pepper; their eyes widen, a faint heat‑wave ripple surrounds their head, and a thought bubble shows a tiny cartoon fire, indicating the sudden spiciness sensation",
+  "kicker": "FIRST BITE",
+  "text": "اگر *فلفل* بخوری؟",
   "number": "",
   "kw": [
-   "فلفل",
-   "خیلی تند",
-   "بخوری"
+   "اولین کاری"
   ]
  },
  {
   "from": 50,
   "to": 52,
   "elements": [
-   "water",
-   "capsaicin"
+   "capsaicin personified"
   ],
   "props": [],
   "more": [],
-  "prompt": "Water droplets fall onto a mouthful of bright red pepper, while a visible red heat wave spreads inside, illustrating that capsaicin is oil‑soluble and not washed away by water, set against a faint desert palette.",
-  "kicker": "WATER WON'T HELP",
-  "text": "چرا *آب* نمی‌کاهد؟",
+  "prompt": "A whimsical personification of capsaicin as a mischievous red spirit with eyes and a grin, floating above a mouth filled with water; the spirit tries to dissolve but remains stubborn, while the water droplets bounce off, illustrating that capsaicin is oil‑soluble and won’t wash away with water",
+  "kicker": "CAPSAICIN REACTION",
+  "text": "چرا *آب* کمکی نمی‌کنه؟",
   "number": "",
   "kw": [
-   "آب",
-   "کاهش",
-   "کپسایسین"
+   "چرب دوسته",
+   "پخش میشه"
   ]
  },
  {
   "from": 53,
   "to": 53,
-  "elements": [
-   "zarf cleaning solution"
-  ],
-  "props": [
-   {
-    "fa": "مایه زرفشوی",
-    "word": "مایه زرفشوی",
-    "prompt": "A small glass bottle of cleaning solvent, translucent amber liquid with a slightly viscous sheen, labeled in Persian script, the liquid catching light with subtle reflections, cap slightly ajar showing a thin stream of the liquid."
-   }
-  ],
+  "elements": [],
+  "props": [],
   "more": [],
-  "prompt": "A close‑up of a greasy kitchen utensil covered in stubborn residue, being rinsed under a stream of clear water that fails to clean it, while a bottle of bright yellow cleaning concentrate labeled \"Zarf\" sits beside it, illuminated by soft kitchen lighting.",
+  "prompt": "A close‑up of a greasy metal pot covered in thick, dark oil that refuses to wash away with plain water, steam rising as a tiny splash of water hits the surface, warm lighting emphasizing the stubborn shine.",
   "kicker": "",
-  "text": "چرا *زرف* تمیز نمی‌شود؟",
+  "text": "چرا *زرف* نمی‌شوید؟",
   "number": "",
   "kw": [
    "زرف",
-   "آب",
-   "تمیز"
+   "چربیه"
   ]
  },
  {
   "from": 54,
   "to": 55,
-  "elements": [
-   "protein cleaning solution",
-   "capsaicin"
-  ],
+  "elements": [],
   "props": [],
   "more": [],
-  "prompt": "A laboratory bench scene showing a white beaker labeled \"Protein Cleaner\" next to a small vial of bright red capsaicin extract, with a handwritten note that reads \"Cazine\" in Persian script, bathed in warm amber light to suggest chemical activity.",
-  "kicker": "",
+  "prompt": "A scientist’s hand holding a small spoon of bright red pepper extract beside a clear glass vial labeled “کازین”, the extract glowing like liquid fire, soft laboratory lighting highlighting the contrast between the vivid red and the sterile background.",
+  "kicker": "WILBERTSCOFIELD · 1912",
   "text": "کازین چه کاری می‌کند؟",
   "number": "",
   "kw": [
    "کازین",
-   "کابسایسینو",
-   "پروتئین"
+   "پروتینی"
   ]
  },
  {
   "from": 56,
   "to": 57,
-  "elements": [
-   "pepper"
+  "elements": [],
+  "props": [
+   {
+    "fa": "آجیل",
+    "word": "آجیلی",
+    "prompt": "A handful of mixed roasted nuts, glossy brown shells with speckles of salt, irregular shapes, some almonds, hazelnuts, and pistachios, each nut showing a slightly oily surface that catches warm light, arranged loosely as if spilling from a small wooden bowl"
+   }
   ],
-  "props": [],
   "more": [],
-  "prompt": "A split‑screen illustration: on the left, a handful of dried red peppers scattered like peanuts; on the right, a person tasting a pepper with a surprised expression, a tiny heart symbol floating above the mouth to indicate love, set against a neutral background.",
+  "prompt": "A split‑screen illustration: on the left, a hand sprinkling pepper seeds onto a surface, on the right, a hand holding a single pepper seed with a tiny heart‑shaped flame hovering over it, warm desert colors and a subtle heat‑wave effect around the mouths.",
   "kicker": "",
-  "text": "چرا *فلفل* را دوست داریم؟",
+  "text": "چرا *فلفل* را این‌قدر دوست داریم؟",
   "number": "",
   "kw": [
    "فلفل",
-   "آجیلی",
    "عشق"
   ]
  },
  {
   "from": 58,
   "to": 63,
-  "elements": [
-   "pepper"
-  ],
+  "elements": [],
   "props": [],
   "more": [],
-  "prompt": "A sequence of four small panels showing a mouth: first, a pepper entering the mouth; second, a tiny drop of capsaicin binding to tongue receptors; third, the receptors lighting up with a gentle heat‑wave glow; fourth, the mouth closing with a relieved sigh, indicating reduced burning sensation.",
+  "prompt": "A laboratory notebook page animated with floating letters forming the word “آدت”, next to a tiny beaker where a drop of capsaicin solution is being held in a mouth‑shaped container, soft blue light indicating dilution, and a faint glow around the imagined fire inside the mouth.",
   "kicker": "",
-  "text": "چگونه *سوزش* کم می‌شود؟",
+  "text": "آدت چه می‌کند؟",
   "number": "",
   "kw": [
-   "سوزش",
-   "کابسایسینو",
-   "دهن"
+   "آدت",
+   "کابسایسینو"
   ]
  },
  {
   "from": 64,
   "to": 67,
-  "elements": [
-   "pepper"
-  ],
+  "elements": [],
   "props": [],
   "more": [],
-  "prompt": "A stylized infographic panel depicting a human mouth with a faint red aura, a question mark hovering above, and a silhouette of a person eating a pepper, emphasizing the mystery of why some people feel less burn despite heavy consumption.",
+  "prompt": "A stylized human mouth interior illuminated from within, showing a subtle, reduced flame effect, while a shadowy figure watches perplexed, representing the mystery of why some people feel less burning despite high pepper intake.",
   "kicker": "",
-  "text": "دهن *آدت* چه می‌کند؟",
+  "text": "چرا سوزش *کم* می‌شود؟",
   "number": "",
   "kw": [
-   "آدت",
    "سوزش",
-   "فلفل"
+   "کم"
   ]
  },
  {
   "from": 68,
   "to": 70,
-  "elements": [
-   "pepper"
-  ],
+  "elements": [],
   "props": [],
   "more": [],
-  "prompt": "A comparative illustration showing two abstract human figures: one with many bright red receptors on the tongue, the other with fewer, both surrounded by small pepper icons, highlighting individual differences in receptor count and sensitivity.",
+  "prompt": "A diverse group of cartoonish faces, each with a tiny flame above the tongue varying in size and intensity, illustrating that the heat receptor sensitivity differs from person to person, warm earthy tones with gentle spotlight on each face.",
   "kicker": "",
-  "text": "حساسیت *تندی* متفاوت است",
+  "text": "حسگرهای *تندی* متفاوت‌اند",
   "number": "",
   "kw": [
-   "حساسیت",
-   "تندی",
-   "دریافت"
+   "حسگر",
+   "تندی"
   ]
  },
  {
@@ -614,13 +642,14 @@
   "elements": [],
   "props": [],
   "more": [],
-  "prompt": "A close‑up illustration of a child’s hand reaching toward bright red chili peppers growing in a desert garden, the sun low in a warm, earthy sky casting long shadows; the focus is on the vivid peppers and the curious expression of the child’s face, captured from a slightly low angle to emphasize the heat‑wave glow around the peppers.",
+  "prompt": "A close‑up of a nostalgic childhood kitchen scene, warm golden lighting, a hand reaching into a bowl of vibrant red chili peppers, a glowing heat aura around the mouth, background blurred suggesting a cozy home interior.",
   "kicker": "",
-  "text": "چرا *فلفل* سوزن می‌سازد؟",
+  "text": "چقدر *فلفل* خورده‌اید؟",
   "number": "",
   "kw": [
    "فلفل",
-   "بچه"
+   "بچه‌گی",
+   "سوزش"
   ]
  },
  {
@@ -629,13 +658,14 @@
   "elements": [],
   "props": [],
   "more": [],
-  "prompt": "A portrait of William Wilbur‑Scoville in a 1910s laboratory, middle‑aged, white lab coat, holding a tiny spoon‑size pepper extract, surrounded by vintage glass bottles and a chalkboard diagram of the Scoville scale, warm desert‑colored lighting filtering through a window.",
-  "kicker": "SCOVILLE · 1912",
-  "text": "اختراع *اسکوویل* چه‌جوری بود؟",
+  "prompt": "A confident adventurer standing on a rocky cliff, wearing a rugged explorer's outfit, looking out over a vast landscape, with a subtle red flare hinting at heat.",
+  "kicker": "",
+  "text": "شخصیت‌های *ماجراجو*",
   "number": "",
   "kw": [
-   "اسکوویل",
-   "آزمایش"
+   "ماجراجو",
+   "سختی",
+   "فلفل"
   ]
  },
  {
@@ -644,14 +674,14 @@
   "elements": [],
   "props": [],
   "more": [],
-  "prompt": "Side‑by‑side panels: on the left, a small desert bird perched on a pepper plant, bright feathers, eyes wide but unbothered; on the right, a tiny brown mouse nibbling a pepper, eyes squinting in pain, a subtle heat‑wave aura around its mouth, all set against a sandy backdrop.",
+  "prompt": "A group of friends gathered around a campfire, laughing and sharing bright red chili peppers, their faces illuminated by the fire, showing they enjoy the burning sensation.",
   "kicker": "",
-  "text": "پرنده *بی‌حساس*؟ موش درد می‌کشه",
+  "text": "دوستان *فلفل‌دوست*",
   "number": "",
   "kw": [
-   "پرنده",
-   "موش",
-   "فلفل"
+   "دوستان",
+   "فلفل",
+   "سوزش"
   ]
  },
  {
@@ -660,13 +690,14 @@
   "elements": [],
   "props": [],
   "more": [],
-  "prompt": "An artistic diagram showing the sensation of heat inside a mouth: a stylized tongue with glowing red‑orange waves radiating outward, overlayed on a muted desert background, suggesting the internal fire without showing actual flames.",
+  "prompt": "A surreal illustration of a pepper flame inside a mouth, the heat depicted as a glowing orange wave that illuminates the skin, emphasizing a mental fire lighting up the senses.",
   "kicker": "",
-  "text": "حس *سوزش* داخل دهن",
+  "text": "آجیر *گرما* در دهان",
   "number": "",
   "kw": [
-   "سوزش",
-   "دهن"
+   "گرما",
+   "دهان",
+   "فلفل"
   ]
  },
  {
@@ -675,13 +706,14 @@
   "elements": [],
   "props": [],
   "more": [],
-  "prompt": "A hand holding a single pepper grain, the focus on the tiny seed as if it were a microscope view, with a faint luminous aura indicating its potency, set against a simple neutral background.",
+  "prompt": "A microscopic view of a single chili pepper seed held between two fingers, tiny detail highlighted against a dark background, inviting the viewer to consider where to place the next seed.",
   "kicker": "",
-  "text": "ذره‌*بین* در دست شما",
+  "text": "ذره‌بین *دست* شما",
   "number": "",
   "kw": [
    "ذره‌بین",
-   "فلفل"
+   "دست",
+   "بذر"
   ]
  }
 ]
