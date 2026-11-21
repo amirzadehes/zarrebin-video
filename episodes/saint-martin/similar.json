@@ -1,1 +1,33 @@
-{}
+{
+ "roman-cloak-4c": [
+  "roman-helmet",
+  "roman-soldier"
+ ],
+ "roman-helmet-4c": [
+  "roman-helmet",
+  "roman-soldier"
+ ],
+ "roman-shield-4c": [
+  "roman-helmet",
+  "roman-soldier"
+ ],
+ "live-goose-19c": [
+  "goose",
+  "roast-goose"
+ ],
+ "roasted-goose-19c": [
+  "goose",
+  "roast-goose"
+ ],
+ "lantern-19c": [
+  "lantern"
+ ],
+ "bonfire-19c": [
+  "fire"
+ ],
+ "coin-denarius-4c": [
+  "money-coins",
+  "banknotes",
+  "euro-sign"
+ ]
+}
