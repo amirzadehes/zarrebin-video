@@ -1075,6 +1075,7 @@ function finish(t) { grain(t); const v = ctx.createRadialGradient(W / 2, H / 2, 
 function draw(t) {
   ctx.setTransform(RS, 0, 0, RS, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'none';
   world(t); ui(t); subs(t); finish(t);
+  if (window.VFX && D.scenes[sceneIndex(t)]) VFX.apply(t, D.scenes[sceneIndex(t)]);   // scene.vfx: moving picture effects (engine/vfx.js)
   const T = D.meta.total; if (t > T - .5) { ctx.fillStyle = `rgba(0,0,0,${ramp(t, T - .5, T)})`; ctx.fillRect(0, 0, W, H) }
   if (t < .25) { ctx.fillStyle = `rgba(0,0,0,${1 - ramp(t, 0, .25)})`; ctx.fillRect(0, 0, W, H) }
 }
@@ -1083,14 +1084,15 @@ function busy(t) {   // a picture or word is arriving, or the scene has just cha
   const near = q => q && q.t != null && t - q.t > -.05 && t - q.t < .6; return (sc.items || []).some(near) || [sc.photo, ...(sc.photos || [])].some(near)
 }
 window.frame = function (t) {   // 180-degree-style shutter: the frame is the average of sub-frames over a short span (4 while things arrive, 2 otherwise)
-  const n = MB && flyIndex(t) < 0 ? (busy(t) ? 4 : 2) : 1;   // no sub-frame blur inside a fly-through: the zoom is too fast and the copies would show as ghosts
+  const vf = window.VFX && D.scenes[sceneIndex(t)] && VFX.active(D.scenes[sceneIndex(t)]); if (vf && vf.steps && !EDIT) t = VFX.qt(t);   // scene.vfx.steps: the whole scene moves at 12 fps
+  const n = MB && flyIndex(t) < 0 && !vf ? (busy(t) ? 4 : 2) : 1;   // a scene with picture effects is drawn once per frame (stepped look, no ghosting)   // no sub-frame blur inside a fly-through: the zoom is too fast and the copies would show as ghosts
   for (let i = 0; i < n; i++) { draw(n === 1 ? t : t + i * (.6 / 30) / (n - 1)); octx.globalAlpha = 1 / (i + 1); octx.drawImage(cv, 0, 0) } octx.globalAlpha = 1
 };
 window.prewarm = async (idx, cb) => {   // build the 3D layers of the given scenes (all by default) one scene at a time, so the first play does not stall on them (a stall makes the audio-clocked preview jump over scenes)
   const ks = idx || D.scenes.map((_, i) => i); let n = 0;
   for (const k of ks) { const sc = D.scenes[k]; if (!sc) continue; try { draw(sc.t0 + (sc.t1 - sc.t0) * .6); if (flyOn(k)) { draw(sc.t0 - .05); draw(sc.t0 + .3) } } catch (e) { console.warn('prewarm', k, e) } n++; /* the second and third draw go through the fly-through into this scene */ if (cb) cb(n, ks.length); await new Promise(r => setTimeout(r, 0)) }
 };
-window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
+window.seek = function (t) { { const vf = window.VFX && D.scenes[sceneIndex(t)] && VFX.active(D.scenes[sceneIndex(t)]); if (vf && vf.steps && !EDIT) t = VFX.qt(t) } draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
 const FONTS = { vazirmatn: ['Vazirmatn-Bold.ttf', 'Vazirmatn-Black.ttf'], lalezar: ['Lalezar-Regular.ttf', 'Lalezar-Regular.ttf'], changa: ['Changa-Var.ttf', 'Changa-Var.ttf'], almarai: ['Almarai-Bold.ttf', 'Almarai-ExtraBold.ttf'], mirza: ['Mirza-Bold.ttf', 'Mirza-Bold.ttf'], amiri: ['Amiri-Bold.ttf', 'Amiri-Bold.ttf'], rakkas: ['Rakkas-Regular.ttf', 'Rakkas-Regular.ttf'] };
 let curFont = 'vazirmatn';   // the family name stays 'Vz' everywhere; a different meta.font just re-points it (a face added later wins over the one in the html)
 async function applyFont(key) {
