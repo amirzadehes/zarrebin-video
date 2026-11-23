@@ -215,7 +215,8 @@ function impact(t, t0, x, y, R, seed) {
           on the next word, so there is a visual event at least every ~3.5 s. Pure function of time (the parallel chunk rendering stays consistent).
           Off with meta.punch=false or ?punch=0. Never inside the in-app layout editor. */
 let VARY = true, BEATS = [];
-function heroVary(sc, its) { if (!VARY || EDIT || its.length !== 1) return { dx: 0, rot: 0 }; const s = sc.idx % 2 ? 1 : -1, r = rng(sc.idx * 53 + 9); return { dx: s * W * (V ? .045 : .06), rot: s * (.025 + r() * .03) } }
+function heroVary(sc, its) { if (!VARY || EDIT || its.length !== 1) return { dx: 0, rot: 0 }; const ml = its[0].lay && its[0].lay[FMT]; if (ml && (ml.dx != null || ml.dy != null || ml.rot != null)) return { dx: 0, rot: 0 };   // the owner placed this picture by hand (e.g. 'centre'): no automatic sideways shift / tilt on top, so the video shows exactly what the editor showed
+  const s = sc.idx % 2 ? 1 : -1, r = rng(sc.idx * 53 + 9); return { dx: s * W * (V ? .045 : .06), rot: s * (.025 + r() * .03) } }
 function buildBeats() {
   BEATS = []; if (!D || D.meta.punch === false || Q.get('punch') === '0') return;
   const ev = []; D.scenes.forEach(s => { ev.push({ t: s.t0, a: .15, b: .6 }); (s.items || []).forEach(i => ev.push({ t: i.t, a: .3, b: .4 })) });   // scene wipes and landing pictures are visual events already
