@@ -11,7 +11,7 @@ canvas{display:block;position:absolute;left:50%;top:50%;transform:translate(-50%
 #gd i{position:absolute;display:block}
 #gb{position:fixed;left:6px;top:6px;z-index:9;width:34px;height:34px;border-radius:9px;border:0;background:#000a;color:#fff;font:700 18px Vz,sans-serif;display:none;cursor:pointer}
 </style></head><body><canvas id="out"></canvas><div id="gd"></div><button id="gb" title="خط‌های راهنما">⌗</button><div id="msg">در حال آماده‌سازی…</div>
-<script src="fx.js?v=1120a"></script><script src="vfx.js?v=1122a"></script><script src="v2.js?v=1122a"></script>
+<script src="fx.js?v=1123a"></script><script src="vfx.js?v=1123a"></script><script src="v2.js?v=1123a"></script>
 <script>
 /* in-app scene preview + layout editor. ?inline=1&fmt=v|h. parent -> {type:'load'|'edit'|'adj'|'stop'}, iframe -> {type:'ready'|'layout'} */
 const msg=document.getElementById('msg'), cvs=document.getElementById('out'), au=new Audio(); au.preload='auto';
@@ -105,7 +105,7 @@ function chkAudio(){ const T=D&&D.meta&&D.meta.total; if(T&&isFinite(au.duration
 addEventListener('message',async e=>{ const m=e.data||{}; if(m.type==='stop'){ stop(); pstate(); return }
   if(m.type==='mvol'){ muVol=+m.v; muSet(); return } if(m.type==='pause'){ pausePlay(); return } if(m.type==='resume'){ resumePlay(); return }
   if(m.type==='amb'){ if(D&&D.meta){ D.meta.ambClips=m.clips||[]; if(m.vol==null) delete D.meta.ambVol; else D.meta.ambVol=m.vol; if(m.on===false) D.meta.amb=false; else delete D.meta.amb } return }   // live edit of the ambience clips from the app
-  if(m.type==='adj'){ if(mode!=='edit'||currentSel()<0) return; const L=lay(); if(m.op==='bigger') L.sz=clampv((L.sz||1)*1.12,.3,3); else if(m.op==='smaller') L.sz=clampv((L.sz||1)/1.12,.3,3); else if(m.op==='rot') L.rot=((L.rot||0)+.2)%(Math.PI*2); else if(m.op==='reset') resetLay(); seek(editT()); post(); return }
+  if(m.type==='adj'){ if(mode!=='edit'||currentSel()<0) return; const L=lay(); if(m.op==='bigger') L.sz=clampv((L.sz||1)*1.12,.3,3); else if(m.op==='smaller') L.sz=clampv((L.sz||1)/1.12,.3,3); else if(m.op==='rot') L.rot=((L.rot||0)+.2)%(Math.PI*2); else if(m.op==='center'){ const rc=getRec()[currentSel()]; if(rc){ L.dx=+((L.dx||0)+(W/2-rc.x)/W).toFixed(5); L.dy=+((L.dy||0)+(H/2-rc.y)/H).toFixed(5) } } else if(m.op==='reset') resetLay(); seek(editT()); post(); return }
   if(m.type==='playall'){ stop(); msg.hidden=false; msg.textContent='در حال آماده‌سازی کل ویدیو…'; try{ await loadData(m.data); await loadAudio(m,6000); await warm(null); ALL=true; muVol=m.musicVol==null?100:+m.musicVol; if(m.music){ if(mu.dataset.u!==m.music){ mu.dataset.u=m.music; mu.src=m.music } } else { mu.removeAttribute('src'); mu.dataset.u='' } SYN=m.sfxVol==null?65:+m.sfxVol; sc={t0:Math.max(0,+m.at||0),t1:D.meta.total,items:[],pins:[]}; si=0; play() }catch(err){ msg.textContent='خطا: '+err.message } return }
   if(m.type==='sel'){ if(sc&&getRec()[m.idx]){ edit(m.idx); post() } return }
   if(m.type==='edit'){ ALL=false; if(m.data) await ld(m); edit(m.sel>=1000?m.sel:Math.min(m.sel||0,sc.items.length-1)); post(); return }

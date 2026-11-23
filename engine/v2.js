@@ -179,7 +179,7 @@ function drawItem(it, t, tx, ty, size, k, rx = 0) {
   const sq = 0;   // no squash & stretch either
   const fk = window.FXL && FXL.itemKey ? FXL.itemKey(CUR, idx, it) : null, srcK = fk && IM[fk] ? fk : it.src;   // framed item: the picture is drawn inside its frame
   if (idx >= 0) REC[idx] = { x: tx, y: ty, size, src: srcK };   // hit box and selection outline follow what is really drawn (the frame included, e.g. a card)
-  const baseDraw = o => drawImg(srcK, e.x, e.y + fl * size * .02, size * e.s * (o ? o.k : 1), e.r + fr + rot0 + (o ? o.dr : 0), e.a, e.bl ? `blur(${e.bl}px)` : 'none', 1 + sq, 1 - sq, true, srcK === it.src ? VOLK[it.vol != null ? it.vol : D.meta.vol != null ? D.meta.vol : 2] || 0 : 0);
+  const baseDraw = o => drawImg(srcK, e.x + (o && o.dx || 0), e.y + fl * size * .02 + (o && o.dy || 0), size * e.s * (o ? o.k : 1), e.r + fr + rot0 + (o ? o.dr : 0), e.a * (o && o.a != null ? o.a : 1), e.bl ? `blur(${e.bl}px)` : 'none', 1 + sq, 1 - sq, true, srcK === it.src ? VOLK[it.vol != null ? it.vol : D.meta.vol != null ? D.meta.vol : 2] || 0 : 0);
   if (!EDIT && it.fx && it.fx.length && window.FXL) FXL.item(it, t, { x: e.x, y: e.y + fl * size * .02, size: size * e.s, rot: e.r + fr + rot0, a: e.a, sx: 1 + sq, sy: 1 - sq }, baseDraw);   // image-bound effects follow the picture's own motion
   else baseDraw();
   if (!EDIT) impact(t, it.t, tx, ty, size * .5, k * 13 + (CUR ? CUR.idx : 0));
@@ -957,10 +957,10 @@ function drawScene(t, sc) {
   const z = EDIT ? 1 : POSTER ? 1 + punch : (kc % 2 ? lerp(1.08, 1.0, pc) : lerp(1.0, 1.08, pc)) * (1 + beatZ(t)), px = EDIT || POSTER ? 0 : [-1, 1, 0, 0][kc] * lerp(-16, 16, pc), py = EDIT || POSTER ? 0 : [0, 0, -1, 1][kc] * lerp(-14, 14, pc);
   let shake = 0; sc.items.forEach(it => { const d = t - it.t; if (d > 0 && d < .35) shake = Math.max(shake, 8 * (1 - d / .35)) }); if (EDIT || D.meta.shake === false || (KK !== 'shake' && KK !== 'both')) { shake = 0 }   // meta.shake === false switches the entry shake off for the whole episode
   ctx.save(); ctx.translate(W / 2 + px + Math.sin(t * 90) * shake, H / 2 + py + Math.cos(t * 77) * shake); ctx.scale(z, z); ctx.translate(-W / 2, -H / 2 + (V ? 0 : 0));
-  const TF = POSTER ? null : tfOf(sc);
-  if (POSTER) posterBg(t, sc); else if (TF) tfBg(t, sc, th, TF); else { bgLayer(t, sc, th); if (window.FXL && sc.bg && sc.bg.src) FXL.bg(t, sc) }   // optional background picture layer (engine/fx.js)
-  if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, false);   // optional framed pictures pinned to the backdrop
-  if (POSTER) posterAtm(t, sc, 'back'); decor(t, sc, th); const KC = POSTER ? false : keyCustom(sc); (POSTER ? TPL.poster : (TPL[sc.tpl] || TPL.hero))(t, KC ? Object.assign(Object.create(sc), { keyOn: false }) : sc); if (window.FXL && sc.pins && sc.pins.length) FXL.pins(t, sc, true); if (KC) keyCard(t, sc); if (POSTER) { posterAtm(t, sc, 'front'); posterText(t, sc) } ctx.restore(); if (TF) tfCounter(t, sc, TF)   // pins marked 'top' (stamps, arrows) lie over the pictures
+  const TF = POSTER ? null : tfOf(sc), vf = window.VFX && !EDIT && !FLYX ? VFX.active(sc) : null, tp = vf && vf.steps ? VFX.qt(t) : t;   // scene.vfx: the picture (backdrop, pictures, pins) is drawn at time tp (12 fps when 'steps' is on) and gets the moving effects; text, numbers, captions and the brand bar are drawn after them with the real t and stay untouched
+  if (POSTER) posterBg(tp, sc); else if (TF) tfBg(tp, sc, th, TF); else { bgLayer(tp, sc, th); if (window.FXL && sc.bg && sc.bg.src) FXL.bg(tp, sc) }   // optional background picture layer (engine/fx.js)
+  if (window.FXL && sc.pins && sc.pins.length) FXL.pins(tp, sc, false);   // optional framed pictures pinned to the backdrop
+  if (POSTER) posterAtm(tp, sc, 'back'); decor(tp, sc, th); const KC = POSTER ? false : keyCustom(sc); (POSTER ? TPL.poster : (TPL[sc.tpl] || TPL.hero))(tp, KC ? Object.assign(Object.create(sc), { keyOn: false }) : sc); if (window.FXL && sc.pins && sc.pins.length) FXL.pins(tp, sc, true); if (POSTER) posterAtm(tp, sc, 'front'); if (vf) VFX.apply(tp, sc); if (KC) keyCard(t, sc); if (POSTER) posterText(t, sc); ctx.restore(); if (TF) tfCounter(t, sc, TF)   // pins marked 'top' (stamps, arrows) lie over the pictures
   if (POSTER && !EDIT && punch > .01 && !FLYX) zoomBlur(punch)
 }
 function wipePath(style, p, k) {
@@ -1075,7 +1075,6 @@ function finish(t) { grain(t); const v = ctx.createRadialGradient(W / 2, H / 2, 
 function draw(t) {
   ctx.setTransform(RS, 0, 0, RS, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'none';
   world(t); ui(t); subs(t); finish(t);
-  if (window.VFX && D.scenes[sceneIndex(t)]) VFX.apply(t, D.scenes[sceneIndex(t)]);   // scene.vfx: moving picture effects (engine/vfx.js)
   const T = D.meta.total; if (t > T - .5) { ctx.fillStyle = `rgba(0,0,0,${ramp(t, T - .5, T)})`; ctx.fillRect(0, 0, W, H) }
   if (t < .25) { ctx.fillStyle = `rgba(0,0,0,${1 - ramp(t, 0, .25)})`; ctx.fillRect(0, 0, W, H) }
 }
@@ -1084,7 +1083,7 @@ function busy(t) {   // a picture or word is arriving, or the scene has just cha
   const near = q => q && q.t != null && t - q.t > -.05 && t - q.t < .6; return (sc.items || []).some(near) || [sc.photo, ...(sc.photos || [])].some(near)
 }
 window.frame = function (t) {   // 180-degree-style shutter: the frame is the average of sub-frames over a short span (4 while things arrive, 2 otherwise)
-  const vf = window.VFX && D.scenes[sceneIndex(t)] && VFX.active(D.scenes[sceneIndex(t)]); if (vf && vf.steps && !EDIT) t = VFX.qt(t);   // scene.vfx.steps: the whole scene moves at 12 fps
+  const vf = window.VFX && D.scenes[sceneIndex(t)] && VFX.active(D.scenes[sceneIndex(t)]);
   const n = MB && flyIndex(t) < 0 && !vf ? (busy(t) ? 4 : 2) : 1;   // a scene with picture effects is drawn once per frame (stepped look, no ghosting)   // no sub-frame blur inside a fly-through: the zoom is too fast and the copies would show as ghosts
   for (let i = 0; i < n; i++) { draw(n === 1 ? t : t + i * (.6 / 30) / (n - 1)); octx.globalAlpha = 1 / (i + 1); octx.drawImage(cv, 0, 0) } octx.globalAlpha = 1
 };
@@ -1092,7 +1091,7 @@ window.prewarm = async (idx, cb) => {   // build the 3D layers of the given scen
   const ks = idx || D.scenes.map((_, i) => i); let n = 0;
   for (const k of ks) { const sc = D.scenes[k]; if (!sc) continue; try { draw(sc.t0 + (sc.t1 - sc.t0) * .6); if (flyOn(k)) { draw(sc.t0 - .05); draw(sc.t0 + .3) } } catch (e) { console.warn('prewarm', k, e) } n++; /* the second and third draw go through the fly-through into this scene */ if (cb) cb(n, ks.length); await new Promise(r => setTimeout(r, 0)) }
 };
-window.seek = function (t) { { const vf = window.VFX && D.scenes[sceneIndex(t)] && VFX.active(D.scenes[sceneIndex(t)]); if (vf && vf.steps && !EDIT) t = VFX.qt(t) } draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
+window.seek = function (t) { draw(t); octx.globalAlpha = 1; octx.drawImage(cv, 0, 0) };
 const FONTS = { vazirmatn: ['Vazirmatn-Bold.ttf', 'Vazirmatn-Black.ttf'], lalezar: ['Lalezar-Regular.ttf', 'Lalezar-Regular.ttf'], changa: ['Changa-Var.ttf', 'Changa-Var.ttf'], almarai: ['Almarai-Bold.ttf', 'Almarai-ExtraBold.ttf'], mirza: ['Mirza-Bold.ttf', 'Mirza-Bold.ttf'], amiri: ['Amiri-Bold.ttf', 'Amiri-Bold.ttf'], rakkas: ['Rakkas-Regular.ttf', 'Rakkas-Regular.ttf'] };
 let curFont = 'vazirmatn';   // the family name stays 'Vz' everywhere; a different meta.font just re-points it (a face added later wins over the one in the html)
 async function applyFont(key) {

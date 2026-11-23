@@ -28,7 +28,8 @@ window.FXL = (() => {
   const num = (v, d, a, b) => { v = parseFloat(v); if (!isFinite(v)) v = d; return Math.max(a, Math.min(b, v)) };
   const hsh = (a, b = 0, c = 0) => { let x = Math.imul(a | 0, 0x9E3779B1) ^ Math.imul((b | 0) + 0x7F4A7C15, 0x85EBCA6B) ^ Math.imul((c | 0) + 0x165667B1, 0xC2B2AE35); x ^= x >>> 15; x = Math.imul(x, 0x2C1B3C6D); x ^= x >>> 12; x = Math.imul(x, 0x297A2D39); x ^= x >>> 15; return (x >>> 0) / 4294967296 };   // stateless seeded random in [0,1)
   const cnv = (w, h) => { const c = document.createElement('canvas'); c.width = Math.max(2, Math.round(w)); c.height = Math.max(2, Math.round(h)); return c };
-  const TYPES = ['steam', 'smoke', 'page-turn', 'tea-ring', 'aged', 'burn', 'sparkle', 'shine', 'glow', 'wiggle', 'pulse', 'crack', 'fold', 'bubble'];
+  const TYPES = ['steam', 'smoke', 'page-turn', 'tea-ring', 'aged', 'burn', 'sparkle', 'shine', 'glow', 'wiggle', 'pulse', 'crack', 'fold', 'bubble', 'boil', 'float', 'sway', 'spin', 'bounce', 'flicker'];
+  const MOT = ['wiggle', 'pulse', 'boil', 'float', 'sway', 'spin', 'bounce', 'flicker'];   // motion effects: they only change the picture's own offset / rotation / scale / opacity
 
   /* ---------- picture info: bounding box + top-centre + average colour + a coarse inside mask (fractions of the image) ---------- */
   function measure(im) {
@@ -236,10 +237,17 @@ window.FXL = (() => {
   }
 
   /* ---------- wiggle / pulse: the picture itself shakes or beats (changes how the base picture is drawn) ---------- */
-  function motion(it, t, f, o) {
-    const tau = t - T0(it, f, 0); if (tau < 0) return; const dur = +f.dur > 0 ? +f.dur : 0, env = envOf(tau, dur, .15, .3);
-    if (f.type === 'wiggle') o.dr += Math.sin(tau * TAU * num(f.freq, 3.2, .5, 10)) * num(f.amp, .07, .01, .5) * env;
-    else o.k *= 1 + num(f.amp, .07, .01, .5) * Math.pow(Math.max(0, Math.sin(tau * TAU * num(f.rate, 1.2, .3, 4))), 3) * env
+  function motion(it, t, f, o, sz) {
+    const tau = t - T0(it, f, 0); if (tau < 0) return; const dur = +f.dur > 0 ? +f.dur : 0, env = envOf(tau, dur, .15, .3), ty = f.type;
+    const sd = (it.t * 1000 | 0) + itemId(it.src).length * 7, stp = Math.floor(t * 12 + 1e-6), r = k => hsh(sd, stp, k) - .5;   // r(): a new random value on every 12 fps step
+    if (ty === 'wiggle') o.dr += Math.sin(tau * TAU * num(f.freq, 3.2, .5, 10)) * num(f.amp, .07, .01, .5) * env;
+    else if (ty === 'pulse') o.k *= 1 + num(f.amp, .07, .01, .5) * Math.pow(Math.max(0, Math.sin(tau * TAU * num(f.rate, 1.2, .3, 4))), 3) * env;
+    else if (ty === 'boil') { const a = num(f.amp, .02, .002, .2) * env; o.dx += r(1) * 2 * a * sz; o.dy += r(2) * 2 * a * sz; o.dr += r(3) * 2 * a * .9; o.k *= 1 + r(4) * a * .8 }   // hand-drawn boil: a new tiny offset / turn / size every 1/12 s, held in between
+    else if (ty === 'float') { const a = num(f.amp, .05, .005, .4) * env, w = TAU * num(f.rate, .5, .1, 3); o.dy += Math.sin(tau * w) * a * sz; o.dx += Math.cos(tau * w * .7 + 1) * a * .5 * sz; o.dr += Math.sin(tau * w * .5 + 2) * a * .35 }
+    else if (ty === 'sway') { const a = num(f.amp, .14, .01, .6) * env, d = Math.sin(tau * TAU * num(f.rate, .6, .1, 3)) * a; o.dr += d; o.dx += d * sz * .25 }
+    else if (ty === 'spin') o.dr += tau * TAU * num(f.speed, .15, -2, 2)
+    else if (ty === 'bounce') { const a = num(f.amp, .09, .01, .5) * env, ph = (tau * num(f.rate, 1.1, .2, 4)) % 1; o.dy -= Math.abs(Math.sin(Math.PI * ph)) * a * sz; if (ph < .08 || ph > .92) o.k *= 1 + .035 * a / .09 }
+    else if (ty === 'flicker') { const a = num(f.amp, .4, .05, .9) * env; o.a *= 1 - a * (hsh(sd, stp, 9) < .35 ? hsh(sd, stp, 10) : 0) }
   }
 
   /* ---------- crack: glass-like cracks spread out of one point ---------- */
@@ -349,8 +357,8 @@ window.FXL = (() => {
   function item(it, t, st0, base) {
     const inf = INFO[it.src], fxs = (it.fx || []).filter(f => f && TYPES.includes(f.type));
     if (!inf || !fxs.length) { base(); return }
-    const o = { k: 1, dr: 0 }; fxs.forEach(f => { if (f.type === 'wiggle' || f.type === 'pulse') motion(it, t, f, o) });
-    const st = o.k === 1 && !o.dr ? st0 : { ...st0, size: st0.size * o.k, rot: st0.rot + o.dr };
+    const o = { k: 1, dr: 0, dx: 0, dy: 0, a: 1 }; fxs.forEach(f => { if (MOT.includes(f.type)) motion(it, t, f, o, st0.size) });
+    const st = o.k === 1 && !o.dr && !o.dx && !o.dy && o.a === 1 ? st0 : { ...st0, size: st0.size * o.k, rot: st0.rot + o.dr, x: st0.x + o.dx, y: st0.y + o.dy, a: st0.a * o.a };
     fxs.forEach(f => { if (f.type === 'glow') glow(it, t, st, f, inf) });
     let done = false, flat = true; const pg = fxs.find(f => f.type === 'page-turn'); if (pg) { done = pageTurn(it, t, st, pg, inf); flat = !done }
     let burned = false; if (!done) { const bn = fxs.find(f => f.type === 'burn'); if (bn) { done = burned = burn(it, t, st, bn, inf, fxs) } }
@@ -468,8 +476,8 @@ window.FXL = (() => {
   function selBox(x, y, im, S, rot) { const m = Math.max(im.width, im.height), w = im.width / m * S, h = im.height / m * S; ctx.save(); ctx.translate(x, y); ctx.rotate(rot || 0); ctx.setLineDash([22, 14]); ctx.lineWidth = 7; ctx.strokeStyle = '#00e5ff'; ctx.strokeRect(-w / 2 - 8, -h / 2 - 8, w + 16, h + 16); ctx.restore() }
   function drawPinImg(key, x, y, size, rot, a, sh, o) {   // a picture stuck on the wall: no entrance, no float, no squash; only a soft contact shadow
     const im = IM[key]; if (!im) return; const s = size * (o ? o.k : 1) / Math.max(im.width, im.height);
-    ctx.save(); ctx.translate(x, y); ctx.rotate(rot + (o ? o.dr : 0)); if (sh > 0) { ctx.shadowColor = `rgba(25,12,0,${.5 * sh})`; ctx.shadowBlur = 6 + 22 * sh; ctx.shadowOffsetX = 5 * sh + 1; ctx.shadowOffsetY = 12 * sh + 2 }
-    ctx.scale(s, s); ctx.globalAlpha = a; if (VOX) ctx.filter = 'sepia(.1) saturate(1.05) contrast(1.05)'; ctx.drawImage(im, -im.width / 2, -im.height / 2); ctx.restore()
+    ctx.save(); ctx.translate(x + (o && o.dx || 0), y + (o && o.dy || 0)); ctx.rotate(rot + (o ? o.dr : 0)); if (sh > 0) { ctx.shadowColor = `rgba(25,12,0,${.5 * sh})`; ctx.shadowBlur = 6 + 22 * sh; ctx.shadowOffsetX = 5 * sh + 1; ctx.shadowOffsetY = 12 * sh + 2 }
+    ctx.scale(s, s); ctx.globalAlpha = a * (o && o.a != null ? o.a : 1); if (VOX) ctx.filter = 'sepia(.1) saturate(1.05) contrast(1.05)'; ctx.drawImage(im, -im.width / 2, -im.height / 2); ctx.restore()
   }
   function pins(t, sc, top) {
     const arr = sc.pins; if (!arr || !arr.length) return;
