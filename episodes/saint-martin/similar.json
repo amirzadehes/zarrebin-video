@@ -1,6 +1,5 @@
 {
  "roman-cloak-4c": [
-  "u-mwi82fu8",
   "cloak",
   "half-cloak"
  ],
@@ -14,11 +13,11 @@
   "shield"
  ],
  "live-goose-19c": [
-  "goose"
+  "goose",
+  "roast-goose"
  ],
  "roasted-goose-19c": [
-  "roast-goose",
-  "u-mwjpsz3n"
+  "roast-goose"
  ],
  "lantern-19c": [
   "lantern"
@@ -27,6 +26,8 @@
   "fire"
  ],
  "coin-denarius-4c": [
-  "money-coins"
+  "banknotes",
+  "money-coins",
+  "cash"
  ]
 }
